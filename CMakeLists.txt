@@ -18,3 +18,5 @@ configure_file(config.h.in config/config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/config)
 target_link_libraries(dxhr PRIVATE
 	-ld3d11 -ld3dcompiler)
+
+add_subdirectory(rendering)

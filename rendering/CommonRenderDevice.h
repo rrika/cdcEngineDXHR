@@ -1,0 +1,116 @@
+#pragma once
+#include "../types.h"
+
+namespace cdc {
+
+class CommonRenderDevice
+{
+public:
+	virtual ~CommonRenderDevice() = default;
+	virtual void refCountDec() = 0;
+	virtual void method_08() = 0;
+	virtual void method_0C() = 0;
+	virtual void method_10() = 0;
+	virtual void method_14();
+	virtual void method_18();
+	virtual void method_1C() = 0;
+	virtual void method_20() = 0;
+	virtual void method_24() = 0;
+	virtual void method_28() = 0;
+	virtual void method_2C() = 0;
+	virtual void method_30() = 0;
+	virtual void method_34();
+	virtual void method_38();
+	virtual void method_3C();
+	virtual void method_40();
+	virtual void method_44();
+	virtual void method_48() = 0;
+	virtual void method_4C();
+	virtual void method_50() = 0;
+	virtual void method_54();
+	virtual void method_58();
+	virtual void getScene();
+	virtual void getSceneRenderTarget() = 0;
+	virtual void method_64() = 0;
+	virtual void method_68();
+	virtual void method_6C() = 0;
+	virtual void method_70() = 0;
+	virtual void method_74();
+	virtual void method_78();
+	virtual void method_7C();
+	virtual void method_80();
+	virtual void registerPassCallback();
+	virtual void method_88();
+	virtual void method_8C();
+	virtual void method_90();
+	virtual void method_94();
+	virtual void registerDrawer();
+	virtual void getDrawer();
+	virtual void registerComparator();
+	virtual void getComparator();
+	virtual void method_A8() = 0;
+	virtual void method_AC();
+	virtual void method_B0();
+	virtual void method_B4();
+	virtual void clearRenderTarget() = 0;
+	virtual void setRenderTarget() = 0;
+	virtual void method_C0() = 0;
+	virtual void method_C4() = 0;
+	virtual void method_C8() = 0;
+	virtual void method_CC() = 0;
+	virtual void method_D0() = 0;
+	virtual void method_D4() = 0;
+	virtual void method_D8() = 0;
+	virtual void method_DC() = 0;
+	virtual void method_E0();
+	virtual void method_E4();
+	virtual void method_E8();
+	virtual void method_EC() = 0;
+	virtual void method_F0();
+	virtual void method_F4();
+	virtual void method_F8();
+	virtual void method_FC();
+	virtual void method_100();
+	virtual void method_104();
+	virtual void method_108();
+	virtual void method_10C();
+	virtual void method_110();
+	virtual void method_114();
+	virtual void method_118();
+	virtual void method_11C();
+	virtual void method_120();
+	virtual void method_124();
+	virtual void method_128();
+	virtual void createMaterial() = 0;
+	virtual void createTexture() = 0;
+	virtual void createProceduralTexture() = 0;
+	virtual void createShader() = 0;
+	virtual void createRenderModel() = 0;
+	virtual void method_140();
+	virtual void createRenderModelInstance() = 0;
+	virtual void createRenderTerrain() = 0;
+	virtual void createRenderTerrainInstance() = 0;
+	virtual void createRenderImage() = 0;
+	virtual void createWaterSurface() = 0;
+	virtual void createLightResource() = 0;
+	virtual void createRenderLight() = 0;
+	virtual void createMatrixState() = 0;
+	virtual void createVertexBuffer() = 0;
+	virtual void createIndexBuffer() = 0;
+	virtual void method_16C() = 0;
+	virtual void createDepthBuffer() = 0;
+	virtual void method_174() = 0;
+	virtual void getWindowSize(uint *width, uint *height) = 0;
+	virtual void method_17C() = 0;
+	virtual void method_180() = 0;
+	virtual void method_184();
+	virtual bool isInStereoMode();
+	virtual void method_18C();
+	virtual void method_190();
+	virtual void method_194();
+	virtual void method_198();
+	virtual void method_19C();
+	virtual void method_1A0();
+};
+
+}
