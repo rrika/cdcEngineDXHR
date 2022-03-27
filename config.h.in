@@ -1,0 +1,3 @@
+#cmakedefine01 ENABLE_STEAM
+#cmakedefine01 ENABLE_MCE
+#cmakedefine01 ENABLE_GCS
