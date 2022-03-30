@@ -1,6 +1,7 @@
 #include <windows.h>
 #include "main.h"
 #include "main2.h"
+#include "spinnycube.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11RenderDevice.h"
@@ -55,6 +56,9 @@ int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
 	createPCDX11DeviceManager();
 	createWindow();
 	createPCDX11RenderDevice(hwnd, 640, 480, 0);
+
+	if (true)
+		return spinnyCube(hwnd);
 
 	MSG msg;
 

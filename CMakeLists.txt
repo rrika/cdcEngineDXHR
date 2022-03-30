@@ -13,7 +13,8 @@ add_compile_options(-mno-cygwin -m32)
 add_link_options(-mwindows -mno-cygwin -m32)
 add_executable(dxhr
 	main.cpp
-	main2.cpp)
+	main2.cpp
+	spinnycube.cpp)
 configure_file(config.h.in config/config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/config)
 target_link_libraries(dxhr PRIVATE
