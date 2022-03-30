@@ -33,6 +33,14 @@ void PCDX11StateManager::setPixelShader(PCDX11PixelShader *pixelShader) {
 	}
 }
 
+void PCDX11StateManager::setPrimitiveTopology(int topology) {
+	// TODO: tesselation stuff
+	if (topology != m_topology) {
+		m_topology = topology;
+		m_deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)topology);
+	}
+}
+
 void PCDX11StateManager::internalResource04() {};
 void PCDX11StateManager::internalResource08() {};
 

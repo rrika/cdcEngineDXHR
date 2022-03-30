@@ -6,8 +6,9 @@
 namespace cdc {
 
 class PCDX11StateManager : public PCDX11InternalResource {
-	ID3D11DeviceContext *m_deviceContext;
-	ID3D11Buffer *m_indexBufferD3D;
+	ID3D11DeviceContext *m_deviceContext; // 10
+	int m_topology; // B8
+	ID3D11Buffer *m_indexBufferD3D; // 188
 	PCDX11PixelShader *m_pixelShader; // 198
 public:
 	PCDX11StateManager();
@@ -19,6 +20,7 @@ public:
 
 	void setIndexBuffer(PCDX11IndexBuffer *indexBuffer);
 	void setPixelShader(PCDX11PixelShader *pixelShader);
+	void setPrimitiveTopology(int topology);
 
 	void internalResource04() override;
 	void internalResource08() override;

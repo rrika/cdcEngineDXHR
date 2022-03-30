@@ -520,7 +520,7 @@ int spinnyCube(HWND window) {
         deviceContext->ClearRenderTargetView(frameBufferView, backgroundColor);
         deviceContext->ClearDepthStencilView(depthBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-        deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        stateManager.setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         deviceContext->IASetInputLayout(inputLayout);
         deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
         stateManager.setIndexBuffer(&cdcIndexBuffer);
