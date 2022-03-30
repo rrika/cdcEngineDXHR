@@ -196,6 +196,7 @@ void CommonRenderDevice::method_184() {
 
 bool CommonRenderDevice::isInStereoMode() {
 	// TODO
+	return false;
 }
 
 void CommonRenderDevice::method_18C() {
