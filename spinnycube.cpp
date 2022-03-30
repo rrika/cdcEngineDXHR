@@ -341,6 +341,8 @@ int spinnyCube(HWND window) {
 
     device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &pixelShader);
 
+    cdc::PCDX11PixelShader cdcPixelShader(pixelShader);
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     D3D11_RASTERIZER_DESC1 rasterizerDesc = {};
@@ -530,7 +532,8 @@ int spinnyCube(HWND window) {
         deviceContext->RSSetViewports(1, &viewport);
         deviceContext->RSSetState(rasterizerState);
 
-        deviceContext->PSSetShader(pixelShader, nullptr, 0);
+        //deviceContext->PSSetShader(pixelShader, nullptr, 0);
+        stateManager.setPixelShader(&cdcPixelShader);
         deviceContext->PSSetShaderResources(0, 1, &textureView);
         deviceContext->PSSetSamplers(0, 1, &samplerState);
 
