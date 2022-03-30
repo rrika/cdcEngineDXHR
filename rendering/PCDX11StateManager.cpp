@@ -17,4 +17,7 @@ void PCDX11StateManager::setIndexBuffer(PCDX11IndexBuffer *indexBuffer) {
 	}
 }
 
+void PCDX11StateManager::internalResource04() {};
+void PCDX11StateManager::internalResource08() {};
+
 }

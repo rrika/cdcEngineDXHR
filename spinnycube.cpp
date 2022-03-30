@@ -8,6 +8,8 @@
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11RenderDevice.h"
+#include "rendering/PCDX11StateManager.h"
+#include "rendering/PCDX11IndexBuffer.h"
 
 #define TEXTURE_WIDTH  2
 #define TEXTURE_HEIGHT 2
@@ -189,7 +191,7 @@ float VertexData[] = // float3 position, float3 normal, float2 texcoord, float3 
      0.6f, -1.0f,  0.6f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
 };
 
-uint IndexData[] =
+unsigned short IndexData[] =
 {
       0,   1,   9,   9,   8,   0,   1,   2,   5,   5,   4,   1,   6,   7,  10,  10,   9,   6,   2,   3,  11,  11,  10,   2,
      12,  13,  21,  21,  20,  12,  13,  14,  17,  17,  16,  13,  18,  19,  22,  22,  21,  18,  14,  15,  23,  23,  22,  14,
@@ -415,8 +417,10 @@ int spinnyCube(HWND window) {
     D3D11_SUBRESOURCE_DATA indexData = { IndexData };
 
     ID3D11Buffer* indexBuffer;
-
     device->CreateBuffer(&indexBufferDesc, &indexData, &indexBuffer);
+
+    cdc::PCDX11StateManager stateManager(deviceContext);
+    cdc::HackIndexBuffer cdcIndexBuffer(indexBuffer);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -517,7 +521,8 @@ int spinnyCube(HWND window) {
         deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         deviceContext->IASetInputLayout(inputLayout);
         deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-        deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+        stateManager.setIndexBuffer(&cdcIndexBuffer);
+        //deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
         deviceContext->VSSetShader(vertexShader, nullptr, 0);
         deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
