@@ -21,4 +21,5 @@ target_link_libraries(dxhr PRIVATE
 	-ld3d11 -ld3dcompiler)
 
 add_subdirectory(allocator)
+add_subdirectory(drm)
 add_subdirectory(rendering)
