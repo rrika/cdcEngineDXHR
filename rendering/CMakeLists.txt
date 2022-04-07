@@ -3,4 +3,6 @@ target_sources(dxhr PRIVATE
 	PCDX11DeviceManager.cpp
 	PCDX11InternalResource.cpp
 	PCDX11RenderDevice.cpp
-	PCDX11StateManager.cpp)
+	PCDX11StateManager.cpp
+	PCDX11Texture.cpp
+	RenderResource.cpp)

@@ -40,12 +40,12 @@ public:
 	void method_DC();
 	void method_EC();
 	void createMaterial();
-	void createTexture();
+	TextureMap *createTexture(uint32_t);
 	void createProceduralTexture();
 	void createShader();
-	void createRenderModel();
+	RenderResource *createRenderModel(uint32_t);
 	void createRenderModelInstance();
-	void createRenderTerrain();
+	RenderResource *createRenderTerrain(uint32_t);
 	void createRenderTerrainInstance();
 	void createRenderImage();
 	void createWaterSurface();

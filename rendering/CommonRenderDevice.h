@@ -1,7 +1,11 @@
 #pragma once
+#include <stdint.h>
 #include "../types.h"
 
 namespace cdc {
+
+class TextureMap;
+class RenderResource;
 
 class CommonRenderDevice
 {
@@ -82,13 +86,13 @@ public:
 	virtual void method_124();
 	virtual void method_128();
 	virtual void createMaterial() = 0;
-	virtual void createTexture() = 0;
+	virtual TextureMap *createTexture(uint32_t) = 0;
 	virtual void createProceduralTexture() = 0;
 	virtual void createShader() = 0;
-	virtual void createRenderModel() = 0;
-	virtual void method_140();
+	virtual RenderResource *createRenderModel(uint32_t) = 0;
+	virtual RenderResource *method_140(uint32_t);
 	virtual void createRenderModelInstance() = 0;
-	virtual void createRenderTerrain() = 0;
+	virtual RenderResource *createRenderTerrain(uint32_t) = 0;
 	virtual void createRenderTerrainInstance() = 0;
 	virtual void createRenderImage() = 0;
 	virtual void createWaterSurface() = 0;
@@ -111,6 +115,10 @@ public:
 	virtual void method_198();
 	virtual void method_19C();
 	virtual void method_1A0();
+
+	static RenderResource *createResource(uint32_t, uint32_t);
 };
+
+extern CommonRenderDevice *gRenderDevice;
 
 }

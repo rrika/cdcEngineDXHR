@@ -3,6 +3,8 @@
 #include <d3dcompiler.h>
 #include <math.h>
 
+#include <stdio.h>
+
 #include "spinnycube.h"
 #include "types.h"
 #include "rendering/IPCDeviceManager.h"
@@ -10,6 +12,9 @@
 #include "rendering/PCDX11RenderDevice.h"
 #include "rendering/PCDX11StateManager.h"
 #include "rendering/PCDX11IndexBuffer.h"
+#include "rendering/PCDX11Texture.h"
+#include "drm/ResolveReceiver.h"
+#include "drm/sections/RenderResourceSection.h"
 
 #define TEXTURE_WIDTH  2
 #define TEXTURE_HEIGHT 2
@@ -424,25 +429,46 @@ int spinnyCube(HWND window) {
     cdc::PCDX11StateManager stateManager(deviceContext);
     cdc::HackIndexBuffer cdcIndexBuffer(indexBuffer);
 
+    cdc::RenderResourceSection renderResourceSection;
+    cdc::ResolveSection *resolveSections[16] = {nullptr};
+    resolveSections[5] = &renderResourceSection;
+    hackResolveReceiver("alc_beer_bottle_a.drm", resolveSections);
+    auto bottleTexture = (cdc::PCDX11Texture*)renderResourceSection.getWrapped(0x0396);
+    printf("have bottle cdc texture: %p\n", bottleTexture);
+    bottleTexture->asyncCreate();
+    printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
+
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    D3D11_TEXTURE2D_DESC textureDesc = {};
-    textureDesc.Width              = TEXTURE_WIDTH;  // in data.h
-    textureDesc.Height             = TEXTURE_HEIGHT; // in data.h
-    textureDesc.MipLevels          = 1;
-    textureDesc.ArraySize          = 1;
-    textureDesc.Format             = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-    textureDesc.SampleDesc.Count   = 1;
-    textureDesc.Usage              = D3D11_USAGE_IMMUTABLE;
-    textureDesc.BindFlags          = D3D11_BIND_SHADER_RESOURCE;
-
-    D3D11_SUBRESOURCE_DATA textureData = {};
-    textureData.pSysMem            = TextureData;
-    textureData.SysMemPitch        = TEXTURE_WIDTH * 4; // 4 bytes per pixel
 
     ID3D11Texture2D* texture;
 
-    device->CreateTexture2D(&textureDesc, &textureData, &texture);
+    if (false) {
+        D3D11_TEXTURE2D_DESC textureDesc = {};
+        textureDesc.Width              = TEXTURE_WIDTH;  // in data.h
+        textureDesc.Height             = TEXTURE_HEIGHT; // in data.h
+        textureDesc.MipLevels          = 1;
+        textureDesc.ArraySize          = 1;
+        textureDesc.Format             = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+        textureDesc.SampleDesc.Count   = 1;
+        textureDesc.Usage              = D3D11_USAGE_IMMUTABLE;
+        textureDesc.BindFlags          = D3D11_BIND_SHADER_RESOURCE;
+
+        D3D11_SUBRESOURCE_DATA textureData = {};
+        textureData.pSysMem            = TextureData;
+        textureData.SysMemPitch        = TEXTURE_WIDTH * 4; // 4 bytes per pixel
+
+        // random stuff I needed while narrowing in on a bug:
+        // device->CreateTexture2D(&textureDesc, &textureData, &texture);
+        // device->CreateTexture2D(&bottleTexture->hackTextureDesc, &bottleTexture->hackTextureData, &texture);
+        //ID3D11Texture2D* dummyTexture;
+        //device->CreateTexture2D(&textureDesc, &textureData, &dummyTexture);
+        //device->CreateTexture2D(&bottleTexture->hackTextureDesc, &bottleTexture->hackTextureData, &dummyTexture);
+    }
+    else
+    {
+        texture = bottleTexture->d3dTexture128;
+    }
 
     ID3D11ShaderResourceView* textureView;
 

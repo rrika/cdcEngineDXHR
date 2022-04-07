@@ -1,6 +1,9 @@
 #include "CommonRenderDevice.h"
+#include "TextureMap.h"
 
 namespace cdc {
+
+CommonRenderDevice *gRenderDevice = nullptr;
 
 void CommonRenderDevice::method_14() {
 	// TODO
@@ -186,8 +189,9 @@ void CommonRenderDevice::method_128() {
 	// TODO
 }
 
-void CommonRenderDevice::method_140() {
+RenderResource *CommonRenderDevice::method_140(uint32_t) {
 	// TODO
+	return nullptr;
 }
 
 void CommonRenderDevice::method_184() {
@@ -221,6 +225,16 @@ void CommonRenderDevice::method_19C() {
 
 void CommonRenderDevice::method_1A0() {
 	// TODO
+}
+
+RenderResource *CommonRenderDevice::createResource(uint32_t type, uint32_t arg) {
+	switch (type) {
+		case 5: return gRenderDevice->createTexture(arg);
+		case 24: return gRenderDevice->createRenderTerrain(arg);
+		case 26: return gRenderDevice->createRenderModel(arg);
+		case 27: return gRenderDevice->method_140(arg);
+		default: return nullptr;
+	}
 }
 
 }

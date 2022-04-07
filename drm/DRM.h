@@ -3,7 +3,7 @@
 
 namespace cdc {
 
-enum ContentType /* class ContentType : uint8_t*/ {
+enum class ContentType : uint8_t {
 	Generic = 0,
 	Empty = 1,
 	Animation = 2,
@@ -22,7 +22,7 @@ enum ContentType /* class ContentType : uint8_t*/ {
 
 struct DRMSectionHeader {
 	uint32_t payloadSize;
-	ContentType type;
+	uint8_t type;
 	uint8_t  unknown05;
 	uint16_t unknown06;
 	struct {

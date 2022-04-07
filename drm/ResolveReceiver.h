@@ -1,8 +1,10 @@
 #pragma once
+#include <vector>
 
 namespace cdc {
 
 class ResolveSection;
-void hackResolveReceiver(char *data, size_t size, ResolveSection *sections);
+void hackResolveReceiver(std::vector<char> data, ResolveSection **sections);
+void hackResolveReceiver(const char *path, ResolveSection **sections);
 
 }

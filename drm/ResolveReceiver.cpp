@@ -1,9 +1,15 @@
+#include <stdio.h>
 #include <stdint.h>
-#include <vector>
 #include <string.h>
+#include <stdlib.h>
+#include <vector>
 #include "ResolveReceiver.h"
 #include "ResolveSection.h"
 #include "DRM.h"
+
+extern "C" {
+#include "../miniz/miniz.h"
+}
 
 namespace cdc {
 
@@ -91,11 +97,109 @@ static void applyRelocs(
 	}
 }
 
-void hackResolveReceiver(char *data, size_t size, ResolveSection *resolveSections) {
+static std::vector<char> decompressCDRM(std::vector<char>& data) {
+	struct CDRMHeader {
+		uint32_t magic;
+		uint32_t version;
+		uint32_t count;
+		uint32_t padding;
+	} header;
+
+	memcpy(&header, data.data(), sizeof(CDRMHeader));
+
+	if (header.magic != 0x4D524443)
+		return data;
+
+	printf("  decompressing\n");
+
+	size_t cursor = 16 + header.count * 8;
+	cursor = (cursor+15) & ~15;
+	std::vector<char> output;
+
+	for (uint32_t i = 0; i<header.count; i++) {
+
+		struct CDRMChunk {
+			uint32_t type : 8;
+			uint32_t unpackedSize : 24;
+			uint32_t packedSize;
+		} chunk;
+		memcpy(&chunk, data.data() + 16 + i*8, 8);
+
+		size_t targetOffset = output.size();
+		size_t packedSize = chunk.packedSize;
+		size_t unpackedSize = chunk.unpackedSize;
+		output.resize(targetOffset + unpackedSize);
+
+		if (chunk.type == 1) {
+			memcpy(output.data() + targetOffset, data.data() + cursor, packedSize);
+		} else if (chunk.type == 2) {
+			unsigned long unpackedSizeActual = unpackedSize;
+			uncompress(
+				(unsigned char*)(output.data() + targetOffset), &unpackedSizeActual,
+				(unsigned char*)(data.data() + cursor), packedSize);
+		}
+
+		// align output
+		for (auto j = unpackedSize; (j & 15); j++)
+			output.push_back(0);
+
+		// align input
+		cursor += chunk.packedSize;
+		cursor = (cursor+15) & ~15;
+	}
+
+	return output;
+}
+
+void hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSections) {
+	data = decompressCDRM(data);
 	DRMHeader header;
-	memcpy(&header, data, sizeof(header));
+	memcpy(&header, data.data(), sizeof(header));
 	std::vector<DRMSectionHeader> sectionHeaders(header.sectionCount);
-	memcpy(sectionHeaders.data(), data + sizeof(header), sizeof(DRMSectionHeader) * header.sectionCount);
+	memcpy(sectionHeaders.data(), data.data() + sizeof(header), sizeof(DRMSectionHeader) * header.sectionCount);
+
+	uint32_t cursor = 32 + header.sectionCount*20 + header.dependencyDrmListSize + header.dependencyObjListSize;
+	cursor = (cursor+15) & ~15;
+
+	for (uint32_t i = 0; i < header.sectionCount; i++) {
+		DRMSectionHeader& sectionHeader = sectionHeaders[i];
+
+		char *reloc = data.data() + cursor;
+		cursor += sectionHeader.relocSize;
+		cursor = (cursor+15) & ~15;
+
+		char *payload = data.data() + cursor;
+		cursor += sectionHeader.payloadSize;
+		cursor = (cursor+15) & ~15;
+
+		auto *resolveSection = resolveSections[sectionHeader.type];
+		if (resolveSection) {
+			bool alreadyLoaded;
+			uint32_t id = resolveSection->allocate(
+				sectionHeader.id,
+				sectionHeader.allocFlags,
+				sectionHeader.unknown06,
+				sectionHeader.payloadSize,
+				alreadyLoaded);
+			printf("  section %3d %04x (%04x)\n", i, sectionHeader.id, id);
+			if (!alreadyLoaded) {
+				resolveSection->fill(id, payload, sectionHeader.payloadSize, 0);
+			}
+		}
+	}
+}
+
+void hackResolveReceiver(const char *path, ResolveSection **resolveSections) {
+	printf("loading %s\n", path);
+	FILE *f = fopen(path, "rb");
+	fseek(f, 0, SEEK_END);
+	size_t size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	std::vector<char> buffer(size);
+	fread(buffer.data(), size, 1, f);
+	fclose(f);
+
+	hackResolveReceiver(buffer, resolveSections);
 }
 
 }

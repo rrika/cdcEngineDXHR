@@ -22,4 +22,5 @@ target_link_libraries(dxhr PRIVATE
 
 add_subdirectory(allocator)
 add_subdirectory(drm)
+add_subdirectory(miniz)
 add_subdirectory(rendering)

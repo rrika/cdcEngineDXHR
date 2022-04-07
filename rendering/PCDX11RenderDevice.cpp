@@ -1,5 +1,6 @@
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderDevice.h"
+#include "PCDX11Texture.h"
 
 namespace cdc {
 
@@ -123,8 +124,8 @@ void PCDX11RenderDevice::createMaterial() {
 	// TODO
 }
 
-void PCDX11RenderDevice::createTexture() {
-	// TODO
+TextureMap *PCDX11RenderDevice::createTexture(uint32_t) {
+	return new PCDX11Texture(this);
 }
 
 void PCDX11RenderDevice::createProceduralTexture() {
@@ -135,16 +136,18 @@ void PCDX11RenderDevice::createShader() {
 	// TODO
 }
 
-void PCDX11RenderDevice::createRenderModel() {
+RenderResource *PCDX11RenderDevice::createRenderModel(uint32_t) {
 	// TODO
+	return nullptr;
 }
 
 void PCDX11RenderDevice::createRenderModelInstance() {
 	// TODO
 }
 
-void PCDX11RenderDevice::createRenderTerrain() {
+RenderResource *PCDX11RenderDevice::createRenderTerrain(uint32_t) {
 	// TODO
+	return nullptr;
 }
 
 void PCDX11RenderDevice::createRenderTerrainInstance() {

@@ -27,6 +27,9 @@ public:
 	void method_1C();
 	void method_20();
 	void method_24();
+
+	ID3D11Device *getD3DDevice() { return device; }
+	ID3D11DeviceContext *getD3DDeviceContext() { return deviceContext; }
 };
 
 extern PCDX11DeviceManager *deviceManager;
