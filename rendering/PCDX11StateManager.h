@@ -6,6 +6,8 @@
 
 namespace cdc {
 
+class PCDX11VertexBuffer;
+
 class PCDX11StateManager : public PCDX11InternalResource {
 	ID3D11DeviceContext *m_deviceContext; // 10
 	bool m_dirtyRasterizerState; // 19
@@ -24,6 +26,8 @@ class PCDX11StateManager : public PCDX11InternalResource {
 	uint8_t m_dirtySamplersLast; // 187
 
 	ID3D11Buffer *m_indexBufferD3D; // 188
+	ID3D11Buffer *m_vertexBufferD3D; // 18C
+	uint32_t m_vertexStride; // 190
 	PCDX11PixelShader *m_pixelShader; // 198
 public:
 	PCDX11StateManager();
@@ -34,6 +38,7 @@ public:
 	{}
 
 	void setIndexBuffer(PCDX11IndexBuffer *indexBuffer);
+	void setVertexBuffer(PCDX11VertexBuffer *vertexBuffer);
 	void setPixelShader(PCDX11PixelShader *pixelShader);
 	void setPrimitiveTopology(int topology);
 

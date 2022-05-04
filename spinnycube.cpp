@@ -13,6 +13,7 @@
 #include "rendering/PCDX11StateManager.h"
 #include "rendering/PCDX11IndexBuffer.h"
 #include "rendering/PCDX11Texture.h"
+#include "rendering/PCDX11StaticVertexBuffer.h"
 #include "drm/ResolveReceiver.h"
 #include "drm/sections/RenderResourceSection.h"
 
@@ -409,6 +410,10 @@ int spinnyCube(HWND window,
 
     device->CreateBuffer(&vertexBufferDesc, &vertexData, &vertexBuffer);
 
+    UINT stride = 11 * 4; // vertex size (11 floats: float3 position, float3 normal, float2 texcoord, float3 color)
+    UINT offset = 0;
+    cdc::PCDX11StaticVertexBuffer cdcVertexBuffer(vertexBuffer, stride);
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     D3D11_BUFFER_DESC indexBufferDesc = {};
@@ -472,9 +477,6 @@ int spinnyCube(HWND window,
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     FLOAT backgroundColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f };
-
-    UINT stride = 11 * 4; // vertex size (11 floats: float3 position, float3 normal, float2 texcoord, float3 color)
-    UINT offset = 0;
 
     D3D11_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<float>(depthBufferDesc.Width), static_cast<float>(depthBufferDesc.Height), 0.0f, 1.0f };
     
@@ -543,7 +545,8 @@ int spinnyCube(HWND window,
 
         stateManager.setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         deviceContext->IASetInputLayout(inputLayout);
-        deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+        stateManager.setVertexBuffer(&cdcVertexBuffer);
+        //deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
         stateManager.setIndexBuffer(&cdcIndexBuffer);
         //deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
