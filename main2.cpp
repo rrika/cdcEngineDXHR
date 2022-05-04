@@ -53,12 +53,15 @@ void createWindow() {
 }
 
 int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
-	createPCDX11DeviceManager();
+	auto deviceManager = createPCDX11DeviceManager();
 	createWindow();
 	gRenderDevice = createPCDX11RenderDevice(hwnd, 640, 480, 0);
 
 	if (true)
-		return spinnyCube(hwnd);
+		return spinnyCube(
+			hwnd,
+			deviceManager->getD3DDevice(),
+			deviceManager->getD3DDeviceContext());
 
 	MSG msg;
 

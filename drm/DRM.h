@@ -26,13 +26,15 @@ struct DRMSectionHeader {
 	uint8_t  unknown05;
 	uint16_t unknown06;
 	struct {
-		bool     singleFlag : 1;
-		uint8_t  allocFlags : 7;
+		uint32_t singleFlag : 1;
+		uint32_t allocFlags : 7;
 		uint32_t relocSize : 24;
 	};
 	uint32_t id;
 	uint32_t languageBits;
 };
+
+static_assert(sizeof(DRMSectionHeader) == 20);
 
 struct DRMHeader {
 	uint32_t version;

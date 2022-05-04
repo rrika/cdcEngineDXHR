@@ -172,7 +172,7 @@ void hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSection
 		cursor += sectionHeader.payloadSize;
 		cursor = (cursor+15) & ~15;
 
-		auto *resolveSection = resolveSections[sectionHeader.type];
+		auto *resolveSection = sectionHeader.type < 16 ? resolveSections[sectionHeader.type] : nullptr;
 		if (resolveSection) {
 			bool alreadyLoaded;
 			uint32_t id = resolveSection->allocate(

@@ -234,14 +234,9 @@ struct matrix { float m[4][4]; };
 
 matrix operator*(const matrix& m1, const matrix& m2);
 
-int spinnyCube(HWND window) {
-
-    D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
-    
-    ID3D11Device* baseDevice;
-    ID3D11DeviceContext* baseDeviceContext;
-
-    D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_BGRA_SUPPORT, featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &baseDevice, nullptr, &baseDeviceContext);
+int spinnyCube(HWND window,
+    ID3D11Device *baseDevice,
+    ID3D11DeviceContext *baseDeviceContext) {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
