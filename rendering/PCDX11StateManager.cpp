@@ -103,7 +103,6 @@ void PCDX11StateManager::updateConstantBuffers() {
 	// TODO
 }
 
-
 void PCDX11StateManager::updateRenderTargets() {
 	// TODO
 }

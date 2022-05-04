@@ -465,9 +465,9 @@ int spinnyCube(HWND window,
         texture = bottleTexture->d3dTexture128;
     }
 
-    ID3D11ShaderResourceView* textureView;
+    ID3D11ShaderResourceView* textureView = bottleTexture->createShaderResourceView();
 
-    device->CreateShaderResourceView(texture, nullptr, &textureView);
+    // device->CreateShaderResourceView(texture, nullptr, &textureView);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 

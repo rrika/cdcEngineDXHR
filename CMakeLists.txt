@@ -13,7 +13,12 @@ option(ENABLE_STEAM "Build with Steam integration" OFF)
 option(ENABLE_MCE "Build with Windows Media Center integration" OFF)
 option(ENABLE_GCS "Build with whatever GCS is" OFF)
 
-add_compile_options(-g -target ${triple} -Wno-ignored-pragma-intrinsic -Wno-nonportable-include-path -Wno-ignored-attributes -Wno-pragma-pack)
+add_compile_options(-g -target ${triple}
+	-Wno-ignored-pragma-intrinsic
+	-Wno-nonportable-include-path
+	-Wno-ignored-attributes
+	-Wno-pragma-pack
+	-Wno-deprecated-declarations)
 add_link_options(-g -target ${triple} -fuse-ld=lld-link)
 add_executable(dxhr
 	main.cpp
