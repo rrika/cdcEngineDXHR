@@ -34,8 +34,9 @@ target_link_directories(dxhr PRIVATE
 	../winsdk/sdk/lib/ucrt/x86)
 target_link_libraries(dxhr PRIVATE
 	-luser32 -ld3d11 -ld3dcompiler)
-set_target_properties(dxhr
-	PROPERTIES OUTPUT_NAME dxhr.exe)
+set_target_properties(dxhr PROPERTIES
+	OUTPUT_NAME dxhr.exe
+	CXX_STANDARD 17)
 
 add_subdirectory(allocator)
 add_subdirectory(drm)

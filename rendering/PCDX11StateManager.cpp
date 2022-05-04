@@ -41,6 +41,89 @@ void PCDX11StateManager::setPrimitiveTopology(int topology) {
 	}
 }
 
+void PCDX11StateManager::updateRasterizerState() {
+	// TODO
+}
+
+void PCDX11StateManager::updateDepthStencilState() {
+	// TODO
+}
+
+void PCDX11StateManager::updateBlendState() {
+	// TODO
+}
+
+void PCDX11StateManager::updateShaderResources() {
+	unsigned begin = m_dirtyShaderResourcesFirst;
+	unsigned end = m_dirtyShaderResourcesLast + 1;
+
+	unsigned psBegin = std::clamp(begin, 0u, 16u);
+	unsigned psEnd = std::clamp(end, 0u, 16u);
+
+	if (psBegin < psEnd)
+		m_deviceContext->PSSetShaderResources(
+			psBegin, psEnd-psBegin, &m_resources[psBegin]);
+
+	unsigned vsBegin = std::clamp(begin, 16u, 20u);
+	unsigned vsEnd = std::clamp(end, 16u, 20u);
+
+	if (vsBegin < vsEnd)
+		m_deviceContext->VSSetShaderResources(
+			vsBegin-16, vsEnd-vsBegin, &m_resources[vsBegin]);
+
+	m_dirtyShaderResources = false;
+	m_dirtyShaderResourcesFirst = 20;
+	m_dirtyShaderResourcesLast = 0;
+}
+
+void PCDX11StateManager::updateSamplers() {
+	unsigned begin = m_dirtySamplersFirst;
+	unsigned end = m_dirtySamplersLast + 1;
+
+	unsigned psBegin = std::clamp(begin, 0u, 16u);
+	unsigned psEnd = std::clamp(end, 0u, 16u);
+
+	if (psBegin < psEnd)
+		m_deviceContext->PSSetSamplers(
+			psBegin, psEnd-psBegin, &m_samplers[psBegin]);
+
+	unsigned vsBegin = std::clamp(begin, 16u, 20u);
+	unsigned vsEnd = std::clamp(end, 16u, 20u);
+
+	if (vsBegin < vsEnd)
+		m_deviceContext->VSSetSamplers(
+			vsBegin-16, vsEnd-vsBegin, &m_samplers[vsBegin]);
+
+	m_dirtySamplers = false;
+	m_dirtySamplersFirst = 20;
+	m_dirtySamplersLast = 0;
+}
+
+void PCDX11StateManager::updateConstantBuffers() {
+	// TODO
+}
+
+
+void PCDX11StateManager::updateRenderTargets() {
+	// TODO
+}
+
+void PCDX11StateManager::updateRenderState() {
+	if (m_dirtyRasterizerState)
+		updateRasterizerState();
+	if (m_dirtyDepthStencilState)
+		updateDepthStencilState();
+	if (m_dirtyBlendState)
+		updateBlendState();
+	if (m_dirtyShaderResources)
+		updateShaderResources();
+	if (m_dirtySamplers)
+		updateSamplers();
+	if (m_dirtyConstantBuffers)
+		updateConstantBuffers();
+}
+
+
 void PCDX11StateManager::internalResource04() {};
 void PCDX11StateManager::internalResource08() {};
 
