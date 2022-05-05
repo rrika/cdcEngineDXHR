@@ -13,7 +13,7 @@
 #include "rendering/PCDX11PixelShader.h"
 #include "rendering/PCDX11RenderDevice.h"
 #include "rendering/PCDX11StateManager.h"
-#include "rendering/PCDX11StaticVertexBuffer.h"
+#include "rendering/PCDX11SimpleStaticVertexBuffer.h"
 #include "rendering/PCDX11StreamDecl.h"
 #include "rendering/PCDX11Texture.h"
 #include "rendering/PCDX11VertexShader.h"
@@ -393,7 +393,7 @@ int spinnyCube(HWND window,
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     UINT stride = 11 * 4; // vertex size (11 floats: float3 position, float3 normal, float2 texcoord, float3 color)
-    cdc::PCDX11StaticVertexBuffer cdcVertexBuffer(stride, sizeof(VertexData) / stride, (void*)VertexData);
+    cdc::PCDX11SimpleStaticVertexBuffer cdcVertexBuffer(stride, sizeof(VertexData) / stride, (void*)VertexData);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
