@@ -1,5 +1,6 @@
 #pragma once
 #include "PCDX11VertexBuffer.h"
+#include "PCDX11DeviceManager.h"
 
 namespace cdc {
 
@@ -8,6 +9,18 @@ class PCDX11StaticVertexBuffer :
 	// public PCDX11DeferredUpdate
 {
 public:
+	PCDX11StaticVertexBuffer(uint32_t stride, uint32_t count, void *data) :
+		stride(stride)
+	{
+		// hack
+		D3D11_BUFFER_DESC vertexBufferDesc = {};
+		vertexBufferDesc.ByteWidth = stride * count;
+		vertexBufferDesc.Usage     = D3D11_USAGE_IMMUTABLE;
+		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		D3D11_SUBRESOURCE_DATA subresourceData = { data };
+		deviceManager->getD3DDevice()->CreateBuffer(&vertexBufferDesc, &subresourceData, &buffer);
+	}
+
 	PCDX11StaticVertexBuffer(ID3D11Buffer* buffer, uint32_t stride) : // hack
 		stride(stride),
 		buffer(buffer)

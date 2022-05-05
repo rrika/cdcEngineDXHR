@@ -402,20 +402,8 @@ int spinnyCube(HWND window,
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    D3D11_BUFFER_DESC vertexBufferDesc = {};
-    vertexBufferDesc.ByteWidth = sizeof(VertexData);
-    vertexBufferDesc.Usage     = D3D11_USAGE_IMMUTABLE;
-    vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-    D3D11_SUBRESOURCE_DATA vertexData = { VertexData };
-
-    ID3D11Buffer* vertexBuffer;
-
-    device->CreateBuffer(&vertexBufferDesc, &vertexData, &vertexBuffer);
-
     UINT stride = 11 * 4; // vertex size (11 floats: float3 position, float3 normal, float2 texcoord, float3 color)
-    UINT offset = 0;
-    cdc::PCDX11StaticVertexBuffer cdcVertexBuffer(vertexBuffer, stride);
+    cdc::PCDX11StaticVertexBuffer cdcVertexBuffer(stride, sizeof(VertexData) / stride, (void*)VertexData);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
