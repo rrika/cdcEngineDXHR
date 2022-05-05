@@ -432,38 +432,7 @@ int spinnyCube(HWND window,
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    ID3D11Texture2D* texture;
-
-    if (false) {
-        D3D11_TEXTURE2D_DESC textureDesc = {};
-        textureDesc.Width              = TEXTURE_WIDTH;  // in data.h
-        textureDesc.Height             = TEXTURE_HEIGHT; // in data.h
-        textureDesc.MipLevels          = 1;
-        textureDesc.ArraySize          = 1;
-        textureDesc.Format             = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-        textureDesc.SampleDesc.Count   = 1;
-        textureDesc.Usage              = D3D11_USAGE_IMMUTABLE;
-        textureDesc.BindFlags          = D3D11_BIND_SHADER_RESOURCE;
-
-        D3D11_SUBRESOURCE_DATA textureData = {};
-        textureData.pSysMem            = TextureData;
-        textureData.SysMemPitch        = TEXTURE_WIDTH * 4; // 4 bytes per pixel
-
-        // random stuff I needed while narrowing in on a bug:
-        // device->CreateTexture2D(&textureDesc, &textureData, &texture);
-        // device->CreateTexture2D(&bottleTexture->hackTextureDesc, &bottleTexture->hackTextureData, &texture);
-        //ID3D11Texture2D* dummyTexture;
-        //device->CreateTexture2D(&textureDesc, &textureData, &dummyTexture);
-        //device->CreateTexture2D(&bottleTexture->hackTextureDesc, &bottleTexture->hackTextureData, &dummyTexture);
-    }
-    else
-    {
-        texture = bottleTexture->d3dTexture128;
-    }
-
     ID3D11ShaderResourceView* textureView = bottleTexture->createShaderResourceView();
-
-    // device->CreateShaderResourceView(texture, nullptr, &textureView);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -537,18 +506,14 @@ int spinnyCube(HWND window,
         stateManager.setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         deviceContext->IASetInputLayout(inputLayout);
         stateManager.setVertexBuffer(&cdcVertexBuffer);
-        //deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
         stateManager.setIndexBuffer(&cdcIndexBuffer);
-        //deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-        //deviceContext->VSSetShader(vertexShader, nullptr, 0);
         stateManager.setVertexShader(&cdcVertexShader);
         deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
 
         deviceContext->RSSetViewports(1, &viewport);
         deviceContext->RSSetState(rasterizerState);
 
-        //deviceContext->PSSetShader(pixelShader, nullptr, 0);
         stateManager.setPixelShader(&cdcPixelShader);
         deviceContext->PSSetShaderResources(0, 1, &textureView);
         deviceContext->PSSetSamplers(0, 1, &samplerState);
