@@ -4,6 +4,7 @@
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11RenderTarget.h"
+#include "PCDX11ShaderLib.h"
 #include "PCDX11StateManager.h"
 #include "PCDX11Texture.h"
 
@@ -202,8 +203,8 @@ void PCDX11RenderDevice::createProceduralTexture() {
 	// TODO
 }
 
-void PCDX11RenderDevice::createShader() {
-	// TODO
+IShaderLib *PCDX11RenderDevice::createShaderLib(uint32_t size) {
+	return new PCDX11ShaderLib(size, this);
 }
 
 RenderResource *PCDX11RenderDevice::createRenderModel(uint32_t) {

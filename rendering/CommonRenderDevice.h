@@ -4,8 +4,9 @@
 
 namespace cdc {
 
-class TextureMap;
+class IShaderLib;
 class RenderResource;
+class TextureMap;
 
 class CommonRenderDevice
 {
@@ -94,7 +95,7 @@ public:
 	virtual void createMaterial() = 0;
 	virtual TextureMap *createTexture(uint32_t) = 0;
 	virtual void createProceduralTexture() = 0;
-	virtual void createShader() = 0;
+	virtual IShaderLib *createShaderLib(uint32_t) = 0;
 	virtual RenderResource *createRenderModel(uint32_t) = 0;
 	virtual RenderResource *method_140(uint32_t);
 	virtual void createRenderModelInstance() = 0;

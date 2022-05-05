@@ -4,7 +4,7 @@
 
 namespace cdc {
 
-uint32_t RenderResourceSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& success) {
+uint32_t RenderResourceSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
 	return ~0;
 }
 

@@ -1,2 +1,3 @@
 target_sources(dxhr PRIVATE
-	RenderResourceSection.cpp)
+	RenderResourceSection.cpp
+	ShaderLibSection.cpp)

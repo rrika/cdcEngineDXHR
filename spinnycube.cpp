@@ -25,6 +25,7 @@
 #include "rendering/PCDX11VertexShader.h"
 #include "drm/ResolveReceiver.h"
 #include "drm/sections/RenderResourceSection.h"
+#include "drm/sections/ShaderLibSection.h"
 
 float VertexData[] = // float3 position, float3 normal, float2 texcoord, float3 color
 {
@@ -412,9 +413,15 @@ int spinnyCube(HWND window,
     cdc::deviceManager->stateManager = &stateManager; // hack
 
     cdc::RenderResourceSection renderResourceSection;
+    cdc::ShaderLibSection shaderLibSection;
+
     cdc::ResolveSection *resolveSections[16] = {nullptr};
     resolveSections[5] = &renderResourceSection;
+    resolveSections[9] = &shaderLibSection;
+
+    hackResolveReceiver("pickup_dns_156600946691c80e_dx11.drm", resolveSections);
     hackResolveReceiver("alc_beer_bottle_a.drm", resolveSections);
+
     auto bottleTexture = (cdc::PCDX11Texture*)renderResourceSection.getWrapped(0x0396);
     printf("have bottle cdc texture: %p\n", bottleTexture);
     bottleTexture->asyncCreate();

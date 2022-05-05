@@ -89,7 +89,7 @@ public:
 	void createMaterial();
 	TextureMap *createTexture(uint32_t);
 	void createProceduralTexture();
-	void createShader();
+	IShaderLib *createShaderLib(uint32_t);
 	RenderResource *createRenderModel(uint32_t);
 	void createRenderModelInstance();
 	RenderResource *createRenderTerrain(uint32_t);
