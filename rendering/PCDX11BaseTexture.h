@@ -5,14 +5,15 @@
 namespace cdc {
 
 class PCDX11RenderDevice;
+class PCDX11StateManager;
 
 class PCDX11BaseTexture {
-public:
-	uint16_t repeatmode : 3;
 protected:
+	friend class PCDX11StateManager;
+	uint16_t repeatmode : 3;
 	uint16_t unknownflags : 13;
 	uint32_t shape;
-	uint32_t dwordC;
+	uint32_t maxFilter;
 	uint32_t textureFormat;
 	uint32_t width;
 	uint32_t height;
@@ -20,7 +21,7 @@ protected:
 	PCDX11RenderDevice *renderDevice;
 	uint16_t mipLevels;
 public:
-	virtual void baseTexWait() = 0;
+	virtual ID3D11Resource *getTextureResource() = 0;
 	virtual ID3D11ShaderResourceView *createShaderResourceView() = 0;
 	virtual ID3D11UnorderedAccessView *createUnorderedAccessView() = 0;
 	virtual bool baseTexMethodC() { return false; };

@@ -4,8 +4,8 @@
 
 namespace cdc {
 
-void PCDX11BitmapTexture::baseTexWait() {
-	// TODO
+ID3D11Resource *PCDX11BitmapTexture::getTextureResource() {
+	return d3dTexture128;
 }
 
 ID3D11ShaderResourceView *PCDX11BitmapTexture::createShaderResourceView() {

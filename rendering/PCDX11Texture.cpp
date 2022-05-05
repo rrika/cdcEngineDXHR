@@ -20,6 +20,7 @@ static uint32_t bytesForTextureDim(TextureFormat fmt, uint32_t width, uint32_t h
 			return width * height;
 	}
 	//__builtin_unreachable();
+	return 0;
 }
 
 static uint32_t bytesForTextureDimMips(int width, int height, int depthMinusOne, int mipLevels, TextureFormat textureFormat) {
@@ -151,7 +152,7 @@ void PCDX11Texture::asyncCreate(/* TODO: one argument */) {
 	auto device = deviceManager->getD3DDevice();
 	HRESULT hr = device->CreateTexture2D(&hackTextureDesc, &hackTextureData, &d3dTexture128);
 	printf(" texture %p\n", d3dTexture128);
-	printf(" hr = %08x\n", hr);
+	printf(" hr = %08x\n", (unsigned)hr);
 }
 
 }

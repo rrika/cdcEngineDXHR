@@ -22,7 +22,8 @@ class PCDX11StateManager : public PCDX11InternalResource {
 	bool m_dirtyShaderResources; // CE
 	bool m_dirtySamplers; // CF
 	ID3D11SamplerState *m_samplers[16 + 4]; // D0
-	ID3D11ShaderResourceView *m_resources[16 + 4]; // 120
+	ID3D11ShaderResourceView *m_textureViews[16 + 4]; // 120
+
 	uint8_t m_dirtyShaderResourcesFirst; // 184
 	uint8_t m_dirtyShaderResourcesLast; // 185
 	uint8_t m_dirtySamplersFirst; // 186
@@ -33,6 +34,9 @@ class PCDX11StateManager : public PCDX11InternalResource {
 	uint32_t m_vertexStride; // 190
 	PCDX11PixelShader *m_pixelShader; // 198
 	PCDX11VertexShader *m_vertexShader; // 19C
+
+	PCDX11BaseTexture *m_textures[16 + 4]; // 1A8
+	ID3D11Resource *m_textureResources[16 + 4]; // 1F8
 
 	uint32_t m_samplerFilter[16 + 4]; // 248
 	uint32_t m_samplerRepeat[16 + 4]; // 298
@@ -55,6 +59,7 @@ public:
 	void setPrimitiveTopology(int topology);
 
 	void setSamplerState(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter);
+	void setTextureAndSampler(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown);
 
 	void updateRasterizerState();
 	void updateDepthStencilState();

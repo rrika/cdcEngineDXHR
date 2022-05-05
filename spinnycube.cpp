@@ -19,14 +19,6 @@
 #include "drm/ResolveReceiver.h"
 #include "drm/sections/RenderResourceSection.h"
 
-#define TEXTURE_WIDTH  2
-#define TEXTURE_HEIGHT 2
-
-static uint TextureData[] = {
-    0xffffffff, 0xff7f7f7f,
-    0xff7f7f7f, 0xffffffff,
-};
-
 float VertexData[] = // float3 position, float3 normal, float2 texcoord, float3 color
 {
     -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
@@ -416,8 +408,7 @@ int spinnyCube(HWND window,
     bottleTexture->asyncCreate();
     printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
 
-    ID3D11ShaderResourceView* textureView = bottleTexture->createShaderResourceView();
-    stateManager.setSamplerState(0, bottleTexture, 0);
+    stateManager.setTextureAndSampler(0, bottleTexture, 0, 0.0f);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -500,7 +491,7 @@ int spinnyCube(HWND window,
         deviceContext->RSSetState(rasterizerState);
 
         stateManager.setPixelShader(&cdcPixelShader);
-        deviceContext->PSSetShaderResources(0, 1, &textureView);
+        stateManager.updateShaderResources();
         stateManager.updateSamplers();
 
         deviceContext->OMSetRenderTargets(1, &frameBufferView, depthBufferView);

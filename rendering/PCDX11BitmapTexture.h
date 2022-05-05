@@ -24,7 +24,7 @@ public:
 		repeatmode = 7; // wrap in all axes (rather than clamp)
 	}
 
-	void baseTexWait() override;
+	ID3D11Resource *getTextureResource() override;
 	ID3D11ShaderResourceView *createShaderResourceView() override;
 	ID3D11UnorderedAccessView *createUnorderedAccessView() override;
 

@@ -150,6 +150,37 @@ void PCDX11StateManager::setSamplerState(
 	}
 }
 
+void PCDX11StateManager::setTextureAndSampler(
+	uint32_t slot,
+	PCDX11BaseTexture *tex,
+	uint32_t filter,
+	float unknown)
+{
+	// 0..15 => 0..15
+	//   257 => 16
+	//   258 => 17
+	//   259 => 18
+	//   260 => 19
+	uint32_t originalSlot = slot;
+	if (slot >= 0x10) slot -= 0xF1;
+	if (!m_device) return;
+
+	// TODO: logic to avoid binding a texture currently used as a rendertarget
+	if (tex != m_textures[slot]) {
+		if (auto srv = tex->createShaderResourceView()) {
+			m_textureViews[slot] = srv;
+			if (filter > tex->maxFilter)
+				filter = tex->maxFilter;
+			setSamplerState(originalSlot, tex, filter);
+		}
+		m_textureResources[slot] = tex->getTextureResource();
+		m_dirtyShaderResourcesFirst = std::min<uint8_t>(m_dirtyShaderResourcesFirst, slot);
+		m_dirtyShaderResourcesLast = std::max<uint8_t>(m_dirtyShaderResourcesLast, slot);
+		m_dirtyShaderResources = true;
+		m_textures[slot] = tex;
+	}
+}
+
 void PCDX11StateManager::updateRasterizerState() {
 	// TODO
 }
@@ -171,14 +202,14 @@ void PCDX11StateManager::updateShaderResources() {
 
 	if (psBegin < psEnd)
 		m_deviceContext->PSSetShaderResources(
-			psBegin, psEnd-psBegin, &m_resources[psBegin]);
+			psBegin, psEnd-psBegin, &m_textureViews[psBegin]);
 
 	unsigned vsBegin = std::clamp(begin, 16u, 20u);
 	unsigned vsEnd = std::clamp(end, 16u, 20u);
 
 	if (vsBegin < vsEnd)
 		m_deviceContext->VSSetShaderResources(
-			vsBegin-16, vsEnd-vsBegin, &m_resources[vsBegin]);
+			vsBegin-16, vsEnd-vsBegin, &m_textureViews[vsBegin]);
 
 	m_dirtyShaderResources = false;
 	m_dirtyShaderResourcesFirst = 20;
