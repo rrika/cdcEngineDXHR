@@ -8,6 +8,7 @@
 namespace cdc {
 
 class PCDX11RenderDevice;
+class PCDX11VertexBuffer;
 
 class PCDX11StreamDecl :
 	public PCDX11InternalResource
@@ -25,7 +26,8 @@ public:
 		elementDesc(elementDesc),
 		numElements(numElements),
 		inputLayout(nullptr),
-		shaderSub(shaderSub)
+		shaderSub(shaderSub),
+		vertexBuffer(nullptr)
 	{
 		// InternalResource::...
 	}
@@ -35,6 +37,7 @@ public:
 	uint32_t numElements; // 20
 	ID3D11InputLayout *inputLayout; // 24
 	ShaderSub *shaderSub; // 2C
+	PCDX11VertexBuffer *vertexBuffer; // 34 secondary vertex stream
 
 	void apply();
 
