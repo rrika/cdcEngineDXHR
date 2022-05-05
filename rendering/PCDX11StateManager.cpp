@@ -1,7 +1,8 @@
 #include <d3d11_1.h>
 #include "PCDX11StateManager.h"
-#include "PCDX11PixelShader.h"
 #include "PCDX11VertexBuffer.h"
+#include "PCDX11PixelShader.h"
+#include "PCDX11VertexShader.h"
 
 namespace cdc {
 
@@ -46,6 +47,21 @@ void PCDX11StateManager::setPixelShader(PCDX11PixelShader *pixelShader) {
 			m_deviceContext->PSSetShader(nullptr, nullptr, 0);
 		}
 		m_pixelShader = pixelShader;
+	}
+}
+
+void PCDX11StateManager::setVertexShader(PCDX11VertexShader *vertexShader) {
+	if (vertexShader != m_vertexShader) {
+		if (vertexShader) {
+			if (!vertexShader->m_requested)
+				vertexShader->requestShader();
+			if (vertexShader->m_keepWaiting)
+				vertexShader->await();
+			m_deviceContext->VSSetShader(vertexShader->m_d3dShader, nullptr, 0);
+		} else {
+			m_deviceContext->VSSetShader(nullptr, nullptr, 0);
+		}
+		m_vertexShader = vertexShader;
 	}
 }
 

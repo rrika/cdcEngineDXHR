@@ -9,11 +9,13 @@
 #include "types.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/PCDX11DeviceManager.h"
+#include "rendering/PCDX11IndexBuffer.h"
+#include "rendering/PCDX11PixelShader.h"
 #include "rendering/PCDX11RenderDevice.h"
 #include "rendering/PCDX11StateManager.h"
-#include "rendering/PCDX11IndexBuffer.h"
-#include "rendering/PCDX11Texture.h"
 #include "rendering/PCDX11StaticVertexBuffer.h"
+#include "rendering/PCDX11Texture.h"
+#include "rendering/PCDX11VertexShader.h"
 #include "drm/ResolveReceiver.h"
 #include "drm/sections/RenderResourceSection.h"
 
@@ -342,6 +344,7 @@ int spinnyCube(HWND window,
 
     device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &pixelShader);
 
+    cdc::PCDX11VertexShader cdcVertexShader(vertexShader);
     cdc::PCDX11PixelShader cdcPixelShader(pixelShader);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -550,7 +553,8 @@ int spinnyCube(HWND window,
         stateManager.setIndexBuffer(&cdcIndexBuffer);
         //deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-        deviceContext->VSSetShader(vertexShader, nullptr, 0);
+        //deviceContext->VSSetShader(vertexShader, nullptr, 0);
+        stateManager.setVertexShader(&cdcVertexShader);
         deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
 
         deviceContext->RSSetViewports(1, &viewport);

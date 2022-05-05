@@ -2,11 +2,12 @@
 #include <algorithm> // for clamp
 #include "PCDX11InternalResource.h"
 #include "PCDX11IndexBuffer.h"
-#include "PCDX11PixelShader.h"
 
 namespace cdc {
 
 class PCDX11VertexBuffer;
+class PCDX11PixelShader;
+class PCDX11VertexShader;
 
 class PCDX11StateManager : public PCDX11InternalResource {
 	ID3D11DeviceContext *m_deviceContext; // 10
@@ -29,6 +30,7 @@ class PCDX11StateManager : public PCDX11InternalResource {
 	ID3D11Buffer *m_vertexBufferD3D; // 18C
 	uint32_t m_vertexStride; // 190
 	PCDX11PixelShader *m_pixelShader; // 198
+	PCDX11VertexShader *m_vertexShader; // 19C
 public:
 	PCDX11StateManager();
 	PCDX11StateManager(ID3D11DeviceContext *deviceContext) :
@@ -40,6 +42,7 @@ public:
 	void setIndexBuffer(PCDX11IndexBuffer *indexBuffer);
 	void setVertexBuffer(PCDX11VertexBuffer *vertexBuffer);
 	void setPixelShader(PCDX11PixelShader *pixelShader);
+	void setVertexShader(PCDX11VertexShader *vertexShader);
 	void setPrimitiveTopology(int topology);
 
 	void updateRasterizerState();
