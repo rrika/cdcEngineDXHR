@@ -5,7 +5,7 @@
 namespace cdc {
 
 PCDX11RenderDevice::PCDX11RenderDevice() {
-	
+	d3dDeviceContext111580 = deviceManager->getD3DDeviceContext();
 }
 
 void PCDX11RenderDevice::refCountDec() {

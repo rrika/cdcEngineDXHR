@@ -14,6 +14,7 @@
 #include "rendering/PCDX11RenderDevice.h"
 #include "rendering/PCDX11StateManager.h"
 #include "rendering/PCDX11StaticVertexBuffer.h"
+#include "rendering/PCDX11StreamDecl.h"
 #include "rendering/PCDX11Texture.h"
 #include "rendering/PCDX11VertexShader.h"
 #include "drm/ResolveReceiver.h"
@@ -322,9 +323,19 @@ int spinnyCube(HWND window,
         { "COL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
-    ID3D11InputLayout* inputLayout;
+    // device->CreateInputLayout(inputElementDesc, ARRAYSIZE(inputElementDesc), vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), &inputLayout);
 
-    device->CreateInputLayout(inputElementDesc, ARRAYSIZE(inputElementDesc), vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), &inputLayout);
+    cdc::ShaderSub vsShaderSub {
+        nullptr,
+        vsBlob->GetBufferPointer(),
+        0,
+        (uint16_t)vsBlob->GetBufferSize()
+    };
+
+    cdc::PCDX11StreamDecl streamDecl(
+        static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice),
+        inputElementDesc, ARRAYSIZE(inputElementDesc), &vsShaderSub);
+    streamDecl.internalResource04();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -480,7 +491,7 @@ int spinnyCube(HWND window,
         deviceContext->ClearDepthStencilView(depthBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
         stateManager.setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        deviceContext->IASetInputLayout(inputLayout);
+        stateManager.setStreamDecl(&streamDecl);
         stateManager.setVertexBuffer(&cdcVertexBuffer);
         stateManager.setIndexBuffer(&cdcIndexBuffer);
 

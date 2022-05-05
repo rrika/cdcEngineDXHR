@@ -1,6 +1,7 @@
 #pragma once
 #include "PCDX11AsyncCreateResource.h"
 #include "PCDX11InternalResource.h"
+#include "CommonShader.h"
 
 namespace cdc {
 
@@ -10,6 +11,7 @@ class PCDX11VertexShader :
 {
 public:
 	ID3D11VertexShader *m_d3dShader;
+	ShaderSub m_sub;
 
 	PCDX11VertexShader() {}
 	PCDX11VertexShader(ID3D11VertexShader *shader) {

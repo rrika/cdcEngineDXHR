@@ -2,11 +2,12 @@
 #include <d3d11_1.h>
 #include <climits>
 #include <algorithm>
-#include "PCDX11StateManager.h"
-#include "PCDX11VertexBuffer.h"
-#include "PCDX11PixelShader.h"
-#include "PCDX11VertexShader.h"
 #include "PCDX11BaseTexture.h"
+#include "PCDX11PixelShader.h"
+#include "PCDX11StateManager.h"
+#include "PCDX11StreamDecl.h"
+#include "PCDX11VertexBuffer.h"
+#include "PCDX11VertexShader.h"
 
 namespace cdc {
 
@@ -36,6 +37,13 @@ void PCDX11StateManager::setVertexBuffer(PCDX11VertexBuffer *vertexBuffer) {
 		m_deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
 		m_vertexBufferD3D = buffer;
 		m_vertexStride = stride;
+	}
+}
+
+void PCDX11StateManager::setStreamDecl(PCDX11StreamDecl *streamDecl) {
+	if (streamDecl != m_streamDecl) {
+		streamDecl->apply();
+		m_streamDecl = streamDecl;
 	}
 }
 

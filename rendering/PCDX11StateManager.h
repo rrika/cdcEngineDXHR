@@ -5,10 +5,11 @@
 
 namespace cdc {
 
-class PCDX11VertexBuffer;
-class PCDX11PixelShader;
-class PCDX11VertexShader;
 class PCDX11BaseTexture;
+class PCDX11PixelShader;
+class PCDX11StreamDecl;
+class PCDX11VertexBuffer;
+class PCDX11VertexShader;
 
 class PCDX11StateManager : public PCDX11InternalResource {
 	ID3D11DeviceContext *m_deviceContext; // 10
@@ -32,6 +33,7 @@ class PCDX11StateManager : public PCDX11InternalResource {
 	ID3D11Buffer *m_indexBufferD3D; // 188
 	ID3D11Buffer *m_vertexBufferD3D; // 18C
 	uint32_t m_vertexStride; // 190
+	PCDX11StreamDecl *m_streamDecl; // 194
 	PCDX11PixelShader *m_pixelShader; // 198
 	PCDX11VertexShader *m_vertexShader; // 19C
 
@@ -54,6 +56,7 @@ public:
 
 	void setIndexBuffer(PCDX11IndexBuffer *indexBuffer);
 	void setVertexBuffer(PCDX11VertexBuffer *vertexBuffer);
+	void setStreamDecl(PCDX11StreamDecl *streamDecl);
 	void setPixelShader(PCDX11PixelShader *pixelShader);
 	void setVertexShader(PCDX11VertexShader *vertexShader);
 	void setPrimitiveTopology(int topology);

@@ -63,6 +63,9 @@ public:
 
 	void internalResource04();
 	void internalResource08();
+
+	ID3D11DeviceContext *d3dDeviceContext111580;
+	ID3D11DeviceContext *getD3DDeviceContext() { return d3dDeviceContext111580; }
 };
 
 PCDX11RenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown);
