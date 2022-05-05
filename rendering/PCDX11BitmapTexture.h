@@ -20,7 +20,9 @@ public:
 	:
 		PCDX11BaseTexture(),
 		PCDX11AsyncCreateResource()
-	{}
+	{
+		repeatmode = 7; // wrap in all axes (rather than clamp)
+	}
 
 	void baseTexWait() override;
 	ID3D11ShaderResourceView *createShaderResourceView() override;

@@ -1,8 +1,12 @@
+#define NOMINMAX
 #include <d3d11_1.h>
+#include <climits>
+#include <algorithm>
 #include "PCDX11StateManager.h"
 #include "PCDX11VertexBuffer.h"
 #include "PCDX11PixelShader.h"
 #include "PCDX11VertexShader.h"
+#include "PCDX11BaseTexture.h"
 
 namespace cdc {
 
@@ -70,6 +74,79 @@ void PCDX11StateManager::setPrimitiveTopology(int topology) {
 	if (topology != m_topology) {
 		m_topology = topology;
 		m_deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)topology);
+	}
+}
+
+void PCDX11StateManager::setSamplerState(
+	uint32_t slot,
+	PCDX11BaseTexture *tex,
+	uint32_t filter)
+{
+	// 0..15 => 0..15
+	//   257 => 16
+	//   258 => 17
+	//   259 => 18
+	//   260 => 19
+	if (slot >= 0x10) slot -= 0xF1;
+
+	uint32_t repeat = tex->repeatmode;
+
+	if (repeat != m_samplerRepeat[slot] || filter != m_samplerFilter[slot]) {
+		m_samplerRepeat[slot] = repeat;
+		m_samplerFilter[slot] = filter;
+
+		uint32_t maxAnisotropy = 1;
+		D3D11_FILTER d3dfilter; 
+		switch (filter) {
+			case 1:
+				d3dfilter = D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+				break;
+			case 2:
+				d3dfilter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+				break;
+			case 3: // 1
+			case 4: // 2
+			case 6: // 4
+			case 10: // 8
+			case 18: // 16
+				d3dfilter = D3D11_FILTER_ANISOTROPIC;
+				maxAnisotropy = filter - 2;
+				break;
+			default:
+				d3dfilter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+				break;
+		}
+
+		D3D11_SAMPLER_DESC samplerDesc = {};
+		samplerDesc.Filter = d3dfilter;
+		samplerDesc.AddressU = (repeat & 1) ? D3D11_TEXTURE_ADDRESS_WRAP : D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDesc.AddressV = (repeat & 2) ? D3D11_TEXTURE_ADDRESS_WRAP : D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDesc.AddressW = (repeat & 4) ? D3D11_TEXTURE_ADDRESS_WRAP : D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDesc.MipLODBias = 0.0;
+		samplerDesc.MaxAnisotropy = maxAnisotropy;
+		samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		samplerDesc.BorderColor[0] = 0.0f;
+		samplerDesc.BorderColor[1] = 0.0f;
+		samplerDesc.BorderColor[2] = 0.0f;
+		samplerDesc.BorderColor[3] = 0.0f;
+		samplerDesc.MinLOD = -FLT_MAX;
+		samplerDesc.MaxLOD = FLT_MAX;
+
+		if (slot == 14) {
+			samplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
+			samplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+		}
+
+		// TODO: cache samplers
+		ID3D11SamplerState *samplerState;
+		m_device->CreateSamplerState(&samplerDesc, &samplerState);
+
+		if (samplerState != m_samplers[slot]) {
+			m_dirtySamplersFirst = std::min<uint8_t>(m_dirtySamplersFirst, slot);
+			m_dirtySamplersLast = std::max<uint8_t>(m_dirtySamplersLast, slot);
+			m_dirtySamplers = true;
+			m_samplers[slot] = samplerState;
+		}
 	}
 }
 

@@ -359,19 +359,6 @@ int spinnyCube(HWND window,
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    D3D11_SAMPLER_DESC samplerDesc = {};
-    samplerDesc.Filter         = D3D11_FILTER_MIN_MAG_MIP_POINT;
-    samplerDesc.AddressU       = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressV       = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressW       = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-
-    ID3D11SamplerState* samplerState;
-
-    device->CreateSamplerState(&samplerDesc, &samplerState);
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
     D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
     depthStencilDesc.DepthEnable    = TRUE;
     depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -417,7 +404,7 @@ int spinnyCube(HWND window,
     ID3D11Buffer* indexBuffer;
     device->CreateBuffer(&indexBufferDesc, &indexData, &indexBuffer);
 
-    cdc::PCDX11StateManager stateManager(deviceContext);
+    cdc::PCDX11StateManager stateManager(deviceContext, device);
     cdc::HackIndexBuffer cdcIndexBuffer(indexBuffer);
 
     cdc::RenderResourceSection renderResourceSection;
@@ -429,10 +416,8 @@ int spinnyCube(HWND window,
     bottleTexture->asyncCreate();
     printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
 
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
     ID3D11ShaderResourceView* textureView = bottleTexture->createShaderResourceView();
+    stateManager.setSamplerState(0, bottleTexture, 0);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -516,7 +501,7 @@ int spinnyCube(HWND window,
 
         stateManager.setPixelShader(&cdcPixelShader);
         deviceContext->PSSetShaderResources(0, 1, &textureView);
-        deviceContext->PSSetSamplers(0, 1, &samplerState);
+        stateManager.updateSamplers();
 
         deviceContext->OMSetRenderTargets(1, &frameBufferView, depthBufferView);
         deviceContext->OMSetDepthStencilState(depthStencilState, 0);

@@ -7,8 +7,10 @@ namespace cdc {
 class PCDX11RenderDevice;
 
 class PCDX11BaseTexture {
+public:
+	uint16_t repeatmode : 3;
 protected:
-	uint16_t word4;
+	uint16_t unknownflags : 13;
 	uint32_t shape;
 	uint32_t dwordC;
 	uint32_t textureFormat;
