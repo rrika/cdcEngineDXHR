@@ -5,6 +5,7 @@ namespace cdc {
 
 class PCDX11BaseTexture;
 class PCDX11DepthBuffer;
+class PCDX11IndexBuffer;
 class PCDX11PixelShader;
 class PCDX11RenderTarget;
 class PCDX11StreamDecl;
@@ -73,6 +74,7 @@ public:
 
 	void updateRenderTargets(PCDX11RenderTarget *renderTarget, PCDX11DepthBuffer *depthBuffer);
 	void updateRenderState();
+	void updateViewport();
 
 	void internalResource04() override;
 	void internalResource08() override;

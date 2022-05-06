@@ -5,6 +5,8 @@
 
 namespace cdc {
 
+class PCDX11StateManager;
+
 class PCDX11DeviceManager :
 	public IPCDeviceManager
 {
@@ -15,6 +17,8 @@ class PCDX11DeviceManager :
 	DisplayConfig config1;
 	DisplayConfig config2;
 public:
+	PCDX11StateManager *stateManager;
+
 	PCDX11DeviceManager(HMODULE d3d11, HMODULE dxgi);
 	PCDX11DeviceManager(HMODULE d3d11, HMODULE dxgi, ID3D11Device*, ID3D11DeviceContext*);
 	void method_00();
@@ -30,6 +34,7 @@ public:
 
 	ID3D11Device *getD3DDevice() { return device; }
 	ID3D11DeviceContext *getD3DDeviceContext() { return deviceContext; }
+	PCDX11StateManager *getStateManager() { return stateManager; }
 };
 
 extern PCDX11DeviceManager *deviceManager;

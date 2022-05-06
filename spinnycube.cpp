@@ -14,6 +14,7 @@
 #include "rendering/PCDX11PixelShader.h"
 #include "rendering/PCDX11RenderDevice.h"
 #include "rendering/PCDX11RenderTarget.h"
+#include "rendering/PCDX11SetRTDrawable.h"
 #include "rendering/PCDX11SimpleStaticVertexBuffer.h"
 #include "rendering/PCDX11StateManager.h"
 #include "rendering/PCDX11StreamDecl.h"
@@ -313,6 +314,8 @@ int spinnyCube(HWND window,
     cdcRenderTarget.renderTexture.view = static_cast<ID3D11View*>(frameBufferView);
     cdcDepthBuffer.renderTexture.view = static_cast<ID3D11View*>(depthBufferView);
 
+    cdc::PCDX11SetRTDrawable setRtDrawable(&cdcRenderTarget, &cdcDepthBuffer);
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     ID3DBlob* vsBlob;
@@ -417,6 +420,7 @@ int spinnyCube(HWND window,
 
     cdc::PCDX11StateManager stateManager(deviceContext, device);
     cdc::HackIndexBuffer cdcIndexBuffer(indexBuffer);
+    cdc::deviceManager->stateManager = &stateManager; // hack
 
     cdc::RenderResourceSection renderResourceSection;
     cdc::ResolveSection *resolveSections[16] = {nullptr};
@@ -513,7 +517,7 @@ int spinnyCube(HWND window,
         stateManager.updateShaderResources();
         stateManager.updateSamplers();
 
-        stateManager.updateRenderTargets(&cdcRenderTarget, &cdcDepthBuffer);
+        setRtDrawable.renderDrawable0();
         deviceContext->OMSetDepthStencilState(depthStencilState, 0);
         deviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff); // use default blend mode (i.e. disable)
 

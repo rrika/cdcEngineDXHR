@@ -6,6 +6,7 @@ target_sources(dxhr PRIVATE
 	PCDX11RenderDevice.cpp
 	PCDX11RenderTarget.cpp
 	PCDX11RenderTexture.cpp
+	PCDX11SetRTDrawable.cpp
 	PCDX11StateManager.cpp
 	PCDX11StreamDecl.cpp
 	PCDX11Texture.cpp

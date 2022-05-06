@@ -282,6 +282,9 @@ void PCDX11StateManager::updateRenderState() {
 		updateConstantBuffers();
 }
 
+void PCDX11StateManager::updateViewport() {
+	// TODO
+}
 
 void PCDX11StateManager::internalResource04() {};
 void PCDX11StateManager::internalResource08() {};
