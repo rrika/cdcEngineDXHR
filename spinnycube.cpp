@@ -502,7 +502,13 @@ int spinnyCube(HWND window,
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
-        clearDrawable.renderDrawable0(); // won't clear on first frame because RTs are not set
+        // won't clear on first frame because RTs are not set
+        if (true) {
+            float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
+            renderDevice->clearRenderTarget(10, 0, 0.0f, backgroundColor, 1.0f, 0);
+        } else {
+            clearDrawable.renderDrawable0();
+        }
 
         stateManager.setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         stateManager.setStreamDecl(&streamDecl);

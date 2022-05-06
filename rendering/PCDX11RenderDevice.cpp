@@ -1,3 +1,4 @@
+#include "PCDX11ClearDrawable.h"
 #include "PCDX11DepthBuffer.h"
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderDevice.h"
@@ -79,8 +80,28 @@ void PCDX11RenderDevice::method_A8() {
 	// TODO
 }
 
-void PCDX11RenderDevice::clearRenderTarget() {
-	// TODO
+void PCDX11RenderDevice::clearRenderTarget(
+	uint32_t flags,
+	uint32_t unknown1,
+	float unknown2,
+	float *clearColor,
+	float clearDepth,
+	uint32_t clearStencil)
+{
+	// TODO allocation
+	uint32_t clearColorI =
+		((int)(clearColor[3] * 255.0) << 24) |
+		((int)(clearColor[0] * 255.0) << 16) |
+		((int)(clearColor[1] * 255.0) <<  8) |
+		((int)(clearColor[2] * 255.0) <<  0);
+	(void)unknown2;
+	auto clearDrawable = new PCDX11ClearDrawable(
+		this,
+		(flags & 2 | (flags >> 1) & 0xC) >> 1,
+		clearColorI,
+		clearDepth,
+		clearStencil);
+	recordDrawable(clearDrawable, unknown1, 0);
 }
 
 void PCDX11RenderDevice::setRenderTarget() {
@@ -217,7 +238,12 @@ void PCDX11RenderDevice::internalResource08() {
 	// TODO
 }
 
-void PCDX11RenderDevice::clearRenderTarget(char flags, float *color, float depth, uint32_t stencil) {
+void PCDX11RenderDevice::recordDrawable(IRenderDrawable *drawable, uint32_t arg1, uint8_t arg2) {
+	// TODO
+	drawable->renderDrawable0(); // hack
+}
+
+void PCDX11RenderDevice::clearRenderTargetNow(char flags, float *color, float depth, uint32_t stencil) {
 	auto deviceContext = d3dDeviceContext111580;
 	auto stateManager = deviceManager->getStateManager();
 	if (auto depthBuffer = stateManager->m_depthBuffer) {

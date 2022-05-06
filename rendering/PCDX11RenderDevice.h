@@ -5,6 +5,8 @@
 
 namespace cdc {
 
+class IRenderDrawable;
+
 class PCDX11RenderDevice :
 	public PCDX11InternalResource,
 	public CommonRenderDevice
@@ -29,7 +31,13 @@ public:
 	void method_6C();
 	void method_70();
 	void method_A8();
-	void clearRenderTarget();
+	void clearRenderTarget(
+		uint32_t flags,
+		uint32_t unknown1,
+		float unknown2,
+		float *clearColor,
+		float clearDepth,
+		uint32_t clearStencil);
 	void setRenderTarget();
 	void method_C0();
 	void method_C4();
@@ -67,7 +75,8 @@ public:
 
 	ID3D11DeviceContext *d3dDeviceContext111580;
 	ID3D11DeviceContext *getD3DDeviceContext() { return d3dDeviceContext111580; }
-	void clearRenderTarget(char mode, float *color, float depth, uint32_t stencil);
+	void recordDrawable(IRenderDrawable *drawable, uint32_t arg1, uint8_t arg2);
+	void clearRenderTargetNow(char mode, float *color, float depth, uint32_t stencil);
 };
 
 PCDX11RenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown);

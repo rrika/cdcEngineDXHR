@@ -56,7 +56,13 @@ public:
 	virtual void method_AC();
 	virtual void method_B0();
 	virtual void method_B4();
-	virtual void clearRenderTarget() = 0;
+	virtual void clearRenderTarget(
+		uint32_t flags,
+		uint32_t unknown1,
+		float unknown2,
+		float *clearColor,
+		float clearDepth,
+		uint32_t clearStencil) = 0;
 	virtual void setRenderTarget() = 0;
 	virtual void method_C0() = 0;
 	virtual void method_C4() = 0;

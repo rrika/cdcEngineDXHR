@@ -10,7 +10,7 @@ void PCDX11ClearDrawable::renderDrawable0() {
 		float(((clearColor >>  0) & 0xff) / 255.0),
 		float(((clearColor >> 24) & 0xff) / 255.0)
 	};
-	renderDevice->clearRenderTarget(
+	renderDevice->clearRenderTargetNow(
 		flags,
 		clearColorF,
 		clearDepth,
