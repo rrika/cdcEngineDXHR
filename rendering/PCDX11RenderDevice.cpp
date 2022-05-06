@@ -1,5 +1,8 @@
+#include "PCDX11DepthBuffer.h"
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderDevice.h"
+#include "PCDX11RenderTarget.h"
+#include "PCDX11StateManager.h"
 #include "PCDX11Texture.h"
 
 namespace cdc {
@@ -212,6 +215,20 @@ void PCDX11RenderDevice::internalResource04() {
 
 void PCDX11RenderDevice::internalResource08() {
 	// TODO
+}
+
+void PCDX11RenderDevice::clearRenderTarget(char flags, float *color, float depth, uint32_t stencil) {
+	auto deviceContext = d3dDeviceContext111580;
+	auto stateManager = deviceManager->getStateManager();
+	if (auto depthBuffer = stateManager->m_depthBuffer) {
+		ID3D11DepthStencilView *view = depthBuffer->getDepthStencilView();
+		deviceContext->ClearDepthStencilView(view, (flags >> 1) & 3, depth, stencil);
+	}
+	if (auto renderTarget = stateManager->m_renderTarget) {
+		ID3D11RenderTargetView *view = renderTarget->getRenderTargetView();
+		if (flags & 1)
+			deviceContext->ClearRenderTargetView(view, color);
+	}
 }
 
 PCDX11RenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown) {

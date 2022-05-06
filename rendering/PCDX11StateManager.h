@@ -45,6 +45,10 @@ class PCDX11StateManager : public PCDX11InternalResource {
 	uint32_t m_samplerRepeat[16 + 4]; // 298
 
 public:
+	PCDX11RenderTarget *m_renderTarget = nullptr; // 380
+	PCDX11DepthBuffer *m_depthBuffer = nullptr; // 384
+
+public:
 	PCDX11StateManager();
 	PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D11Device *device) :
 		m_deviceContext(deviceContext),
@@ -52,7 +56,9 @@ public:
 		m_indexBufferD3D(nullptr),
 		m_pixelShader(nullptr),
 		m_dirtySamplersFirst(20),
-		m_dirtySamplersLast(0)
+		m_dirtySamplersLast(0),
+		m_dirtyShaderResourcesFirst(20),
+		m_dirtyShaderResourcesLast(0)
 	{}
 
 	void setIndexBuffer(PCDX11IndexBuffer *indexBuffer);

@@ -1,4 +1,5 @@
 #pragma once
+#include <d3d11.h>
 #include "PCDX11InternalResource.h"
 #include "CommonRenderDevice.h"
 
@@ -66,6 +67,7 @@ public:
 
 	ID3D11DeviceContext *d3dDeviceContext111580;
 	ID3D11DeviceContext *getD3DDeviceContext() { return d3dDeviceContext111580; }
+	void clearRenderTarget(char mode, float *color, float depth, uint32_t stencil);
 };
 
 PCDX11RenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown);

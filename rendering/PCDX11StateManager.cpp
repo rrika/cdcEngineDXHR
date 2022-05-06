@@ -259,6 +259,8 @@ void PCDX11StateManager::updateRenderTargets(
 	PCDX11DepthBuffer *depthBuffer
 ) {
 	// TODO
+	m_renderTarget = renderTarget;
+	m_depthBuffer = depthBuffer;
 	ID3D11RenderTargetView *renderTargetView = renderTarget->getRenderTargetView();
 	ID3D11DepthStencilView *depthStencilView = depthBuffer->getDepthStencilView();
 	m_deviceContext->OMSetRenderTargets(

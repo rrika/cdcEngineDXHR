@@ -8,6 +8,7 @@
 #include "spinnycube.h"
 #include "types.h"
 #include "rendering/IPCDeviceManager.h"
+#include "rendering/PCDX11ClearDrawable.h"
 #include "rendering/PCDX11DepthBuffer.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11IndexBuffer.h"
@@ -314,6 +315,8 @@ int spinnyCube(HWND window,
     cdcRenderTarget.renderTexture.view = static_cast<ID3D11View*>(frameBufferView);
     cdcDepthBuffer.renderTexture.view = static_cast<ID3D11View*>(depthBufferView);
 
+    auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice);
+
     cdc::PCDX11SetRTDrawable setRtDrawable(&cdcRenderTarget, &cdcDepthBuffer);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -435,10 +438,10 @@ int spinnyCube(HWND window,
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    FLOAT backgroundColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f };
-
     D3D11_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<float>(depthBufferDesc.Width), static_cast<float>(depthBufferDesc.Height), 0.0f, 1.0f };
-    
+
+    cdc::PCDX11ClearDrawable clearDrawable(renderDevice, (D3D11_CLEAR_DEPTH << 1) | 1, 0xff060606, 1.0f, 0);    
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     float w = viewport.Width / viewport.Height; // width (aspect ratio)
@@ -499,8 +502,7 @@ int spinnyCube(HWND window,
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
-        deviceContext->ClearRenderTargetView(frameBufferView, backgroundColor);
-        deviceContext->ClearDepthStencilView(depthBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+        clearDrawable.renderDrawable0(); // won't clear on first frame because RTs are not set
 
         stateManager.setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         stateManager.setStreamDecl(&streamDecl);
