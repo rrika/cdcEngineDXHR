@@ -1,12 +1,12 @@
 #pragma once
-#include <algorithm> // for clamp
 #include "PCDX11InternalResource.h"
-#include "PCDX11IndexBuffer.h"
 
 namespace cdc {
 
 class PCDX11BaseTexture;
+class PCDX11DepthBuffer;
 class PCDX11PixelShader;
+class PCDX11RenderTarget;
 class PCDX11StreamDecl;
 class PCDX11VertexBuffer;
 class PCDX11VertexShader;
@@ -71,7 +71,7 @@ public:
 	void updateSamplers();
 	void updateConstantBuffers();
 
-	void updateRenderTargets();
+	void updateRenderTargets(PCDX11RenderTarget *renderTarget, PCDX11DepthBuffer *depthBuffer);
 	void updateRenderState();
 
 	void internalResource04() override;

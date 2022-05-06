@@ -3,7 +3,10 @@
 #include <climits>
 #include <algorithm>
 #include "PCDX11BaseTexture.h"
+#include "PCDX11DepthBuffer.h"
+#include "PCDX11IndexBuffer.h"
 #include "PCDX11PixelShader.h"
+#include "PCDX11RenderTarget.h"
 #include "PCDX11StateManager.h"
 #include "PCDX11StreamDecl.h"
 #include "PCDX11VertexBuffer.h"
@@ -251,8 +254,17 @@ void PCDX11StateManager::updateConstantBuffers() {
 	// TODO
 }
 
-void PCDX11StateManager::updateRenderTargets() {
+void PCDX11StateManager::updateRenderTargets(
+	PCDX11RenderTarget *renderTarget,
+	PCDX11DepthBuffer *depthBuffer
+) {
 	// TODO
+	ID3D11RenderTargetView *renderTargetView = renderTarget->getRenderTargetView();
+	ID3D11DepthStencilView *depthStencilView = depthBuffer->getDepthStencilView();
+	m_deviceContext->OMSetRenderTargets(
+		!!renderTargetView,
+		&renderTargetView,
+		depthStencilView);
 }
 
 void PCDX11StateManager::updateRenderState() {
