@@ -3,6 +3,7 @@
 #include <climits>
 #include <algorithm>
 #include "PCDX11BaseTexture.h"
+#include "PCDX11ConstantBuffer.h"
 #include "PCDX11DepthBuffer.h"
 #include "PCDX11IndexBuffer.h"
 #include "PCDX11PixelShader.h"
@@ -56,7 +57,7 @@ void PCDX11StateManager::setPixelShader(PCDX11PixelShader *pixelShader) {
 			if (!pixelShader->m_requested)
 				pixelShader->requestShader();
 			if (pixelShader->m_keepWaiting)
-				pixelShader->await();
+				pixelShader->awaitResource();
 			m_deviceContext->PSSetShader(pixelShader->m_d3dShader, nullptr, 0);
 		} else {
 			m_deviceContext->PSSetShader(nullptr, nullptr, 0);
@@ -71,7 +72,7 @@ void PCDX11StateManager::setVertexShader(PCDX11VertexShader *vertexShader) {
 			if (!vertexShader->m_requested)
 				vertexShader->requestShader();
 			if (vertexShader->m_keepWaiting)
-				vertexShader->await();
+				vertexShader->awaitResource();
 			m_deviceContext->VSSetShader(vertexShader->m_d3dShader, nullptr, 0);
 		} else {
 			m_deviceContext->VSSetShader(nullptr, nullptr, 0);
@@ -189,6 +190,22 @@ void PCDX11StateManager::setTextureAndSampler(
 		m_dirtyShaderResourcesLast = std::max<uint8_t>(m_dirtyShaderResourcesLast, slot);
 		m_dirtyShaderResources = true;
 		m_textures[slot] = tex;
+	}
+}
+
+void PCDX11StateManager::setPsConstantBuffer(uint32_t slot, PCDX11ConstantBuffer *cb) {
+	if (cb != m_constantBufferPs[slot]) {
+		ID3D11Buffer *buffer = cb->getBuffer();
+		m_deviceContext->PSSetConstantBuffers(slot, 1, &buffer);
+		m_constantBufferPs[slot] = cb;
+	}
+}
+
+void PCDX11StateManager::setVsConstantBuffer(uint32_t slot, PCDX11ConstantBuffer *cb) {
+	if (cb != m_constantBufferVs[slot]) {
+		ID3D11Buffer *buffer = cb->getBuffer();
+		m_deviceContext->VSSetConstantBuffers(slot, 1, &buffer);
+		m_constantBufferVs[slot] = cb;
 	}
 }
 

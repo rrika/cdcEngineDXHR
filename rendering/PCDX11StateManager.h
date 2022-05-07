@@ -4,6 +4,7 @@
 namespace cdc {
 
 class PCDX11BaseTexture;
+class PCDX11ConstantBuffer;
 class PCDX11DepthBuffer;
 class PCDX11IndexBuffer;
 class PCDX11PixelShader;
@@ -44,9 +45,15 @@ class PCDX11StateManager : public PCDX11InternalResource {
 	uint32_t m_samplerFilter[16 + 4]; // 248
 	uint32_t m_samplerRepeat[16 + 4]; // 298
 
+	PCDX11ConstantBuffer *m_constantBufferVs[7 /*?*/]; // 330
+	PCDX11ConstantBuffer *m_constantBufferPs[1]; // 34C
+
 public:
 	PCDX11RenderTarget *m_renderTarget = nullptr; // 380
 	PCDX11DepthBuffer *m_depthBuffer = nullptr; // 384
+
+private:
+	PCDX11ConstantBuffer *m_constantBufferSync[7]; // 5A8
 
 public:
 	PCDX11StateManager();
@@ -70,6 +77,8 @@ public:
 
 	void setSamplerState(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter);
 	void setTextureAndSampler(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown);
+	void setPsConstantBuffer(uint32_t slot, PCDX11ConstantBuffer *cb);
+	void setVsConstantBuffer(uint32_t slot, PCDX11ConstantBuffer *cb);
 
 	void updateRasterizerState();
 	void updateDepthStencilState();

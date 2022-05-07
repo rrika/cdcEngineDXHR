@@ -102,6 +102,7 @@ void PCDX11RenderDevice::clearRenderTarget(
 		clearDepth,
 		clearStencil);
 	recordDrawable(clearDrawable, unknown1, 0);
+	delete clearDrawable; // since it's not actually getting queued
 }
 
 void PCDX11RenderDevice::setRenderTarget() {

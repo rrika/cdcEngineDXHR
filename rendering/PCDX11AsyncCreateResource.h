@@ -10,7 +10,11 @@ public:
 	bool m_requested = false;
 	virtual void asyncCreate() = 0;
 	void request(uint data) {}
-	void await() {}
+	void awaitResource() {
+		// hack
+		asyncCreate();
+		m_keepWaiting = false;
+	}
 };
 
 }
