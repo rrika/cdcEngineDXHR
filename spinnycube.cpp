@@ -12,7 +12,6 @@
 #include "rendering/PCDX11ConstantBufferPool.h"
 #include "rendering/PCDX11DepthBuffer.h"
 #include "rendering/PCDX11DeviceManager.h"
-#include "rendering/PCDX11DynamicConstantBuffer.h"
 #include "rendering/PCDX11IndexBuffer.h"
 #include "rendering/PCDX11PixelShader.h"
 #include "rendering/PCDX11RenderDevice.h"
@@ -22,6 +21,7 @@
 #include "rendering/PCDX11StateManager.h"
 #include "rendering/PCDX11StreamDecl.h"
 #include "rendering/PCDX11Texture.h"
+#include "rendering/PCDX11UberConstantBuffer.h"
 #include "rendering/PCDX11VertexShader.h"
 #include "drm/ResolveReceiver.h"
 #include "drm/sections/RenderResourceSection.h"
@@ -396,19 +396,8 @@ int spinnyCube(HWND window,
         float3 LightVector;
     };
 
-    D3D11_BUFFER_DESC constantBufferDesc = {};
-    constantBufferDesc.ByteWidth      = sizeof(Constants) + 0xf & 0xfffffff0; // round constant buffer size to 16 byte boundary
-    constantBufferDesc.Usage          = D3D11_USAGE_DYNAMIC;
-    constantBufferDesc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
-    constantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-    ID3D11Buffer* constantBuffer;
-
-    device->CreateBuffer(&constantBufferDesc, nullptr, &constantBuffer);
-
-    cdc::PCDX11ConstantBufferPool cbPool{renderDevice};
-    cdc::PCDX11DynamicConstantBuffer cdcConstantBuffer(&cbPool, (sizeof(Constants) + 15) / 16);
-    cdcConstantBuffer.buffer = constantBuffer; // hack
+    // cdc::PCDX11ConstantBufferPool cbPool{renderDevice};
+    cdc::PCDX11UberConstantBuffer cdcConstantBuffer((sizeof(Constants) + 15) / 16);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -494,17 +483,13 @@ int spinnyCube(HWND window,
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
-        D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+        Constants constants;
+        constants.Transform   = rotateX * rotateY * rotateZ * scale * translate;
+        constants.Projection  = { 2 * n / w, 0, 0, 0, 0, 2 * n / h, 0, 0, 0, 0, f / (f - n), 1, 0, 0, n * f / (n - f), 0 };
+        constants.LightVector = { 1.0f, -1.0f, 1.0f };
 
-        deviceContext->Map(constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
-
-        Constants* constants = reinterpret_cast<Constants*>(mappedSubresource.pData);
-
-        constants->Transform   = rotateX * rotateY * rotateZ * scale * translate;
-        constants->Projection  = { 2 * n / w, 0, 0, 0, 0, 2 * n / h, 0, 0, 0, 0, f / (f - n), 1, 0, 0, n * f / (n - f), 0 };
-        constants->LightVector = { 1.0f, -1.0f, 1.0f };
-
-        deviceContext->Unmap(constantBuffer, 0);
+        memcpy(cdcConstantBuffer.data, &constants, sizeof(Constants));
+        cdcConstantBuffer.syncBuffer(deviceContext);
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 

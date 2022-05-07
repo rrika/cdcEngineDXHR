@@ -66,7 +66,9 @@ public:
 		m_dirtySamplersLast(0),
 		m_dirtyShaderResourcesFirst(20),
 		m_dirtyShaderResourcesLast(0)
-	{}
+	{
+		m_constantBufferVs[0] = nullptr;
+	}
 
 	void setIndexBuffer(PCDX11IndexBuffer *indexBuffer);
 	void setVertexBuffer(PCDX11VertexBuffer *vertexBuffer);
