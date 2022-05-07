@@ -1,4 +1,5 @@
 target_sources(dxhr PRIVATE
+	BuiltinResources.cpp
 	CommonRenderDevice.cpp
 	PCDX11BitmapTexture.cpp
 	PCDX11ClearDrawable.cpp
