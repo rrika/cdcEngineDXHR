@@ -9,8 +9,10 @@
 #include "types.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/PCDX11ClearDrawable.h"
+#include "rendering/PCDX11ConstantBufferPool.h"
 #include "rendering/PCDX11DepthBuffer.h"
 #include "rendering/PCDX11DeviceManager.h"
+#include "rendering/PCDX11DynamicConstantBuffer.h"
 #include "rendering/PCDX11IndexBuffer.h"
 #include "rendering/PCDX11PixelShader.h"
 #include "rendering/PCDX11RenderDevice.h"
@@ -404,6 +406,10 @@ int spinnyCube(HWND window,
 
     device->CreateBuffer(&constantBufferDesc, nullptr, &constantBuffer);
 
+    cdc::PCDX11ConstantBufferPool cbPool{renderDevice};
+    cdc::PCDX11DynamicConstantBuffer cdcConstantBuffer(&cbPool, (sizeof(Constants) + 15) / 16);
+    cdcConstantBuffer.buffer = constantBuffer; // hack
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     UINT stride = 11 * 4; // vertex size (11 floats: float3 position, float3 normal, float2 texcoord, float3 color)
@@ -516,7 +522,7 @@ int spinnyCube(HWND window,
         stateManager.setIndexBuffer(&cdcIndexBuffer);
 
         stateManager.setVertexShader(&cdcVertexShader);
-        deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
+        stateManager.setVsConstantBuffer(0, &cdcConstantBuffer);
 
         deviceContext->RSSetViewports(1, &viewport);
         deviceContext->RSSetState(rasterizerState);
