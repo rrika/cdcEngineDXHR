@@ -47,10 +47,10 @@ public:
 		request(0);
 	}
 
-	void asyncCreate() override {};
+	void asyncCreate() override;
 
-	void internalResource04() override {};
-	void internalResource08() override {};
+	void internalResource04() override;
+	void internalResource08() override;
 };
 
 }

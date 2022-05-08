@@ -21,16 +21,24 @@ public:
 		m_keepWaiting = false;
 		m_d3dShader = shader;
 	}
+	PCDX11PixelShader(char *blob, bool takeCopy, bool isWrapped) :
+		PCDX11AsyncCreateResource(),
+		PCDX11InternalResource(),
+		m_d3dShader(nullptr),
+		m_sub(blob, takeCopy, isWrapped)
+	{ // copied from PCDX11VertexShader
+		internalResource04IfDeviceManagerAgrees();
+	}
 
 	void requestShader() {
 		m_d3dShader = 0;
 		request(0);
 	}
 
-	void asyncCreate() override {};
+	void asyncCreate() override;
 
-	void internalResource04() override {};
-	void internalResource08() override {};
+	void internalResource04() override;
+	void internalResource08() override;
 };
 
 }

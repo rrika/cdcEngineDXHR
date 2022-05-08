@@ -5,6 +5,7 @@ target_sources(dxhr PRIVATE
 	PCDX11ClearDrawable.cpp
 	PCDX11DeviceManager.cpp
 	PCDX11InternalResource.cpp
+	PCDX11PixelShader.cpp
 	PCDX11RenderDevice.cpp
 	PCDX11RenderTarget.cpp
 	PCDX11RenderTexture.cpp
@@ -13,4 +14,5 @@ target_sources(dxhr PRIVATE
 	PCDX11StateManager.cpp
 	PCDX11StreamDecl.cpp
 	PCDX11Texture.cpp
+	PCDX11VertexShader.cpp
 	RenderResource.cpp)

@@ -9,7 +9,13 @@ public:
 	bool m_keepWaiting = false;
 	bool m_requested = false;
 	virtual void asyncCreate() = 0;
-	void request(uint data) {}
+	void request(uint data) {
+		if (!m_requested) {
+			m_requested = true;
+			m_keepWaiting = true;
+			// deviceManager->queueAsyncCreation(this, data);
+		}
+	}
 	void awaitResource() {
 		// hack
 		asyncCreate();

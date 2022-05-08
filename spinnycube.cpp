@@ -327,9 +327,11 @@ int spinnyCube(HWND window,
 
     D3DCompile(shaders, sizeof(shaders), "shaders.hlsl", nullptr, nullptr, "vs_main", "vs_5_0", 0, 0, &vsBlob, nullptr);
 
-    ID3D11VertexShader* vertexShader;
-
-    device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), nullptr, &vertexShader);
+    cdc::PCDX11VertexShader cdcVertexShader(
+        (char*)vsBlob->GetBufferPointer(),
+        /*takeCopy=*/false,
+        /*isWrapped=*/false);
+    cdcVertexShader.asyncCreate();
 
     D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = // float3 position, float3 normal, float2 texcoord, float3 color
     {
@@ -339,16 +341,9 @@ int spinnyCube(HWND window,
         { "COL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
-    // device->CreateInputLayout(inputElementDesc, ARRAYSIZE(inputElementDesc), vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), &inputLayout);
-
-    cdc::PCDX11ShaderSub vsShaderSub(
-        vsBlob->GetBufferPointer(),
-        (uint16_t)vsBlob->GetBufferSize()
-    );
-
     cdc::PCDX11StreamDecl streamDecl(
         static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice),
-        inputElementDesc, ARRAYSIZE(inputElementDesc), &vsShaderSub);
+        inputElementDesc, ARRAYSIZE(inputElementDesc), &cdcVertexShader.m_sub);
     streamDecl.internalResource04();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -357,12 +352,10 @@ int spinnyCube(HWND window,
 
     D3DCompile(shaders, sizeof(shaders), "shaders.hlsl", nullptr, nullptr, "ps_main", "ps_5_0", 0, 0, &psBlob, nullptr);
 
-    ID3D11PixelShader* pixelShader;
-
-    device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &pixelShader);
-
-    cdc::PCDX11VertexShader cdcVertexShader(vertexShader);
-    cdc::PCDX11PixelShader cdcPixelShader(pixelShader);
+    cdc::PCDX11PixelShader cdcPixelShader(
+        (char*)psBlob->GetBufferPointer(),
+        /*takeCopy=*/false,
+        /*isWrapped=*/false);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
