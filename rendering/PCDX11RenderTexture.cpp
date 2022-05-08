@@ -26,6 +26,7 @@ void PCDX11RenderTexture::resFill(void* src, size_t size, size_t offset) {
 
 char *PCDX11RenderTexture::resGetBuffer() {
 	// TODO
+	return nullptr;
 }
 
 void PCDX11RenderTexture::resConstruct() {

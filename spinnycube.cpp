@@ -344,12 +344,10 @@ int spinnyCube(HWND window,
 
     // device->CreateInputLayout(inputElementDesc, ARRAYSIZE(inputElementDesc), vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), &inputLayout);
 
-    cdc::ShaderSub vsShaderSub {
-        nullptr,
+    cdc::PCDX11ShaderSub vsShaderSub(
         vsBlob->GetBufferPointer(),
-        0,
         (uint16_t)vsBlob->GetBufferSize()
-    };
+    );
 
     cdc::PCDX11StreamDecl streamDecl(
         static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice),

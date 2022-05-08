@@ -1,0 +1,28 @@
+#pragma once
+#include "PCDX11ShaderTable.h"
+#include "IShaderLib.h"
+
+namespace cdc {
+
+class PCDX11RenderDevice;
+
+class PCDX11ShaderLib :
+	public IShaderLib
+	/* public PCDX11RenderExternalResource */
+{
+public:
+	PCDX11ShaderLib(uint32_t size, PCDX11RenderDevice *renderDevice) :
+		IShaderLib(),
+		table(nullptr)
+	{
+		buffer = new char[size];
+	}
+	PCDX11ShaderTable *table; // 10
+	char *buffer; // 14
+
+	~PCDX11ShaderLib() override = default;
+	void fill(char *buffer, uint32_t offset, uint32_t size, bool done) override;
+	// TODO: method8
+};
+
+}

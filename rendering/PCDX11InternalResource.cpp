@@ -19,4 +19,9 @@ void PCDX11InternalResource::internalResource10() { internalResource08(); }
 
 void PCDX11InternalResource::internalResource14() { /* empty */ }
 
+void PCDX11InternalResource::internalResource04IfDeviceManagerAgrees() {
+	// if (!deviceManager11->byte30)
+		internalResource04();
+}
+
 }

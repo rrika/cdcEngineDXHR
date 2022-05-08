@@ -13,6 +13,8 @@ public:
 	virtual void internalResource0C();
 	virtual void internalResource10();
 	virtual void internalResource14();
+
+	void internalResource04IfDeviceManagerAgrees();
 };
 
 }

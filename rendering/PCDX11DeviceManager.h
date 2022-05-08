@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <d3d11_1.h>
 #include "IPCDeviceManager.h"
+#include "PCDX11ShaderManager.h"
 
 namespace cdc {
 
@@ -16,6 +17,7 @@ class PCDX11DeviceManager :
 	ID3D11DeviceContext *deviceContext;
 	DisplayConfig config1;
 	DisplayConfig config2;
+	PCDX11ShaderManager shaderManager; // actually a pointer
 public:
 	PCDX11StateManager *stateManager;
 
@@ -35,6 +37,7 @@ public:
 	ID3D11Device *getD3DDevice() { return device; }
 	ID3D11DeviceContext *getD3DDeviceContext() { return deviceContext; }
 	PCDX11StateManager *getStateManager() { return stateManager; }
+	PCDX11ShaderManager *getShaderManager() { return &shaderManager; }
 };
 
 extern PCDX11DeviceManager *deviceManager;
