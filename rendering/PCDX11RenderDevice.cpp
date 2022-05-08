@@ -276,11 +276,12 @@ void PCDX11RenderDevice::method_180() {
 	// TODO
 }
 
-void PCDX11RenderDevice::internalResource04() {
+bool PCDX11RenderDevice::internalCreate() {
 	// TODO
+	return true;
 }
 
-void PCDX11RenderDevice::internalResource08() {
+void PCDX11RenderDevice::internalRelease() {
 	// TODO
 }
 

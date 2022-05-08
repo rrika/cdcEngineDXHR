@@ -107,8 +107,8 @@ public:
 	void method_17C();
 	void method_180();
 
-	void internalResource04();
-	void internalResource08();
+	bool internalCreate();
+	void internalRelease();
 
 	ID3D11DeviceContext *d3dDeviceContext111580;
 	ID3D11DeviceContext *getD3DDeviceContext() { return d3dDeviceContext111580; }

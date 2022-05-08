@@ -9,11 +9,12 @@ void PCDX11VertexShader::asyncCreate() {
 		m_sub.shaderBinary, m_sub.shaderBinarySize, 0, &m_d3dShader);
 }
 
-void PCDX11VertexShader::internalResource04() {
+bool PCDX11VertexShader::internalCreate() {
 	requestShader();
+	return true;
 }
 
-void PCDX11VertexShader::internalResource08() {
+void PCDX11VertexShader::internalRelease() {
 	if (m_d3dShader)
 		m_d3dShader->Release();
 	m_d3dShader = nullptr;

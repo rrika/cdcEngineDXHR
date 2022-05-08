@@ -8,13 +8,13 @@ class PCDX11InternalResource {
 public:
 	PCDX11InternalResource();
 	virtual ~PCDX11InternalResource();
-	virtual void internalResource04() = 0;
-	virtual void internalResource08() = 0;
+	virtual bool internalCreate() = 0;
+	virtual void internalRelease() = 0;
 	virtual void internalResource0C();
 	virtual void internalResource10();
 	virtual void internalResource14();
 
-	void internalResource04IfDeviceManagerAgrees();
+	void internalCreateIfDeviceManagerAgrees();
 };
 
 }

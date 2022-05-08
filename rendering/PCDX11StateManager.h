@@ -93,8 +93,8 @@ public:
 	void updateRenderState();
 	void updateViewport();
 
-	void internalResource04() override;
-	void internalResource08() override;
+	bool internalCreate() override;
+	void internalRelease() override;
 };
 
 }

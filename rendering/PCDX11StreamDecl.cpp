@@ -18,8 +18,8 @@ void PCDX11StreamDecl::apply() {
 	// TODO: constant buffer
 }
 
-void PCDX11StreamDecl::internalResource04() {
-	/*return*/ deviceManager->getD3DDevice()->CreateInputLayout(
+bool PCDX11StreamDecl::internalCreate() {
+	return deviceManager->getD3DDevice()->CreateInputLayout(
 		elementDesc,
 		numElements,
 		shaderSub->shaderBinary,
@@ -28,7 +28,7 @@ void PCDX11StreamDecl::internalResource04() {
 	) == 0;
 }
 
-void PCDX11StreamDecl::internalResource08() {
+void PCDX11StreamDecl::internalRelease() {
 	if (inputLayout) {
 		inputLayout->Release();
 		inputLayout = nullptr;

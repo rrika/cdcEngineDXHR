@@ -344,7 +344,7 @@ int spinnyCube(HWND window,
     cdc::PCDX11StreamDecl streamDecl(
         static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice),
         inputElementDesc, ARRAYSIZE(inputElementDesc), &cdcVertexShader.m_sub);
-    streamDecl.internalResource04();
+    streamDecl.internalCreate();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 

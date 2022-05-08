@@ -2,8 +2,6 @@
 #include "PCDX11DeviceManager.h"
 #include <d3d11.h>
 
-// copied from PCDX11VertexShader
-
 namespace cdc {
 
 void PCDX11PixelShader::asyncCreate() {
@@ -11,11 +9,12 @@ void PCDX11PixelShader::asyncCreate() {
 		m_sub.shaderBinary, m_sub.shaderBinarySize, 0, &m_d3dShader);
 }
 
-void PCDX11PixelShader::internalResource04() {
-	requestShader();
+bool PCDX11PixelShader::internalCreate() {
+	// why? vertex shader does this different
+	return true;
 }
 
-void PCDX11PixelShader::internalResource08() {
+void PCDX11PixelShader::internalRelease() {
 	if (m_d3dShader)
 		m_d3dShader->Release();
 	m_d3dShader = nullptr;

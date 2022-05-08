@@ -27,7 +27,7 @@ public:
 		m_d3dShader(nullptr),
 		m_sub(blob, takeCopy, isWrapped)
 	{ // copied from PCDX11VertexShader
-		internalResource04IfDeviceManagerAgrees();
+		internalCreateIfDeviceManagerAgrees();
 	}
 
 	void requestShader() {
@@ -37,8 +37,8 @@ public:
 
 	void asyncCreate() override;
 
-	void internalResource04() override;
-	void internalResource08() override;
+	bool internalCreate() override;
+	void internalRelease() override;
 };
 
 }

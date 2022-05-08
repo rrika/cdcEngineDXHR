@@ -13,15 +13,15 @@ PCDX11InternalResource::~PCDX11InternalResource() {
 	// deviceManager->unregister(this);
 }
 
-void PCDX11InternalResource::internalResource0C() { internalResource04(); }
+void PCDX11InternalResource::internalResource0C() { internalCreate(); }
 
-void PCDX11InternalResource::internalResource10() { internalResource08(); }
+void PCDX11InternalResource::internalResource10() { internalRelease(); }
 
 void PCDX11InternalResource::internalResource14() { /* empty */ }
 
-void PCDX11InternalResource::internalResource04IfDeviceManagerAgrees() {
+void PCDX11InternalResource::internalCreateIfDeviceManagerAgrees() {
 	// if (!deviceManager11->byte30)
-		internalResource04();
+		internalCreate();
 }
 
 }

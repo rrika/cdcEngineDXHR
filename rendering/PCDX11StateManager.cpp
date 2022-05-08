@@ -305,7 +305,7 @@ void PCDX11StateManager::updateViewport() {
 	// TODO
 }
 
-void PCDX11StateManager::internalResource04() {};
-void PCDX11StateManager::internalResource08() {};
+bool PCDX11StateManager::internalCreate() { return true; };
+void PCDX11StateManager::internalRelease() {};
 
 }

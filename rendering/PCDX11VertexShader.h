@@ -39,7 +39,7 @@ public:
 		m_sub(blob, takeCopy, isWrapped)
 	{
 		// dword28 = true;
-		internalResource04IfDeviceManagerAgrees();
+		internalCreateIfDeviceManagerAgrees();
 	}
 
 	void requestShader() {
@@ -49,8 +49,8 @@ public:
 
 	void asyncCreate() override;
 
-	void internalResource04() override;
-	void internalResource08() override;
+	bool internalCreate() override;
+	void internalRelease() override;
 };
 
 }
