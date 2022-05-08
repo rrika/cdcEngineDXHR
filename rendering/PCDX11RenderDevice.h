@@ -1,7 +1,9 @@
 #pragma once
 #include <d3d11.h>
-#include "PCDX11InternalResource.h"
 #include "CommonRenderDevice.h"
+#include "PCDX11InternalResource.h"
+#include "PCDX11ShaderLib.h"
+#include "PCDX11ShaderTable.h" // for PixelShaderTable and VertexShaderTable
 
 namespace cdc {
 
@@ -11,9 +13,44 @@ class PCDX11RenderDevice :
 	public PCDX11InternalResource,
 	public CommonRenderDevice
 {
+	PCDX11ShaderLib *shlib_22;
+	PCDX11ShaderLib *shlib_21;
+	PCDX11ShaderLib *shlib_20;
+	PCDX11ShaderLib *shlib_19;
+	PCDX11ShaderLib *shlib_18;
+	PCDX11ShaderLib *shlib_17;
+	PCDX11ShaderLib *shlib_16;
+	PCDX11ShaderLib *shlib_15;
+	PCDX11ShaderLib *shlib_14;
+	PCDX11ShaderLib *shlib_13;
+	PCDX11ShaderLib *shlib_12;
+	PCDX11ShaderLib *shlib_11;
+	PCDX11ShaderLib *shlib_10;
+	PCDX11ShaderLib *shlib_9;
+	PCDX11ShaderLib *shlib_8;
+	PCDX11ShaderLib *shlib_7;
+	PCDX11ShaderLib *shlib_6;
+	PCDX11ShaderLib *shlib_5;
+	PCDX11ShaderLib *shlib_4;
+	PCDX11ShaderLib *shlib_3;
+	PCDX11ShaderLib *shlib_2;
+	PCDX11ShaderLib *shlib_1;
+	PCDX11ShaderLib *shlib_0;
+	PCDX11VertexShaderTable shtab_vs_wvp_1_0; // 10D1C
+	PCDX11VertexShaderTable shtab_vs_ui;      // 10D38
+	PCDX11VertexShaderTable shtab_vs_wvp;     // 10D54
+	PCDX11PixelShaderTable shtab_ps_white_27; // 10D70
+	PCDX11PixelShaderTable shtab_ps_passthrough; // 10D90
+	PCDX11PixelShaderTable shtab_ps_white_25; // 10DB0
+	PCDX11PixelShaderTable shtab_ps_fogColor; // 10DD0
+	PCDX11PixelShaderTable shtab_ps_errorColor; // 10DF0
+
 public:
-	// incomplete
 	PCDX11RenderDevice();
+	void createDefaultResources();
+	void createDefaultVertexAttribLayouts();
+
+	// incomplete
 	void refCountDec();
 	void method_08();
 	void method_0C();

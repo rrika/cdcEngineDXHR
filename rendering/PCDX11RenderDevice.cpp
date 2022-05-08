@@ -1,3 +1,4 @@
+#include "BuiltinResources.h"
 #include "PCDX11ClearDrawable.h"
 #include "PCDX11DepthBuffer.h"
 #include "PCDX11DeviceManager.h"
@@ -8,8 +9,52 @@
 
 namespace cdc {
 
-PCDX11RenderDevice::PCDX11RenderDevice() {
+
+PCDX11RenderDevice::PCDX11RenderDevice() :
+	shtab_vs_wvp_1_0(shad::shader_30_vs, /*takeCopy=*/ false),
+	shtab_vs_ui(shad::shader_29_vs, /*takeCopy=*/ false),
+	shtab_vs_wvp(shad::shader_28_vs, /*takeCopy=*/ false),
+	shtab_ps_white_27(shad::white_27_ps, /*takeCopy=*/ false),
+	shtab_ps_passthrough(shad::passthrough_ps, /*takeCopy=*/ false),
+	shtab_ps_white_25(shad::white_25_ps, /*takeCopy=*/ false),
+	shtab_ps_fogColor(shad::fogColor_ps, /*takeCopy=*/ false),
+	shtab_ps_errorColor(shad::errorColor_ps, /*takeCopy=*/ false)
+{
 	d3dDeviceContext111580 = deviceManager->getD3DDeviceContext();
+	createDefaultResources();
+	createDefaultVertexAttribLayouts();
+}
+
+void PCDX11RenderDevice::createDefaultResources() {
+	// TODO
+	shlib_22 = new PCDX11ShaderLib(shad::shader_22_ps, PCDX11ShaderLib::kPixel, this);
+	shlib_21 = new PCDX11ShaderLib(shad::shader_21_vs, PCDX11ShaderLib::kVertex, this);
+	shlib_20 = new PCDX11ShaderLib(shad::shader_20_vs, PCDX11ShaderLib::kVertex, this);
+	shlib_19 = new PCDX11ShaderLib(shad::aa_19_vs, PCDX11ShaderLib::kVertex, this);
+	shlib_18 = new PCDX11ShaderLib(shad::shader_18_vs, PCDX11ShaderLib::kVertex, this);
+	shlib_17 = new PCDX11ShaderLib(shad::shader_17_ps, PCDX11ShaderLib::kPixel, this);
+	shlib_16 = new PCDX11ShaderLib(shad::normalPass_16_ps, PCDX11ShaderLib::kPixel, this);
+	shlib_15 = new PCDX11ShaderLib(shad::normalPass_15_vs, PCDX11ShaderLib::kVertex, this);
+	shlib_14 = new PCDX11ShaderLib(shad::normalPass_14_vs, PCDX11ShaderLib::kVertex, this);
+	shlib_13 = new PCDX11ShaderLib(shad::mlaa_13_ps, PCDX11ShaderLib::kPixel, this);
+	shlib_12 = new PCDX11ShaderLib(shad::fxaa_12_ps, PCDX11ShaderLib::kPixel, this);
+	shlib_11 = new PCDX11ShaderLib(shad::mlaa_11_ps, PCDX11ShaderLib::kPixel, this);
+	shlib_10 = new PCDX11ShaderLib(shad::mlaa_10_ps, PCDX11ShaderLib::kPixel, this);
+	shlib_9 = new PCDX11ShaderLib(shad::shader_9_ps, PCDX11ShaderLib::kPixel, this);
+	shlib_8 = new PCDX11ShaderLib(shad::shader_8_ps, PCDX11ShaderLib::kPixel, this);
+	shlib_7 = new PCDX11ShaderLib(shad::shader_7_vs, PCDX11ShaderLib::kVertex, this);
+	shlib_6 = new PCDX11ShaderLib(shad::shader_6_vs, PCDX11ShaderLib::kVertex, this);
+	shlib_5 = new PCDX11ShaderLib(shad::shader_5_ps, PCDX11ShaderLib::kPixel, this);
+	shlib_4 = new PCDX11ShaderLib(shad::fastBlur0_cs, PCDX11ShaderLib::kCompute, this);
+	shlib_3 = new PCDX11ShaderLib(shad::fastBlur1_cs, PCDX11ShaderLib::kCompute, this);
+	shlib_2 = new PCDX11ShaderLib(shad::bilateralBlur_cs, PCDX11ShaderLib::kCompute, this);
+	shlib_1 = new PCDX11ShaderLib(shad::error_ps, PCDX11ShaderLib::kPixel, this);
+	shlib_0 = new PCDX11ShaderLib(shad::error_vs, PCDX11ShaderLib::kVertex, this);
+	// TODO
+}
+
+void PCDX11RenderDevice::createDefaultVertexAttribLayouts() {
+	// TODO
 }
 
 void PCDX11RenderDevice::refCountDec() {

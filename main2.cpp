@@ -1,4 +1,5 @@
 #include <windows.h>
+#include "rendering/BuiltinResources.h"
 #include "main.h"
 #include "main2.h"
 #include "spinnycube.h"
@@ -53,6 +54,7 @@ void createWindow() {
 }
 
 int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
+    loadBuiltinResources();
 	auto deviceManager = createPCDX11DeviceManager();
 	createWindow();
 	gRenderDevice = createPCDX11RenderDevice(hwnd, 640, 480, 0);

@@ -33,7 +33,7 @@ public:
 	{
 		auto *blobWords = (uint32_t*)blob;
 		offsets = &blobWords[2];
-		numShaders = blobWords[0];
+		numShaders = blobWords[0] >> 2;
 		vertexShaders = new PCDX11VertexShader*[numShaders];
 		hasOwnership = takeCopy;
 		memset(vertexShaders, 0, sizeof(PCDX11VertexShader*[numShaders]));
@@ -57,7 +57,7 @@ public:
 	{
 		// auto *blobWords = (uint32_t*)blob;
 		// offsets = &blobWords[2];
-		// numShaders = blobWords[0];
+		// numShaders = blobWords[0] >> 2;
 		// vertexShaders = new PCDX11PixelShader*[numShaders];
 		// hasOwnership = takeCopy;
 		// memset(vertexShaders, 0, sizeof(PCDX11VertexShader*[numShaders]));

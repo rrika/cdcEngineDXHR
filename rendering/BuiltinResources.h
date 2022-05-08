@@ -15,7 +15,7 @@ extern char *shader_9_ps;
 extern char *mlaa_10_ps;
 extern char *mlaa_11_ps;
 extern char *fxaa_12_ps;
-extern char *shader_13_ps;
+extern char *mlaa_13_ps;
 extern char *normalPass_14_vs;
 extern char *normalPass_15_vs;
 extern char *normalPass_16_ps;

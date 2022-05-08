@@ -7,7 +7,6 @@
 
 #include "spinnycube.h"
 #include "types.h"
-#include "rendering/BuiltinResources.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/PCDX11ClearDrawable.h"
 #include "rendering/PCDX11ConstantBufferPool.h"
@@ -240,8 +239,6 @@ matrix operator*(const matrix& m1, const matrix& m2);
 int spinnyCube(HWND window,
     ID3D11Device *baseDevice,
     ID3D11DeviceContext *baseDeviceContext) {
-
-    loadBuiltinResources();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
