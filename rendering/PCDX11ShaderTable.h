@@ -38,14 +38,18 @@ public:
 		hasOwnership = takeCopy;
 		memset(vertexShaders, 0, sizeof(PCDX11VertexShader*[numShaders]));
 		for (uint32_t i = 0; i < numShaders; i++)
-			vertexShaders[i] = deviceManager->getShaderManager()->createVertexShader(
-				/*blob=*/ blob + offsets[i],
-				/*takeCopy=*/ hasOwnership,
-				/*isWrapped=*/ true);
+			if (offsets[i] != ~0u)
+				vertexShaders[i] = deviceManager->getShaderManager()->createVertexShader(
+					/*blob=*/ blob + offsets[i],
+					/*takeCopy=*/ hasOwnership,
+					/*isWrapped=*/ true);
+			else
+				vertexShaders[i] = nullptr;
 	}
 };
 
 class PCDX11PixelShaderTable : public PCDX11ShaderTable {
+public:
 	// uint32_t dword10;
 	PCDX11PixelShader **pixelShaders = nullptr;
 	bool hasOwnership = false;
@@ -55,17 +59,22 @@ public:
 	PCDX11PixelShaderTable(char *blob, bool takeCopy) :
 		PCDX11ShaderTable(blob)
 	{
-		// auto *blobWords = (uint32_t*)blob;
-		// offsets = &blobWords[2];
-		// numShaders = blobWords[0] >> 2;
-		// vertexShaders = new PCDX11PixelShader*[numShaders];
-		// hasOwnership = takeCopy;
-		// memset(vertexShaders, 0, sizeof(PCDX11VertexShader*[numShaders]));
-		// for (uint32_t i = 0; i < numShaders; i++)
-		// 	vertexShaders[i] = deviceManager->getShaderManager()->createPixelShader(
-		// 		/*blob=*/ blob + offsets[i],
-		// 		/*takeCopy=*/ hasOwnership,
-		// 		/*isWrapped=*/ true);
+		auto *blobWords = (uint32_t*)blob;
+		offsets = &blobWords[2];
+		numShaders = blobWords[0] >> 2;
+		pixelShaders = new PCDX11PixelShader*[numShaders];
+		hasOwnership = takeCopy;
+		memset(pixelShaders, 0, sizeof(PCDX11VertexShader*[numShaders]));
+		for (uint32_t i = 0; i < numShaders; i++)
+			if (offsets[i] != ~0u)
+				offsets[i] ^= (i&1); // what??
+
+		for (uint32_t i = 0; i < numShaders; i++)
+			if (offsets[i] != ~0u)
+				pixelShaders[i] = deviceManager->getShaderManager()->createPixelShader(
+					/*blob=*/ blob + offsets[i],
+					/*takeCopy=*/ hasOwnership,
+					/*isWrapped=*/ true);
 	}
 };
 

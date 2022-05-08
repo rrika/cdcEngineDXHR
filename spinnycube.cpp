@@ -503,7 +503,12 @@ int spinnyCube(HWND window,
         deviceContext->RSSetViewports(1, &viewport);
         deviceContext->RSSetState(rasterizerState);
 
-        stateManager.setPixelShader(&cdcPixelShader);
+        if (true) {
+            auto errorTable = static_cast<cdc::PCDX11PixelShaderTable*>(renderDevice->shlib_1->table);
+            stateManager.setPixelShader(errorTable->pixelShaders[0]);
+        } else {
+            stateManager.setPixelShader(&cdcPixelShader);
+        }
         stateManager.updateShaderResources();
         stateManager.updateSamplers();
 

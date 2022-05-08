@@ -13,6 +13,7 @@ class PCDX11RenderDevice :
 	public PCDX11InternalResource,
 	public CommonRenderDevice
 {
+public:
 	PCDX11ShaderLib *shlib_22;
 	PCDX11ShaderLib *shlib_21;
 	PCDX11ShaderLib *shlib_20;

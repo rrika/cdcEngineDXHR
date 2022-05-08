@@ -15,6 +15,17 @@ public:
 	ID3D11PixelShader *m_d3dShader;
 	PCDX11ShaderSub m_sub;
 
+	static PCDX11PixelShader *create(
+		char *blob, bool takeCopy, /*shaderManagerData,*/
+		bool *isWrappedPtr, bool isWrapped)
+	{
+		PCDX11ShaderSub sub(blob, /*takeCopy=*/false, isWrapped);
+		// TODO
+		auto *shader = new PCDX11PixelShader(blob, takeCopy, isWrapped);
+		// TODO
+		return shader;
+	}
+
 	PCDX11PixelShader() {}
 	PCDX11PixelShader(ID3D11PixelShader *shader) {
 		m_requested = true;
