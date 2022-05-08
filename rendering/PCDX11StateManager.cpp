@@ -17,6 +17,27 @@ namespace cdc {
 
 PCDX11StateManager::PCDX11StateManager() {}
 
+PCDX11StateManager::PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D11Device *device) :
+	m_deviceContext(deviceContext),
+	m_device(device),
+	m_indexBufferD3D(nullptr),
+	m_pixelShader(nullptr),
+	m_dirtySamplersFirst(20),
+	m_dirtySamplersLast(0),
+	m_dirtyShaderResourcesFirst(20),
+	m_dirtyShaderResourcesLast(0)
+{
+	m_constantBufferVs[0] = nullptr;
+	m_uberConstantBuffer[0] = new PCDX11UberConstantBuffer(12);
+	m_uberConstantBuffer[1] = new PCDX11UberConstantBuffer(57);
+	m_uberConstantBuffer[2] = new PCDX11UberConstantBuffer(4);
+	m_uberConstantBuffer[3] = new PCDX11UberConstantBuffer(168);
+	m_uberConstantBuffer[4] = new PCDX11UberConstantBuffer(8);
+	m_uberConstantBuffer[5] = new PCDX11UberConstantBuffer(7);
+	m_uberConstantBuffer[6] = new PCDX11UberConstantBuffer(1);
+}
+
+
 void PCDX11StateManager::setIndexBuffer(PCDX11IndexBuffer *indexBuffer) {
 	ID3D11Buffer *buffer = nullptr;
 	if (indexBuffer)
@@ -209,6 +230,28 @@ void PCDX11StateManager::setVsConstantBuffer(uint32_t slot, PCDX11ConstantBuffer
 	}
 }
 
+void PCDX11StateManager::setCommonConstantBuffers() {
+	setVsConstantBuffer(0, m_uberConstantBuffer[0]); // WorldBuffer
+	setVsConstantBuffer(1, m_uberConstantBuffer[3]); // SkinningBuffer
+	setVsConstantBuffer(2, m_uberConstantBuffer[1]); // SceneBuffer
+	setVsConstantBuffer(5, m_uberConstantBuffer[4]);
+	setVsConstantBuffer(6, m_uberConstantBuffer[5]);
+
+	setPsConstantBuffer(0, m_uberConstantBuffer[0]); // WorldBuffer
+	setPsConstantBuffer(1, m_uberConstantBuffer[2]); // DrawableBuffer
+	setPsConstantBuffer(2, m_uberConstantBuffer[1]); // SceneBuffer
+	setPsConstantBuffer(5, m_uberConstantBuffer[4]);
+	setPsConstantBuffer(6, m_uberConstantBuffer[5]);
+
+	// setHsConstantBuffer(0, m_uberConstantBuffer[0]);
+	// setHsConstantBuffer(1, m_uberConstantBuffer[6]);
+	// setHsConstantBuffer(2, m_uberConstantBuffer[1]);
+
+	// setDsConstantBuffer(0, m_uberConstantBuffer[0]);
+	// setDsConstantBuffer(1, m_uberConstantBuffer[6]);
+	// setDsConstantBuffer(2, m_uberConstantBuffer[1]);
+}
+
 void PCDX11StateManager::updateRasterizerState() {
 	// TODO
 }
@@ -268,7 +311,9 @@ void PCDX11StateManager::updateSamplers() {
 }
 
 void PCDX11StateManager::updateConstantBuffers() {
-	// TODO
+	for (int i = 0; i < 7; i++)
+		m_uberConstantBuffer[i]->syncBuffer(m_deviceContext);
+	m_dirtyConstantBuffers = false;
 }
 
 void PCDX11StateManager::updateRenderTargets(

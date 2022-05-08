@@ -12,6 +12,7 @@ class PCDX11RenderTarget;
 class PCDX11StreamDecl;
 class PCDX11VertexBuffer;
 class PCDX11VertexShader;
+class PCDX11UberConstantBuffer;
 
 class PCDX11StateManager : public PCDX11InternalResource {
 	ID3D11DeviceContext *m_deviceContext; // 10
@@ -45,30 +46,19 @@ class PCDX11StateManager : public PCDX11InternalResource {
 	uint32_t m_samplerFilter[16 + 4]; // 248
 	uint32_t m_samplerRepeat[16 + 4]; // 298
 
-	PCDX11ConstantBuffer *m_constantBufferVs[7 /*?*/]; // 330
-	PCDX11ConstantBuffer *m_constantBufferPs[1]; // 34C
+	PCDX11ConstantBuffer *m_constantBufferVs[7]; // 330
+	PCDX11ConstantBuffer *m_constantBufferPs[7]; // 34C
 
 public:
 	PCDX11RenderTarget *m_renderTarget = nullptr; // 380
 	PCDX11DepthBuffer *m_depthBuffer = nullptr; // 384
 
 private:
-	PCDX11ConstantBuffer *m_constantBufferSync[7]; // 5A8
+	PCDX11UberConstantBuffer *m_uberConstantBuffer[7]; // 5A8
 
 public:
 	PCDX11StateManager();
-	PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D11Device *device) :
-		m_deviceContext(deviceContext),
-		m_device(device),
-		m_indexBufferD3D(nullptr),
-		m_pixelShader(nullptr),
-		m_dirtySamplersFirst(20),
-		m_dirtySamplersLast(0),
-		m_dirtyShaderResourcesFirst(20),
-		m_dirtyShaderResourcesLast(0)
-	{
-		m_constantBufferVs[0] = nullptr;
-	}
+	PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D11Device *device);
 
 	void setIndexBuffer(PCDX11IndexBuffer *indexBuffer);
 	void setVertexBuffer(PCDX11VertexBuffer *vertexBuffer);
@@ -81,6 +71,7 @@ public:
 	void setTextureAndSampler(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown);
 	void setPsConstantBuffer(uint32_t slot, PCDX11ConstantBuffer *cb);
 	void setVsConstantBuffer(uint32_t slot, PCDX11ConstantBuffer *cb);
+	void setCommonConstantBuffers();
 
 	void updateRasterizerState();
 	void updateDepthStencilState();
