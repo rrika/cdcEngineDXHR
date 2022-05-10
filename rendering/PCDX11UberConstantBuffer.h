@@ -1,5 +1,6 @@
 #pragma once
 #include "PCDX11ConstantBuffer.h"
+#include "PCDX11DeviceManager.h"
 #include <cstdio>
 #include <cstring>
 #include <d3d11.h>

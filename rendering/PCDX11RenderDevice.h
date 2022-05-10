@@ -50,6 +50,10 @@ public:
 	PCDX11RenderDevice();
 	void createDefaultResources();
 	void createDefaultVertexAttribLayouts();
+	void setupPassCallbacks();
+	void registerComparatorsAndDrawersModel();
+	void registerComparatorsAndDrawersTerrain1();
+	void registerComparatorsAndDrawersTerrain2();
 
 	// incomplete
 	void refCountDec();

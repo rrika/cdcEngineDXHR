@@ -1,15 +1,19 @@
 #pragma once
 #include <stdint.h>
 #include "../types.h"
+#include "RenderPasses.h"
 
 namespace cdc {
 
 class IShaderLib;
+class IRenderPassCallback;
 class RenderResource;
 class TextureMap;
 
 class CommonRenderDevice
 {
+protected:
+	RenderPasses renderPasses; // 2E8
 public:
 	virtual ~CommonRenderDevice() = default;
 	virtual void refCountDec() = 0;
@@ -40,19 +44,22 @@ public:
 	virtual void method_68();
 	virtual void method_6C() = 0;
 	virtual void method_70() = 0;
-	virtual void method_74();
+
+	virtual void addPass();
 	virtual void method_78();
-	virtual void method_7C();
+	virtual uint32_t getPassOrder(uint32_t);
 	virtual void method_80();
-	virtual void registerPassCallback();
+	virtual void setPassCallback(uint32_t passId, IRenderPassCallback *cb);
 	virtual void method_88();
 	virtual void method_8C();
-	virtual void method_90();
-	virtual void method_94();
-	virtual void registerDrawer();
-	virtual void getDrawer();
-	virtual void registerComparator();
-	virtual void getComparator();
+
+	virtual uint8_t allocFuncSet(const char *name);
+	virtual void freeFuncSet(uint8_t);
+	virtual void registerDrawer(uint32_t funcSetIndex, uint32_t funcIndex, RenderFunc drawer);
+	virtual RenderFunc getDrawer(uint32_t funcSetIndex, uint32_t funcIndex);
+	virtual void registerComparator(uint32_t funcSetIndex, uint32_t funcIndex, RenderFunc comparator);
+	virtual RenderFunc getComparator(uint32_t funcSetIndex, uint32_t funcIndex);
+
 	virtual void method_A8() = 0;
 	virtual void method_AC();
 	virtual void method_B0();

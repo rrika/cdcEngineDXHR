@@ -12,6 +12,7 @@
 #include "PCDX11StreamDecl.h"
 #include "PCDX11VertexBuffer.h"
 #include "PCDX11VertexShader.h"
+#include "PCDX11UberConstantBuffer.h"
 
 namespace cdc {
 

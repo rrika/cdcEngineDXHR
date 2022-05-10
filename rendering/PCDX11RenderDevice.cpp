@@ -7,6 +7,7 @@
 #include "PCDX11ShaderLib.h"
 #include "PCDX11StateManager.h"
 #include "PCDX11Texture.h"
+#include "RenderPasses.h"
 
 namespace cdc {
 
@@ -24,6 +25,26 @@ PCDX11RenderDevice::PCDX11RenderDevice() :
 	d3dDeviceContext111580 = deviceManager->getD3DDeviceContext();
 	createDefaultResources();
 	createDefaultVertexAttribLayouts();
+
+	renderPasses.addRenderPass(0, 0x1000, 1,  1, 0);  // Depth0
+	renderPasses.addRenderPass(0, 0x2000, 1,  4, 1);  // Composite
+	renderPasses.addRenderPass(0, 0x3000, 1,  3, 2);  // Opaque
+	renderPasses.addRenderPass(0, 0x4000, 0,  5, 3);  // Translucent
+	renderPasses.addRenderPass(0, 0x8000, 0,  5, 4);  // Fullscreen
+	renderPasses.addRenderPass(0, 0x9000, 0,  5, 5);  // PostFx
+	renderPasses.addRenderPass(0, 0x5000, 0,  7, 6);  // AlphaBloomFsx
+	renderPasses.addRenderPass(0, 0x7000, 0,  6, 7);  // Predator
+	renderPasses.addRenderPass(0, 0x6000, 1,  8, 8);
+	renderPasses.addRenderPass(2, 0x8000, 1,  2, 9);
+	renderPasses.addRenderPass(0, 0x1850, 2,  0, 10); // DepthDependent
+	renderPasses.addRenderPass(0, 0x1800, 1, 10, 12); // Normal
+	renderPasses.addRenderPass(0, 0x1900, 2,  5, 13); // DeferredShading
+	renderPasses.addRenderPass(0, 0x1400, 1,  1, 14); // Depth14
+	setupPassCallbacks();
+	registerComparatorsAndDrawersModel();
+	registerComparatorsAndDrawersTerrain1();
+	registerComparatorsAndDrawersTerrain2();
+	internalCreateIfDeviceManagerAgrees();
 }
 
 void PCDX11RenderDevice::createDefaultResources() {
@@ -56,6 +77,125 @@ void PCDX11RenderDevice::createDefaultResources() {
 
 void PCDX11RenderDevice::createDefaultVertexAttribLayouts() {
 	// TODO
+}
+
+void PCDX11RenderDevice::setupPassCallbacks() {
+	IRenderPassCallback *todoDepth = nullptr;
+	IRenderPassCallback *todoDepthDependent = nullptr;
+	IRenderPassCallback *todoComposite = nullptr;
+	IRenderPassCallback *todoOpaque = nullptr;
+	IRenderPassCallback *todoTranslucent = nullptr;
+	IRenderPassCallback *todoAlphaBloomFsx = nullptr;
+	IRenderPassCallback *todoPredator = nullptr;
+	IRenderPassCallback *todoFullscreenFx = nullptr;
+	IRenderPassCallback *todoPostFx = nullptr;
+	IRenderPassCallback *todoNormal = nullptr;
+	IRenderPassCallback *todoDeferredShading = nullptr;
+
+	setPassCallback( 0, todoDepth);
+	setPassCallback(14, todoDepth);
+	setPassCallback(10, todoDepthDependent);
+	setPassCallback( 1, todoComposite);
+	setPassCallback( 2, todoOpaque);
+	setPassCallback( 3, todoTranslucent);
+	setPassCallback( 6, todoAlphaBloomFsx);
+	setPassCallback( 7, todoPredator);
+	setPassCallback( 4, todoFullscreenFx);
+	setPassCallback( 5, todoPostFx);
+	setPassCallback(12, todoNormal);
+	setPassCallback(13, todoDeferredShading);
+}
+
+void PCDX11RenderDevice::registerComparatorsAndDrawersModel() {
+	RenderFunc todoCmp128 = nullptr;
+	RenderFunc todoCmp7 = nullptr;
+	RenderFunc todoCmp46 = nullptr;
+	RenderFunc todoCmpA = nullptr;
+
+	RenderFunc todoDraw1 = nullptr;
+	RenderFunc todoDraw2 = nullptr;
+	RenderFunc todoDraw7 = nullptr;
+	RenderFunc todoDraw4 = nullptr;
+	RenderFunc todoDraw56 = nullptr;
+	RenderFunc todoDrawA = nullptr;
+
+	allocFuncSet("RenderModelDrawable");
+	uint8_t funcSet = 1;
+	registerComparator(funcSet, 1, todoCmp128);
+	registerComparator(funcSet, 2, todoCmp128);
+	registerComparator(funcSet, 8, todoCmp128);
+	registerComparator(funcSet, 7, todoCmp7);
+	registerComparator(funcSet, 4, todoCmp46);
+	registerComparator(funcSet, 6, todoCmp46);
+
+	registerDrawer(funcSet, 1, todoDraw1);
+	registerDrawer(funcSet, 2, todoDraw2);
+	registerDrawer(funcSet, 7, todoDraw7);
+	registerDrawer(funcSet, 4, todoDraw4);
+	registerDrawer(funcSet, 5, todoDraw56);
+	registerDrawer(funcSet, 6, todoDraw56);
+
+	registerComparator(funcSet, 10, todoCmpA);
+	registerDrawer(funcSet, 10, todoDrawA);
+}
+
+void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain1() {
+	RenderFunc todoCmp12 = nullptr;
+	RenderFunc todoCmp467 = nullptr;
+	RenderFunc todoCmpA = nullptr;
+
+	RenderFunc todoDraw1 = nullptr;
+	RenderFunc todoDraw2 = nullptr;
+	RenderFunc todoDraw7 = nullptr;
+	RenderFunc todoDraw4 = nullptr;
+	RenderFunc todoDraw56 = nullptr;
+	RenderFunc todoDrawA = nullptr;
+
+	uint8_t funcSet = allocFuncSet("RenderTerrainDrawable");
+	registerComparator(funcSet, 1, todoCmp12);
+	registerComparator(funcSet, 2, todoCmp12);
+	registerComparator(funcSet, 7, todoCmp467);
+	registerComparator(funcSet, 4, todoCmp467);
+	registerComparator(funcSet, 6, todoCmp467);
+
+	registerDrawer(funcSet, 1, todoDraw1);
+	registerDrawer(funcSet, 2, todoDraw2);
+	registerDrawer(funcSet, 7, todoDraw7);
+	registerDrawer(funcSet, 4, todoDraw4);
+	registerDrawer(funcSet, 5, todoDraw56);
+	registerDrawer(funcSet, 6, todoDraw56);
+
+	registerComparator(funcSet, 10, todoCmpA);
+	registerDrawer(funcSet, 10, todoDrawA);
+}
+
+void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain2() {
+	RenderFunc todoCmp = nullptr;
+
+	RenderFunc todoDraw1 = nullptr;
+	RenderFunc todoDraw2 = nullptr;
+	RenderFunc todoDraw7 = nullptr;
+	RenderFunc todoDraw4 = nullptr;
+	RenderFunc todoDraw56 = nullptr;
+	RenderFunc todoDrawA = nullptr;
+
+	uint8_t funcSet = allocFuncSet("RenderTerrainDrawable");
+	registerComparator(funcSet, 1, todoCmp);
+	registerComparator(funcSet, 2, todoCmp);
+	registerComparator(funcSet, 8, todoCmp);
+	registerComparator(funcSet, 7, todoCmp);
+	registerComparator(funcSet, 4, todoCmp);
+	registerComparator(funcSet, 6, todoCmp);
+
+	registerDrawer(funcSet, 1, todoDraw1);
+	registerDrawer(funcSet, 2, todoDraw2);
+	registerDrawer(funcSet, 7, todoDraw7);
+	registerDrawer(funcSet, 4, todoDraw4);
+	registerDrawer(funcSet, 5, todoDraw56);
+	registerDrawer(funcSet, 6, todoDraw56);
+
+	registerComparator(funcSet, 10, todoCmp);
+	registerDrawer(funcSet, 10, todoDrawA);
 }
 
 void PCDX11RenderDevice::refCountDec() {

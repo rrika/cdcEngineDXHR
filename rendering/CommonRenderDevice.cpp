@@ -53,7 +53,7 @@ void CommonRenderDevice::method_68() {
 	// TODO
 }
 
-void CommonRenderDevice::method_74() {
+void CommonRenderDevice::addPass() {
 	// TODO
 }
 
@@ -61,16 +61,16 @@ void CommonRenderDevice::method_78() {
 	// TODO
 }
 
-void CommonRenderDevice::method_7C() {
-	// TODO
+uint32_t CommonRenderDevice::getPassOrder(uint32_t passId) {
+	return renderPasses.passes[passId].order;
 }
 
 void CommonRenderDevice::method_80() {
 	// TODO
 }
 
-void CommonRenderDevice::registerPassCallback() {
-	// TODO
+void CommonRenderDevice::setPassCallback(uint32_t passId, IRenderPassCallback *cb) {
+	renderPasses.passes[passId].callbacks = cb;
 }
 
 void CommonRenderDevice::method_88() {
@@ -81,28 +81,30 @@ void CommonRenderDevice::method_8C() {
 	// TODO
 }
 
-void CommonRenderDevice::method_90() {
+uint8_t CommonRenderDevice::allocFuncSet(const char *name) {
+	// TODO
+	static int counter = 0;
+	return ++counter;
+}
+
+void CommonRenderDevice::freeFuncSet(uint8_t funcSet) {
 	// TODO
 }
 
-void CommonRenderDevice::method_94() {
-	// TODO
+void CommonRenderDevice::registerDrawer(uint32_t funcSetIndex, uint32_t funcIndex, RenderFunc drawer) {
+	renderPasses.drawers[funcSetIndex].func[funcIndex] = drawer;
 }
 
-void CommonRenderDevice::registerDrawer() {
-	// TODO
+RenderFunc CommonRenderDevice::getDrawer(uint32_t funcSetIndex, uint32_t funcIndex) {
+	return renderPasses.drawers[funcSetIndex].func[funcIndex];
 }
 
-void CommonRenderDevice::getDrawer() {
-	// TODO
+void CommonRenderDevice::registerComparator(uint32_t funcSetIndex, uint32_t funcIndex, RenderFunc comparator) {
+	renderPasses.comparators[funcSetIndex].func[funcIndex] = comparator;
 }
 
-void CommonRenderDevice::registerComparator() {
-	// TODO
-}
-
-void CommonRenderDevice::getComparator() {
-	// TODO
+RenderFunc CommonRenderDevice::getComparator(uint32_t funcSetIndex, uint32_t funcIndex) {
+	return renderPasses.comparators[funcSetIndex].func[funcIndex];
 }
 
 void CommonRenderDevice::method_AC() {

@@ -9,9 +9,6 @@ class PCDX11ClearDrawable :
 	public IRenderDrawable
 {
 public:
-	// uint16_t word4;
-	// uint16_t word6;
-	// float float8;
 	PCDX11RenderDevice *renderDevice; // C
 	uint32_t flags; // 10
 	uint32_t clearStencil; // 14
