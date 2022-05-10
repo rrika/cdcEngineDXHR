@@ -47,11 +47,12 @@ struct DrawableItem { // guessed name
 };
 
 struct DrawableList { // guessed name
-	RingBuffer *ringbuffer;
+	RingBuffer *ringBuffer;
 	DrawableItem *first;
 	DrawableItem *last;
 	uint32_t itemCount;
 
+	void add(IRenderDrawable *drawable);
 	void sortSimple();
 	void sortWithFunc(RenderFunctionSet *funcSet, uint32_t funcSetIndex);
 	void draw(RenderFunctionSet *funcSet, uint32_t funcSetIndex);

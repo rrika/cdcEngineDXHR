@@ -23,6 +23,7 @@
 #include "rendering/PCDX11Texture.h"
 #include "rendering/PCDX11UberConstantBuffer.h"
 #include "rendering/PCDX11VertexShader.h"
+#include "rendering/RenderPasses.h"
 #include "drm/ResolveReceiver.h"
 #include "drm/sections/RenderResourceSection.h"
 #include "drm/sections/ShaderLibSection.h"
@@ -491,6 +492,15 @@ int spinnyCube(HWND window,
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
+        cdc::RingBuffer *ringBuffer = nullptr;
+        cdc::DrawableList list = {ringBuffer, 0, 0, 0};
+
+        cdc::RenderFunctionSet funcSet;
+        funcSet.func[0] = [](uint32_t ignore, cdc::IRenderDrawable *r, cdc::IRenderDrawable *p) -> bool {
+            r->renderDrawable0();
+            return true;
+        };
+
         // won't clear on first frame because RTs are not set
         if (true) {
             float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
@@ -519,7 +529,12 @@ int spinnyCube(HWND window,
         stateManager.updateShaderResources();
         stateManager.updateSamplers();
 
-        setRtDrawable.renderDrawable0();
+        if (true) {
+            list.add(&setRtDrawable);
+            list.draw(&funcSet, 0);
+        } else {
+            setRtDrawable.renderDrawable0();
+        }
         deviceContext->OMSetDepthStencilState(depthStencilState, 0);
         deviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff); // use default blend mode (i.e. disable)
 

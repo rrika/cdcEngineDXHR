@@ -16,6 +16,19 @@ DrawableListsAndMasks *RenderPasses::createDrawableLists(/*uint32_t,*/ uint32_t 
 	return new DrawableListsAndMasks(this, mask, ringBuffer);
 }
 
+void DrawableList::add(IRenderDrawable *drawable) {
+	itemCount++;
+	// TODO: alloc from ringbuffer
+	auto item = new DrawableItem;
+	item->drawable = drawable;
+	item->next = nullptr;
+	if (last)
+		last->next = item;
+	last = item;
+	if (!first)
+		first = item;
+}
+
 void DrawableList::sortSimple() {
 	// TODO
 }
@@ -34,6 +47,7 @@ void DrawableList::draw(RenderFunctionSet *funcSet, uint32_t funcSetIndex) {
 			prev->word4 == drawable->word4 &&
 			prev->getVtable() == drawable->getVtable();
 		funcSet->func[drawable->word4](funcSetIndex, drawable, prev);
+		item = item->next;
 	}
 }
 
@@ -64,18 +78,8 @@ void DrawableListsAndMasks::add(IRenderDrawable *drawable, uint32_t insertMask) 
 	uint32_t advanceMask = passMask8;
 	insertMask &= passMaskC;
 	while (insertMask) {
-		if (insertMask & 1) {
-			list->itemCount++;
-			// TODO: alloc from ringbuffer
-			auto item = new DrawableItem;
-			item->drawable = drawable;
-			item->next = nullptr;
-			if (list->last)
-				list->last->next = item;
-			list->last = item;
-			if (!list->first)
-				list->first = item;
-		}
+		if (insertMask & 1)
+			list->add(drawable);
 
 		if (advanceMask & 1)
 			list++;
