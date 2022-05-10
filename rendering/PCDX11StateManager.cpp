@@ -317,10 +317,23 @@ void PCDX11StateManager::updateConstantBuffers() {
 	m_dirtyConstantBuffers = false;
 }
 
+void PCDX11StateManager::pushRenderTargets(
+	PCDX11RenderTarget *renderTarget,
+	PCDX11DepthBuffer *depthBuffer)
+{
+	// TODO
+	if (renderTarget && depthBuffer)
+		updateRenderTargets(renderTarget, depthBuffer);
+}
+
+void PCDX11StateManager::popRenderTargets() {
+	// TODO
+}
+
 void PCDX11StateManager::updateRenderTargets(
 	PCDX11RenderTarget *renderTarget,
-	PCDX11DepthBuffer *depthBuffer
-) {
+	PCDX11DepthBuffer *depthBuffer)
+{
 	// TODO
 	m_renderTarget = renderTarget;
 	m_depthBuffer = depthBuffer;

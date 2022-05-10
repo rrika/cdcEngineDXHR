@@ -5,10 +5,30 @@ namespace cdc {
 
 void RenderPasses::addRenderPass(uint32_t arg0, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex, uint32_t firstPassId) {
 	// TODO
+	uint32_t passId = firstPassId;
+	passes[passId].order = order;
+	passes[passId].sortMode = sortMode;
+	passes[passId].funcSetIndex = 0;
+	passes[passId].callbacks = nullptr;
 }
 
-void RenderPasses::draw(/*uint32_t,*/ DrawableListsAndMasks *lists, CommonRenderDevice *renderdevice, uint32_t mask) {
+void RenderPasses::draw(/*uint32_t,*/ DrawableListsAndMasks *lists, CommonRenderDevice *renderDevice, uint32_t mask) {
 	// TODO
+	uint32_t passId = 0;
+	RenderPass *pass = &passes[passId];
+	IRenderPassCallback *callbacks = pass->callbacks;
+	DrawableList *list = &lists->drawableLists[0];
+	uint32_t drawableCount = list->itemCount;
+	uint32_t priorPasses = 0;
+	if (!callbacks || callbacks->pre(renderDevice, passId, drawableCount, priorPasses)) {
+		priorPasses |= 1 << passId;
+		if (drawableCount) {
+			// TODO: sort
+			list->draw(&drawers[pass->funcSetIndex], pass->funcSetIndex);
+		}
+	}
+	if (callbacks)
+		callbacks->post(renderDevice, passId);
 }
 
 DrawableListsAndMasks *RenderPasses::createDrawableLists(/*uint32_t,*/ uint32_t mask, RingBuffer *ringBuffer) {
@@ -69,6 +89,7 @@ DrawableListsAndMasks::DrawableListsAndMasks(
 	}
 	// TODO: use ringbuffer
 	drawableLists = new DrawableList[listCount];
+
 	for (uint32_t i = 0; i<listCount; i++)
 		drawableLists[i] = { ringBuffer, 0, 0, 0 };
 }

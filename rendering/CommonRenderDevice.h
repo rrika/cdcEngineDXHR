@@ -13,6 +13,7 @@ class TextureMap;
 class CommonRenderDevice
 {
 protected:
+	RingBuffer *ringBuffer30; // 30
 	RenderPasses renderPasses; // 2E8
 public:
 	virtual ~CommonRenderDevice() = default;
@@ -131,6 +132,7 @@ public:
 	virtual void method_1A0();
 
 	static RenderResource *createResource(uint32_t, uint32_t);
+	RingBuffer *getRingBuffer() { return ringBuffer30; }
 };
 
 extern CommonRenderDevice *gRenderDevice;

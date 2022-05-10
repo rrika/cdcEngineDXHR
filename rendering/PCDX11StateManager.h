@@ -80,6 +80,9 @@ public:
 	void updateSamplers();
 	void updateConstantBuffers();
 
+	void pushRenderTargets(PCDX11RenderTarget *renderTarget, PCDX11DepthBuffer *depthBuffer);
+	void popRenderTargets();
+
 	void updateRenderTargets(PCDX11RenderTarget *renderTarget, PCDX11DepthBuffer *depthBuffer);
 	void updateRenderState();
 	void updateViewport();

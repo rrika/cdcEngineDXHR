@@ -16,6 +16,7 @@
 #include "rendering/PCDX11PixelShader.h"
 #include "rendering/PCDX11RenderDevice.h"
 #include "rendering/PCDX11RenderTarget.h"
+#include "rendering/PCDX11Scene.h"
 #include "rendering/PCDX11SetRTDrawable.h"
 #include "rendering/PCDX11SimpleStaticVertexBuffer.h"
 #include "rendering/PCDX11StateManager.h"
@@ -319,9 +320,45 @@ int spinnyCube(HWND window,
     cdcRenderTarget.renderTexture.view = static_cast<ID3D11View*>(frameBufferView);
     cdcDepthBuffer.renderTexture.view = static_cast<ID3D11View*>(depthBufferView);
 
+    cdc::PCDX11SetRTDrawable setRtDrawable(&cdcRenderTarget, &cdcDepthBuffer);
+
+
     auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice);
 
-    cdc::PCDX11SetRTDrawable setRtDrawable(&cdcRenderTarget, &cdcDepthBuffer);
+    auto simplyDraw = [](uint32_t ignore, cdc::IRenderDrawable *r, cdc::IRenderDrawable *p) -> bool {
+        r->renderDrawable0();
+        return true;
+    };
+
+    cdc::RingBuffer *ringBuffer = nullptr;
+
+    // create a scene
+    cdc::CommonSceneSub18 commonSceneSub18 { 1 };
+    cdc::CommonSceneSub114 commonSceneSub114 {};
+
+    cdc::RenderPasses renderPasses;
+    renderPasses.addRenderPass(0, 0, 0, 0, 0);
+    renderPasses.drawers[0].func[0] = simplyDraw;
+
+    cdc::PCDX11Scene scene(
+        renderDevice,
+        nullptr,
+        &commonSceneSub18,
+        nullptr, // &cdcRenderTarget,
+        nullptr, // &cdcDepthBuffer,
+        &commonSceneSub114,
+        &renderPasses);
+
+    // add drawable to scene
+    scene.drawableListsAndMasks->add(&setRtDrawable, /*mask=*/ 1);
+
+    // create standalone list
+    cdc::DrawableList list = {ringBuffer, 0, 0, 0};
+    cdc::RenderFunctionSet funcSet;
+    funcSet.func[0] = simplyDraw;
+
+    // add drawable to list
+    list.add(&setRtDrawable);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -492,15 +529,6 @@ int spinnyCube(HWND window,
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
-        cdc::RingBuffer *ringBuffer = nullptr;
-        cdc::DrawableList list = {ringBuffer, 0, 0, 0};
-
-        cdc::RenderFunctionSet funcSet;
-        funcSet.func[0] = [](uint32_t ignore, cdc::IRenderDrawable *r, cdc::IRenderDrawable *p) -> bool {
-            r->renderDrawable0();
-            return true;
-        };
-
         // won't clear on first frame because RTs are not set
         if (true) {
             float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
@@ -520,7 +548,7 @@ int spinnyCube(HWND window,
         deviceContext->RSSetViewports(1, &viewport);
         deviceContext->RSSetState(rasterizerState);
 
-        if (true) {
+        if (false) {
             auto errorTable = static_cast<cdc::PCDX11PixelShaderTable*>(renderDevice->shlib_1->table);
             stateManager.setPixelShader(errorTable->pixelShaders[0]);
         } else {
@@ -530,7 +558,8 @@ int spinnyCube(HWND window,
         stateManager.updateSamplers();
 
         if (true) {
-            list.add(&setRtDrawable);
+            scene.renderDrawable0();
+        } else if (false) {
             list.draw(&funcSet, 0);
         } else {
             setRtDrawable.renderDrawable0();
