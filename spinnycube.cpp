@@ -8,7 +8,7 @@
 #include "spinnycube.h"
 #include "types.h"
 #include "rendering/IPCDeviceManager.h"
-#include "rendering/PCDX11ClearDrawable.h"
+#include "rendering/IRenderPassCallback.h"
 #include "rendering/PCDX11ConstantBufferPool.h"
 #include "rendering/PCDX11DepthBuffer.h"
 #include "rendering/PCDX11DeviceManager.h"
@@ -17,7 +17,6 @@
 #include "rendering/PCDX11RenderDevice.h"
 #include "rendering/PCDX11RenderTarget.h"
 #include "rendering/PCDX11Scene.h"
-#include "rendering/PCDX11SetRTDrawable.h"
 #include "rendering/PCDX11SimpleStaticVertexBuffer.h"
 #include "rendering/PCDX11StateManager.h"
 #include "rendering/PCDX11StreamDecl.h"
@@ -253,9 +252,27 @@ public:
     uint32_t renderDrawable4() override { /*TODO*/ return 0; };
 };
 
+class SpinnyCubePass : public cdc::IRenderPassCallback {
+public:
+    D3D11_VIEWPORT *viewport;
+    ID3D11RasterizerState1* rasterizerState;
+    ID3D11DepthStencilState* depthStencilState;
+
+    bool pre(
+        cdc::CommonRenderDevice *renderDevice,
+        uint32_t passId,
+        uint32_t drawableCount,
+        uint32_t priorPassesBitfield) override;
+    void post(
+        cdc::CommonRenderDevice *renderDevice,
+        uint32_t passId) override;
+};
+
 int spinnyCube(HWND window,
     ID3D11Device *baseDevice,
     ID3D11DeviceContext *baseDeviceContext) {
+
+    auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -333,28 +350,6 @@ int spinnyCube(HWND window,
 
     cdcRenderTarget.renderTexture.view = static_cast<ID3D11View*>(frameBufferView);
     cdcDepthBuffer.renderTexture.view = static_cast<ID3D11View*>(depthBufferView);
-
-    cdc::PCDX11SetRTDrawable setRtDrawable(&cdcRenderTarget, &cdcDepthBuffer);
-
-    auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice);
-
-    auto simplyDraw = [](uint32_t ignore, cdc::IRenderDrawable *r, cdc::IRenderDrawable *p) -> bool {
-        r->renderDrawable0();
-        return true;
-    };
-
-    cdc::RingBuffer *ringBuffer = nullptr;
-
-    // create a scene
-    cdc::CommonSceneSub18 commonSceneSub18 { 1 };
-
-    renderDevice->renderPasses.addRenderPass(0, 0, 0, 0, 0);
-    renderDevice->renderPasses.drawers[0].func[0] = simplyDraw;
-
-    auto *scene = renderDevice->createScene(
-        &commonSceneSub18,
-        &cdcRenderTarget,
-        &cdcDepthBuffer);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -467,8 +462,6 @@ int spinnyCube(HWND window,
 
     D3D11_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<float>(depthBufferDesc.Width), static_cast<float>(depthBufferDesc.Height), 0.0f, 1.0f };
 
-    cdc::PCDX11ClearDrawable clearDrawable(renderDevice, (D3D11_CLEAR_DEPTH << 1) | 1, 0xff060606, 1.0f, 0);    
-
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     float w = viewport.Width / viewport.Height; // width (aspect ratio)
@@ -481,6 +474,25 @@ int spinnyCube(HWND window,
     float3 modelTranslation = { 0.0f, 0.0f, 4.0f };
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    cdc::CommonSceneSub18 commonSceneSub18 { 1 };
+    auto *scene = renderDevice->createScene(
+        &commonSceneSub18,
+        &cdcRenderTarget,
+        &cdcDepthBuffer);
+
+    auto simplyDraw = [](uint32_t ignore, cdc::IRenderDrawable *r, cdc::IRenderDrawable *p) -> bool {
+        r->renderDrawable0();
+        return true;
+    };
+
+    SpinnyCubePass cubePass;
+    cubePass.viewport = &viewport;
+    cubePass.rasterizerState = rasterizerState;
+    cubePass.depthStencilState = depthStencilState;
+    renderDevice->renderPasses.addRenderPass(0, 0, 0, 0, 0);
+    renderDevice->renderPasses.drawers[0].func[0] = simplyDraw;
+    renderDevice->setPassCallback(0, &cubePass);
 
     SpinnyCubeDrawable cubeDrawable;
     cubeDrawable.renderDevice = renderDevice;
@@ -496,6 +508,7 @@ int spinnyCube(HWND window,
     float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
     renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
     renderDevice->recordDrawable(&cubeDrawable, /*maskA=*/ 1, /*maskB=*/ 0);
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -542,20 +555,36 @@ int spinnyCube(HWND window,
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
-        // won't clear on first frame because RTs are not set
-
-        deviceContext->RSSetViewports(1, &viewport);
-        deviceContext->RSSetState(rasterizerState);
-
-        deviceContext->OMSetDepthStencilState(depthStencilState, 0);
-        deviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff); // use default blend mode (i.e. disable)
-
         scene->renderDrawable0();
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
         swapChain->Present(1, 0);
     }
+}
+
+bool SpinnyCubePass::pre(
+    cdc::CommonRenderDevice *renderDevice,
+    uint32_t passId,
+    uint32_t drawableCount,
+    uint32_t priorPassesBitfield)
+{
+    auto *deviceContext = static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice)->getD3DDeviceContext();
+
+    deviceContext->RSSetViewports(1, viewport);
+    deviceContext->RSSetState(rasterizerState);
+
+    deviceContext->OMSetDepthStencilState(depthStencilState, 0);
+    deviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff); // use default blend mode (i.e. disable)
+
+    return true;
+}
+
+void SpinnyCubePass::post(
+    cdc::CommonRenderDevice *renderDevice,
+    uint32_t passId)
+{
+    // empty
 }
 
 void SpinnyCubeDrawable::renderDrawable0() {
