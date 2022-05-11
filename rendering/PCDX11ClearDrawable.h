@@ -29,8 +29,8 @@ public:
 		clearColor(clearColor)
 	{}
 
-	virtual void renderDrawable0();
-	virtual uint32_t renderDrawable4();
+	virtual void draw(uint32_t funcSetIndex, IRenderDrawable *other);
+	virtual uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *other);
 };
 
 }

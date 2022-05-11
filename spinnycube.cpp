@@ -248,8 +248,8 @@ public:
     cdc::PCDX11IndexBuffer *cdcIndexBuffer;
     cdc::PCDX11StreamDecl *streamDecl;
     cdc::PCDX11VertexBuffer *cdcVertexBuffer;
-    void renderDrawable0() override;
-    uint32_t renderDrawable4() override { /*TODO*/ return 0; };
+    void draw(uint32_t funcSetIndex, IRenderDrawable *other) override;
+    uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *other) override { /*TODO*/ return 0; };
 };
 
 class SpinnyCubePass : public cdc::IRenderPassCallback {
@@ -481,8 +481,8 @@ int spinnyCube(HWND window,
         &cdcRenderTarget,
         &cdcDepthBuffer);
 
-    auto simplyDraw = [](uint32_t ignore, cdc::IRenderDrawable *r, cdc::IRenderDrawable *p) -> bool {
-        r->renderDrawable0();
+    auto simplyDraw = [](uint32_t funcSetIndex, cdc::IRenderDrawable *r, cdc::IRenderDrawable *p) -> bool {
+        r->draw(funcSetIndex, p);
         return true;
     };
 
@@ -555,7 +555,7 @@ int spinnyCube(HWND window,
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
-        scene->renderDrawable0();
+        scene->draw(0, nullptr);
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -587,7 +587,7 @@ void SpinnyCubePass::post(
     // empty
 }
 
-void SpinnyCubeDrawable::renderDrawable0() {
+void SpinnyCubeDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 
     stateManager->setVertexShader(cdcVertexShader);
     stateManager->setVsConstantBuffer(0, cdcConstantBuffer);

@@ -28,7 +28,7 @@ public:
 		drawableListsAndMasks = renderPasses->createDrawableLists(/*0,*/ mask, renderDevice->getRingBuffer());
 	}
 
-	void renderDrawable0() override;
+	void draw(uint32_t funcSetIndex, IRenderDrawable *other) override;
 };
 
 }

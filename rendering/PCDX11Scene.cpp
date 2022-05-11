@@ -6,7 +6,7 @@
 
 namespace cdc {
 
-void PCDX11Scene::renderDrawable0() {
+void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 	auto stateManager = deviceManager->getStateManager();
 	// TODO
 	stateManager->pushRenderTargets(

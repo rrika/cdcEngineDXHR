@@ -119,8 +119,8 @@ public:
 	void scene9() override {}
 	void sceneA() override {}
 
-	// void renderDrawable0() = 0;
-	uint32_t renderDrawable4() override { return true; }
+	// void draw(uint32_t funcSetIndex, IRenderDrawable *other) = 0;
+	uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *other) override { return true; }
 };
 
 }

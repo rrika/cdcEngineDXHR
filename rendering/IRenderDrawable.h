@@ -10,8 +10,8 @@ protected:
 	uint16_t word6 = 0;
 	float float8 = 0.0f;
 public:
-	virtual void renderDrawable0() = 0;
-	virtual uint32_t renderDrawable4() = 0;
+	virtual void draw(uint32_t funcSetIndex, IRenderDrawable *other) = 0;
+	virtual uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *other) = 0;
 	uint32_t getVtable() { return *(uint32_t*)this; }
 };
 
