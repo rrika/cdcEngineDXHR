@@ -14,7 +14,7 @@ void PCDX11Scene::renderDrawable0() {
 		static_cast<PCDX11DepthBuffer*>(depthBuffer));
 	// TODO
 	if (drawableListsAndMasks) {
-		drawableListsAndMasks->renderPasses->draw(
+		drawableListsAndMasks->renderPasses->sortAndDraw(
 			drawableListsAndMasks,
 			renderDevice,
 			drawableListsAndMasks->passMask8);

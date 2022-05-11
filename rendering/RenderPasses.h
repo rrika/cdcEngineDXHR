@@ -4,6 +4,7 @@
 namespace cdc {
 
 struct RingBuffer;
+struct DrawableList;
 struct DrawableListsAndMasks;
 class IRenderDrawable;
 
@@ -37,7 +38,9 @@ struct RenderPasses { // guessed name
 	RenderFunctionSet drawers[20]; // 91C
 
 	void addRenderPass(uint32_t arg0, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex, uint32_t firstPassId);
-	void draw(/*uint32_t,*/ DrawableListsAndMasks *lists, CommonRenderDevice *renderdevice, uint32_t mask);
+	void sort(DrawableList *list, int passId);
+	void draw(DrawableList *list, int passId);
+	void sortAndDraw(/*uint32_t,*/ DrawableListsAndMasks *lists, CommonRenderDevice *renderdevice, uint32_t mask);
 	DrawableListsAndMasks *createDrawableLists(/*uint32_t,*/ uint32_t mask, RingBuffer *ringBuffer);
 };
 

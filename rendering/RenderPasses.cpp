@@ -12,7 +12,21 @@ void RenderPasses::addRenderPass(uint32_t arg0, uint32_t order, uint32_t sortMod
 	passes[passId].callbacks = nullptr;
 }
 
-void RenderPasses::draw(/*uint32_t,*/ DrawableListsAndMasks *lists, CommonRenderDevice *renderDevice, uint32_t mask) {
+void RenderPasses::sort(DrawableList *list, int passId) {
+	RenderPass& pass = passes[passId];
+	if (pass.sortMode == 0) {
+		list->sortSimple();
+	} else if (pass.sortMode == 1) {
+		list->sortWithFunc(&comparators[pass.funcSetIndex], pass.funcSetIndex);
+	}
+}
+
+void RenderPasses::draw(DrawableList *list, int passId) {
+	RenderPass& pass = passes[passId];
+	list->draw(&drawers[pass.funcSetIndex], pass.funcSetIndex);
+}
+
+void RenderPasses::sortAndDraw(/*uint32_t,*/ DrawableListsAndMasks *lists, CommonRenderDevice *renderDevice, uint32_t mask) {
 	// TODO
 	uint32_t passId = 0;
 	RenderPass *pass = &passes[passId];
@@ -23,8 +37,8 @@ void RenderPasses::draw(/*uint32_t,*/ DrawableListsAndMasks *lists, CommonRender
 	if (!callbacks || callbacks->pre(renderDevice, passId, drawableCount, priorPasses)) {
 		priorPasses |= 1 << passId;
 		if (drawableCount) {
-			// TODO: sort
-			list->draw(&drawers[pass->funcSetIndex], pass->funcSetIndex);
+			sort(list, passId);
+			draw(list, passId);
 		}
 	}
 	if (callbacks)
