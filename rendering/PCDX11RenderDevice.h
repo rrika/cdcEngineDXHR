@@ -56,67 +56,87 @@ public:
 	void registerComparatorsAndDrawersTerrain2();
 
 	// incomplete
-	void refCountDec();
-	void method_08();
-	void method_0C();
-	void method_10();
-	void method_1C();
-	void method_20();
-	void method_24();
-	void method_28();
-	void method_2C();
-	void method_30();
+	void refCountDec() override;
+	void method_08() override;
+	void method_0C() override;
+	void method_10() override;
+	void method_1C() override;
+	void method_20() override;
+	void method_24() override;
+	void method_28() override;
+	void method_2C() override;
+	void method_30() override;
 	CommonScene *createScene(
 		CommonSceneSub18 *sub18,
 		CommonRenderTarget *renderTarget,
-		CommonDepthBuffer *depthBuffer);
-	void method_50();
-	void getSceneRenderTarget();
-	void method_64();
-	void method_6C();
-	void method_70();
-	void method_A8();
+		CommonDepthBuffer *depthBuffer) override;
+	void method_50() override;
+	void getSceneRenderTarget() override;
+	void method_64() override;
+	void method_6C() override;
+	void method_70() override;
+	void method_A8() override;
 	void clearRenderTarget(
 		uint32_t flags,
 		uint32_t unknown1,
 		float unknown2,
 		float *clearColor,
 		float clearDepth,
-		uint32_t clearStencil);
-	void setRenderTarget();
-	void method_C0();
-	void method_C4();
-	void method_C8();
-	void method_CC();
-	void method_D0();
-	void method_D4();
-	void method_D8();
-	void method_DC();
-	void method_EC();
-	void createMaterial();
-	TextureMap *createTexture(uint32_t);
-	void createProceduralTexture();
-	IShaderLib *createShaderLib(uint32_t);
-	RenderResource *createRenderModel(uint32_t);
-	void createRenderModelInstance();
-	RenderResource *createRenderTerrain(uint32_t);
-	void createRenderTerrainInstance();
-	void createRenderImage();
-	void createWaterSurface();
-	void createLightResource();
-	void createRenderLight();
-	void createMatrixState();
-	void createVertexBuffer();
-	void createIndexBuffer();
-	void method_16C();
-	void createDepthBuffer();
-	void method_174();
-	void getWindowSize(uint *width, uint *height);
-	void method_17C();
-	void method_180();
+		uint32_t clearStencil) override;
+	void setRenderTarget() override;
+	void method_C0() override;
+	void method_C4() override;
+	void method_C8() override;
+	void method_CC() override;
+	void method_D0() override;
+	void method_D4() override;
+	void method_D8() override;
+	void method_DC() override;
+	void method_EC() override;
+	void createMaterial() override;
+	TextureMap *createTexture(uint32_t) override;
+	void createProceduralTexture() override;
+	IShaderLib *createShaderLib(uint32_t) override;
+	RenderResource *createRenderModel(uint32_t) override;
+	void createRenderModelInstance() override;
+	RenderResource *createRenderTerrain(uint32_t) override;
+	void createRenderTerrainInstance() override;
+	void createRenderImage() override;
+	void createWaterSurface() override;
+	void createLightResource() override;
+	void createRenderLight() override;
+	void createMatrixState() override;
+	void createVertexBuffer() override;
+	void createIndexBuffer() override;
+	void method_16C() override;
+	void createDepthBuffer() override;
+	void method_174() override;
+	void getWindowSize(uint *width, uint *height) override;
+	void method_17C() override;
+	void method_180() override;
 
-	bool internalCreate();
-	void internalRelease();
+	bool internalCreate() override;
+	void internalRelease() override;
+
+	virtual void dx11_method_0();
+	virtual void dx11_method_4();
+	virtual void dx11_method_8();
+	virtual void dx11_method_C();
+	virtual void dx11_method_10();
+	virtual void dx11_method_14();
+	virtual void dx11_method_18();
+	virtual void dx11_method_1C();
+	virtual void dx11_method_20();
+	virtual void dx11_method_24();
+	virtual void dx11_method_28();
+	virtual void dx11_method_2C();
+	virtual void dx11_method_30();
+	virtual void dx11_method_34();
+	virtual void dx11_method_38();
+	virtual void dx11_method_3C();
+	virtual void dx11_method_40();
+	virtual void dx11_method_44();
+	virtual void dx11_method_48();
 
 	ID3D11DeviceContext *d3dDeviceContext111580;
 	ID3D11DeviceContext *getD3DDeviceContext() { return d3dDeviceContext111580; }

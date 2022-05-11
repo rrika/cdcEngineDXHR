@@ -441,6 +441,82 @@ void PCDX11RenderDevice::internalRelease() {
 	// TODO
 }
 
+void PCDX11RenderDevice::dx11_method_0() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_4() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_8() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_C() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_10() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_14() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_18() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_1C() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_20() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_24() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_28() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_2C() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_30() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_34() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_38() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_3C() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_40() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_44() {
+	// TODO
+}
+
+void PCDX11RenderDevice::dx11_method_48() {
+	// TODO
+}
+
 void PCDX11RenderDevice::recordDrawable(IRenderDrawable *drawable, uint32_t maskA, uint8_t maskB) {
 	// TODO
 	// drawable->renderDrawable0(); // hack
