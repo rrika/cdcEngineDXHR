@@ -347,21 +347,14 @@ int spinnyCube(HWND window,
 
     // create a scene
     cdc::CommonSceneSub18 commonSceneSub18 { 1 };
-    cdc::CommonSceneSub114 commonSceneSub114 {};
 
-    cdc::RenderPasses renderPasses;
-    renderPasses.addRenderPass(0, 0, 0, 0, 0);
-    renderPasses.drawers[0].func[0] = simplyDraw;
+    renderDevice->renderPasses.addRenderPass(0, 0, 0, 0, 0);
+    renderDevice->renderPasses.drawers[0].func[0] = simplyDraw;
 
-    cdc::PCDX11Scene scene(
-        renderDevice,
-        nullptr,
+    auto *scene = renderDevice->createScene(
         &commonSceneSub18,
         &cdcRenderTarget,
-        &cdcDepthBuffer,
-        &commonSceneSub114,
-        &renderPasses);
-
+        &cdcDepthBuffer);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -499,8 +492,10 @@ int spinnyCube(HWND window,
     cubeDrawable.streamDecl = &streamDecl;
     cubeDrawable.cdcVertexBuffer = &cdcVertexBuffer;
 
-    // add drawable to scene
-    scene.drawableListsAndMasks->add(&cubeDrawable, /*mask=*/ 1);
+    // add two drawables to the scene
+    float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
+    renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
+    renderDevice->recordDrawable(&cubeDrawable, /*maskA=*/ 1, /*maskB=*/ 0);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -549,16 +544,13 @@ int spinnyCube(HWND window,
 
         // won't clear on first frame because RTs are not set
 
-        float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
-        renderDevice->clearRenderTarget(10, 0, 0.0f, backgroundColor, 1.0f, 0);
-
         deviceContext->RSSetViewports(1, &viewport);
         deviceContext->RSSetState(rasterizerState);
 
         deviceContext->OMSetDepthStencilState(depthStencilState, 0);
         deviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff); // use default blend mode (i.e. disable)
 
-        scene.renderDrawable0();
+        scene->renderDrawable0();
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 

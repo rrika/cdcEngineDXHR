@@ -24,7 +24,7 @@ class CommonScene :
 	public IRenderScene,
 	public IRenderDrawable
 {
-protected:
+public:
 	// char char10;
 	// uint8_t f11[7];
 	CommonSceneSub18 sub18;
@@ -79,9 +79,7 @@ protected:
 	// uint8_t f680[64];
 	// uint32_t dword6C0;
 	// uint32_t figureThisOut6C4;
-public:
 	DrawableListsAndMasks *drawableListsAndMasks; // 6C8
-protected:
 	// int forwardToLightManagerPassMask6CC;
 	// uint32_t dword6D0;
 	// uint32_t dword6D4;

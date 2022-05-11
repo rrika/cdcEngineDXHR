@@ -4,6 +4,7 @@
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11RenderTarget.h"
+#include "PCDX11Scene.h"
 #include "PCDX11ShaderLib.h"
 #include "PCDX11StateManager.h"
 #include "PCDX11Texture.h"
@@ -238,8 +239,22 @@ void PCDX11RenderDevice::method_30() {
 	// TODO
 }
 
-void PCDX11RenderDevice::method_48() {
+CommonScene *PCDX11RenderDevice::createScene(
+	CommonSceneSub18 *sub18,
+	CommonRenderTarget *renderTarget,
+	CommonDepthBuffer *depthBuffer
+) {
 	// TODO
+	auto scene = new PCDX11Scene(
+		this,
+		scene7C, // parent scene perhaps?
+		sub18,
+		renderTarget,
+		depthBuffer,
+		getSceneSub114(),
+		&renderPasses);
+	scene7C = scene;
+	return scene;
 }
 
 void PCDX11RenderDevice::method_50() {
@@ -268,8 +283,8 @@ void PCDX11RenderDevice::method_A8() {
 
 void PCDX11RenderDevice::clearRenderTarget(
 	uint32_t flags,
-	uint32_t unknown1,
-	float unknown2,
+	uint32_t passMask,
+	float sortOrder,
 	float *clearColor,
 	float clearDepth,
 	uint32_t clearStencil)
@@ -280,15 +295,15 @@ void PCDX11RenderDevice::clearRenderTarget(
 		((int)(clearColor[0] * 255.0) << 16) |
 		((int)(clearColor[1] * 255.0) <<  8) |
 		((int)(clearColor[2] * 255.0) <<  0);
-	(void)unknown2;
+	(void)sortOrder; // assign to IRenderDrawable::float8
 	auto clearDrawable = new PCDX11ClearDrawable(
 		this,
 		(flags & 2 | (flags >> 1) & 0xC) >> 1,
 		clearColorI,
 		clearDepth,
 		clearStencil);
-	recordDrawable(clearDrawable, unknown1, 0);
-	delete clearDrawable; // since it's not actually getting queued
+	recordDrawable(clearDrawable, passMask, 0);
+	// TODO: don't leak PCDX11ClearDrawable instances
 }
 
 void PCDX11RenderDevice::setRenderTarget() {
@@ -426,9 +441,10 @@ void PCDX11RenderDevice::internalRelease() {
 	// TODO
 }
 
-void PCDX11RenderDevice::recordDrawable(IRenderDrawable *drawable, uint32_t arg1, uint8_t arg2) {
+void PCDX11RenderDevice::recordDrawable(IRenderDrawable *drawable, uint32_t maskA, uint8_t maskB) {
 	// TODO
-	drawable->renderDrawable0(); // hack
+	// drawable->renderDrawable0(); // hack
+	scene7C->drawableListsAndMasks->add(drawable, maskA);
 }
 
 void PCDX11RenderDevice::clearRenderTargetNow(char flags, float *color, float depth, uint32_t stencil) {

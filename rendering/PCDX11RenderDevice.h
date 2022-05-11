@@ -66,7 +66,10 @@ public:
 	void method_28();
 	void method_2C();
 	void method_30();
-	void method_48();
+	CommonScene *createScene(
+		CommonSceneSub18 *sub18,
+		CommonRenderTarget *renderTarget,
+		CommonDepthBuffer *depthBuffer);
 	void method_50();
 	void getSceneRenderTarget();
 	void method_64();

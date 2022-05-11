@@ -127,8 +127,12 @@ void CommonRenderDevice::method_E4() {
 	// TODO
 }
 
-void CommonRenderDevice::method_E8() {
-	// TODO
+CommonSceneSub114 *CommonRenderDevice::getSceneSub114() {
+	if (scene7C)
+		return &scene7C->sub114;
+	else
+		return &sceneSub114_8C;
+	return nullptr;
 }
 
 void CommonRenderDevice::method_F0() {

@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "../types.h"
 #include "RenderPasses.h"
+#include "CommonScene.h"
 
 namespace cdc {
 
@@ -9,11 +10,15 @@ class IShaderLib;
 class IRenderPassCallback;
 class RenderResource;
 class TextureMap;
+class CommonScene;
 
 class CommonRenderDevice
 {
 protected:
 	RingBuffer *ringBuffer30; // 30
+	CommonScene *scene7C; // 7C
+	CommonSceneSub114 sceneSub114_8C; // 8C
+public:
 	RenderPasses renderPasses; // 2E8
 public:
 	virtual ~CommonRenderDevice() = default;
@@ -34,7 +39,10 @@ public:
 	virtual void method_3C();
 	virtual void method_40();
 	virtual void method_44();
-	virtual void method_48() = 0;
+	virtual CommonScene *createScene(
+		CommonSceneSub18 *sub18,
+		CommonRenderTarget *renderTarget,
+		CommonDepthBuffer *depthBuffer) = 0;
 	virtual void method_4C();
 	virtual void method_50() = 0;
 	virtual void method_54();
@@ -83,7 +91,7 @@ public:
 	virtual void method_DC() = 0;
 	virtual void method_E0();
 	virtual void method_E4();
-	virtual void method_E8();
+	virtual CommonSceneSub114 *getSceneSub114();
 	virtual void method_EC() = 0;
 	virtual void method_F0();
 	virtual void method_F4();
