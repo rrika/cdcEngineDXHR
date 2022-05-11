@@ -239,6 +239,20 @@ struct matrix { float m[4][4]; };
 
 matrix operator*(const matrix& m1, const matrix& m2);
 
+class SpinnyCubeDrawable : public cdc::IRenderDrawable {
+public:
+    cdc::PCDX11RenderDevice *renderDevice;
+    cdc::PCDX11StateManager *stateManager;
+    cdc::PCDX11ConstantBuffer *cdcConstantBuffer;
+    cdc::PCDX11VertexShader *cdcVertexShader;
+    cdc::PCDX11PixelShader *cdcPixelShader;
+    cdc::PCDX11IndexBuffer *cdcIndexBuffer;
+    cdc::PCDX11StreamDecl *streamDecl;
+    cdc::PCDX11VertexBuffer *cdcVertexBuffer;
+    void renderDrawable0() override;
+    uint32_t renderDrawable4() override { /*TODO*/ return 0; };
+};
+
 int spinnyCube(HWND window,
     ID3D11Device *baseDevice,
     ID3D11DeviceContext *baseDeviceContext) {
@@ -322,7 +336,6 @@ int spinnyCube(HWND window,
 
     cdc::PCDX11SetRTDrawable setRtDrawable(&cdcRenderTarget, &cdcDepthBuffer);
 
-
     auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice);
 
     auto simplyDraw = [](uint32_t ignore, cdc::IRenderDrawable *r, cdc::IRenderDrawable *p) -> bool {
@@ -344,21 +357,11 @@ int spinnyCube(HWND window,
         renderDevice,
         nullptr,
         &commonSceneSub18,
-        nullptr, // &cdcRenderTarget,
-        nullptr, // &cdcDepthBuffer,
+        &cdcRenderTarget,
+        &cdcDepthBuffer,
         &commonSceneSub114,
         &renderPasses);
 
-    // add drawable to scene
-    scene.drawableListsAndMasks->add(&setRtDrawable, /*mask=*/ 1);
-
-    // create standalone list
-    cdc::DrawableList list = {ringBuffer, 0, 0, 0};
-    cdc::RenderFunctionSet funcSet;
-    funcSet.func[0] = simplyDraw;
-
-    // add drawable to list
-    list.add(&setRtDrawable);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -486,6 +489,21 @@ int spinnyCube(HWND window,
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    SpinnyCubeDrawable cubeDrawable;
+    cubeDrawable.renderDevice = renderDevice;
+    cubeDrawable.stateManager = &stateManager;
+    cubeDrawable.cdcConstantBuffer = &cdcConstantBuffer;
+    cubeDrawable.cdcVertexShader = &cdcVertexShader;
+    cubeDrawable.cdcPixelShader = &cdcPixelShader;
+    cubeDrawable.cdcIndexBuffer = &cdcIndexBuffer;
+    cubeDrawable.streamDecl = &streamDecl;
+    cubeDrawable.cdcVertexBuffer = &cdcVertexBuffer;
+
+    // add drawable to scene
+    scene.drawableListsAndMasks->add(&cubeDrawable, /*mask=*/ 1);
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     while (true)
     {
         MSG msg;
@@ -530,51 +548,44 @@ int spinnyCube(HWND window,
         ///////////////////////////////////////////////////////////////////////////////////////////
 
         // won't clear on first frame because RTs are not set
-        if (true) {
-            float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
-            renderDevice->clearRenderTarget(10, 0, 0.0f, backgroundColor, 1.0f, 0);
-        } else {
-            clearDrawable.renderDrawable0();
-        }
 
-        stateManager.setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        stateManager.setStreamDecl(&streamDecl);
-        stateManager.setVertexBuffer(&cdcVertexBuffer);
-        stateManager.setIndexBuffer(&cdcIndexBuffer);
-
-        stateManager.setVertexShader(&cdcVertexShader);
-        stateManager.setVsConstantBuffer(0, &cdcConstantBuffer);
+        float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
+        renderDevice->clearRenderTarget(10, 0, 0.0f, backgroundColor, 1.0f, 0);
 
         deviceContext->RSSetViewports(1, &viewport);
         deviceContext->RSSetState(rasterizerState);
 
-        if (false) {
-            auto errorTable = static_cast<cdc::PCDX11PixelShaderTable*>(renderDevice->shlib_1->table);
-            stateManager.setPixelShader(errorTable->pixelShaders[0]);
-        } else {
-            stateManager.setPixelShader(&cdcPixelShader);
-        }
-        stateManager.updateShaderResources();
-        stateManager.updateSamplers();
-
-        if (true) {
-            scene.renderDrawable0();
-        } else if (false) {
-            list.draw(&funcSet, 0);
-        } else {
-            setRtDrawable.renderDrawable0();
-        }
         deviceContext->OMSetDepthStencilState(depthStencilState, 0);
         deviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff); // use default blend mode (i.e. disable)
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-
-        deviceContext->DrawIndexed(ARRAYSIZE(IndexData), 0, 0);
+        scene.renderDrawable0();
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
         swapChain->Present(1, 0);
     }
+}
+
+void SpinnyCubeDrawable::renderDrawable0() {
+
+    stateManager->setVertexShader(cdcVertexShader);
+    stateManager->setVsConstantBuffer(0, cdcConstantBuffer);
+    stateManager->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    stateManager->setStreamDecl(streamDecl);
+    stateManager->setVertexBuffer(cdcVertexBuffer);
+    stateManager->setIndexBuffer(cdcIndexBuffer);
+
+    if (false) {
+        auto errorTable = static_cast<cdc::PCDX11PixelShaderTable*>(renderDevice->shlib_1->table);
+        stateManager->setPixelShader(errorTable->pixelShaders[0]);
+    } else {
+        stateManager->setPixelShader(cdcPixelShader);
+    }
+
+    stateManager->updateShaderResources();
+    stateManager->updateSamplers();
+
+    renderDevice->getD3DDeviceContext()->DrawIndexed(ARRAYSIZE(IndexData), 0, 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
