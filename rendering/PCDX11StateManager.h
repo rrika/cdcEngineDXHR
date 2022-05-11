@@ -54,6 +54,10 @@ public:
 	PCDX11DepthBuffer *m_depthBuffer = nullptr; // 384
 
 private:
+	uint32_t m_renderTargetStackIndex = 0; // 38C
+	PCDX11RenderTarget *m_renderTargetStack[20]; // 390
+	PCDX11DepthBuffer *m_depthBufferStack[20]; // 3E0
+
 	PCDX11UberConstantBuffer *m_uberConstantBuffer[7]; // 5A8
 
 public:

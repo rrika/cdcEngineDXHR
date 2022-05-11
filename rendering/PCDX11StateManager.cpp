@@ -321,13 +321,23 @@ void PCDX11StateManager::pushRenderTargets(
 	PCDX11RenderTarget *renderTarget,
 	PCDX11DepthBuffer *depthBuffer)
 {
-	// TODO
-	if (renderTarget && depthBuffer)
-		updateRenderTargets(renderTarget, depthBuffer);
+	uint32_t &i = m_renderTargetStackIndex;
+	m_renderTargetStack[i] = m_renderTarget;
+	m_depthBufferStack[i] = m_depthBuffer;
+	i++;
+
+	updateRenderTargets(renderTarget, depthBuffer);
 }
 
 void PCDX11StateManager::popRenderTargets() {
-	// TODO
+	PCDX11RenderTarget *renderTarget = nullptr;
+	PCDX11DepthBuffer *depthBuffer = nullptr;
+	if (uint32_t &i = m_renderTargetStackIndex; --i) {
+		renderTarget = m_renderTargetStack[i];
+		depthBuffer = m_depthBufferStack[i];
+	}
+
+	updateRenderTargets(renderTarget, depthBuffer);
 }
 
 void PCDX11StateManager::updateRenderTargets(
@@ -337,8 +347,9 @@ void PCDX11StateManager::updateRenderTargets(
 	// TODO
 	m_renderTarget = renderTarget;
 	m_depthBuffer = depthBuffer;
-	ID3D11RenderTargetView *renderTargetView = renderTarget->getRenderTargetView();
-	ID3D11DepthStencilView *depthStencilView = depthBuffer->getDepthStencilView();
+
+	ID3D11RenderTargetView *renderTargetView = renderTarget ? renderTarget->getRenderTargetView() : nullptr;
+	ID3D11DepthStencilView *depthStencilView = depthBuffer ? depthBuffer->getDepthStencilView() : nullptr;
 	m_deviceContext->OMSetRenderTargets(
 		!!renderTargetView,
 		&renderTargetView,
