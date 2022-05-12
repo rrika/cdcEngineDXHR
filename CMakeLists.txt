@@ -23,6 +23,7 @@ add_link_options(-g -target ${triple} -fuse-ld=lld-link)
 add_executable(dxhr
 	main.cpp
 	main2.cpp
+	matrix.cpp
 	spinnycube.cpp)
 configure_file(config.h.in config/config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/config)
