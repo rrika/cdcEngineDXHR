@@ -218,20 +218,22 @@ unsigned short IndexData[] =
 };
 
 const char shaders [] = (
-	"cbuffer constants : register(b0) { float4x4 transform; float4x4 projection; float3 lightvector; }\n"
-	"struct vs_in { float3 position : POS; float3 normal : NOR; float2 texcoord : TEX; float3 color : COL; };\n"
-	"struct vs_out { float4 position : SV_POSITION; float2 texcoord : TEX; float4 color : COL; };\n"
-	"Texture2D    mytexture : register(t0);\n"
-	"SamplerState mysampler : register(s0);\n"
-	"vs_out vs_main(vs_in input) {\n"
-	"    float light = clamp(dot(normalize(mul(transform, float4(input.normal, 0.0f)).xyz), normalize(-lightvector)), 0.0f, 1.0f) * 0.8f + 0.2f;\n"
-	"    vs_out output;\n"
-	"    output.position = mul(mul(projection, transform), float4(input.position, 1.0f));\n"
-	"    output.texcoord = input.texcoord;\n"
-	"    output.color = float4(input.color * light, 1.0f);\n"
-	"    return output;\n"
-	"}\n"
-	"float4 ps_main(vs_out input) : SV_TARGET { return mytexture.Sample(mysampler, input.texcoord) * input.color; }\n"
+    "cbuffer WorldBuffer : register(b0) { float4x4 WorldViewProject; float4x4 World; float4x4 ViewProject; }\n"
+    "cbuffer SceneBuffer : register(b2) { float4x4 View; }\n"
+    "struct vs_in { float3 position : POS; float3 normal : NOR; float2 texcoord : TEX; float3 color : COL; };\n"
+    "struct vs_out { float4 position : SV_POSITION; float2 texcoord : TEX; float4 color : COL; };\n"
+    "Texture2D    mytexture : register(t0);\n"
+    "SamplerState mysampler : register(s0);\n"
+    "static const float3 lightvector = { 1.0f, -1.0f, 1.0f };\n"
+    "vs_out vs_main(vs_in input) {\n"
+    "    float light = clamp(dot(normalize(mul(World, float4(input.normal, 0.0f)).xyz), normalize(-lightvector)), 0.0f, 1.0f) * 0.8f + 0.2f;\n"
+    "    vs_out output;\n"
+    "    output.position = mul(WorldViewProject, float4(input.position, 1.0f));\n"
+    "    output.texcoord = input.texcoord;\n"
+    "    output.color = float4(input.color * light, 1.0f);\n"
+    "    return output;\n"
+    "}\n"
+    "float4 ps_main(vs_out input) : SV_TARGET { return mytexture.Sample(mysampler, input.texcoord) * input.color; }\n"
 );
 
 struct float3 { float x, y, z; };
@@ -410,9 +412,9 @@ int spinnyCube(HWND window,
 
     struct Constants
     {
-        float4x4 Transform;
-        float4x4 Projection;
-        float3 LightVector;
+        float4x4 WorldViewProject;
+        float4x4 World;
+        float4x4 ViewProject;
     };
 
     // cdc::PCDX11ConstantBufferPool cbPool{renderDevice};
@@ -543,10 +545,13 @@ int spinnyCube(HWND window,
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
+        float4x4 transform = translate * scale * rotateZ * rotateY * rotateX;
+        float4x4 project = { 2 * n / w, 0, 0, 0, 0, 2 * n / h, 0, 0, 0, 0, f / (f - n), 1, 0, 0, n * f / (n - f), 0 };
+
         Constants constants;
-        constants.Transform   = translate * scale * rotateZ * rotateY * rotateX;
-        constants.Projection  = { 2 * n / w, 0, 0, 0, 0, 2 * n / h, 0, 0, 0, 0, f / (f - n), 1, 0, 0, n * f / (n - f), 0 };
-        constants.LightVector = { 1.0f, -1.0f, 1.0f };
+        constants.WorldViewProject = project * transform;
+        constants.World = transform;
+        constants.ViewProject = project;
 
         memcpy(cdcConstantBuffer.data, &constants, sizeof(Constants));
         cdcConstantBuffer.syncBuffer(deviceContext);
