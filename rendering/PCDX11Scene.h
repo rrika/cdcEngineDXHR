@@ -11,7 +11,7 @@ public:
 		CommonRenderDevice *renderDevice,
 		/* ... */
 		CommonScene *otherScene,
-		CommonSceneSub18 *sub18,
+		CommonSceneSub10 *sub10,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer,
 		/* ... */
@@ -19,11 +19,11 @@ public:
 		/* ... */
 		RenderPasses *renderPasses)
 	:
-		CommonScene(renderDevice, otherScene, sub18, renderTarget, depthBuffer, sub114, renderPasses),
+		CommonScene(renderDevice, otherScene, sub10, renderTarget, depthBuffer, sub114, renderPasses),
 		renderDevice(static_cast<PCDX11RenderDevice*>(renderDevice))
 	{
 		// TODO
-		uint32_t mask = sub18->mask;
+		uint32_t mask = sub10->mask;
 		// TODO
 		drawableListsAndMasks = renderPasses->createDrawableLists(/*0,*/ mask, renderDevice->getRingBuffer());
 	}

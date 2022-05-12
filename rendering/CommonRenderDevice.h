@@ -42,7 +42,7 @@ public:
 	virtual void method_40();
 	virtual void method_44();
 	virtual CommonScene *createScene(
-		CommonSceneSub18 *sub18,
+		CommonSceneSub10 *sub10,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer) = 0;
 	virtual void method_4C();

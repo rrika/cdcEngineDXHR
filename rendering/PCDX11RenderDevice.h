@@ -67,7 +67,7 @@ public:
 	void method_2C() override;
 	void method_30() override;
 	CommonScene *createScene(
-		CommonSceneSub18 *sub18,
+		CommonSceneSub10 *sub10,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer) override;
 	void method_50() override;

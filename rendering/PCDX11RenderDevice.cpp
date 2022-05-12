@@ -240,7 +240,7 @@ void PCDX11RenderDevice::method_30() {
 }
 
 CommonScene *PCDX11RenderDevice::createScene(
-	CommonSceneSub18 *sub18,
+	CommonSceneSub10 *sub10,
 	CommonRenderTarget *renderTarget,
 	CommonDepthBuffer *depthBuffer
 ) {
@@ -248,7 +248,7 @@ CommonScene *PCDX11RenderDevice::createScene(
 	auto scene = new PCDX11Scene(
 		this,
 		scene7C, // parent scene perhaps?
-		sub18,
+		sub10,
 		renderTarget,
 		depthBuffer,
 		getSceneSub114(),

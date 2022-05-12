@@ -12,7 +12,7 @@ class CommonDepthBuffer;
 class DrawableListsAndMasks;
 class RenderPasses;
 
-struct CommonSceneSub18 {
+struct CommonSceneSub10 {
 	uint32_t mask; // E0
 };
 
@@ -25,9 +25,7 @@ class CommonScene :
 	public IRenderDrawable
 {
 public:
-	// char char10;
-	// uint8_t f11[7];
-	CommonSceneSub18 sub18;
+	CommonSceneSub10 sub10;
 	// float fogColor[4];
 	// float float110;
 	CommonSceneSub114 sub114;
@@ -92,7 +90,7 @@ public:
 		CommonRenderDevice *renderDevice,
 		/* ... */
 		CommonScene *otherScene,
-		CommonSceneSub18 *sub18,
+		CommonSceneSub10 *sub10,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer,
 		/* ... */
@@ -103,7 +101,7 @@ public:
 		renderTarget(renderTarget),
 		depthBuffer(depthBuffer)
 	{
-		this->sub18 = *sub18;
+		this->sub10 = *sub10;
 		this->sub114 = *sub114;
 	}
 
