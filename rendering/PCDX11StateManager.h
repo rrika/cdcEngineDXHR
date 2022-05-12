@@ -86,6 +86,9 @@ public:
 	void setPixelShader(PCDX11PixelShader *pixelShader);
 	void setVertexShader(PCDX11VertexShader *vertexShader);
 	void setPrimitiveTopology(int topology);
+	void setDepthLayer(bool layer);
+	void setCullMode(D3D11_CULL_MODE cullMode, bool frontIsCounterClockwise);
+	void setDepthState(D3D11_COMPARISON_FUNC comparisonFunc, D3D11_DEPTH_WRITE_MASK depthWriteMask);
 
 	void setSamplerState(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter);
 	void setTextureAndSampler(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown);

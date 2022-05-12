@@ -117,6 +117,18 @@ void PCDX11StateManager::setPrimitiveTopology(int topology) {
 	}
 }
 
+void PCDX11StateManager::setDepthLayer(bool layer) {
+	// TODO
+}
+
+void PCDX11StateManager::setCullMode(D3D11_CULL_MODE cullMode, bool frontIsCounterClockwise) {
+	// TODO
+}
+
+void PCDX11StateManager::setDepthState(D3D11_COMPARISON_FUNC comparisonFunc, D3D11_DEPTH_WRITE_MASK depthWriteMask) {
+	// TODO
+}
+
 void PCDX11StateManager::setSamplerState(
 	uint32_t slot,
 	PCDX11BaseTexture *tex,
