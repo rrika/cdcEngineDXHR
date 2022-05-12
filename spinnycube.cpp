@@ -218,15 +218,15 @@ unsigned short IndexData[] =
 };
 
 const char shaders [] = (
-	"cbuffer constants : register(b0) { row_major float4x4 transform; row_major float4x4 projection; float3 lightvector; }\n"
+	"cbuffer constants : register(b0) { float4x4 transform; float4x4 projection; float3 lightvector; }\n"
 	"struct vs_in { float3 position : POS; float3 normal : NOR; float2 texcoord : TEX; float3 color : COL; };\n"
 	"struct vs_out { float4 position : SV_POSITION; float2 texcoord : TEX; float4 color : COL; };\n"
 	"Texture2D    mytexture : register(t0);\n"
 	"SamplerState mysampler : register(s0);\n"
 	"vs_out vs_main(vs_in input) {\n"
-	"    float light = clamp(dot(normalize(mul(float4(input.normal, 0.0f), transform).xyz), normalize(-lightvector)), 0.0f, 1.0f) * 0.8f + 0.2f;\n"
+	"    float light = clamp(dot(normalize(mul(transform, float4(input.normal, 0.0f)).xyz), normalize(-lightvector)), 0.0f, 1.0f) * 0.8f + 0.2f;\n"
 	"    vs_out output;\n"
-	"    output.position = mul(float4(input.position, 1.0f), mul(transform, projection));\n"
+	"    output.position = mul(mul(projection, transform), float4(input.position, 1.0f));\n"
 	"    output.texcoord = input.texcoord;\n"
 	"    output.color = float4(input.color * light, 1.0f);\n"
 	"    return output;\n"
