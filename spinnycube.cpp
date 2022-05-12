@@ -481,17 +481,11 @@ int spinnyCube(HWND window,
         &cdcRenderTarget,
         &cdcDepthBuffer);
 
-    auto simplyDraw = [](uint32_t funcSetIndex, cdc::IRenderDrawable *r, cdc::IRenderDrawable *p) -> bool {
-        r->draw(funcSetIndex, p);
-        return true;
-    };
-
     SpinnyCubePass cubePass;
     cubePass.viewport = &viewport;
     cubePass.rasterizerState = rasterizerState;
     cubePass.depthStencilState = depthStencilState;
     renderDevice->renderPasses.addRenderPass(0, 0, 0, 0, 0);
-    renderDevice->renderPasses.drawers[0].func[0] = simplyDraw;
     renderDevice->setPassCallback(0, &cubePass);
 
     SpinnyCubeDrawable cubeDrawable;

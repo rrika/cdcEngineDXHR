@@ -3,6 +3,15 @@
 
 namespace cdc {
 
+static bool defaultDrawer(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+	drawable->draw(funcSetIndex, prevDrawable);
+	return true; // TODO
+}
+
+static bool defaultComparator(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+	return drawable->compare(funcSetIndex, prevDrawable);
+}
+
 void RenderPasses::addRenderPass(uint32_t arg0, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex, uint32_t firstPassId) {
 	// TODO
 	uint32_t passId = firstPassId;
@@ -10,6 +19,27 @@ void RenderPasses::addRenderPass(uint32_t arg0, uint32_t order, uint32_t sortMod
 	passes[passId].sortMode = sortMode;
 	passes[passId].funcSetIndex = 0;
 	passes[passId].callbacks = nullptr;
+}
+
+uint32_t RenderPasses::allocFuncIndex(const char *name) {
+	// find zero bit
+	uint32_t i = 0, active = activeFuncBitfield;
+	while (active & 1) {
+		active >>= 1;
+		i++;
+	}
+	if (i == 32)
+		return 0;
+
+	// assign defaults on that column across function sets
+	for (uint32_t funcSet=0; funcSet<20; funcSet++) {
+		drawers[funcSet].func[i] = &defaultDrawer;
+		comparators[funcSet].func[i] = &defaultComparator;
+	}
+
+	// mark in use
+	activeFuncBitfield |= 1 << i;
+	return i;
 }
 
 void RenderPasses::sort(DrawableList *list, int passId) {

@@ -120,24 +120,24 @@ void PCDX11RenderDevice::registerComparatorsAndDrawersModel() {
 	RenderFunc todoDraw56 = nullptr;
 	RenderFunc todoDrawA = nullptr;
 
-	allocFuncSet("RenderModelDrawable");
-	uint8_t funcSet = 1;
-	registerComparator(funcSet, 1, todoCmp128);
-	registerComparator(funcSet, 2, todoCmp128);
-	registerComparator(funcSet, 8, todoCmp128);
-	registerComparator(funcSet, 7, todoCmp7);
-	registerComparator(funcSet, 4, todoCmp46);
-	registerComparator(funcSet, 6, todoCmp46);
+	allocFuncIndex("RenderModelDrawable");
+	uint8_t funcIndex = 1;
+	registerComparator(funcIndex, 1, todoCmp128);
+	registerComparator(funcIndex, 2, todoCmp128);
+	registerComparator(funcIndex, 8, todoCmp128);
+	registerComparator(funcIndex, 7, todoCmp7);
+	registerComparator(funcIndex, 4, todoCmp46);
+	registerComparator(funcIndex, 6, todoCmp46);
 
-	registerDrawer(funcSet, 1, todoDraw1);
-	registerDrawer(funcSet, 2, todoDraw2);
-	registerDrawer(funcSet, 7, todoDraw7);
-	registerDrawer(funcSet, 4, todoDraw4);
-	registerDrawer(funcSet, 5, todoDraw56);
-	registerDrawer(funcSet, 6, todoDraw56);
+	registerDrawer(funcIndex, 1, todoDraw1);
+	registerDrawer(funcIndex, 2, todoDraw2);
+	registerDrawer(funcIndex, 7, todoDraw7);
+	registerDrawer(funcIndex, 4, todoDraw4);
+	registerDrawer(funcIndex, 5, todoDraw56);
+	registerDrawer(funcIndex, 6, todoDraw56);
 
-	registerComparator(funcSet, 10, todoCmpA);
-	registerDrawer(funcSet, 10, todoDrawA);
+	registerComparator(funcIndex, 10, todoCmpA);
+	registerDrawer(funcIndex, 10, todoDrawA);
 }
 
 void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain1() {
@@ -152,22 +152,22 @@ void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain1() {
 	RenderFunc todoDraw56 = nullptr;
 	RenderFunc todoDrawA = nullptr;
 
-	uint8_t funcSet = allocFuncSet("RenderTerrainDrawable");
-	registerComparator(funcSet, 1, todoCmp12);
-	registerComparator(funcSet, 2, todoCmp12);
-	registerComparator(funcSet, 7, todoCmp467);
-	registerComparator(funcSet, 4, todoCmp467);
-	registerComparator(funcSet, 6, todoCmp467);
+	uint8_t funcIndex = allocFuncIndex("RenderTerrainDrawable");
+	registerComparator(funcIndex, 1, todoCmp12);
+	registerComparator(funcIndex, 2, todoCmp12);
+	registerComparator(funcIndex, 7, todoCmp467);
+	registerComparator(funcIndex, 4, todoCmp467);
+	registerComparator(funcIndex, 6, todoCmp467);
 
-	registerDrawer(funcSet, 1, todoDraw1);
-	registerDrawer(funcSet, 2, todoDraw2);
-	registerDrawer(funcSet, 7, todoDraw7);
-	registerDrawer(funcSet, 4, todoDraw4);
-	registerDrawer(funcSet, 5, todoDraw56);
-	registerDrawer(funcSet, 6, todoDraw56);
+	registerDrawer(funcIndex, 1, todoDraw1);
+	registerDrawer(funcIndex, 2, todoDraw2);
+	registerDrawer(funcIndex, 7, todoDraw7);
+	registerDrawer(funcIndex, 4, todoDraw4);
+	registerDrawer(funcIndex, 5, todoDraw56);
+	registerDrawer(funcIndex, 6, todoDraw56);
 
-	registerComparator(funcSet, 10, todoCmpA);
-	registerDrawer(funcSet, 10, todoDrawA);
+	registerComparator(funcIndex, 10, todoCmpA);
+	registerDrawer(funcIndex, 10, todoDrawA);
 }
 
 void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain2() {
@@ -180,23 +180,23 @@ void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain2() {
 	RenderFunc todoDraw56 = nullptr;
 	RenderFunc todoDrawA = nullptr;
 
-	uint8_t funcSet = allocFuncSet("RenderTerrainDrawable");
-	registerComparator(funcSet, 1, todoCmp);
-	registerComparator(funcSet, 2, todoCmp);
-	registerComparator(funcSet, 8, todoCmp);
-	registerComparator(funcSet, 7, todoCmp);
-	registerComparator(funcSet, 4, todoCmp);
-	registerComparator(funcSet, 6, todoCmp);
+	uint8_t funcIndex = allocFuncIndex("RenderTerrainDrawable");
+	registerComparator(funcIndex, 1, todoCmp);
+	registerComparator(funcIndex, 2, todoCmp);
+	registerComparator(funcIndex, 8, todoCmp);
+	registerComparator(funcIndex, 7, todoCmp);
+	registerComparator(funcIndex, 4, todoCmp);
+	registerComparator(funcIndex, 6, todoCmp);
 
-	registerDrawer(funcSet, 1, todoDraw1);
-	registerDrawer(funcSet, 2, todoDraw2);
-	registerDrawer(funcSet, 7, todoDraw7);
-	registerDrawer(funcSet, 4, todoDraw4);
-	registerDrawer(funcSet, 5, todoDraw56);
-	registerDrawer(funcSet, 6, todoDraw56);
+	registerDrawer(funcIndex, 1, todoDraw1);
+	registerDrawer(funcIndex, 2, todoDraw2);
+	registerDrawer(funcIndex, 7, todoDraw7);
+	registerDrawer(funcIndex, 4, todoDraw4);
+	registerDrawer(funcIndex, 5, todoDraw56);
+	registerDrawer(funcIndex, 6, todoDraw56);
 
-	registerComparator(funcSet, 10, todoCmp);
-	registerDrawer(funcSet, 10, todoDrawA);
+	registerComparator(funcIndex, 10, todoCmp);
+	registerDrawer(funcIndex, 10, todoDrawA);
 }
 
 void PCDX11RenderDevice::refCountDec() {

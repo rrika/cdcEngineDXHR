@@ -33,11 +33,12 @@ struct RenderPasses { // guessed name
 	//uint32_t dword40C;
 	//uint32_t dword410;
 	//uint32_t dword414;
-	//uint32_t activeIndicesBitfield;
+	uint32_t activeFuncBitfield; // 418
 	RenderFunctionSet comparators[20]; // 41C
 	RenderFunctionSet drawers[20]; // 91C
 
 	void addRenderPass(uint32_t arg0, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex, uint32_t firstPassId);
+	uint32_t allocFuncIndex(const char *name);
 	void sort(DrawableList *list, int passId);
 	void draw(DrawableList *list, int passId);
 	void sortAndDraw(/*uint32_t,*/ DrawableListsAndMasks *lists, CommonRenderDevice *renderdevice, uint32_t mask);

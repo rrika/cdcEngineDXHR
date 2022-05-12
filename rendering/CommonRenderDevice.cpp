@@ -5,6 +5,11 @@ namespace cdc {
 
 CommonRenderDevice *gRenderDevice = nullptr;
 
+CommonRenderDevice::CommonRenderDevice() {
+	// ensure that the draw function 0 in every func set just calls IRenderDrawable::draw
+	renderPasses.allocFuncIndex("Default");
+}
+
 void CommonRenderDevice::method_14() {
 	// TODO
 }
@@ -81,29 +86,27 @@ void CommonRenderDevice::method_8C() {
 	// TODO
 }
 
-uint8_t CommonRenderDevice::allocFuncSet(const char *name) {
-	// TODO
-	static int counter = 0;
-	return ++counter;
+uint8_t CommonRenderDevice::allocFuncIndex(const char *name) {
+	return renderPasses.allocFuncIndex(name);
 }
 
-void CommonRenderDevice::freeFuncSet(uint8_t funcSet) {
+void CommonRenderDevice::freeFuncIndex(uint8_t funcSet) {
 	// TODO
 }
 
-void CommonRenderDevice::registerDrawer(uint32_t funcSetIndex, uint32_t funcIndex, RenderFunc drawer) {
+void CommonRenderDevice::registerDrawer(uint32_t funcIndex, uint32_t funcSetIndex, RenderFunc drawer) {
 	renderPasses.drawers[funcSetIndex].func[funcIndex] = drawer;
 }
 
-RenderFunc CommonRenderDevice::getDrawer(uint32_t funcSetIndex, uint32_t funcIndex) {
+RenderFunc CommonRenderDevice::getDrawer(uint32_t funcIndex, uint32_t funcSetIndex) {
 	return renderPasses.drawers[funcSetIndex].func[funcIndex];
 }
 
-void CommonRenderDevice::registerComparator(uint32_t funcSetIndex, uint32_t funcIndex, RenderFunc comparator) {
+void CommonRenderDevice::registerComparator(uint32_t funcIndex, uint32_t funcSetIndex, RenderFunc comparator) {
 	renderPasses.comparators[funcSetIndex].func[funcIndex] = comparator;
 }
 
-RenderFunc CommonRenderDevice::getComparator(uint32_t funcSetIndex, uint32_t funcIndex) {
+RenderFunc CommonRenderDevice::getComparator(uint32_t funcIndex, uint32_t funcSetIndex) {
 	return renderPasses.comparators[funcSetIndex].func[funcIndex];
 }
 

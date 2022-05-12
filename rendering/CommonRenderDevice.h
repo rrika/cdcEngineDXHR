@@ -21,6 +21,8 @@ protected:
 public:
 	RenderPasses renderPasses; // 2E8
 public:
+	CommonRenderDevice();
+
 	virtual ~CommonRenderDevice() = default;
 	virtual void refCountDec() = 0;
 	virtual void method_08() = 0;
@@ -62,12 +64,12 @@ public:
 	virtual void method_88();
 	virtual void method_8C();
 
-	virtual uint8_t allocFuncSet(const char *name);
-	virtual void freeFuncSet(uint8_t);
-	virtual void registerDrawer(uint32_t funcSetIndex, uint32_t funcIndex, RenderFunc drawer);
-	virtual RenderFunc getDrawer(uint32_t funcSetIndex, uint32_t funcIndex);
-	virtual void registerComparator(uint32_t funcSetIndex, uint32_t funcIndex, RenderFunc comparator);
-	virtual RenderFunc getComparator(uint32_t funcSetIndex, uint32_t funcIndex);
+	virtual uint8_t allocFuncIndex(const char *name);
+	virtual void freeFuncIndex(uint8_t);
+	virtual void registerDrawer(uint32_t funcIndex, uint32_t funcSetIndex, RenderFunc drawer);
+	virtual RenderFunc getDrawer(uint32_t funcIndex, uint32_t funcSetIndex);
+	virtual void registerComparator(uint32_t funcIndex, uint32_t funcSetIndex, RenderFunc comparator);
+	virtual RenderFunc getComparator(uint32_t funcIndex, uint32_t funcSetIndex);
 
 	virtual void method_A8() = 0;
 	virtual void method_AC();
