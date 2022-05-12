@@ -544,7 +544,7 @@ int spinnyCube(HWND window,
         ///////////////////////////////////////////////////////////////////////////////////////////
 
         Constants constants;
-        constants.Transform   = rotateX * rotateY * rotateZ * scale * translate;
+        constants.Transform   = translate * scale * rotateZ * rotateY * rotateX;
         constants.Projection  = { 2 * n / w, 0, 0, 0, 0, 2 * n / h, 0, 0, 0, 0, f / (f - n), 1, 0, 0, n * f / (n - f), 0 };
         constants.LightVector = { 1.0f, -1.0f, 1.0f };
 
