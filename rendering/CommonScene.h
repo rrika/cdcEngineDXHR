@@ -1,18 +1,21 @@
 #pragma once
 #include <cstdint>
+#include "../matrix.h"
 #include "IRenderScene.h"
 #include "IRenderDrawable.h"
+#include "CommonRenderTarget.h" // for CommonRenderTarget to IRenderTarget cast
+#include "CommonDepthBuffer.h" // for CommonDepthBuffer to IDepthBuffer cast
 
 namespace cdc {
 
 class CommonRenderDevice;
 class CommonScene;
-class CommonRenderTarget;
-class CommonDepthBuffer;
 class DrawableListsAndMasks;
 class RenderPasses;
 
 struct CommonSceneSub10 {
+	float cameraDirection[4]; // 50
+	float cameraPosition[4]; // 60
 	uint32_t mask; // E0
 };
 
@@ -37,8 +40,8 @@ public:
 	// uint32_t dword2A4;
 	// uint32_t dword2A8;
 	// uint32_t dword2AC;
-	// Matrix4x4 mat2B0;
-	// Matrix4x4 mat2F0;
+	float4x4 viewMatrix;
+	float4x4 projectMatrix;
 	// Matrix4x4 mat330;
 	// Matrix4x4 mat370;
 	// Matrix4x4 mat3B0_maybe;
@@ -49,8 +52,10 @@ public:
 	// uint32_t dword400;
 	// CommonScene *otherScene404;
 	// CommonScene *scene408;
-	// uint32_t dword40C;
-	// uint8_t f410[36];
+	// CommonScene *scene40C;
+	// float heightFogParams[4];
+	// float fogScaleOffset[4];
+	// uint8_t f430[4];
 	// float float434;
 	// uint8_t byte438;
 	// uint8_t f439[3];
@@ -105,17 +110,27 @@ public:
 		this->sub114 = *sub114;
 	}
 
-	void scene0() override {}
-	void scene1() override {}
-	void scene2() override {}
-	void scene3() override {}
+	float4x4& getViewMatrix() override { return viewMatrix; }
 	void scene4() override {}
-	void scene5() override {}
-	void scene6() override {}
-	void scene7() override {} // getRenderTarget
-	void scene8() override {}
-	void scene9() override {}
-	void sceneA() override {}
+	float4x4& getProjectMatrix() override { return projectMatrix; }
+	void sceneC() override {}
+	void getCameraPosition(float *pos) override {
+		pos[0] = sub10.cameraPosition[0];
+		pos[1] = sub10.cameraPosition[1];
+		pos[2] = sub10.cameraPosition[2];
+		pos[3] = sub10.cameraPosition[3];		
+	}
+	void getCameraDirection(float *dir) override {
+		dir[0] = sub10.cameraDirection[0];
+		dir[1] = sub10.cameraDirection[1];
+		dir[2] = sub10.cameraDirection[2];
+		dir[3] = sub10.cameraDirection[3];
+	}
+	CommonSceneSub10& getSceneSub10() override { return sub10; }
+	IRenderTarget *getRenderTarget() override { return renderTarget; }
+	IDepthBuffer *getDepthBuffer() override { return depthBuffer; }
+	void scene24() override {}
+	void scene28() override {}
 
 	// void draw(uint32_t funcSetIndex, IRenderDrawable *other) = 0;
 	uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *other) override { return true; }
