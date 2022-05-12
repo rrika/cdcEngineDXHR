@@ -537,6 +537,12 @@ void PCDX11RenderDevice::clearRenderTargetNow(char flags, float *color, float de
 	}
 }
 
+void PCDX11RenderDevice::setTexture(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown) {
+	if (!tex)
+		tex = missingTexture;
+	deviceManager->getStateManager()->setTextureAndSampler(slot, tex, filter, unknown);
+}
+
 PCDX11RenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown) {
 	// createPCDX11DeviceManager(); // already done, else wouldn't have an hwnd
 	return new PCDX11RenderDevice();

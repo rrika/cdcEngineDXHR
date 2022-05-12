@@ -8,6 +8,8 @@
 namespace cdc {
 
 class IRenderDrawable;
+class PCDX11BaseTexture;
+class PCDX11Texture;
 
 class PCDX11RenderDevice :
 	public PCDX11InternalResource,
@@ -45,6 +47,8 @@ public:
 	PCDX11PixelShaderTable shtab_ps_white_25; // 10DB0
 	PCDX11PixelShaderTable shtab_ps_fogColor; // 10DD0
 	PCDX11PixelShaderTable shtab_ps_errorColor; // 10DF0
+
+	PCDX11Texture *missingTexture; // 1112F0
 
 public:
 	PCDX11RenderDevice();
@@ -142,6 +146,7 @@ public:
 	ID3D11DeviceContext *getD3DDeviceContext() { return d3dDeviceContext111580; }
 	void recordDrawable(IRenderDrawable *drawable, uint32_t arg1, uint8_t arg2);
 	void clearRenderTargetNow(char mode, float *color, float depth, uint32_t stencil);
+	void setTexture(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown);
 };
 
 PCDX11RenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown);
