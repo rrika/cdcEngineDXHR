@@ -242,7 +242,7 @@ class SpinnyCubeDrawable : public cdc::IRenderDrawable {
 public:
     cdc::PCDX11RenderDevice *renderDevice;
     cdc::PCDX11StateManager *stateManager;
-    cdc::PCDX11ConstantBuffer *cdcConstantBuffer;
+    // cdc::PCDX11ConstantBuffer *cdcConstantBuffer;
     cdc::PCDX11VertexShader *cdcVertexShader;
     cdc::PCDX11PixelShader *cdcPixelShader;
     cdc::PCDX11IndexBuffer *cdcIndexBuffer;
@@ -410,15 +410,15 @@ int spinnyCube(HWND window,
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    struct Constants
-    {
-        float4x4 WorldViewProject;
-        float4x4 World;
-        float4x4 ViewProject;
-    };
+    // struct Constants
+    // {
+    //     float4x4 WorldViewProject;
+    //     float4x4 World;
+    //     float4x4 ViewProject;
+    // };
 
     // cdc::PCDX11ConstantBufferPool cbPool{renderDevice};
-    cdc::PCDX11UberConstantBuffer cdcConstantBuffer((sizeof(Constants) + 15) / 16);
+    // cdc::PCDX11UberConstantBuffer cdcConstantBuffer((sizeof(Constants) + 15) / 16);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -497,7 +497,7 @@ int spinnyCube(HWND window,
     SpinnyCubeDrawable cubeDrawable;
     cubeDrawable.renderDevice = renderDevice;
     cubeDrawable.stateManager = &stateManager;
-    cubeDrawable.cdcConstantBuffer = &cdcConstantBuffer;
+    // cubeDrawable.cdcConstantBuffer = &cdcConstantBuffer;
     cubeDrawable.cdcVertexShader = &cdcVertexShader;
     cubeDrawable.cdcPixelShader = &cdcPixelShader;
     cubeDrawable.cdcIndexBuffer = &cdcIndexBuffer;
@@ -545,16 +545,20 @@ int spinnyCube(HWND window,
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
-        float4x4 transform = translate * scale * rotateZ * rotateY * rotateX;
+        float4x4 world = scale * rotateZ * rotateY * rotateX;
         float4x4 project = { 2 * n / w, 0, 0, 0, 0, 2 * n / h, 0, 0, 0, 0, f / (f - n), 1, 0, 0, n * f / (n - f), 0 };
 
-        Constants constants;
-        constants.WorldViewProject = project * transform;
-        constants.World = transform;
-        constants.ViewProject = project;
+        // Constants constants;
+        // constants.WorldViewProject = project * world;
+        // constants.World = world;
+        // constants.ViewProject = project;
 
-        memcpy(cdcConstantBuffer.data, &constants, sizeof(Constants));
-        cdcConstantBuffer.syncBuffer(deviceContext);
+        stateManager.setWorldMatrix(world);
+        stateManager.setViewMatrix(translate);
+        stateManager.setProjectMatrix(project);
+
+        // memcpy(cdcConstantBuffer.data, &constants, sizeof(Constants));
+        // cdcConstantBuffer.syncBuffer(deviceContext);
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -591,9 +595,12 @@ void SpinnyCubePass::post(
 }
 
 void SpinnyCubeDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
+    stateManager->updateMatrices();
+    stateManager->updateConstantBuffers();
 
     stateManager->setVertexShader(cdcVertexShader);
-    stateManager->setVsConstantBuffer(0, cdcConstantBuffer);
+    // stateManager->setVsConstantBuffer(0, cdcConstantBuffer);
+    stateManager->setCommonConstantBuffers();
     stateManager->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     stateManager->setStreamDecl(streamDecl);
     stateManager->setVertexBuffer(cdcVertexBuffer);

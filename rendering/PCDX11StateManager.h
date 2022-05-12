@@ -1,5 +1,6 @@
 #pragma once
 #include "PCDX11InternalResource.h"
+#include "../matrix.h"
 
 namespace cdc {
 
@@ -46,6 +47,9 @@ class PCDX11StateManager : public PCDX11InternalResource {
 	uint32_t m_samplerFilter[16 + 4]; // 248
 	uint32_t m_samplerRepeat[16 + 4]; // 298
 
+	float m_materialOpacity; // 300
+	float m_fogColor[4]; // 310
+
 	PCDX11ConstantBuffer *m_constantBufferVs[7]; // 330
 	PCDX11ConstantBuffer *m_constantBufferPs[7]; // 34C
 
@@ -58,7 +62,19 @@ private:
 	PCDX11RenderTarget *m_renderTargetStack[20]; // 390
 	PCDX11DepthBuffer *m_depthBufferStack[20]; // 3E0
 
+	float m_alphaThreshold; // 438
+
+	float4x4 m_projectMatrix; // 440
+	float4x4 m_viewMatrix; // 480
+	float4x4 m_viewProjectMatrix; // 4C0
+	float4x4 m_worldMatrix; // 500
+	float4x4 *m_projectMatrixPtr; // 540
+	bool m_dirtyWorldMatrix; // 544
+	bool m_dirtyViewMatrix; // 545
+	bool m_dirtyProjectMatrix; // 546
+
 	PCDX11UberConstantBuffer *m_uberConstantBuffer[7]; // 5A8
+	bool m_dirtyUberCBs[7]; // 5C4
 
 public:
 	PCDX11StateManager();
@@ -76,6 +92,17 @@ public:
 	void setPsConstantBuffer(uint32_t slot, PCDX11ConstantBuffer *cb);
 	void setVsConstantBuffer(uint32_t slot, PCDX11ConstantBuffer *cb);
 	void setCommonConstantBuffers();
+	PCDX11UberConstantBuffer& accessCommonCB(uint32_t i);
+
+	void setAlphaThreshold(uint8_t threshold);
+	void setFogColor(float *color);
+	void setOpacity(float opacity);
+	void setWorldMatrix(float4x4& worldMatrix);
+	void setViewMatrix(float4x4& viewMatrix);
+	void setProjectMatrix(float4x4& projectMatrix);
+	void setProjectMatrixPtr(float4x4* projectMatrixPtr);
+
+	void updateMatrices();
 
 	void updateRasterizerState();
 	void updateDepthStencilState();

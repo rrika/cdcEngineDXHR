@@ -36,6 +36,12 @@ PCDX11StateManager::PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D1
 	m_uberConstantBuffer[4] = new PCDX11UberConstantBuffer(8);
 	m_uberConstantBuffer[5] = new PCDX11UberConstantBuffer(7);
 	m_uberConstantBuffer[6] = new PCDX11UberConstantBuffer(1);
+
+	m_projectMatrix = identity4x4;
+	m_viewMatrix = identity4x4;
+	m_viewProjectMatrix = identity4x4;
+	m_worldMatrix = identity4x4;
+	m_projectMatrixPtr = nullptr;
 }
 
 
@@ -251,6 +257,103 @@ void PCDX11StateManager::setCommonConstantBuffers() {
 	// setDsConstantBuffer(0, m_uberConstantBuffer[0]);
 	// setDsConstantBuffer(1, m_uberConstantBuffer[6]);
 	// setDsConstantBuffer(2, m_uberConstantBuffer[1]);
+}
+
+PCDX11UberConstantBuffer& PCDX11StateManager::accessCommonCB(uint32_t i) {
+	m_dirtyUberCBs[i] = true;
+	m_dirtyConstantBuffers = true;
+	return *m_uberConstantBuffer[i];
+}
+
+void PCDX11StateManager::setAlphaThreshold(uint8_t threshold) {
+	float alphaThreshold = threshold / 255.0;
+	if (m_alphaThreshold != alphaThreshold) {
+		m_alphaThreshold = alphaThreshold;
+		float row[4] = {alphaThreshold, 0.0f, 0.0f, 0.0f};
+		accessCommonCB(2).assignRow(3, row, 1); // DrawableBuffer::AlphaThreshold
+	}
+}
+
+void PCDX11StateManager::setFogColor(float *color) {
+	if (m_fogColor[0] != color[0] ||
+		m_fogColor[1] != color[1] ||
+		m_fogColor[2] != color[2] ||
+		m_fogColor[3] != color[3])
+	{
+		m_fogColor[0] = color[0];
+		m_fogColor[1] = color[1];
+		m_fogColor[2] = color[2];
+		m_fogColor[3] = color[3];
+		accessCommonCB(2).assignRow(0, color, 1); // DrawableBuffer::FogColor
+	}
+}
+
+void PCDX11StateManager::setOpacity(float opacity) {
+	if (m_materialOpacity != opacity) {
+		m_materialOpacity = opacity;
+		float row[4] = {opacity, 0.0f, 0.0f, 0.0f};
+		accessCommonCB(2).assignRow(2, row, 1); // DrawableBuffer::MaterialOpacity
+	}
+}
+
+void PCDX11StateManager::setWorldMatrix(float4x4& worldMatrix) {
+	if (m_worldMatrix != worldMatrix) {
+		m_worldMatrix = worldMatrix;
+		m_dirtyWorldMatrix = true;
+	}
+}
+
+void PCDX11StateManager::setViewMatrix(float4x4& viewMatrix) {
+	if (m_viewMatrix != viewMatrix) {
+		m_viewMatrix = viewMatrix;
+		m_dirtyViewMatrix = true;
+	}
+}
+
+void PCDX11StateManager::setProjectMatrix(float4x4& projectMatrix) {
+	if (m_projectMatrix != projectMatrix) {
+		m_projectMatrix = projectMatrix;
+		m_dirtyProjectMatrix = true;
+	}
+}
+
+void PCDX11StateManager::setProjectMatrixPtr(float4x4* projectMatrixPtr) {
+	if (m_projectMatrixPtr != projectMatrixPtr) {
+		m_projectMatrixPtr = projectMatrixPtr;
+		m_dirtyProjectMatrix = true;
+	}
+}
+
+void PCDX11StateManager::updateMatrices() {
+	if (m_dirtyWorldMatrix)
+		accessCommonCB(0).assignMatrix(4, m_worldMatrix); // WorldBuffer::World
+
+	if (m_dirtyViewMatrix)
+		accessCommonCB(1).assignMatrix(0, m_viewMatrix); // SceneBuffer::View
+
+	if (m_dirtyViewMatrix || m_dirtyProjectMatrix) {
+
+		float4x4 *projectMatrix = &m_projectMatrix;
+		if (m_projectMatrixPtr)
+			projectMatrix = m_projectMatrixPtr;
+		// TODO: build project matrix right here depending on byte5E9
+
+		m_viewProjectMatrix = *projectMatrix * m_viewMatrix;
+
+		accessCommonCB(0).assignMatrix(8, m_viewProjectMatrix); // WorldBuffer::ViewProject
+
+	}
+
+	if (m_dirtyWorldMatrix || m_dirtyViewMatrix || m_dirtyProjectMatrix) {
+
+		float4x4 worldViewProject = m_viewProjectMatrix * m_worldMatrix;
+
+		accessCommonCB(0).assignMatrix(0, worldViewProject);
+
+		m_dirtyWorldMatrix = false;
+		m_dirtyViewMatrix = false;
+		m_dirtyProjectMatrix = false;
+	}
 }
 
 void PCDX11StateManager::updateRasterizerState() {
