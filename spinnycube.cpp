@@ -539,18 +539,18 @@ int spinnyCube(HWND window,
         // constants.ViewProject = project;
 
         stateManager.setWorldMatrix(world);
-        stateManager.setViewMatrix(translate);
-        stateManager.setProjectMatrix(project);
 
         // memcpy(cdcConstantBuffer.data, &constants, sizeof(Constants));
         // cdcConstantBuffer.syncBuffer(deviceContext);
 
         renderDevice->resetRenderLists();
         renderDevice->beginRenderList();
-        renderDevice->createSubScene(
+        auto *scene = renderDevice->createSubScene(
             &commonSceneSub10,
             &cdcRenderTarget,
             &cdcDepthBuffer);
+        scene->viewMatrix = translate;
+        scene->projectMatrix = project;
 
         // add two drawables to the scene
         float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};

@@ -5,7 +5,7 @@
 namespace cdc {
 
 class PCDX11Scene : public CommonScene {
-	PCDX11RenderDevice *renderDevice;
+	PCDX11RenderDevice *renderDevice; // 7A8
 public:
 	PCDX11Scene(
 		CommonRenderDevice *renderDevice,
@@ -30,6 +30,7 @@ public:
 
 	void draw(uint32_t funcSetIndex, IRenderDrawable *other) override;
 
+	void updateUniforms();
 	void addToDrawableList(DrawableList *drawableList);
 	void addToDrawableList(DrawableList *drawableList, uint32_t);
 };

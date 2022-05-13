@@ -17,6 +17,7 @@ public:
 	PCDX11ConstantBuffer(uint32_t rows)
 		: buffer(nullptr), data(nullptr), sizeInUnitsOf16(rows), size(rows*16)
 	{}
+	PCDX11ConstantBuffer(const PCDX11ConstantBuffer& other) = delete;
 	virtual ~PCDX11ConstantBuffer() = default;
 	virtual ID3D11Buffer *getBuffer() { return buffer; }
 

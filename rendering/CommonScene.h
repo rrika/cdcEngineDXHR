@@ -53,8 +53,8 @@ public:
 	CommonScene *parentScene;
 	CommonScene *nextScene;
 	CommonScene *prevScene;
-	// float heightFogParams[4];
-	// float fogScaleOffset[4];
+	float heightFogParams[4];
+	float fogScaleOffset[4];
 	// uint8_t f430[4];
 	// float float434;
 	// uint8_t byte438;

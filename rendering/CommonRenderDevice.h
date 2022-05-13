@@ -16,7 +16,10 @@ class CommonRenderDevice
 {
 protected:
 	RingBuffer *ringBuffer30; // 30
-	CommonScene *scene7C; // 7C
+public:
+	CommonScene *scene78; // 78
+protected:
+	CommonScene *scene7C = nullptr; // 7C
 	CommonSceneSub114 sceneSub114_8C; // 8C
 public:
 	RenderPasses renderPasses; // 2E8
@@ -27,11 +30,11 @@ public:
 	virtual void refCountDec() = 0;
 	virtual void method_08() = 0;
 	virtual void resetRenderLists() = 0;
-	virtual void drawRenderLists() = 0;
+	virtual void drawRenderLists() = 0; // 10
 	virtual void method_14();
 	virtual void method_18();
 	virtual bool beginRenderList() = 0;
-	virtual bool endRenderList() = 0;
+	virtual bool endRenderList() = 0; // 20
 	virtual bool hasRenderList() = 0;
 	virtual void method_28() = 0;
 	virtual void method_2C() = 0;
