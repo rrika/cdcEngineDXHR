@@ -10,7 +10,7 @@ public:
 	PCDX11Scene(
 		CommonRenderDevice *renderDevice,
 		/* ... */
-		CommonScene *otherScene,
+		CommonScene *parentScene,
 		CommonSceneSub10 *sub10,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer,
@@ -19,7 +19,7 @@ public:
 		/* ... */
 		RenderPasses *renderPasses)
 	:
-		CommonScene(renderDevice, otherScene, sub10, renderTarget, depthBuffer, sub114, renderPasses),
+		CommonScene(renderDevice, parentScene, sub10, renderTarget, depthBuffer, sub114, renderPasses),
 		renderDevice(static_cast<PCDX11RenderDevice*>(renderDevice))
 	{
 		// TODO
@@ -29,6 +29,9 @@ public:
 	}
 
 	void draw(uint32_t funcSetIndex, IRenderDrawable *other) override;
+
+	void addToDrawableList(DrawableList *drawableList);
+	void addToDrawableList(DrawableList *drawableList, uint32_t);
 };
 
 }

@@ -12,6 +12,13 @@
 
 namespace cdc {
 
+PCDX11RenderDevice::RenderList::RenderList(PCDX11RenderDevice *renderDevice, void *dimensions) :
+	drawableList { renderDevice->getRingBuffer() },
+	next (nullptr)
+{
+	// TODO
+	(void)dimensions;
+}
 
 PCDX11RenderDevice::PCDX11RenderDevice() :
 	shtab_vs_wvp_1_0(shad::shader_30_vs, /*takeCopy=*/ false),
@@ -211,20 +218,29 @@ void PCDX11RenderDevice::method_0C() {
 	// TODO
 }
 
-void PCDX11RenderDevice::method_10() {
+void PCDX11RenderDevice::drawRenderLists() {
 	// TODO
 }
 
-void PCDX11RenderDevice::method_1C() {
+bool PCDX11RenderDevice::beginRenderList() {
+	renderList_current = new RenderList(this, /*TODO*/nullptr);
 	// TODO
+	return true;
 }
 
-void PCDX11RenderDevice::method_20() {
+bool PCDX11RenderDevice::endRenderList() {
+	if (renderList_last) {
+		renderList_last->next = renderList_current;
+	} else {
+		renderList_first->next = renderList_current;
+	}
+	renderList_last = renderList_current;
 	// TODO
+	return true;
 }
 
-void PCDX11RenderDevice::method_24() {
-	// TODO
+bool PCDX11RenderDevice::hasRenderList() {
+	return renderList_current != nullptr;
 }
 
 void PCDX11RenderDevice::method_28() {
@@ -239,7 +255,7 @@ void PCDX11RenderDevice::method_30() {
 	// TODO
 }
 
-CommonScene *PCDX11RenderDevice::createScene(
+CommonScene *PCDX11RenderDevice::createSubScene(
 	CommonSceneSub10 *sub10,
 	CommonRenderTarget *renderTarget,
 	CommonDepthBuffer *depthBuffer
@@ -257,8 +273,22 @@ CommonScene *PCDX11RenderDevice::createScene(
 	return scene;
 }
 
-void PCDX11RenderDevice::method_50() {
+void PCDX11RenderDevice::finishScene() {
 	// TODO
+	auto *thisScene = scene7C;
+
+	// first in list in charge of finish the siblings
+	if (auto sibling = thisScene->nextScene; sibling && !thisScene->prevScene) {
+		for (; sibling; sibling = sibling->nextScene) {
+			scene7C = sibling;
+			finishScene();
+		}
+		// return to current scene
+		scene7C = thisScene;
+	}
+	// TODO
+	static_cast<PCDX11Scene*>(scene7C)->addToDrawableList(&renderList_current->drawableList);
+	scene7C = scene7C->parentScene;
 }
 
 void PCDX11RenderDevice::getSceneRenderTarget() {

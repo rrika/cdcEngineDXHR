@@ -27,12 +27,12 @@ public:
 	virtual void refCountDec() = 0;
 	virtual void method_08() = 0;
 	virtual void method_0C() = 0;
-	virtual void method_10() = 0;
+	virtual void drawRenderLists() = 0;
 	virtual void method_14();
 	virtual void method_18();
-	virtual void method_1C() = 0;
-	virtual void method_20() = 0;
-	virtual void method_24() = 0;
+	virtual bool beginRenderList() = 0;
+	virtual bool endRenderList() = 0;
+	virtual bool hasRenderList() = 0;
 	virtual void method_28() = 0;
 	virtual void method_2C() = 0;
 	virtual void method_30() = 0;
@@ -41,12 +41,15 @@ public:
 	virtual void method_3C();
 	virtual void method_40();
 	virtual void method_44();
-	virtual CommonScene *createScene(
+	virtual CommonScene *createSubScene(
 		CommonSceneSub10 *sub10,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer) = 0;
-	virtual void method_4C();
-	virtual void method_50() = 0;
+	virtual void createSiblingScene(
+		CommonSceneSub10 *sub10,
+		CommonRenderTarget *renderTarget,
+		CommonDepthBuffer *depthBuffer);
+	virtual void finishScene() = 0;
 	virtual void method_54();
 	virtual void method_58();
 	virtual void getScene();

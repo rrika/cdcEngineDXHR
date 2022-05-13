@@ -16,6 +16,27 @@ class PCDX11RenderDevice :
 	public CommonRenderDevice
 {
 public:
+	struct RenderList {
+		RenderList(PCDX11RenderDevice *renderDevice, void *dimensions);
+
+		// uint32_t dword0;
+		// uint32_t dword4;
+		// uint32_t widthMaybe8;
+		// uint32_t heightMaybeC;
+		// uint32_t subFrameRenderTarget10;
+		// uint32_t dword14;
+		DrawableList drawableList; // 18
+		// LightManagerSubB *dword28;
+		// uint8_t byte2C;
+		// uint8_t byte2D;
+		RenderList *next;
+	};
+
+	RenderList *renderList_current = nullptr; // 10CF8
+	RenderList *renderList_10CFC = nullptr; // 10CFC
+	RenderList *renderList_first = nullptr; // 10D00
+	RenderList *renderList_last = nullptr; // 10CD04
+
 	PCDX11ShaderLib *shlib_22;
 	PCDX11ShaderLib *shlib_21;
 	PCDX11ShaderLib *shlib_20;
@@ -63,18 +84,18 @@ public:
 	void refCountDec() override;
 	void method_08() override;
 	void method_0C() override;
-	void method_10() override;
-	void method_1C() override;
-	void method_20() override;
-	void method_24() override;
+	void drawRenderLists() override;
+	bool beginRenderList() override;
+	bool endRenderList() override;
+	bool hasRenderList() override;
 	void method_28() override;
 	void method_2C() override;
 	void method_30() override;
-	CommonScene *createScene(
+	CommonScene *createSubScene(
 		CommonSceneSub10 *sub10,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer) override;
-	void method_50() override;
+	void finishScene() override;
 	void getSceneRenderTarget() override;
 	void method_64() override;
 	void method_6C() override;

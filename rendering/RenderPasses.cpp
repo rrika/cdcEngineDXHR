@@ -154,4 +154,9 @@ void DrawableListsAndMasks::add(IRenderDrawable *drawable, uint32_t insertMask) 
 	}
 }
 
+DrawableList *DrawableListsAndMasks::listForPass(uint32_t passId) {
+	// TODO
+	return nullptr;
+}
+
 }

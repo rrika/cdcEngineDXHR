@@ -38,7 +38,13 @@ void CommonRenderDevice::method_44() {
 	// TODO
 }
 
-void CommonRenderDevice::method_4C() {
+void CommonRenderDevice::createSiblingScene(
+	CommonSceneSub10 *sub10,
+	CommonRenderTarget *renderTarget,
+	CommonDepthBuffer *depthBuffer)
+{
+	// TODO
+	createSubScene(sub10, renderTarget, depthBuffer);
 	// TODO
 }
 

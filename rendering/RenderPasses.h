@@ -80,6 +80,7 @@ struct DrawableListsAndMasks { // guessed name
 
 	DrawableListsAndMasks(RenderPasses *, /*uint32_t,*/ uint32_t, RingBuffer *);
 	void add(IRenderDrawable *drawable, uint32_t passMask);
+	DrawableList *listForPass(uint32_t);
 };
 
 }

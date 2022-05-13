@@ -50,9 +50,9 @@ public:
 	// uint32_t dword3F8;
 	// uint32_t dword3FC;
 	// uint32_t dword400;
-	// CommonScene *otherScene404;
-	// CommonScene *scene408;
-	// CommonScene *scene40C;
+	CommonScene *parentScene;
+	CommonScene *nextScene;
+	CommonScene *prevScene;
 	// float heightFogParams[4];
 	// float fogScaleOffset[4];
 	// uint8_t f430[4];
@@ -88,13 +88,14 @@ public:
 	// uint32_t dword6D4;
 	// char field_6D4[120];
 	// uint32_t dword750;
-	// uint32_t dword754;
+	uint32_t numSubScenes;
+  	CommonScene *subScenes[18];
 
 public:
 	CommonScene(
 		CommonRenderDevice *renderDevice,
 		/* ... */
-		CommonScene *otherScene,
+		CommonScene *parentScene,
 		CommonSceneSub10 *sub10,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer,
@@ -104,7 +105,9 @@ public:
 		RenderPasses *renderPasses)
 	:
 		renderTarget(renderTarget),
-		depthBuffer(depthBuffer)
+		parentScene(parentScene),
+		depthBuffer(depthBuffer),
+		numSubScenes(0)
 	{
 		this->sub10 = *sub10;
 		this->sub114 = *sub114;

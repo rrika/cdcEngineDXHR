@@ -477,7 +477,7 @@ int spinnyCube(HWND window,
 
     cdc::CommonSceneSub10 commonSceneSub10;
     commonSceneSub10.mask = 1;
-    auto *scene = renderDevice->createScene(
+    auto *scene = renderDevice->createSubScene(
         &commonSceneSub10,
         &cdcRenderTarget,
         &cdcDepthBuffer);

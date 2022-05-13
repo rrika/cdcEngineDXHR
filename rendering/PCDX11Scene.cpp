@@ -23,4 +23,24 @@ void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 	stateManager->popRenderTargets();
 }
 
+void PCDX11Scene::addToDrawableList(DrawableList *drawableList) {
+	// TODO
+	addToDrawableList(drawableList, 0);
+	// TODO
+}
+
+void PCDX11Scene::addToDrawableList(DrawableList *drawableList, uint32_t) {
+	// TODO
+	if (parentScene) {
+		auto *parentDrawableList = parentScene->drawableListsAndMasks->listForPass(10);
+		for (uint32_t i=0; i<numSubScenes; i++)
+			parentDrawableList->add(subScenes[i]);
+		// TODO
+	} else {
+		drawableList->add(this);
+		for (uint32_t i=0; i<numSubScenes; i++)
+			drawableList->add(subScenes[i]);
+	}
+}
+
 }
