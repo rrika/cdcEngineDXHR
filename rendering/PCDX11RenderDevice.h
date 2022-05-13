@@ -33,7 +33,7 @@ public:
 	};
 
 	RenderList *renderList_current = nullptr; // 10CF8
-	RenderList *renderList_10CFC = nullptr; // 10CFC
+	RenderList *renderList_processing = nullptr; // 10CFC
 	RenderList *renderList_first = nullptr; // 10D00
 	RenderList *renderList_last = nullptr; // 10CD04
 
@@ -83,7 +83,7 @@ public:
 	// incomplete
 	void refCountDec() override;
 	void method_08() override;
-	void method_0C() override;
+	void resetRenderLists() override;
 	void drawRenderLists() override;
 	bool beginRenderList() override;
 	bool endRenderList() override;
@@ -168,6 +168,7 @@ public:
 	void recordDrawable(IRenderDrawable *drawable, uint32_t arg1, uint8_t arg2);
 	void clearRenderTargetNow(char mode, float *color, float depth, uint32_t stencil);
 	void setTexture(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown);
+	void drawRenderListsInternal(void *arg);
 };
 
 PCDX11RenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown);

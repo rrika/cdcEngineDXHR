@@ -214,12 +214,19 @@ void PCDX11RenderDevice::method_08() {
 	// TODO
 }
 
-void PCDX11RenderDevice::method_0C() {
+void PCDX11RenderDevice::resetRenderLists() {
+	// TODO
+	renderList_current = nullptr;
+	renderList_last = nullptr;
+	renderList_first = nullptr;
 	// TODO
 }
 
 void PCDX11RenderDevice::drawRenderLists() {
+	if (hasRenderList())
+		endRenderList();
 	// TODO
+	drawRenderListsInternal(/*TODO*/(void*)this);
 }
 
 bool PCDX11RenderDevice::beginRenderList() {
@@ -232,9 +239,10 @@ bool PCDX11RenderDevice::endRenderList() {
 	if (renderList_last) {
 		renderList_last->next = renderList_current;
 	} else {
-		renderList_first->next = renderList_current;
+		renderList_first = renderList_current;
 	}
 	renderList_last = renderList_current;
+	renderList_current = 0;
 	// TODO
 	return true;
 }
@@ -571,6 +579,20 @@ void PCDX11RenderDevice::setTexture(uint32_t slot, PCDX11BaseTexture *tex, uint3
 	if (!tex)
 		tex = missingTexture;
 	deviceManager->getStateManager()->setTextureAndSampler(slot, tex, filter, unknown);
+}
+
+void PCDX11RenderDevice::drawRenderListsInternal(void *arg) {
+	// TODO
+	renderList_processing = renderList_first;
+	// TODO
+	if (arg) {
+		// TODO
+		while (renderList_processing) {
+			// TODO
+			renderList_processing->drawableList.draw(renderPasses.drawers, /*funcSetIndex=*/0);
+			renderList_processing = renderList_processing->next;
+		}
+	}
 }
 
 PCDX11RenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown) {

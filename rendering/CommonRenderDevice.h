@@ -26,7 +26,7 @@ public:
 	virtual ~CommonRenderDevice() = default;
 	virtual void refCountDec() = 0;
 	virtual void method_08() = 0;
-	virtual void method_0C() = 0;
+	virtual void resetRenderLists() = 0;
 	virtual void drawRenderLists() = 0;
 	virtual void method_14();
 	virtual void method_18();

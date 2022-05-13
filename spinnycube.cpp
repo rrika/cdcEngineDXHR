@@ -477,10 +477,6 @@ int spinnyCube(HWND window,
 
     cdc::CommonSceneSub10 commonSceneSub10;
     commonSceneSub10.mask = 1;
-    auto *scene = renderDevice->createSubScene(
-        &commonSceneSub10,
-        &cdcRenderTarget,
-        &cdcDepthBuffer);
 
     SpinnyCubePass cubePass;
     cubePass.viewport = &viewport;
@@ -498,12 +494,6 @@ int spinnyCube(HWND window,
     cubeDrawable.cdcIndexBuffer = &cdcIndexBuffer;
     cubeDrawable.streamDecl = &streamDecl;
     cubeDrawable.cdcVertexBuffer = &cdcVertexBuffer;
-
-    // add two drawables to the scene
-    float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
-    renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
-    renderDevice->recordDrawable(&cubeDrawable, /*maskA=*/ 1, /*maskB=*/ 0);
-
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -555,9 +545,22 @@ int spinnyCube(HWND window,
         // memcpy(cdcConstantBuffer.data, &constants, sizeof(Constants));
         // cdcConstantBuffer.syncBuffer(deviceContext);
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
+        renderDevice->resetRenderLists();
+        renderDevice->beginRenderList();
+        renderDevice->createSubScene(
+            &commonSceneSub10,
+            &cdcRenderTarget,
+            &cdcDepthBuffer);
 
-        scene->draw(0, nullptr);
+        // add two drawables to the scene
+        float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
+        renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
+        renderDevice->recordDrawable(&cubeDrawable, /*mask=*/ 1, /*addToParent=*/ 0);
+
+        renderDevice->finishScene();
+        renderDevice->endRenderList();
+
+        renderDevice->drawRenderLists();
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
