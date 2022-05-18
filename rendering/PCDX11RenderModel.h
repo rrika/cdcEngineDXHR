@@ -19,20 +19,20 @@ public:
 	MeshHeader *meshHeader;
 	Mesh       *mesh;
 
-	// uint16_t count0; // 1C
-	// MeshTab0 *table0; // 20
+	uint16_t count0; // 1C
+	MeshTab0 *table0; // 20
 
-	// uint16_t count1; // 24
-	// MeshSub *table1; // 28
+	uint16_t count1; // 24
+	MeshSub *table1; // 28
 
 	// uint32_t bonesMaybe;
 	// uint32_t dword30;
-	// uint32_t indices;
+	uint32_t indices;
 	// PCDX11StaticIndexBuffer *indexBuffer; // 38
 	PCDX11SimpleStaticIndexBuffer *indexBuffer; // 38, hack
-	// MeshTab0Ext16 *tab0Ext16Byte;
-	// MeshTab0Ext128 *tab0Ext128Byte;
-	// uint32_t vsSelect; // 4C
+	MeshTab0Ext16 *tab0Ext16Byte;
+	MeshTab0Ext128 *tab0Ext128Byte;
+	uint32_t vsSelect; // 4C
 
 public:
 	PCDX11RenderModel(PCDX11RenderDevice *renderDevice, uint32_t size);
