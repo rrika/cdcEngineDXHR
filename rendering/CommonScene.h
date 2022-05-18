@@ -106,6 +106,8 @@ public:
 	:
 		renderTarget(renderTarget),
 		parentScene(parentScene),
+		nextScene(nullptr),
+		prevScene(nullptr),
 		depthBuffer(depthBuffer),
 		numSubScenes(0)
 	{
