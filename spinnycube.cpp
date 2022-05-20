@@ -18,6 +18,7 @@
 #include "rendering/PCDX11RenderDevice.h"
 #include "rendering/PCDX11RenderTarget.h"
 #include "rendering/PCDX11Scene.h"
+#include "rendering/PCDX11SimpleStaticIndexBuffer.h"
 #include "rendering/PCDX11SimpleStaticVertexBuffer.h"
 #include "rendering/PCDX11StateManager.h"
 #include "rendering/PCDX11StreamDecl.h"
@@ -427,18 +428,8 @@ int spinnyCube(HWND window,
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    D3D11_BUFFER_DESC indexBufferDesc = {};
-    indexBufferDesc.ByteWidth = sizeof(IndexData);
-    indexBufferDesc.Usage     = D3D11_USAGE_IMMUTABLE;
-    indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
-    D3D11_SUBRESOURCE_DATA indexData = { IndexData };
-
-    ID3D11Buffer* indexBuffer;
-    device->CreateBuffer(&indexBufferDesc, &indexData, &indexBuffer);
-
     cdc::PCDX11StateManager stateManager(deviceContext, device);
-    cdc::HackIndexBuffer cdcIndexBuffer(indexBuffer);
+    cdc::PCDX11SimpleStaticIndexBuffer cdcIndexBuffer(sizeof(IndexData)/2, IndexData);
     cdc::deviceManager->stateManager = &stateManager; // hack
 
     cdc::RenderResourceSection renderResourceSection;
