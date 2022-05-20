@@ -10,6 +10,7 @@ namespace cdc {
 PCDX11RenderModel::PCDX11RenderModel(PCDX11RenderDevice *renderDevice, uint32_t size) :
 	RenderMesh(),
 	// RenderExternalResource(renderDevice),
+	renderDevice(renderDevice),
 	size(size)
 {
 	meshHeader = (MeshHeader*)new char[size];
@@ -85,12 +86,14 @@ void PCDX11RenderModel::resConstruct() {
 			layout->vertStrideA,
 			sub1->numVertices,
 			(void*)sub1->vertices);
+		printf("%d:%d indices\n", i, sub1->numVertices);
 		if (mesh->flags.hasBones)
 			sub1->matrixGatherOffsets += (uintptr_t)mesh;
 	}
 
 	// process indices
 	if (mesh->numIndices != 0) {
+		printf("%d indices\n", mesh->numIndices);
 		mesh->indices += (uintptr_t)mesh;
 		indices = mesh->indices;
 		indexBuffer = new PCDX11SimpleStaticIndexBuffer( // should be PCDX11StaticIndexBuffer

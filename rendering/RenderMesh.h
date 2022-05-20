@@ -83,7 +83,7 @@ struct Mesh { // guessed name
 struct MeshTab0 {
 	uint32_t vec0[4];
 	uint32_t startIndex;
-	uint32_t indexCount;
+	uint32_t triangleCount;
 	uint32_t dword18;
 	uint32_t dword1C;
 	uint32_t dword20;

@@ -556,10 +556,10 @@ void PCDX11RenderDevice::dx11_method_48() {
 	// TODO
 }
 
-void PCDX11RenderDevice::recordDrawable(IRenderDrawable *drawable, uint32_t maskA, uint8_t maskB) {
+void PCDX11RenderDevice::recordDrawable(IRenderDrawable *drawable, uint32_t mask, bool addToNextScene) {
 	// TODO
 	// drawable->draw(0, nullptr); // hack
-	scene7C->drawableListsAndMasks->add(drawable, maskA);
+	scene7C->drawableListsAndMasks->add(drawable, mask);
 }
 
 void PCDX11RenderDevice::clearRenderTargetNow(char flags, float *color, float depth, uint32_t stencil) {

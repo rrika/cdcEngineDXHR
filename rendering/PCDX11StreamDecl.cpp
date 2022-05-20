@@ -2,6 +2,7 @@
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11VertexBuffer.h"
+#include <d3d11.h>
 
 namespace cdc {
 

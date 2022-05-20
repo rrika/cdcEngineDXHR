@@ -5,6 +5,8 @@
 // #include "CommonStreamDecl.h"
 #include "PCDX11Shader.h"
 
+class D3D11_INPUT_ELEMENT_DESC;
+
 namespace cdc {
 
 class PCDX11RenderDevice;

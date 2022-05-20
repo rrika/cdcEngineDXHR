@@ -21,6 +21,18 @@ class PCDX11ModelDrawable : public IRenderDrawable {
 	uint32_t triangleCount : 24;
 
 public:
+	PCDX11ModelDrawable(
+		PCDX11RenderModel *renderModel,
+		MeshSub *meshSub,
+		MeshTab0 *tab0)
+	:
+		renderModel(renderModel),
+		meshSub(meshSub),
+		tab0(tab0)
+	{ // hack
+		triangleCount = tab0[0].triangleCount;
+	}
+
 	void draw(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) override;
 	uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) override;
 

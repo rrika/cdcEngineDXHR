@@ -11,12 +11,14 @@ class PCDX11RenderModelInstance :
 	public CommonRenderModelInstance
 	// public PCDX11RenderExternalResource
 {
+	PCDX11RenderDevice *renderDevice; // part of CommonRenderModelInstance
 	PCDX11RenderModel *renderModel;
 public:
 	PCDX11RenderModelInstance(PCDX11RenderModel *renderModel, PCDX11RenderDevice *renderDevice) :
-		CommonRenderModelInstance(renderModel)
+		CommonRenderModelInstance(renderModel),
+		renderDevice(renderDevice)
 	{
-		(void)renderDevice;
+		baseMask = 1; // hack
 	}
 
 	void resRegisterAtRenderDevice() override { /*TODO*/ };

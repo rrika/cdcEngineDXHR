@@ -74,6 +74,7 @@ void PCDX11StateManager::setVertexBuffer(PCDX11VertexBuffer *vertexBuffer) {
 
 void PCDX11StateManager::setStreamDecl(PCDX11StreamDecl *streamDecl) {
 	if (streamDecl != m_streamDecl) {
+		if (!streamDecl->inputLayout) streamDecl->internalCreate(); // hack
 		streamDecl->apply();
 		m_streamDecl = streamDecl;
 	}

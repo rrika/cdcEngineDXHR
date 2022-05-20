@@ -16,6 +16,7 @@
 #include "rendering/PCDX11IndexBuffer.h"
 #include "rendering/PCDX11PixelShader.h"
 #include "rendering/PCDX11RenderDevice.h"
+#include "rendering/PCDX11RenderModel.h"
 #include "rendering/PCDX11RenderTarget.h"
 #include "rendering/PCDX11Scene.h"
 #include "rendering/PCDX11SimpleStaticIndexBuffer.h"
@@ -26,6 +27,7 @@
 #include "rendering/PCDX11UberConstantBuffer.h"
 #include "rendering/PCDX11VertexShader.h"
 #include "rendering/RenderPasses.h"
+#include "rendering/RenderModelInstance.h"
 #include "rendering/VertexAttribute.h"
 #include "drm/ResolveReceiver.h"
 #include "drm/sections/RenderResourceSection.h"
@@ -465,6 +467,13 @@ int spinnyCube(HWND window,
 
     stateManager.setTextureAndSampler(0, bottleTexture, 0, 0.0f);
 
+    auto bottleRenderModel = (cdc::PCDX11RenderModel*)renderResourceSection.getWrapped(0xA301);
+    printf("have bottle cdc render model: %p\n", bottleRenderModel);
+    printf("have bottle cdc mesh blob: %p\n", bottleRenderModel->getMesh());
+
+    cdc::RenderModelInstance *bottleRenderModelInstance =
+        renderDevice->createRenderModelInstance(bottleRenderModel);
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     D3D11_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<float>(depthBufferDesc.Width), static_cast<float>(depthBufferDesc.Height), 0.0f, 1.0f };
@@ -476,8 +485,9 @@ int spinnyCube(HWND window,
     float n = 1.0f;                             // near
     float f = 9.0f;                             // far
 
+    float scale = 0.1f;
     float3 modelRotation    = { 0.0f, 0.0f, 0.0f };
-    float3 modelScale       = { 1.0f, 1.0f, 1.0f };
+    float3 modelScale       = { scale, scale, scale };
     float3 modelTranslation = { 0.0f, 0.0f, 4.0f };
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -559,10 +569,11 @@ int spinnyCube(HWND window,
         scene->viewMatrix = translate;
         scene->projectMatrix = project;
 
-        // add two drawables to the scene
+        // add drawables to the scene
         float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
         renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
         renderDevice->recordDrawable(&cubeDrawable, /*mask=*/ 1, /*addToParent=*/ 0);
+        bottleRenderModelInstance->recordDrawables();
 
         renderDevice->finishScene();
         renderDevice->endRenderList();
