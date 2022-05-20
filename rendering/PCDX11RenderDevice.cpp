@@ -5,6 +5,7 @@
 #include "PCDX11RenderDevice.h"
 #include "PCDX11RenderTarget.h"
 #include "PCDX11RenderModel.h"
+#include "PCDX11RenderModelInstance.h"
 #include "PCDX11Scene.h"
 #include "PCDX11ShaderLib.h"
 #include "PCDX11StateManager.h"
@@ -405,8 +406,8 @@ RenderResource *PCDX11RenderDevice::createRenderModel(uint32_t size) {
 	return new PCDX11RenderModel(this, size);
 }
 
-void PCDX11RenderDevice::createRenderModelInstance() {
-	// TODO
+RenderModelInstance *PCDX11RenderDevice::createRenderModelInstance(RenderMesh *renderMesh) {
+	return new PCDX11RenderModelInstance(static_cast<PCDX11RenderModel*>(renderMesh), this);
 }
 
 RenderResource *PCDX11RenderDevice::createRenderTerrain(uint32_t) {

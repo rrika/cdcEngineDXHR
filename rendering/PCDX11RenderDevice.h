@@ -123,7 +123,7 @@ public:
 	void createProceduralTexture() override;
 	IShaderLib *createShaderLib(uint32_t) override;
 	RenderResource *createRenderModel(uint32_t) override;
-	void createRenderModelInstance() override;
+	RenderModelInstance *createRenderModelInstance(RenderMesh*) override;
 	RenderResource *createRenderTerrain(uint32_t) override;
 	void createRenderTerrainInstance() override;
 	void createRenderImage() override;

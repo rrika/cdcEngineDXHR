@@ -9,6 +9,7 @@ target_sources(dxhr PRIVATE
 	PCDX11PixelShader.cpp
 	PCDX11RenderDevice.cpp
 	PCDX11RenderModel.cpp
+	PCDX11RenderModelInstance.cpp
 	PCDX11RenderTarget.cpp
 	PCDX11RenderTexture.cpp
 	PCDX11Scene.cpp

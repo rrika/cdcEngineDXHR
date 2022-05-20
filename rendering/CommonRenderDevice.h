@@ -8,7 +8,9 @@ namespace cdc {
 
 class IShaderLib;
 class IRenderPassCallback;
+class RenderMesh;
 class RenderResource;
+class RenderModelInstance;
 class TextureMap;
 class CommonScene;
 
@@ -122,7 +124,7 @@ public:
 	virtual IShaderLib *createShaderLib(uint32_t) = 0;
 	virtual RenderResource *createRenderModel(uint32_t) = 0;
 	virtual RenderResource *method_140(uint32_t);
-	virtual void createRenderModelInstance() = 0;
+	virtual RenderModelInstance *createRenderModelInstance(RenderMesh*) = 0;
 	virtual RenderResource *createRenderTerrain(uint32_t) = 0;
 	virtual void createRenderTerrainInstance() = 0;
 	virtual void createRenderImage() = 0;
