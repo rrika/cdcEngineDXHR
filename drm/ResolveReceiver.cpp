@@ -161,6 +161,9 @@ void hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSection
 	uint32_t cursor = 32 + header.sectionCount*20 + header.dependencyDrmListSize + header.dependencyObjListSize;
 	cursor = (cursor+15) & ~15;
 
+	std::vector<uint32_t> sectionDomainIds;
+	std::vector<char*> relocPtrs;
+
 	for (uint32_t i = 0; i < header.sectionCount; i++) {
 		DRMSectionHeader& sectionHeader = sectionHeaders[i];
 
@@ -174,7 +177,7 @@ void hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSection
 
 		auto *resolveSection = sectionHeader.type < 16 ? resolveSections[sectionHeader.type] : nullptr;
 		if (resolveSection) {
-			bool alreadyLoaded;
+			bool alreadyLoaded = false;
 			uint32_t id = resolveSection->allocate(
 				sectionHeader.id,
 				sectionHeader.allocFlags,
@@ -185,8 +188,18 @@ void hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSection
 			if (!alreadyLoaded) {
 				resolveSection->fill(id, payload, sectionHeader.payloadSize, 0);
 			}
+			sectionDomainIds.push_back(id);
+		} else {
+			sectionDomainIds.push_back(0);
 		}
+		relocPtrs.push_back(sectionHeader.relocSize >= 20 ? reloc : nullptr);
 	}
+
+	for (uint32_t i = 0; i < header.sectionCount; i++) {
+		if (relocPtrs[i])
+			applyRelocs(resolveSections, sectionHeaders.data(), sectionDomainIds.data(), i, relocPtrs[i]);
+	}
+
 }
 
 void hackResolveReceiver(const char *path, ResolveSection **resolveSections) {
