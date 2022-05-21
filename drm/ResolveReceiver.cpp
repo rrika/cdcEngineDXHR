@@ -56,7 +56,9 @@ static void applyRelocs(
 		uint32_t targetOffset = (reloc & 0xFFFFFFC000000000) >> 38;
 
 		ResolveSection *targetResolveSection = resolveSections[sectionHeaders[targetIndex].type];
+		if (!targetResolveSection) continue; // not in original engine
 		char *targetData = (char*)targetResolveSection->getBlob(sectionDomainIds[targetIndex]);
+		if (!targetData) continue; // not in original engine
 		char *patch = data + patchSite;
 		char *target = targetData + targetOffset;
 		memcpy(patch, &target, sizeof(void*));
@@ -72,6 +74,7 @@ static void applyRelocs(
 		memcpy(&targetSectionId, patch, 4);
 
 		ResolveSection *targetResolveSection = resolveSections[targetTy];
+		if (!targetResolveSection) continue; // not in original engine
 		uint32_t targetDomainId = targetResolveSection->getDomainId(targetSectionId);
 
 		memcpy(patch, &targetDomainId, 4);
@@ -89,6 +92,7 @@ static void applyRelocs(
 		memcpy(&targetSectionId, patch, 4);
 
 		ResolveSection *targetResolveSection = resolveSections[targetTy];
+		if (!targetResolveSection) continue; // not in original engine
 		uint32_t targetDomainId = targetResolveSection->getDomainId(targetSectionId);
 		void *targetData = nullptr;
 		if (targetDomainId != ~0)
