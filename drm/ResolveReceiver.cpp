@@ -14,14 +14,14 @@ extern "C" {
 namespace cdc {
 
 static void applyRelocs(
-	ResolveSection *resolveSections,
+	ResolveSection **resolveSections,
 	DRMSectionHeader *sectionHeaders,
 	size_t *sectionDomainIds,
 	size_t sectionIndex,
 	char *relocData)
 {
 
-	ResolveSection* resolveSection = &resolveSections[sectionHeaders[sectionIndex].type];
+	ResolveSection* resolveSection = resolveSections[sectionHeaders[sectionIndex].type];
 
 	if (resolveSection == nullptr)
 		return;
@@ -49,13 +49,13 @@ static void applyRelocs(
 
 	for (unsigned i=0; i < relocHeader->count1; i++, relocCursor += 2) {
 		uint32_t lo = relocCursor[0];
-		uint32_t hi = relocCursor[0];
+		uint32_t hi = relocCursor[1];
 		uint64_t reloc = (((uint64_t)hi)<<32) | lo;
 		uint32_t targetIndex = (reloc & 0x0000000000003FFF) >> 00;
 		uint32_t patchSite = (reloc & 0x0000003FFFFFC000) >> 12;
 		uint32_t targetOffset = (reloc & 0xFFFFFFC000000000) >> 38;
 
-		ResolveSection *targetResolveSection = &resolveSections[sectionHeaders[targetIndex].type];
+		ResolveSection *targetResolveSection = resolveSections[sectionHeaders[targetIndex].type];
 		char *targetData = (char*)targetResolveSection->getBlob(sectionDomainIds[targetIndex]);
 		char *patch = data + patchSite;
 		char *target = targetData + targetOffset;
@@ -71,7 +71,7 @@ static void applyRelocs(
 		uint32_t targetSectionId = 0;
 		memcpy(&targetSectionId, patch, 4);
 
-		ResolveSection *targetResolveSection = &resolveSections[targetTy];
+		ResolveSection *targetResolveSection = resolveSections[targetTy];
 		uint32_t targetDomainId = targetResolveSection->getDomainId(targetSectionId);
 
 		memcpy(patch, &targetDomainId, 4);
@@ -88,7 +88,7 @@ static void applyRelocs(
 		uint32_t targetSectionId = 0;
 		memcpy(&targetSectionId, patch, 4);
 
-		ResolveSection *targetResolveSection = &resolveSections[targetTy];
+		ResolveSection *targetResolveSection = resolveSections[targetTy];
 		uint32_t targetDomainId = targetResolveSection->getDomainId(targetSectionId);
 		void *targetData = nullptr;
 		if (targetDomainId != ~0)
