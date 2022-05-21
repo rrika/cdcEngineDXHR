@@ -21,6 +21,7 @@ public:
 };
 
 class PCDX11VertexShaderTable : public PCDX11ShaderTable {
+public:
 	// uint32_t dword10;
 	PCDX11VertexShader **vertexShaders = nullptr;
 	bool hasOwnership = 0;

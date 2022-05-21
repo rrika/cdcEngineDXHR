@@ -221,8 +221,8 @@ unsigned short IndexData[] =
 const char shaders [] = (
     "cbuffer WorldBuffer : register(b0) { float4x4 WorldViewProject; float4x4 World; float4x4 ViewProject; }\n"
     "cbuffer SceneBuffer : register(b2) { float4x4 View; }\n"
-    "struct vs_in { float4 position : POS; float3 normal : NOR; float2 texcoord : TEX; float3 color : COL; };\n"
-    "struct vs_out { float4 position : SV_POSITION; float2 texcoord : TEX; float4 color : COL; };\n"
+    "struct vs_in { float4 position : POSITION; float3 normal : NORMAL; float2 texcoord : TEXCOORD1; float3 color : COLOR; };\n"
+    "struct vs_out { float4 position : SV_POSITION; float4 color : COLOR; float2 texcoord : TEXCOORD; };\n"
     "Texture2D    mytexture : register(t0);\n"
     "SamplerState mysampler : register(s0);\n"
     "static const float3 lightvector = { 1.0f, -1.0f, 1.0f };\n"
@@ -358,18 +358,31 @@ int spinnyCube(HWND window,
 
     D3DCompile(shaders, sizeof(shaders), "shaders.hlsl", nullptr, nullptr, "vs_main", "vs_5_0", 0, 0, &vsBlob, nullptr);
 
-    cdc::PCDX11VertexShader cdcVertexShader(
+    cdc::PCDX11VertexShader cdcOwnVertexShader(
         (char*)vsBlob->GetBufferPointer(),
         /*takeCopy=*/false,
         /*isWrapped=*/false);
-    cdcVertexShader.asyncCreate();
+    cdcOwnVertexShader.requestShader();
+    cdcOwnVertexShader.awaitResource();
+
+    cdc::PCDX11VertexShader& cdcScavengedVertexShader = *renderDevice->shtab_vs_wvp_1_0.vertexShaders[0];
+    cdcScavengedVertexShader.requestShader();
+    cdcScavengedVertexShader.awaitResource();
+
+    cdc::PCDX11VertexShader& cdcVertexShader = false
+        ? cdcScavengedVertexShader
+        : cdcOwnVertexShader;
+
+    const char *position = cdcVertexShader.wineWorkaround
+        ? "SV_POSITION"
+        : "POSITION";
 
     D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = // float3 position, float3 normal, float2 texcoord, float3 color
     {
-        { "POS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NOR", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEX", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COL", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { position,   0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR",    0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
     cdc::PCDX11StreamDecl streamDecl(
