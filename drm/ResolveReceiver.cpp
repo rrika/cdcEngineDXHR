@@ -204,6 +204,12 @@ void hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSection
 			applyRelocs(resolveSections, sectionHeaders.data(), sectionDomainIds.data(), i, relocPtrs[i]);
 	}
 
+	for (uint32_t i = 0; i < header.sectionCount; i++) {
+		DRMSectionHeader& sectionHeader = sectionHeaders[i];
+		auto *resolveSection = sectionHeader.type < 16 ? resolveSections[sectionHeader.type] : nullptr;
+		if (resolveSection)
+			resolveSection->construct(sectionDomainIds[i], nullptr);
+	}
 }
 
 void hackResolveReceiver(const char *path, ResolveSection **resolveSections) {

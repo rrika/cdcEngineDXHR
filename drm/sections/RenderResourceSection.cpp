@@ -34,6 +34,18 @@ void RenderResourceSection::fill(uint32_t sectionId, void* src, size_t size, siz
 	res->resFill(src, size, offset);
 }
 
+void RenderResourceSection::construct(uint32_t id, void *) {
+	MapEntry& entry = resources[id];
+	if (id == 0x1F6E)
+		// TODO
+		return;
+
+	// printf("  resConstruct %p\n", entry.resource);
+	entry.resource->resConstruct();
+	entry.todoLoading = false;
+}
+
+
 void* RenderResourceSection::getWrapped(uint32_t sectionId) {
 	if (auto it = resources.find(sectionId); it != resources.end())
 		return (void*)it->second.resource;
