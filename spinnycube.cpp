@@ -451,8 +451,9 @@ int spinnyCube(HWND window,
     cdc::ShaderLibSection shaderLibSection;
 
     cdc::ResolveSection *resolveSections[16] = {nullptr};
-    resolveSections[5] = &renderResourceSection;
+    resolveSections[5] = &renderResourceSection; // textures
     resolveSections[9] = &shaderLibSection;
+    resolveSections[12] = &renderResourceSection; // meshes
 
     hackResolveReceiver("pickup_dns_156600946691c80e_dx11.drm", resolveSections);
     hackResolveReceiver("alc_beer_bottle_a.drm", resolveSections);

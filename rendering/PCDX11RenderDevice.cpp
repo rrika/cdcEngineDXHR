@@ -4,6 +4,7 @@
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11RenderTarget.h"
+#include "PCDX11RenderModel.h"
 #include "PCDX11Scene.h"
 #include "PCDX11ShaderLib.h"
 #include "PCDX11StateManager.h"
@@ -400,9 +401,8 @@ IShaderLib *PCDX11RenderDevice::createShaderLib(uint32_t size) {
 	return new PCDX11ShaderLib(size, this);
 }
 
-RenderResource *PCDX11RenderDevice::createRenderModel(uint32_t) {
-	// TODO
-	return nullptr;
+RenderResource *PCDX11RenderDevice::createRenderModel(uint32_t size) {
+	return new PCDX11RenderModel(this, size);
 }
 
 void PCDX11RenderDevice::createRenderModelInstance() {

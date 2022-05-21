@@ -35,10 +35,12 @@ public:
 	// uint32_t vsSelect; // 4C
 
 public:
+	PCDX11RenderModel(PCDX11RenderDevice *renderDevice, uint32_t size);
+
 	void resRegisterAtRenderDevice() override { /*TODO*/ }
-	void resFill(void* src, size_t size, size_t offset) override { /*TODO*/ }
-	char *resGetBuffer() override { /*TODO*/ return nullptr; }
-	void resConstruct() override { /*TODO*/ }
+	void resFill(void* src, size_t size, size_t offset) override;
+	char *resGetBuffer() override;
+	void resConstruct() override;
 	// void resMethod10();
 	// dtor
 
