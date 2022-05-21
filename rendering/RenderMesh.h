@@ -3,6 +3,7 @@
 
 namespace cdc {
 
+class CommonStreamDecl;
 class PCDX11Material;
 class PCDX11SimpleStaticVertexBuffer;
 
@@ -103,22 +104,26 @@ struct MeshTab0Ext16 {
 	uint32_t dwordC;
 };
 
+struct MeshTab0Ext128Sub10 {
+	uint32_t dword0;
+	uint32_t dword4;
+	uint32_t dword8;
+	uint32_t dwordC;
+	float float10;
+	uint32_t dword14;
+	uint32_t dword18;
+	float minDepth;
+	float maxDepth;
+	CommonStreamDecl *streamDecls24[16];
+	void *stencilSettings64;
+};
+
 struct MeshTab0Ext128 {
 	PCDX11Material *material;
 	uint32_t dword4;
 	uint32_t dword8;
 	uint32_t dwordC;
-	uint32_t dword10;
-	uint32_t dword14;
-	uint32_t dword18;
-	uint32_t dword1C;
-	float float20;
-	uint32_t dword24;
-	uint32_t dword28;
-	uint32_t dword2C;
-	uint32_t dword30;
-	float matrix34[16];
-	void *dataPtr74;
+	MeshTab0Ext128Sub10 sub10;
 	uint32_t dword78;
 	uint32_t dword7C;
 };
