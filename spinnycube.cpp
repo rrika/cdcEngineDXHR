@@ -26,6 +26,7 @@
 #include "rendering/PCDX11UberConstantBuffer.h"
 #include "rendering/PCDX11VertexShader.h"
 #include "rendering/RenderPasses.h"
+#include "rendering/VertexAttribute.h"
 #include "drm/ResolveReceiver.h"
 #include "drm/sections/RenderResourceSection.h"
 #include "drm/sections/ShaderLibSection.h"
@@ -373,21 +374,22 @@ int spinnyCube(HWND window,
         ? cdcScavengedVertexShader
         : cdcOwnVertexShader;
 
-    const char *position = cdcVertexShader.wineWorkaround
-        ? "SV_POSITION"
-        : "POSITION";
+    uint32_t numAttr = 4;
+    auto *layout = (cdc::VertexAttributeLayoutA*)new char[16 + 8 * numAttr];
+    layout->numAttr = numAttr;
+    layout->attrib[0] = {0xD2F7D823,  0, 3}; // position,  offset  0, DXGI_FORMAT_R32G32B32A32_FLOAT
+    layout->attrib[1] = {0x36F5E414, 16, 2}; // normal,    offset 16, DXGI_FORMAT_R32G32B32_FLOAT
+    layout->attrib[2] = {0x8317902A, 28, 1}; // texcoord1, offset 28, DXGI_FORMAT_R32G32_FLOAT
+    layout->attrib[3] = {0XFFFFFFFF, 36, 2}; // color,     offset 36, DXGI_FORMAT_R32G32B32_FLOAT
 
-    D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = // float3 position, float3 normal, float2 texcoord, float3 color
-    {
-        { position,   0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR",    0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    };
+    auto *inputElementDesc = new D3D11_INPUT_ELEMENT_DESC[layout->numAttr];
+    memset(inputElementDesc, 0, sizeof(D3D11_INPUT_ELEMENT_DESC[layout->numAttr]));
+    decodeVertexAttribA(inputElementDesc, layout->attrib, layout->numAttr, cdcVertexShader.wineWorkaround);
+    delete[] (char*)layout;
 
     cdc::PCDX11StreamDecl streamDecl(
         static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice),
-        inputElementDesc, ARRAYSIZE(inputElementDesc), &cdcVertexShader.m_sub);
+        inputElementDesc, numAttr, &cdcVertexShader.m_sub);
     streamDecl.internalCreate();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -17,4 +17,5 @@ target_sources(dxhr PRIVATE
 	PCDX11Texture.cpp
 	PCDX11VertexShader.cpp
 	RenderPasses.cpp
-	RenderResource.cpp)
+	RenderResource.cpp
+	VertexAttribute.cpp)
