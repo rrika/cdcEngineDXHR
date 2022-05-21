@@ -28,7 +28,7 @@ class PCDX11VertexShaderTable : public PCDX11ShaderTable {
 	// uint8_t byte1A;
 	// uint8_t byte1B;
 public:
-	PCDX11VertexShaderTable(char *blob, bool takeCopy) :
+	PCDX11VertexShaderTable(char *blob, bool takeCopy, bool wineWorkaround=false) :
 		PCDX11ShaderTable(blob)
 	{
 		auto *blobWords = (uint32_t*)blob;
@@ -38,12 +38,13 @@ public:
 		hasOwnership = takeCopy;
 		memset(vertexShaders, 0, sizeof(PCDX11VertexShader*[numShaders]));
 		for (uint32_t i = 0; i < numShaders; i++)
-			if (offsets[i] != ~0u)
+			if (offsets[i] != ~0u) {
 				vertexShaders[i] = deviceManager->getShaderManager()->createVertexShader(
 					/*blob=*/ blob + offsets[i],
 					/*takeCopy=*/ hasOwnership,
 					/*isWrapped=*/ true);
-			else
+				vertexShaders[i]->wineWorkaround = wineWorkaround;
+			} else
 				vertexShaders[i] = nullptr;
 	}
 };

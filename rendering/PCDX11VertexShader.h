@@ -14,6 +14,7 @@ class PCDX11VertexShader :
 public:
 	ID3D11VertexShader *m_d3dShader;
 	PCDX11ShaderSub m_sub;
+	bool wineWorkaround = false;
 
 	static PCDX11VertexShader *create(
 		char *blob, bool takeCopy, /*shaderManagerData,*/

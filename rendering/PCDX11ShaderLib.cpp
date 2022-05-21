@@ -3,11 +3,16 @@
 
 namespace cdc {
 
-PCDX11ShaderLib::PCDX11ShaderLib(char *blob, PCDX11ShaderLib::Type type, PCDX11RenderDevice *renderDevice) {
+PCDX11ShaderLib::PCDX11ShaderLib(
+	char *blob,
+	PCDX11ShaderLib::Type type,
+	PCDX11RenderDevice *renderDevice,
+	bool wineWorkaround)
+{
 	buffer = nullptr;
 	switch (type) {
 		case kVertex: // 1
-			table = new PCDX11VertexShaderTable(blob, /*takeCopy=*/ false); break;
+			table = new PCDX11VertexShaderTable(blob, /*takeCopy=*/ false, wineWorkaround); break;
 		case kPixel: // 2
 			table = new PCDX11PixelShaderTable(blob, /*takeCopy=*/ false); break;
 		/*

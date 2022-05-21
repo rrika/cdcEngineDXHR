@@ -21,9 +21,9 @@ PCDX11RenderDevice::RenderList::RenderList(PCDX11RenderDevice *renderDevice, voi
 }
 
 PCDX11RenderDevice::PCDX11RenderDevice() :
-	shtab_vs_wvp_1_0(shad::shader_30_vs, /*takeCopy=*/ false),
+	shtab_vs_wvp_1_0(shad::shader_30_vs, /*takeCopy=*/ false, /*wineWorkaround=*/ true),
 	shtab_vs_ui(shad::shader_29_vs, /*takeCopy=*/ false),
-	shtab_vs_wvp(shad::shader_28_vs, /*takeCopy=*/ false),
+	shtab_vs_wvp(shad::shader_28_vs, /*takeCopy=*/ false, /*wineWorkaround=*/ true),
 	shtab_ps_white_27(shad::white_27_ps, /*takeCopy=*/ false),
 	shtab_ps_passthrough(shad::passthrough_ps, /*takeCopy=*/ false),
 	shtab_ps_white_25(shad::white_25_ps, /*takeCopy=*/ false),
@@ -72,8 +72,8 @@ void PCDX11RenderDevice::createDefaultResources() {
 	shlib_10 = new PCDX11ShaderLib(shad::mlaa_10_ps, PCDX11ShaderLib::kPixel, this);
 	shlib_9 = new PCDX11ShaderLib(shad::shader_9_ps, PCDX11ShaderLib::kPixel, this);
 	shlib_8 = new PCDX11ShaderLib(shad::shader_8_ps, PCDX11ShaderLib::kPixel, this);
-	shlib_7 = new PCDX11ShaderLib(shad::shader_7_vs, PCDX11ShaderLib::kVertex, this);
-	shlib_6 = new PCDX11ShaderLib(shad::shader_6_vs, PCDX11ShaderLib::kVertex, this);
+	shlib_7 = new PCDX11ShaderLib(shad::shader_7_vs, PCDX11ShaderLib::kVertex, this, /*wineWorkaround=*/ true);
+	shlib_6 = new PCDX11ShaderLib(shad::shader_6_vs, PCDX11ShaderLib::kVertex, this, /*wineWorkaround=*/ true);
 	shlib_5 = new PCDX11ShaderLib(shad::shader_5_ps, PCDX11ShaderLib::kPixel, this);
 	shlib_4 = new PCDX11ShaderLib(shad::fastBlur0_cs, PCDX11ShaderLib::kCompute, this);
 	shlib_3 = new PCDX11ShaderLib(shad::fastBlur1_cs, PCDX11ShaderLib::kCompute, this);

@@ -26,7 +26,7 @@ public:
 		buffer = new char[size];
 	}
 
-	PCDX11ShaderLib(char *blob, Type type, PCDX11RenderDevice *renderDevice);
+	PCDX11ShaderLib(char *blob, Type type, PCDX11RenderDevice *renderDevice, bool wineWorkaround=false);
 
 	PCDX11ShaderTable *table; // 10
 	char *buffer; // 14
