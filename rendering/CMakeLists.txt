@@ -10,6 +10,7 @@ target_sources(dxhr PRIVATE
 	PCDX11RenderDevice.cpp
 	PCDX11RenderModel.cpp
 	PCDX11RenderModelInstance.cpp
+	PCDX11RenderPassCallbacks.cpp
 	PCDX11RenderTarget.cpp
 	PCDX11RenderTexture.cpp
 	PCDX11Scene.cpp
