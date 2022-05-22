@@ -1,6 +1,7 @@
 #include <d3d11.h>
 #include "PCDX11IndexBuffer.h"
 #include "PCDX11ModelDrawable.h"
+#include "PCDX11Material.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11RenderModel.h"
 #include "PCDX11SimpleStaticIndexBuffer.h"
@@ -21,7 +22,7 @@ bool PCDX11ModelDrawable::draw1(uint32_t funcSetIndex, IRenderDrawable *drawable
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
-	/* MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl015(
 		&mt0x128->sub10,
 		&thisModel->ext->dword50,
@@ -30,9 +31,8 @@ bool PCDX11ModelDrawable::draw1(uint32_t funcSetIndex, IRenderDrawable *drawable
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		thisModel->float2C,
-		thisModel->float30); */
+		thisModel->float30);
 
-	PCDX11StreamDecl *streamDecl = nullptr; // TODO
 	thisModel->draw(renderDevice, stateManager, streamDecl, false);
 	return false;
 }
@@ -74,7 +74,7 @@ bool PCDX11ModelDrawable::draw7(uint32_t funcSetIndex, IRenderDrawable *drawable
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
-	/* MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl4(
 		&mt0x128->sub10,
 		&thisModel->ext->dword50,
@@ -83,10 +83,7 @@ bool PCDX11ModelDrawable::draw7(uint32_t funcSetIndex, IRenderDrawable *drawable
 		(uint8_t)thisModel->flags34,
 		0.0f);
 	bool renderTwice = (mt0x128->material->materialBlob->dword18 >> 11) & 1;
-	*/
 
-	PCDX11StreamDecl *streamDecl = nullptr; // TODO
-	bool renderTwice = false; // TODO
 	thisModel->draw(renderDevice, stateManager, streamDecl, renderTwice);
 	return false;
 }
@@ -101,7 +98,7 @@ bool PCDX11ModelDrawable::draw4(uint32_t funcSetIndex, IRenderDrawable *drawable
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
-	/* MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl038(
 		&mt0x128->sub10,
 		&thisModel->ext->dword50,
@@ -111,12 +108,11 @@ bool PCDX11ModelDrawable::draw4(uint32_t funcSetIndex, IRenderDrawable *drawable
 		(uint8_t)thisModel->flags34,
 		0,
 		thisModel->float2C,
-		thisModel->float30); */
+		thisModel->float30);
 
 	if (!thisModel->isUnlit())
 		thisModel->buildAndAssignLightBuffer(renderDevice, stateManager);
 
-	PCDX11StreamDecl *streamDecl = nullptr; // TODO
 	thisModel->draw(renderDevice, stateManager, streamDecl, false);
 	return false;
 }
@@ -132,7 +128,7 @@ bool PCDX11ModelDrawable::draw56(uint32_t funcSetIndex, IRenderDrawable *drawabl
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
-	/* MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl038(
 		&mt0x128->sub10,
 		&thisModel->ext->dword50,
@@ -144,13 +140,10 @@ bool PCDX11ModelDrawable::draw56(uint32_t funcSetIndex, IRenderDrawable *drawabl
 		thisModel->float2C,
 		thisModel->float30);
 	bool renderTwice = (mt0x128->material->materialBlob->dword18 >> 11) & 1;
-	*/
 
 	if (!thisModel->isUnlit())
 		thisModel->buildAndAssignLightBuffer(renderDevice, stateManager);
 
-	PCDX11StreamDecl *streamDecl = nullptr; // TODO
-	bool renderTwice = false; // TODO
 	thisModel->draw(renderDevice, stateManager, streamDecl, renderTwice);
 	return false;
 }
@@ -165,7 +158,7 @@ bool PCDX11ModelDrawable::drawA(uint32_t funcSetIndex, IRenderDrawable *drawable
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
-	/* MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl7(
 		&mt0x128->sub10,
 		&thisModel->ext->dword50,
@@ -173,9 +166,8 @@ bool PCDX11ModelDrawable::drawA(uint32_t funcSetIndex, IRenderDrawable *drawable
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		thisModel->float2C,
-		thisModel->float30); */
+		thisModel->float30);
 
-	PCDX11StreamDecl *streamDecl = nullptr; // TODO
 	thisModel->draw(renderDevice, stateManager, streamDecl, false);
 	return false;
 }

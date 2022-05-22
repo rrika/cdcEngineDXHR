@@ -9,23 +9,35 @@ class PCDX11RenderDevice;
 class PCDX11StateManager;
 class PCDX11StreamDecl;
 
+struct ModelDrawableExt {
+	// TODO
+	uint32_t dword50;
+};
+
 class PCDX11ModelDrawable : public IRenderDrawable {
 
-	PCDX11RenderModel *renderModel; // 10
+	PCDX11RenderModel *renderModel; // C
+	ModelDrawableExt *ext; // 10
 	MeshSub *meshSub; // 14
 	MeshTab0 *tab0; // 18
+	MeshTab0Ext128 *tab0Ext128; // 1C
 
+	uint32_t dword24; // 24
+	float float2C; // 2C
+	float float30; // 30
 	uint32_t flags34; // 34
 
 public:
 	PCDX11ModelDrawable(
 		PCDX11RenderModel *renderModel,
 		MeshSub *meshSub,
-		MeshTab0 *tab0)
+		MeshTab0 *tab0,
+		MeshTab0Ext128 *tab0Ext128)
 	:
 		renderModel(renderModel),
 		meshSub(meshSub),
-		tab0(tab0)
+		tab0(tab0),
+		tab0Ext128(tab0Ext128)
 	{ // hack
 		flags34 = (tab0[0].triangleCount << 8);
 	}
