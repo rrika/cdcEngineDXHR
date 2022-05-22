@@ -2,6 +2,7 @@
 #include "PCDX11ClearDrawable.h"
 #include "PCDX11DepthBuffer.h"
 #include "PCDX11DeviceManager.h"
+#include "PCDX11ModelDrawable.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11RenderModel.h"
 #include "PCDX11RenderModelInstance.h"
@@ -106,36 +107,24 @@ void PCDX11RenderDevice::setupPassCallbacks() {
 }
 
 void PCDX11RenderDevice::registerComparatorsAndDrawersModel() {
-	RenderFunc todoCmp128 = nullptr;
-	RenderFunc todoCmp7 = nullptr;
-	RenderFunc todoCmp46 = nullptr;
-	RenderFunc todoCmpA = nullptr;
-
-	RenderFunc todoDraw1 = nullptr;
-	RenderFunc todoDraw2 = nullptr;
-	RenderFunc todoDraw7 = nullptr;
-	RenderFunc todoDraw4 = nullptr;
-	RenderFunc todoDraw56 = nullptr;
-	RenderFunc todoDrawA = nullptr;
-
 	allocFuncIndex("RenderModelDrawable");
 	uint8_t funcIndex = 1;
-	registerComparator(funcIndex, 1, todoCmp128);
-	registerComparator(funcIndex, 2, todoCmp128);
-	registerComparator(funcIndex, 8, todoCmp128);
-	registerComparator(funcIndex, 7, todoCmp7);
-	registerComparator(funcIndex, 4, todoCmp46);
-	registerComparator(funcIndex, 6, todoCmp46);
+	registerComparator(funcIndex, 1, PCDX11ModelDrawable::compare128);
+	registerComparator(funcIndex, 2, PCDX11ModelDrawable::compare128);
+	registerComparator(funcIndex, 8, PCDX11ModelDrawable::compare128);
+	registerComparator(funcIndex, 7, PCDX11ModelDrawable::compare7);
+	registerComparator(funcIndex, 4, PCDX11ModelDrawable::compare46);
+	registerComparator(funcIndex, 6, PCDX11ModelDrawable::compare46);
 
-	registerDrawer(funcIndex, 1, todoDraw1);
-	registerDrawer(funcIndex, 2, todoDraw2);
-	registerDrawer(funcIndex, 7, todoDraw7);
-	registerDrawer(funcIndex, 4, todoDraw4);
-	registerDrawer(funcIndex, 5, todoDraw56);
-	registerDrawer(funcIndex, 6, todoDraw56);
+	registerDrawer(funcIndex, 1, PCDX11ModelDrawable::draw1);
+	registerDrawer(funcIndex, 2, PCDX11ModelDrawable::draw2);
+	registerDrawer(funcIndex, 7, PCDX11ModelDrawable::draw7);
+	registerDrawer(funcIndex, 4, PCDX11ModelDrawable::draw4);
+	registerDrawer(funcIndex, 5, PCDX11ModelDrawable::draw56);
+	registerDrawer(funcIndex, 6, PCDX11ModelDrawable::draw56);
 
-	registerComparator(funcIndex, 10, todoCmpA);
-	registerDrawer(funcIndex, 10, todoDrawA);
+	registerComparator(funcIndex, 10, PCDX11ModelDrawable::compareA);
+	registerDrawer(funcIndex, 10, PCDX11ModelDrawable::drawA);
 }
 
 void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain1() {

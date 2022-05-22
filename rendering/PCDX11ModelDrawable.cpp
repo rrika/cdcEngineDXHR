@@ -11,6 +11,91 @@
 
 namespace cdc {
 
+// for funcset 1: renderpasses 0 and 14 (depth)
+bool PCDX11ModelDrawable::draw1(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
+	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
+	// TODO
+	return false;
+}
+
+// for funcset 2: renderpass 9
+bool PCDX11ModelDrawable::draw2(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
+	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
+	// TODO
+	return false;
+}
+
+// for funcset 7: renderpass 6 (AlphaBloomFsx)
+bool PCDX11ModelDrawable::draw7(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
+	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
+	// TODO
+	return false;
+}
+
+// for funcset 4: renderpass 1 (Composite)
+bool PCDX11ModelDrawable::draw4(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
+	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
+	// TODO
+	return false;
+}
+
+// for funcset 5: renderpasses 4, 5 and 13 (Fullscreen, PostFx and DeferredShading)
+// for funcset 6: renderpass 7 (Predator)
+bool PCDX11ModelDrawable::draw56(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
+	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
+	// TODO
+	return false;
+}
+
+// for funcset 10: renderpass 12 (Normal)
+bool PCDX11ModelDrawable::drawA(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
+	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
+	// TODO
+	return false;
+}
+
+// for funcset 1: renderpasses 0 and 14 (depth)
+// for funcset 2: renderpass 9
+// for funcset 8: renderpass 8
+bool PCDX11ModelDrawable::compare128(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
+	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
+	// TODO
+	return false;
+}
+
+// for funcset 7: renderpass 6 (AlphaBloomFsx)
+bool PCDX11ModelDrawable::compare7(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
+	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
+	// TODO
+	return false;
+}
+
+// for funcset 4: renderpass 1 (Composite)
+// for funcset 6: renderpass 7 (Predator)
+bool PCDX11ModelDrawable::compare46(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
+	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
+	// TODO
+	return false;
+}
+
+// for funcset 10: renderpass 12 (Normal)
+bool PCDX11ModelDrawable::compareA(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
+	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
+	// TODO
+	return false;
+}
+
+
 void PCDX11ModelDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) {
 	PCDX11StateManager *stateManager = deviceManager->getStateManager();
 	PCDX11RenderDevice *renderDevice = renderModel->renderDevice;
