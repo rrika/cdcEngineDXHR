@@ -47,5 +47,6 @@ set_target_properties(dxhr PROPERTIES
 add_subdirectory(allocator)
 add_subdirectory(camera)
 add_subdirectory(drm)
+add_subdirectory(input)
 add_subdirectory(miniz)
 add_subdirectory(rendering)

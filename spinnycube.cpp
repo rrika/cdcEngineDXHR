@@ -1,13 +1,15 @@
+#include <cmath>
+#include <cstdio>
+#include <memory>
+
 #include <windows.h>
 #include <d3d11_1.h>
 #include <d3dcompiler.h>
-#include <math.h>
-
-#include <stdio.h>
 
 #include "spinnycube.h"
 #include "types.h"
 #include "matrix.h"
+#include "input/PCMouseKeyboard.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/IRenderPassCallback.h"
 #include "rendering/PCDX11ConstantBufferPool.h"
@@ -276,6 +278,7 @@ int spinnyCube(HWND window,
     ID3D11Device *baseDevice,
     ID3D11DeviceContext *baseDeviceContext) {
 
+    std::unique_ptr<cdc::PCMouseKeyboard> mouseKeyboard(cdc::PCMouseKeyboard::create(window));
     auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -528,6 +531,8 @@ int spinnyCube(HWND window,
             if (msg.message == WM_QUIT) {
                 return 0;
             }
+
+            mouseKeyboard->processWndProc(msg.message, msg.wParam, msg.lParam);
 
             //if (msg.message == WM_KEYDOWN) return 0;
             DispatchMessageA(&msg);
