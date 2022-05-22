@@ -50,10 +50,17 @@ public:
 	uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) override;
 
 	void draw(
-		PCDX11RenderDevice *renderDev,
-		PCDX11StateManager *stateMgr,
+		PCDX11RenderDevice *renderDevice,
+		PCDX11StateManager *stateManager,
 		PCDX11StreamDecl *streamDecl,
 		bool renderTwice);
+	void setMatrices(
+		PCDX11StateManager *stateManager,
+		PCDX11ModelDrawable *prevDrawable,
+		bool hasBones);
+	void buildAndAssignLightBuffer(
+		PCDX11RenderDevice *renderDevice,
+		PCDX11StateManager *stateManager);
 };
 
 }

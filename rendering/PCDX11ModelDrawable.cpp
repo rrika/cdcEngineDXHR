@@ -15,7 +15,25 @@ namespace cdc {
 bool PCDX11ModelDrawable::draw1(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
 	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
-	// TODO
+	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
+	PCDX11StateManager *stateManager = deviceManager->getStateManager();
+	Mesh *mesh = thisModel->renderModel->mesh;
+
+	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
+
+	/* MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl015(
+		&mt0x128->sub10,
+		&thisModel->ext->dword50,
+		mesh->vsSelect4C,
+		false,
+		(VertexAttributeLayoutA*)thisModel->meshSub->format,
+		(uint8_t)thisModel->flags34,
+		thisModel->float2C,
+		thisModel->float30); */
+
+	PCDX11StreamDecl *streamDecl = nullptr; // TODO
+	thisModel->draw(renderDevice, stateManager, streamDecl, false);
 	return false;
 }
 
@@ -23,7 +41,26 @@ bool PCDX11ModelDrawable::draw1(uint32_t funcSetIndex, IRenderDrawable *drawable
 bool PCDX11ModelDrawable::draw2(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
 	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
-	// TODO
+	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
+	PCDX11StateManager *stateManager = deviceManager->getStateManager();
+	Mesh *mesh = thisModel->renderModel->mesh;
+
+	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
+
+	/*auto *lightManager = static_cast<PCDX11LightManager*>(renderDevice->lightManager84);
+	MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl01(
+		&mt0x128->sub10,
+		&thisModel->ext->dword50,
+		(*(char**)lightManager->ptr434)[276],
+		mesh->vsSelect4C,
+		(VertexAttributeLayoutA*)thisModel->meshSub->format,
+		(uint8_t)thisModel->flags34,
+		thisModel->float2C,
+		thisModel->float30); */
+
+	PCDX11StreamDecl *streamDecl = nullptr; // TODO
+	thisModel->draw(renderDevice, stateManager, streamDecl, false);
 	return false;
 }
 
@@ -31,7 +68,26 @@ bool PCDX11ModelDrawable::draw2(uint32_t funcSetIndex, IRenderDrawable *drawable
 bool PCDX11ModelDrawable::draw7(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
 	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
-	// TODO
+	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
+	PCDX11StateManager *stateManager = deviceManager->getStateManager();
+	Mesh *mesh = thisModel->renderModel->mesh;
+
+	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
+
+	/* MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl4(
+		&mt0x128->sub10,
+		&thisModel->ext->dword50,
+		mesh->vsSelect4C,
+		(VertexAttributeLayoutA*)thisModel->meshSub->format,
+		(uint8_t)thisModel->flags34,
+		0.0f);
+	bool renderTwice = (mt0x128->material->materialBlob->dword18 >> 11) & 1;
+	*/
+
+	PCDX11StreamDecl *streamDecl = nullptr; // TODO
+	bool renderTwice = false; // TODO
+	thisModel->draw(renderDevice, stateManager, streamDecl, renderTwice);
 	return false;
 }
 
@@ -39,7 +95,29 @@ bool PCDX11ModelDrawable::draw7(uint32_t funcSetIndex, IRenderDrawable *drawable
 bool PCDX11ModelDrawable::draw4(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
 	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
-	// TODO
+	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
+	PCDX11StateManager *stateManager = deviceManager->getStateManager();
+	Mesh *mesh = thisModel->renderModel->mesh;
+
+	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
+
+	/* MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl038(
+		&mt0x128->sub10,
+		&thisModel->ext->dword50,
+		thisModel->dword24,
+		mesh->vsSelect4C,
+		(VertexAttributeLayoutA*)thisModel->meshSub->format,
+		(uint8_t)thisModel->flags34,
+		0,
+		thisModel->float2C,
+		thisModel->float30); */
+
+	if (!thisModel->isUnlit())
+		thisModel->buildAndAssignLightBuffer(renderDevice, stateManager);
+
+	PCDX11StreamDecl *streamDecl = nullptr; // TODO
+	thisModel->draw(renderDevice, stateManager, streamDecl, false);
 	return false;
 }
 
@@ -48,7 +126,32 @@ bool PCDX11ModelDrawable::draw4(uint32_t funcSetIndex, IRenderDrawable *drawable
 bool PCDX11ModelDrawable::draw56(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
 	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
-	// TODO
+	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
+	PCDX11StateManager *stateManager = deviceManager->getStateManager();
+	Mesh *mesh = thisModel->renderModel->mesh;
+
+	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
+
+	/* MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl038(
+		&mt0x128->sub10,
+		&thisModel->ext->dword50,
+		thisModel->dword24,
+		mesh->vsSelect4C,
+		(VertexAttributeLayoutA*)thisModel->meshSub->format,
+		(uint8_t)thisModel->flags34,
+		1,
+		thisModel->float2C,
+		thisModel->float30);
+	bool renderTwice = (mt0x128->material->materialBlob->dword18 >> 11) & 1;
+	*/
+
+	if (!thisModel->isUnlit())
+		thisModel->buildAndAssignLightBuffer(renderDevice, stateManager);
+
+	PCDX11StreamDecl *streamDecl = nullptr; // TODO
+	bool renderTwice = false; // TODO
+	thisModel->draw(renderDevice, stateManager, streamDecl, renderTwice);
 	return false;
 }
 
@@ -56,7 +159,24 @@ bool PCDX11ModelDrawable::draw56(uint32_t funcSetIndex, IRenderDrawable *drawabl
 bool PCDX11ModelDrawable::drawA(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
 	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
-	// TODO
+	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
+	PCDX11StateManager *stateManager = deviceManager->getStateManager();
+	Mesh *mesh = thisModel->renderModel->mesh;
+
+	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
+
+	/* MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl7(
+		&mt0x128->sub10,
+		&thisModel->ext->dword50,
+		mesh->vsSelect4C,
+		(VertexAttributeLayoutA*)thisModel->meshSub->format,
+		(uint8_t)thisModel->flags34,
+		thisModel->float2C,
+		thisModel->float30); */
+
+	PCDX11StreamDecl *streamDecl = nullptr; // TODO
+	thisModel->draw(renderDevice, stateManager, streamDecl, false);
 	return false;
 }
 
@@ -158,6 +278,21 @@ void PCDX11ModelDrawable::draw(
 		stateManager->updateRenderState();
 		d3d11DeviceContext->DrawIndexed(indexCount, startIndex, baseVertex);
 	}
+}
+
+void PCDX11ModelDrawable::setMatrices(
+	PCDX11StateManager *stateManager,
+	PCDX11ModelDrawable *prevDrawable,
+	bool hasBones)
+{
+	// TODO
+}
+
+void PCDX11ModelDrawable::buildAndAssignLightBuffer(
+	PCDX11RenderDevice *renderDevice,
+	PCDX11StateManager *stateManager)
+{
+	// TODO
 }
 
 }
