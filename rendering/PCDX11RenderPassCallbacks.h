@@ -134,4 +134,16 @@ public:
 		uint32_t passId) override;
 };
 
+extern PCDX11NormalPassCallbacks normalPassCallbacks;
+extern PCDX11DeferredShadingPassCallbacks deferredShadingPassCallbacks;
+extern PCDX11DepthPassCallbacks depthPassCallbacks;
+extern PCDX11CompositePassCallbacks compositePassCallbacks;
+extern PCDX11OpaquePassCallbacks opaquePassCallbacks;
+extern PCDX11TranslucentPassCallbacks translucentPassCallbacks;
+extern PCDX11AlphaBloomFSXPassCallbacks alphaBloomFSXPassCallbacks;
+extern PCDX11PredatorPassCallbacks predatorPassCallbacks;
+extern PCDX11FullScreenFXPassCallbacks fullScreenFXPassCallbacks;
+extern PCDX11PostFSXPassCallbacks postFSXPassCallbacks;
+extern PCDX11DepthDependentPassCallbacks depthDependentPassCallbacks;
+
 }

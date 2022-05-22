@@ -3,9 +3,10 @@
 #include "PCDX11DepthBuffer.h"
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderDevice.h"
-#include "PCDX11RenderTarget.h"
 #include "PCDX11RenderModel.h"
 #include "PCDX11RenderModelInstance.h"
+#include "PCDX11RenderPassCallbacks.h"
+#include "PCDX11RenderTarget.h"
 #include "PCDX11Scene.h"
 #include "PCDX11ShaderLib.h"
 #include "PCDX11StateManager.h"
@@ -90,30 +91,18 @@ void PCDX11RenderDevice::createDefaultVertexAttribLayouts() {
 }
 
 void PCDX11RenderDevice::setupPassCallbacks() {
-	IRenderPassCallback *todoDepth = nullptr;
-	IRenderPassCallback *todoDepthDependent = nullptr;
-	IRenderPassCallback *todoComposite = nullptr;
-	IRenderPassCallback *todoOpaque = nullptr;
-	IRenderPassCallback *todoTranslucent = nullptr;
-	IRenderPassCallback *todoAlphaBloomFsx = nullptr;
-	IRenderPassCallback *todoPredator = nullptr;
-	IRenderPassCallback *todoFullscreenFx = nullptr;
-	IRenderPassCallback *todoPostFx = nullptr;
-	IRenderPassCallback *todoNormal = nullptr;
-	IRenderPassCallback *todoDeferredShading = nullptr;
-
-	setPassCallback( 0, todoDepth);
-	setPassCallback(14, todoDepth);
-	setPassCallback(10, todoDepthDependent);
-	setPassCallback( 1, todoComposite);
-	setPassCallback( 2, todoOpaque);
-	setPassCallback( 3, todoTranslucent);
-	setPassCallback( 6, todoAlphaBloomFsx);
-	setPassCallback( 7, todoPredator);
-	setPassCallback( 4, todoFullscreenFx);
-	setPassCallback( 5, todoPostFx);
-	setPassCallback(12, todoNormal);
-	setPassCallback(13, todoDeferredShading);
+	setPassCallback( 0, &depthPassCallbacks);
+	setPassCallback(14, &depthPassCallbacks);
+	setPassCallback(10, &depthDependentPassCallbacks);
+	setPassCallback( 1, &compositePassCallbacks);
+	setPassCallback( 2, &opaquePassCallbacks);
+	setPassCallback( 3, &translucentPassCallbacks);
+	setPassCallback( 6, &alphaBloomFSXPassCallbacks);
+	setPassCallback( 7, &predatorPassCallbacks);
+	setPassCallback( 4, &fullScreenFXPassCallbacks);
+	setPassCallback( 5, &postFSXPassCallbacks);
+	setPassCallback(12, &normalPassCallbacks);
+	setPassCallback(13, &deferredShadingPassCallbacks);
 }
 
 void PCDX11RenderDevice::registerComparatorsAndDrawersModel() {

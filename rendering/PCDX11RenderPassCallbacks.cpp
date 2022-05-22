@@ -2,6 +2,20 @@
 
 namespace cdc {
 
+// globals
+PCDX11NormalPassCallbacks normalPassCallbacks;
+PCDX11DeferredShadingPassCallbacks deferredShadingPassCallbacks;
+PCDX11DepthPassCallbacks depthPassCallbacks;
+PCDX11CompositePassCallbacks compositePassCallbacks;
+PCDX11OpaquePassCallbacks opaquePassCallbacks;
+PCDX11TranslucentPassCallbacks translucentPassCallbacks;
+PCDX11AlphaBloomFSXPassCallbacks alphaBloomFSXPassCallbacks;
+PCDX11PredatorPassCallbacks predatorPassCallbacks;
+PCDX11FullScreenFXPassCallbacks fullScreenFXPassCallbacks;
+PCDX11PostFSXPassCallbacks postFSXPassCallbacks;
+PCDX11DepthDependentPassCallbacks depthDependentPassCallbacks;
+
+
 bool PCDX11NormalPassCallbacks::pre(
 	CommonRenderDevice *renderDevice,
 	uint32_t passId,
