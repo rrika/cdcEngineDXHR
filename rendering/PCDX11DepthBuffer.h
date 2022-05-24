@@ -9,11 +9,11 @@ class PCDX11DepthBuffer : public CommonDepthBuffer {
 public:
 	PCDX11RenderTexture renderTexture; // 18
 
-	void getRenderTexture() override { /*TODO*/ };
-	void getWidth() override { /*TODO*/ };
-	void getHeight() override { /*TODO*/ };
-	void method_0C() override { /*TODO*/ };
-	void method_10() override { /*TODO*/ };
+	TextureMap *getRenderTexture() override { return &renderTexture; };
+	uint32_t getWidth() override { return renderTexture.getWidth(); };
+	uint32_t getHeight() override { return renderTexture.getHeight(); };
+	void registerAtRenderDevice() override { /*TODO*/ };
+	void registerAtScene(void *ptr) override { /*TODO*/ };
 	void method_14() override { /*TODO*/ };
 
 	ID3D11DepthStencilView *getDepthStencilView() {

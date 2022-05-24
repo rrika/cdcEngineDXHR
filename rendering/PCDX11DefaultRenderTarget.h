@@ -11,12 +11,12 @@ class PCDX11DefaultRenderTarget :
 public:
 	PCDX11RenderTexture renderTexture; // 1C
 
-	void getRenderTexture() override { /*TODO*/ };
-	void getWidth() override { /*TODO*/ };
-	void getHeight() override { /*TODO*/ };
-	void method_0C() override { /*TODO*/ };
-	void method_10() override { /*TODO*/ };
-	void method_14() override { /*TODO*/ };
+	TextureMap *getRenderTexture() override { return &renderTexture; }
+	uint32_t getWidth() override { return renderTexture.getWidth(); }
+	uint32_t getHeight() override { return renderTexture.getHeight(); }
+	void registerAtRenderDevice() override { /*TODO*/ }
+	void registerAtScene(void *ptr) override { /*TODO*/ }
+	void method_14() override { /*empty*/ }
 
 	void method_24() override;
 	uint32_t method_28() override;
