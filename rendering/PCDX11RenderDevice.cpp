@@ -64,8 +64,8 @@ void PCDX11RenderDevice::createDefaultResources() {
 	shlib_21 = new PCDX11ShaderLib(shad::shader_21_vs, PCDX11ShaderLib::kVertex, this);
 	shlib_20 = new PCDX11ShaderLib(shad::shader_20_vs, PCDX11ShaderLib::kVertex, this);
 	shlib_19 = new PCDX11ShaderLib(shad::aa_19_vs, PCDX11ShaderLib::kVertex, this);
-	shlib_18 = new PCDX11ShaderLib(shad::shader_18_vs, PCDX11ShaderLib::kVertex, this);
-	shlib_17 = new PCDX11ShaderLib(shad::shader_17_ps, PCDX11ShaderLib::kPixel, this);
+	shlib_18 = new PCDX11ShaderLib(shad::copy_18_vs, PCDX11ShaderLib::kVertex, this);
+	shlib_17 = new PCDX11ShaderLib(shad::copy_17_ps, PCDX11ShaderLib::kPixel, this);
 	shlib_16 = new PCDX11ShaderLib(shad::normalPass_16_ps, PCDX11ShaderLib::kPixel, this);
 	shlib_15 = new PCDX11ShaderLib(shad::normalPass_15_vs, PCDX11ShaderLib::kVertex, this);
 	shlib_14 = new PCDX11ShaderLib(shad::normalPass_14_vs, PCDX11ShaderLib::kVertex, this);

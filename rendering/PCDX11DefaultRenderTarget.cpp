@@ -25,7 +25,7 @@ ID3D11RenderTargetView *PCDX11DefaultRenderTarget::getRenderTargetView() {
 	return static_cast<ID3D11RenderTargetView*>(renderTexture.getView());
 }
 
-void PCDX11DefaultRenderTarget::method_38() {
+void PCDX11DefaultRenderTarget::copyFromTexture(void *) {
 	// TODO
 }
 

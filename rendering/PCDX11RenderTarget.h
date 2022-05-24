@@ -11,7 +11,7 @@ public:
 	virtual uint32_t method_2C() = 0;
 	virtual ID3D11Resource *getTextureResource() = 0;
 	virtual ID3D11RenderTargetView *getRenderTargetView() = 0;
-	virtual void method_38() = 0;
+	virtual void copyFromTexture(void*) = 0;
 	virtual void method_3C() = 0;
 	virtual void method_40() = 0;
 	virtual void method_44() = 0;

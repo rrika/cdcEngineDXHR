@@ -23,7 +23,7 @@ public:
 	uint32_t method_2C() override;
 	ID3D11Resource *getTextureResource() override;
 	ID3D11RenderTargetView *getRenderTargetView() override;
-	void method_38() override;
+	void copyFromTexture(void *) override;
 	void method_3C() override;
 	void method_40() override;
 	void method_44() override;
