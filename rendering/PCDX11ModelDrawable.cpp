@@ -140,21 +140,21 @@ void PCDX11ModelDrawable::draw(
 	stateManager->setStreamDecl(streamDecl);
 
 	if (renderTwice) {
-		stateManager->setCullMode(D3D11_CULL_FRONT, cullMode);
+		stateManager->setCullMode(D3D11_CULL_FRONT, getCullMode());
 		stateManager->setDepthState(D3D11_COMPARISON_LESS, D3D11_DEPTH_WRITE_MASK_ZERO);
 	}
 
 	ID3D11DeviceContext *d3d11DeviceContext = renderDevice->getD3DDeviceContext();
 	uint32_t baseVertex = meshSub->staticVertexBuffer->getBaseVertex();
 	uint32_t startIndex = tab0->startIndex + renderModel->indexBuffer->getStartIndex();
-	uint32_t indexCount = triangleCount * 3;
+	uint32_t indexCount = getTriangleCount() * 3;
 
 	stateManager->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	stateManager->updateRenderState();
 	d3d11DeviceContext->DrawIndexed(indexCount, startIndex, baseVertex);
 
 	if (renderTwice) {
-		stateManager->setCullMode(D3D11_CULL_NONE, cullMode);
+		stateManager->setCullMode(D3D11_CULL_NONE, getCullMode());
 		stateManager->updateRenderState();
 		d3d11DeviceContext->DrawIndexed(indexCount, startIndex, baseVertex);
 	}

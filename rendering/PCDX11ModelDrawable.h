@@ -15,10 +15,7 @@ class PCDX11ModelDrawable : public IRenderDrawable {
 	MeshSub *meshSub; // 14
 	MeshTab0 *tab0; // 18
 
-	uint32_t flags34_unknown_0 : 1; // 34
-	uint32_t cullMode : 1;
-	uint32_t flags34_unknown_2 : 6;
-	uint32_t triangleCount : 24;
+	uint32_t flags34; // 34
 
 public:
 	PCDX11ModelDrawable(
@@ -30,8 +27,12 @@ public:
 		meshSub(meshSub),
 		tab0(tab0)
 	{ // hack
-		triangleCount = tab0[0].triangleCount;
+		flags34 = (tab0[0].triangleCount << 8);
 	}
+
+	inline bool isUnlit() const { return (flags34 >> 0) & 1; }
+	inline bool getCullMode() const { return (flags34 >> 1) & 1; }
+	inline uint32_t getTriangleCount() const { return (flags34 >> 8); }
 
 	static bool draw1(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
 	static bool draw2(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
