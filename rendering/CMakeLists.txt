@@ -3,6 +3,7 @@ target_sources(dxhr PRIVATE
 	CommonRenderDevice.cpp
 	PCDX11BitmapTexture.cpp
 	PCDX11ClearDrawable.cpp
+	PCDX11DefaultRenderTarget.cpp
 	PCDX11DeviceManager.cpp
 	PCDX11InternalResource.cpp
 	PCDX11ModelDrawable.cpp
@@ -11,7 +12,6 @@ target_sources(dxhr PRIVATE
 	PCDX11RenderModel.cpp
 	PCDX11RenderModelInstance.cpp
 	PCDX11RenderPassCallbacks.cpp
-	PCDX11RenderTarget.cpp
 	PCDX11RenderTexture.cpp
 	PCDX11Scene.cpp
 	PCDX11SetRTDrawable.cpp

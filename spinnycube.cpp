@@ -13,13 +13,13 @@
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/IRenderPassCallback.h"
 #include "rendering/PCDX11ConstantBufferPool.h"
+#include "rendering/PCDX11DefaultRenderTarget.h"
 #include "rendering/PCDX11DepthBuffer.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11IndexBuffer.h"
 #include "rendering/PCDX11PixelShader.h"
 #include "rendering/PCDX11RenderDevice.h"
 #include "rendering/PCDX11RenderModel.h"
-#include "rendering/PCDX11RenderTarget.h"
 #include "rendering/PCDX11Scene.h"
 #include "rendering/PCDX11SimpleStaticIndexBuffer.h"
 #include "rendering/PCDX11SimpleStaticVertexBuffer.h"
@@ -352,7 +352,7 @@ int spinnyCube(HWND window,
 
     device->CreateDepthStencilView(depthBuffer, nullptr, &depthBufferView);
 
-    cdc::PCDX11RenderTarget cdcRenderTarget;
+    cdc::PCDX11DefaultRenderTarget cdcRenderTarget;
     cdc::PCDX11DepthBuffer cdcDepthBuffer;
 
     cdcRenderTarget.renderTexture.view = static_cast<ID3D11View*>(frameBufferView);
