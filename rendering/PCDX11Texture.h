@@ -39,6 +39,8 @@ class PCDX11Texture :
 	// public PCDX11RenderExternalResource
 {
 public:
+	uint32_t width; // 18
+	uint32_t height; // 1C
 	uint32_t dword144 = 0;
 	TextureBlob *textureBlob = nullptr;
 	uint32_t dword14C = 0;
@@ -66,6 +68,14 @@ public:
 	char *resGetBuffer() override;
 	void resConstruct() override;
 	void resMethod10() override;
+
+	// for TextureMap
+	uint32_t getWidth() override;
+	uint32_t getHeight() override;
+	// void method_20() override;
+	// void method_24() override;
+	// void method_28() override;
+	// void method_2C() override;
 
 	// for PCDX11AsyncCreateResource
 	void asyncCreate() override;

@@ -33,6 +33,16 @@ void PCDX11RenderTexture::resConstruct() {
 	// TODO
 }
 
+
+uint32_t PCDX11RenderTexture::getWidth() {
+	return width;
+}
+
+uint32_t PCDX11RenderTexture::getHeight() {
+	return height;
+}
+
+
 ID3D11Resource *PCDX11RenderTexture::getTextureResource() {
 	ensureBuffer();
 	return resource;

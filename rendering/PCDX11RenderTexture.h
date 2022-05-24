@@ -9,6 +9,8 @@ class PCDX11RenderTexture :
 	public PCDX11BaseTexture
 {
 public:
+	uint32_t width; // 18
+	uint32_t height; // 1C
 	PCDX11RenderDevice *renderDevice; // 2C
 	// uint32_t dword30;
 	// uint32_t dword34;
@@ -36,6 +38,13 @@ public:
 	void resConstruct() override;
 	// void resMethod10();
 	// ~RenderResource() override;
+
+	uint32_t getWidth() override;
+	uint32_t getHeight() override;
+	// void method_20() override;
+	// void method_24() override;
+	// void method_28() override;
+	// void method_2C() override;
 
 	ID3D11Resource *getTextureResource() override;
 	ID3D11ShaderResourceView *createShaderResourceView() override;

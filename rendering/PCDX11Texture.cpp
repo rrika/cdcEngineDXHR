@@ -89,6 +89,16 @@ uint32_t decodeFormat(uint32_t format) {
 	}
 }
 
+
+uint32_t PCDX11Texture::getWidth() {
+	return width;
+}
+
+uint32_t PCDX11Texture::getHeight() {
+	return height;
+}
+
+
 void PCDX11Texture::resRegisterAtRenderDevice() {
 	// TODO
 }
