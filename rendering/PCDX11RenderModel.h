@@ -30,8 +30,8 @@ public:
 	uint32_t indices;
 	// PCDX11StaticIndexBuffer *indexBuffer; // 38
 	PCDX11SimpleStaticIndexBuffer *indexBuffer; // 38, hack
-	MeshTab0Ext16 *tab0Ext16Byte;
-	MeshTab0Ext128 *tab0Ext128Byte;
+	MeshTab0Ext16 *tab0Ext16Byte; // uses count0
+	MeshTab0Ext128 *tab0Ext128Byte; // uses count0
 	uint32_t vsSelect; // 4C
 
 public:

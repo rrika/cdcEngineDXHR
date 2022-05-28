@@ -477,6 +477,9 @@ int spinnyCube(HWND window,
     printf("have bottle cdc render model: %p\n", bottleRenderModel);
     printf("have bottle cdc mesh blob: %p\n", bottleRenderModel->getMesh());
 
+    for (uint32_t i = 0; i < bottleRenderModel->count0; i++)
+        printf("  bottle->tab0Ext128Byte[i].material = %p\n", bottleRenderModel->tab0Ext128Byte[i].material);
+
     cdc::RenderModelInstance *bottleRenderModelInstance =
         renderDevice->createRenderModelInstance(bottleRenderModel);
 

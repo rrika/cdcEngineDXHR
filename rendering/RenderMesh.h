@@ -4,6 +4,7 @@
 namespace cdc {
 
 class CommonStreamDecl;
+class IMaterial;
 class PCDX11Material;
 class PCDX11SimpleStaticVertexBuffer;
 
@@ -89,7 +90,7 @@ struct MeshTab0 {
 	uint32_t dword1C;
 	uint32_t dword20;
 	uint32_t dword24;
-	void *material; // 28, index patched to pointer
+	IMaterial *material; // 28, index patched to pointer
 	uint32_t dword2C; // index into fourBase, patched to pointer
 	uint32_t dword30; // index into fourBase, patched to pointer
 	uint32_t dword34; // index into fourBase, patched to pointer
@@ -125,8 +126,8 @@ struct MeshTab0Ext128 {
 	uint32_t dword8;
 	uint32_t dwordC;
 	MeshTab0Ext128Sub10 sub10;
-	uint32_t dword78;
-	uint32_t dword7C;
+	uint32_t dword78; // probably also part of MeshTab0Ext128Sub10
+	uint32_t dword7C; // a subfunction of RenderModel::load does a memcpy of 0x70
 };
 
 struct MeshHeader {

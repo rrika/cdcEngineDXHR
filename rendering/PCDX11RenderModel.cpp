@@ -1,6 +1,7 @@
 #include "PCDX11RenderModel.h"
 #include <cstring>
 #include <cstdio>
+#include "PCDX11Material.h"
 #include "PCDX11SimpleStaticIndexBuffer.h"
 #include "PCDX11SimpleStaticVertexBuffer.h"
 #include "VertexAttribute.h"
@@ -27,7 +28,7 @@ char *PCDX11RenderModel::resGetBuffer() {
 void PCDX11RenderModel::resConstruct() {
 	mesh = meshHeader->mesh;
 	uint32_t *fourBase = meshHeader->ptr4 + 1;
-	void **materials = meshHeader->materials;
+	void **materials = meshHeader->materials + 1; // first dword is count
 	char *magic = (char*)&mesh->magic;
 
 	printf("reading mesh with magic \"%c%c%c%c\" ", magic[0], magic[1], magic[2], magic[3]);
@@ -37,6 +38,11 @@ void PCDX11RenderModel::resConstruct() {
 		printf("NG\n");
 	if (vsSelect == -1)
 		return;
+
+	printf(" header.mesh      = %p\n", meshHeader->mesh);
+	printf(" header.ptr4      = %p\n", meshHeader->ptr4);
+	printf(" header.materials = %p\n", meshHeader->materials);
+	printf(" header.skeleton  = %p\n", meshHeader->skeleton);
 
 	bool allMaterialsPresent = true;
 	if (mesh->dword70)
@@ -48,8 +54,10 @@ void PCDX11RenderModel::resConstruct() {
 	count0 = mesh->table0Count;
 
 	for (uint32_t i = 0; i<count0; i++) {
+		printf("  [%d] material %d -> ", i, (uintptr_t)table0[i].material);
 		auto *material = materials[(uintptr_t)table0[i].material];
-		table0[i].material = material;
+		table0[i].material = (IMaterial*)material;
+		printf("%p\n", material);
 
 		if (!material)
 			allMaterialsPresent = false;
@@ -116,6 +124,7 @@ void PCDX11RenderModel::resConstruct() {
 		tab0Ext16Byte = new MeshTab0Ext16[count0];
 		for (uint32_t i=0; i<count0; i++) {
 			// TODO
+			tab0Ext128Byte[i].material = static_cast<PCDX11Material*>(table0[i].material);
 		}
 	}
 }
