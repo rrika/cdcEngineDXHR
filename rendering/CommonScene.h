@@ -20,7 +20,7 @@ struct CommonSceneSub10 {
 };
 
 struct CommonSceneSub114 {
-
+	TextureMap *tex14[1]; // 14
 };
 
 class CommonScene :

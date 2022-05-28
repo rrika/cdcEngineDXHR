@@ -21,6 +21,25 @@ struct VertexAttributeLayoutA {
 	VertexAttributeA attrib[];
 };
 
+struct VertexAttributeB {
+	uint32_t attribKind;
+	uint32_t dword04;
+	uint16_t order;
+	uint16_t field_A;
+	float vx;
+	float vy;
+	float vz;
+	float vw;
+};
+
+struct VertexAttributeLayoutB {
+	uint32_t hash0;
+	uint32_t hash4;
+	uint32_t numAttribs;
+	uint32_t dwordC;
+	VertexAttributeB attr[];
+};
+
 void decodeVertexAttribA(
 	D3D11_INPUT_ELEMENT_DESC *dst,
 	VertexAttributeA *src,

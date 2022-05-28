@@ -1,15 +1,63 @@
 #pragma once
-#include "IMaterial.h"
 #include <cstdint>
+#include "IMaterial.h"
+#include "VertexAttribute.h"
 
 namespace cdc {
+
+class IShaderLib;
+class TextureMap;
 
 struct StencilSettings {
 	uint32_t data[4];
 };
 
+struct MaterialTexRef {
+	TextureMap *tex;
+	float unknown4;
+	uint32_t dword8;
+	uint8_t fallbackIndex;
+	uint8_t slotIndex;
+	uint16_t filter;
+};
+
 struct MaterialBlobSub {
-	// TODO
+	IShaderLib *shaderPixel;
+	IShaderLib *shaderVertex;
+	IShaderLib *shaderHull;
+	IShaderLib *shaderDomain;
+	uint32_t dword10;
+
+	uint8_t psByte14;
+	uint8_t psRefIndexEndB;
+	uint8_t psRefIndexEndA;
+	uint8_t psRefIndexBeginB;
+	MaterialTexRef *psTextureRef;
+	uint32_t psBufferSize;
+	char *psBufferData;
+
+	uint8_t vsByte24;
+	uint8_t vsRefIndexEndB; // 25
+	uint8_t vsRefIndexEndA; // 26
+	uint8_t vsRefIndexBeginB; // 27
+	MaterialTexRef *vsTextureRef; // 28
+	uint32_t vsBufferSize; // 2C
+	char *vsBufferData; // 30
+
+	uint8_t psBufferFirstRow; // 34
+	uint8_t psBufferNumRows; // 35
+
+	uint8_t vsBufferFirstRow; // 36
+	uint8_t vsBufferNumRows; // 37
+
+	VertexAttributeLayoutB *layout38;
+	VertexAttributeLayoutB *layout3C;
+	VertexAttributeLayoutB *layout40;
+	uint32_t dword44;
+	uint32_t dword48;
+	uint32_t dword4C;
+	uint32_t dword50;
+	uint32_t dword54;
 };
 
 struct MaterialBlob {

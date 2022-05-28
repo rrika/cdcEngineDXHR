@@ -13,19 +13,26 @@ class PCDX11Material :
 	public CommonMaterial
 	// public PCDX11RenderExternalResource
 {
-	unsigned short numTextures = 0;
-	unsigned short texBits = 0;
-	// PCDX11BitmapTexture *texture[4];
-	// PCDX11StaticConstantBuffer *constantBuffersPs[16];
-	// PCDX11StaticConstantBuffer *constantBuffersVs[16];
+	PCDX11RenderDevice *renderDevice; // 14
+
+	unsigned short numTextures = 0; // 1C
+	unsigned short texBits = 0; // 1E
+	// PCDX11BitmapTexture *texture[4]; // 20
+	PCDX11StaticConstantBuffer *constantBuffersPs[16]; // 30
+	PCDX11StaticConstantBuffer *constantBuffersVs[16]; // 70
 public:
-	PCDX11Material() {}
+	PCDX11Material(PCDX11RenderDevice *renderDevice) :
+		renderDevice(renderDevice)
+	{}
 
 	void method_04() override;
 	void method_0C() override;
 	void method_10() override;
 	~PCDX11Material() = default;
 	void method_18() override;
+
+	void setupVertexResources(uint32_t, MaterialBlobSub*, MeshTab0Ext128Sub10*, char*, bool);
+	void setupPixelResources(uint32_t, MaterialBlobSub*, MeshTab0Ext128Sub10*, char*, bool);
 
 	PCDX11StreamDecl *buildStreamDecl015(
 		MeshTab0Ext128Sub10*,

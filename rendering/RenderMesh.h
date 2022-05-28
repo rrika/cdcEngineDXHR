@@ -105,6 +105,7 @@ struct MeshTab0Ext16 {
 };
 
 struct MeshTab0Ext128Sub10 {
+	// see also PCDX11Material::setupPixelResources
 	uint32_t dword0;
 	uint32_t dword4;
 	uint32_t dword8;
