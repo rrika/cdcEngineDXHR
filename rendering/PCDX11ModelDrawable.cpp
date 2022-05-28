@@ -221,14 +221,9 @@ void PCDX11ModelDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *prevDrawa
 	// renderDevice->setTexture(1, renderDevice->missingTexture1, /*format=*/256, 0.0);
 
 	auto *layout = (VertexAttributeLayoutA*)meshSub->format;
-	auto *elementDesc = new D3D11_INPUT_ELEMENT_DESC[layout->numAttr];
-	// printf("decodeVertexAttribA count = %d\n", layout->numAttr);
-	memset(elementDesc, 0, sizeof(D3D11_INPUT_ELEMENT_DESC[layout->numAttr]));
-	decodeVertexAttribA(elementDesc, layout->attrib, layout->numAttr, vertexShader->wineWorkaround);
+	PCDX11StreamDecl *streamDecl = renderDevice->streamDeclCache.buildStreamDecl(layout, &vertexShader->m_sub);
 
-	PCDX11StreamDecl streamDecl(renderDevice, elementDesc, layout->numAttr, &vertexShader->m_sub);
-	draw(renderDevice, stateManager, &streamDecl, false);
-	delete[] elementDesc;
+	draw(renderDevice, stateManager, streamDecl, false);
 }
 
 uint32_t PCDX11ModelDrawable::compare(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) {

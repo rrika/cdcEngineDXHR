@@ -33,7 +33,8 @@ PCDX11RenderDevice::PCDX11RenderDevice() :
 	shtab_ps_passthrough(shad::passthrough_ps, /*takeCopy=*/ false),
 	shtab_ps_white_25(shad::white_25_ps, /*takeCopy=*/ false),
 	shtab_ps_fogColor(shad::fogColor_ps, /*takeCopy=*/ false),
-	shtab_ps_errorColor(shad::errorColor_ps, /*takeCopy=*/ false)
+	shtab_ps_errorColor(shad::errorColor_ps, /*takeCopy=*/ false),
+	streamDeclCache(this)
 {
 	d3dDeviceContext111580 = deviceManager->getD3DDeviceContext();
 	createDefaultResources();

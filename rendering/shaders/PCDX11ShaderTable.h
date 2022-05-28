@@ -44,7 +44,7 @@ public:
 					/*blob=*/ blob + offsets[i],
 					/*takeCopy=*/ hasOwnership,
 					/*isWrapped=*/ true);
-				vertexShaders[i]->wineWorkaround = wineWorkaround;
+				vertexShaders[i]->m_sub.wineWorkaround = wineWorkaround;
 			} else
 				vertexShaders[i] = nullptr;
 	}

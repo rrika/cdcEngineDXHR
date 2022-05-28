@@ -2,6 +2,7 @@
 #include <d3d11.h>
 #include "CommonRenderDevice.h"
 #include "PCDX11InternalResource.h"
+#include "PCDX11StreamDeclCache.h"
 #include "shaders/PCDX11ShaderLib.h"
 #include "shaders/PCDX11ShaderTable.h" // for PixelShaderTable and VertexShaderTable
 
@@ -69,6 +70,7 @@ public:
 	PCDX11PixelShaderTable shtab_ps_fogColor; // 10DD0
 	PCDX11PixelShaderTable shtab_ps_errorColor; // 10DF0
 
+	PCDX11StreamDeclCache streamDeclCache; // 1112D4
 	PCDX11Texture *missingTexture; // 1112F0
 
 public:

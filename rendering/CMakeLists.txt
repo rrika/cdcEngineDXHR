@@ -28,6 +28,7 @@ target_sources(dxhr PRIVATE
 	PCDX11Scene.cpp
 	PCDX11StateManager.cpp
 	PCDX11StreamDecl.cpp
+	PCDX11StreamDeclCache.cpp
 	RenderPasses.cpp
 	RenderResource.cpp
 	VertexAttribute.cpp)

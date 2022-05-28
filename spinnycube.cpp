@@ -390,7 +390,7 @@ int spinnyCube(HWND window,
 
     auto *inputElementDesc = new D3D11_INPUT_ELEMENT_DESC[layout->numAttr];
     memset(inputElementDesc, 0, sizeof(D3D11_INPUT_ELEMENT_DESC[layout->numAttr]));
-    decodeVertexAttribA(inputElementDesc, layout->attrib, layout->numAttr, cdcVertexShader.wineWorkaround);
+    decodeVertexAttribA(inputElementDesc, layout->attrib, layout->numAttr, cdcVertexShader.m_sub.wineWorkaround);
     delete[] (char*)layout;
 
     cdc::PCDX11StreamDecl streamDecl(

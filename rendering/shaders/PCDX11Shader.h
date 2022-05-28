@@ -18,6 +18,7 @@ struct PCDX11ShaderSub { // guessed name
 	DXBCWrapper *dxbcWrapper = nullptr;
 	void *shaderBinary = nullptr;
 	bool hasOwnership; // 8
+	bool wineWorkaround = false; // 9
 	uint16_t shaderBinarySize; // C
 public:
 	PCDX11ShaderSub() { // hack
