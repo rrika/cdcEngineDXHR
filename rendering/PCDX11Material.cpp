@@ -87,7 +87,7 @@ void PCDX11Material::setupPixelResources(
 	auto *stateManager = deviceManager->getStateManager();
 	auto *texref = subMat->psTextureRef;
 
-	if (!doEverything) {
+	if (doEverything) {
 
 		if (subMat->psBufferSize)
 			stateManager->setPsConstantBuffer(3, constantBuffersPs[cb3Index]);

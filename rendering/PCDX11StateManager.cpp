@@ -37,6 +37,9 @@ PCDX11StateManager::PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D1
 	m_uberConstantBuffer[5] = new PCDX11UberConstantBuffer(7);
 	m_uberConstantBuffer[6] = new PCDX11UberConstantBuffer(1);
 
+	memset(m_textureViews, 0, 20 * 4);
+	memset(m_textureResources, 0, 20 * 4);
+
 	m_projectMatrix = identity4x4;
 	m_viewMatrix = identity4x4;
 	m_viewProjectMatrix = identity4x4;

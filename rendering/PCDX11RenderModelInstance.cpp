@@ -26,7 +26,7 @@ void PCDX11RenderModelInstance::recordDrawables() {
 				getRenderModel(),
 				sub,
 				tab0,
-				tab0Ext128);
+				tab0ext128);
 			renderDevice->recordDrawable(drawable, mask, addToNextScene);
 		}
 	}
