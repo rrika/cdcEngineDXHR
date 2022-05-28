@@ -2,6 +2,7 @@
 #include "PCDX11ClearDrawable.h"
 #include "PCDX11DepthBuffer.h"
 #include "PCDX11DeviceManager.h"
+#include "PCDX11Material.h"
 #include "PCDX11ModelDrawable.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11RenderModel.h"
@@ -364,8 +365,8 @@ void PCDX11RenderDevice::method_EC() {
 	// TODO
 }
 
-void PCDX11RenderDevice::createMaterial() {
-	// TODO
+IMaterial *PCDX11RenderDevice::createMaterial() {
+	return new PCDX11Material(this);
 }
 
 TextureMap *PCDX11RenderDevice::createTexture(uint32_t) {

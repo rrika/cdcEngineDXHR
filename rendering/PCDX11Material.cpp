@@ -7,6 +7,17 @@
 
 namespace cdc {
 
+void PCDX11Material::load(MaterialBlob *) {
+	// TODO
+}
+
+void PCDX11Material::method_08() {
+	// TODO
+}
+
+void PCDX11Material::method_18() {
+	// TODO
+}
 
 void PCDX11Material::setupVertexResources(
 	uint32_t cb4Index,

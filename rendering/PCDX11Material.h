@@ -25,9 +25,8 @@ public:
 		renderDevice(renderDevice)
 	{}
 
-	void method_04() override;
-	void method_0C() override;
-	void method_10() override;
+	void load(MaterialBlob *) override;
+	void method_08() override;
 	~PCDX11Material() = default;
 	void method_18() override;
 

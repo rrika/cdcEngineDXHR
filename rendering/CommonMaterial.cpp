@@ -1,4 +1,4 @@
-#pragma "CommonMaterial.h"
+#include "CommonMaterial.h"
 
 namespace cdc {
 

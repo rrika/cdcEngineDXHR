@@ -168,6 +168,10 @@ void hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSection
 	std::vector<uint32_t> sectionDomainIds;
 	std::vector<char*> relocPtrs;
 
+	// sectionHeader.languageBits >> 30 =
+	// 1: DX9
+	// 2: DX11
+
 	for (uint32_t i = 0; i < header.sectionCount; i++) {
 		DRMSectionHeader& sectionHeader = sectionHeaders[i];
 
@@ -180,7 +184,7 @@ void hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSection
 		cursor = (cursor+15) & ~15;
 
 		auto *resolveSection = sectionHeader.type < 16 ? resolveSections[sectionHeader.type] : nullptr;
-		if (resolveSection) {
+		if (resolveSection && (sectionHeader.languageBits >> 30) != 1) {
 			bool alreadyLoaded = false;
 			uint32_t id = resolveSection->allocate(
 				sectionHeader.id,
@@ -188,7 +192,7 @@ void hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSection
 				sectionHeader.unknown06,
 				sectionHeader.payloadSize,
 				alreadyLoaded);
-			printf("  section %3d %04x (%04x)\n", i, sectionHeader.id, id);
+			printf("  section %3d %2d %04x (%04x)\n", i, sectionHeader.type, sectionHeader.id, id);
 			if (!alreadyLoaded) {
 				resolveSection->fill(id, payload, sectionHeader.payloadSize, 0);
 			}
@@ -200,14 +204,15 @@ void hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSection
 	}
 
 	for (uint32_t i = 0; i < header.sectionCount; i++) {
-		if (relocPtrs[i])
+		DRMSectionHeader& sectionHeader = sectionHeaders[i];
+		if (relocPtrs[i] && (sectionHeader.languageBits >> 30) != 1)
 			applyRelocs(resolveSections, sectionHeaders.data(), sectionDomainIds.data(), i, relocPtrs[i]);
 	}
 
 	for (uint32_t i = 0; i < header.sectionCount; i++) {
 		DRMSectionHeader& sectionHeader = sectionHeaders[i];
 		auto *resolveSection = sectionHeader.type < 16 ? resolveSections[sectionHeader.type] : nullptr;
-		if (resolveSection)
+		if (resolveSection && (sectionHeader.languageBits >> 30) != 1)
 			resolveSection->construct(sectionDomainIds[i], nullptr);
 	}
 }

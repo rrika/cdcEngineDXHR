@@ -6,13 +6,14 @@
 
 namespace cdc {
 
-class IShaderLib;
-class IRenderPassCallback;
-class RenderMesh;
-class RenderResource;
-class RenderModelInstance;
-class TextureMap;
 class CommonScene;
+class IMaterial;
+class IRenderPassCallback;
+class IShaderLib;
+class RenderMesh;
+class RenderModelInstance;
+class RenderResource;
+class TextureMap;
 
 class CommonRenderDevice
 {
@@ -118,7 +119,7 @@ public:
 	virtual void method_120();
 	virtual void method_124();
 	virtual void method_128();
-	virtual void createMaterial() = 0;
+	virtual IMaterial *createMaterial() = 0;
 	virtual TextureMap *createTexture(uint32_t) = 0;
 	virtual void createProceduralTexture() = 0;
 	virtual IShaderLib *createShaderLib(uint32_t) = 0;

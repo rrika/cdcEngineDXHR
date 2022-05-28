@@ -32,6 +32,7 @@
 #include "rendering/RenderModelInstance.h"
 #include "rendering/VertexAttribute.h"
 #include "drm/ResolveReceiver.h"
+#include "drm/sections/MaterialSection.h"
 #include "drm/sections/RenderResourceSection.h"
 #include "drm/sections/ShaderLibSection.h"
 
@@ -454,10 +455,12 @@ int spinnyCube(HWND window,
 
     cdc::RenderResourceSection renderResourceSection;
     cdc::ShaderLibSection shaderLibSection;
+    cdc::MaterialSection materialSection;
 
     cdc::ResolveSection *resolveSections[16] = {nullptr};
     resolveSections[5] = &renderResourceSection; // textures
     resolveSections[9] = &shaderLibSection;
+    resolveSections[10] = &materialSection;
     resolveSections[12] = &renderResourceSection; // meshes
 
     hackResolveReceiver("pickup_dns_156600946691c80e_dx11.drm", resolveSections);

@@ -118,7 +118,7 @@ public:
 	void method_D8() override;
 	void method_DC() override;
 	void method_EC() override;
-	void createMaterial() override;
+	IMaterial *createMaterial() override;
 	TextureMap *createTexture(uint32_t) override;
 	void createProceduralTexture() override;
 	IShaderLib *createShaderLib(uint32_t) override;
