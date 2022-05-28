@@ -1,6 +1,5 @@
 #include "BuiltinResources.h"
-#include "PCDX11ClearDrawable.h"
-#include "PCDX11DepthBuffer.h"
+#include "drawables/PCDX11ClearDrawable.h"
 #include "PCDX11DeviceManager.h"
 #include "PCDX11Material.h"
 #include "PCDX11ModelDrawable.h"
@@ -8,12 +7,13 @@
 #include "PCDX11RenderModel.h"
 #include "PCDX11RenderModelInstance.h"
 #include "PCDX11RenderPassCallbacks.h"
-#include "PCDX11RenderTarget.h"
 #include "PCDX11Scene.h"
-#include "PCDX11ShaderLib.h"
 #include "PCDX11StateManager.h"
-#include "PCDX11Texture.h"
 #include "RenderPasses.h"
+#include "shaders/PCDX11ShaderLib.h"
+#include "surfaces/PCDX11DepthBuffer.h"
+#include "surfaces/PCDX11RenderTarget.h"
+#include "surfaces/PCDX11Texture.h"
 
 namespace cdc {
 

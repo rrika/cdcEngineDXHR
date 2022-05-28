@@ -1,5 +1,5 @@
 #include "CommonRenderDevice.h"
-#include "TextureMap.h"
+#include "surfaces/TextureMap.h"
 
 namespace cdc {
 

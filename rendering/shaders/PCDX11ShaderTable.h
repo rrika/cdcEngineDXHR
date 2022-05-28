@@ -1,8 +1,8 @@
 #pragma once
-#include "PCDX11Shader.h"
-#include "PCDX11DeviceManager.h"
-#include "PCDX11ShaderManager.h"
+#include "../PCDX11DeviceManager.h"
 #include "PCDX11PixelShader.h"
+#include "PCDX11Shader.h"
+#include "PCDX11ShaderManager.h"
 #include "PCDX11VertexShader.h"
 // #include "PCDX11HullShader.h"
 // #include "PCDX11DomainShader.h"

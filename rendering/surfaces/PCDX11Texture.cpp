@@ -1,8 +1,8 @@
 #include <d3d11_1.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "../PCDX11DeviceManager.h"
 #include "PCDX11Texture.h"
-#include "PCDX11DeviceManager.h"
 
 namespace cdc {
 

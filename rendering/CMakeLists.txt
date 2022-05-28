@@ -1,27 +1,30 @@
 target_sources(dxhr PRIVATE
+	drawables/PCDX11ClearDrawable.cpp
+	drawables/PCDX11SetRTDrawable.cpp
+
+	shaders/PCDX11PixelShader.cpp
+	shaders/PCDX11ShaderLib.cpp
+	shaders/PCDX11VertexShader.cpp
+
+	surfaces/PCDX11BitmapTexture.cpp
+	surfaces/PCDX11DefaultRenderTarget.cpp
+	surfaces/PCDX11RenderTexture.cpp
+	surfaces/PCDX11Texture.cpp
+
 	BuiltinResources.cpp
 	CommonMaterial.cpp
 	CommonRenderDevice.cpp
-	PCDX11BitmapTexture.cpp
-	PCDX11ClearDrawable.cpp
-	PCDX11DefaultRenderTarget.cpp
 	PCDX11DeviceManager.cpp
 	PCDX11InternalResource.cpp
 	PCDX11Material.cpp
 	PCDX11ModelDrawable.cpp
-	PCDX11PixelShader.cpp
 	PCDX11RenderDevice.cpp
 	PCDX11RenderModel.cpp
 	PCDX11RenderModelInstance.cpp
 	PCDX11RenderPassCallbacks.cpp
-	PCDX11RenderTexture.cpp
 	PCDX11Scene.cpp
-	PCDX11SetRTDrawable.cpp
-	PCDX11ShaderLib.cpp
 	PCDX11StateManager.cpp
 	PCDX11StreamDecl.cpp
-	PCDX11Texture.cpp
-	PCDX11VertexShader.cpp
 	RenderPasses.cpp
 	RenderResource.cpp
 	VertexAttribute.cpp)

@@ -2,8 +2,8 @@
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11StateManager.h"
-#include "PCDX11Texture.h"
-#include "PCDX11UberConstantBuffer.h"
+#include "surfaces/PCDX11Texture.h"
+#include "buffers/PCDX11UberConstantBuffer.h"
 
 namespace cdc {
 

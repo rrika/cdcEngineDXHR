@@ -1,7 +1,7 @@
-#include "PCDX11StreamDecl.h"
+#include "buffers/PCDX11VertexBuffer.h"
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderDevice.h"
-#include "PCDX11VertexBuffer.h"
+#include "PCDX11StreamDecl.h"
 #include <d3d11.h>
 
 namespace cdc {

@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <d3d11_1.h>
 #include "IPCDeviceManager.h"
-#include "PCDX11ShaderManager.h"
+#include "shaders/PCDX11ShaderManager.h"
 
 namespace cdc {
 

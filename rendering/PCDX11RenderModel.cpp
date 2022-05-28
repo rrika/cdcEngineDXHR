@@ -2,8 +2,8 @@
 #include <cstring>
 #include <cstdio>
 #include "PCDX11Material.h"
-#include "PCDX11SimpleStaticIndexBuffer.h"
-#include "PCDX11SimpleStaticVertexBuffer.h"
+#include "buffers/PCDX11SimpleStaticIndexBuffer.h"
+#include "buffers/PCDX11SimpleStaticVertexBuffer.h"
 #include "VertexAttribute.h"
 
 namespace cdc {

@@ -2,8 +2,8 @@
 #include <d3d11.h>
 #include "CommonRenderDevice.h"
 #include "PCDX11InternalResource.h"
-#include "PCDX11ShaderLib.h"
-#include "PCDX11ShaderTable.h" // for PixelShaderTable and VertexShaderTable
+#include "shaders/PCDX11ShaderLib.h"
+#include "shaders/PCDX11ShaderTable.h" // for PixelShaderTable and VertexShaderTable
 
 namespace cdc {
 

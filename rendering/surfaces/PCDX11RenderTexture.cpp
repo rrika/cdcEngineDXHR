@@ -1,5 +1,5 @@
+#include "../PCDX11DeviceManager.h"
 #include "PCDX11RenderTexture.h"
-#include "PCDX11DeviceManager.h"
 #include <d3d11.h>
 
 namespace cdc {

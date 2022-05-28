@@ -1,7 +1,7 @@
 #pragma once
 #include "PCDX11ConstantBuffer.h"
-#include "PCDX11AsyncCreateResource.h"
-#include "PCDX11DeviceManager.h"
+#include "../PCDX11AsyncCreateResource.h"
+#include "../PCDX11DeviceManager.h"
 #include <d3d11.h>
 
 namespace cdc {

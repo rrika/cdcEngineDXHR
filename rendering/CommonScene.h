@@ -3,8 +3,8 @@
 #include "../matrix.h"
 #include "IRenderScene.h"
 #include "IRenderDrawable.h"
-#include "CommonRenderTarget.h" // for CommonRenderTarget to IRenderTarget cast
-#include "CommonDepthBuffer.h" // for CommonDepthBuffer to IDepthBuffer cast
+#include "surfaces/CommonRenderTarget.h" // for CommonRenderTarget to IRenderTarget cast
+#include "surfaces/CommonDepthBuffer.h" // for CommonDepthBuffer to IDepthBuffer cast
 
 namespace cdc {
 

@@ -1,9 +1,9 @@
-#include "PCDX11Scene.h"
-#include "PCDX11DepthBuffer.h"
+#include "buffers/PCDX11UberConstantBuffer.h"
 #include "PCDX11DeviceManager.h"
-#include "PCDX11RenderTarget.h"
+#include "PCDX11Scene.h"
 #include "PCDX11StateManager.h"
-#include "PCDX11UberConstantBuffer.h"
+#include "surfaces/PCDX11DepthBuffer.h"
+#include "surfaces/PCDX11RenderTarget.h"
 
 namespace cdc {
 

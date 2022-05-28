@@ -3,7 +3,7 @@
 #include <d3d11.h>
 #include "PCDX11InternalResource.h"
 // #include "CommonStreamDecl.h"
-#include "PCDX11Shader.h"
+#include "shaders/PCDX11Shader.h"
 
 class D3D11_INPUT_ELEMENT_DESC;
 

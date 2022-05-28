@@ -2,17 +2,17 @@
 #include <d3d11_1.h>
 #include <climits>
 #include <algorithm>
-#include "PCDX11BaseTexture.h"
-#include "PCDX11ConstantBuffer.h"
-#include "PCDX11DepthBuffer.h"
-#include "PCDX11IndexBuffer.h"
-#include "PCDX11PixelShader.h"
-#include "PCDX11RenderTarget.h"
+#include "buffers/PCDX11ConstantBuffer.h"
+#include "buffers/PCDX11IndexBuffer.h"
+#include "buffers/PCDX11UberConstantBuffer.h"
+#include "buffers/PCDX11VertexBuffer.h"
 #include "PCDX11StateManager.h"
 #include "PCDX11StreamDecl.h"
-#include "PCDX11VertexBuffer.h"
-#include "PCDX11VertexShader.h"
-#include "PCDX11UberConstantBuffer.h"
+#include "shaders/PCDX11PixelShader.h"
+#include "shaders/PCDX11VertexShader.h"
+#include "surfaces/PCDX11BaseTexture.h"
+#include "surfaces/PCDX11DepthBuffer.h"
+#include "surfaces/PCDX11RenderTarget.h"
 
 namespace cdc {
 

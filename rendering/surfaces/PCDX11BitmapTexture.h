@@ -1,6 +1,6 @@
 #pragma once
 #include "PCDX11BaseTexture.h"
-#include "PCDX11AsyncCreateResource.h"
+#include "../PCDX11AsyncCreateResource.h"
 
 struct ID3D11Texture2D;
 

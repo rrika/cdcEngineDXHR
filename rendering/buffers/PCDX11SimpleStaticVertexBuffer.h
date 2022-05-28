@@ -1,6 +1,6 @@
 #pragma once
 #include "PCDX11VertexBuffer.h"
-#include "PCDX11DeviceManager.h"
+#include "../PCDX11DeviceManager.h"
 
 namespace cdc {
 

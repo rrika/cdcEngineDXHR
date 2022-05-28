@@ -1,5 +1,8 @@
 #pragma once
 #include "CommonVertexBuffer.h"
+#include <cstdint>
+
+class ID3D11Buffer;
 
 namespace cdc {
 

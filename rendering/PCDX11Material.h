@@ -1,7 +1,7 @@
 #pragma once
 #include "CommonMaterial.h"
-#include "PCDX11BitmapTexture.h"
-#include "PCDX11StaticConstantBuffer.h"
+#include "surfaces/PCDX11BitmapTexture.h"
+#include "buffers/PCDX11StaticConstantBuffer.h"
 
 namespace cdc {
 
