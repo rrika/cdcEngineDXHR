@@ -1,14 +1,39 @@
-#include "PCDX11Material.h"
 #include "PCDX11DeviceManager.h"
+#include "PCDX11Material.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11StateManager.h"
+#include "RenderMesh.h"
 #include "surfaces/PCDX11Texture.h"
 #include "buffers/PCDX11UberConstantBuffer.h"
 
 namespace cdc {
 
-void PCDX11Material::load(MaterialBlob *) {
+void PCDX11Material::load(MaterialBlob *newBlob) {
+	auto deviceContext = renderDevice->getD3DDeviceContext(); // HACK
 	// TODO
+	materialBlob = newBlob;
+	// TODO
+	for (uint32_t i = 0; i < 16; i++) {
+		MaterialBlobSub *sub = materialBlob->subMat4C[i];
+
+		if (!sub) continue;
+		if (!sub->shaderPixel && !sub->shaderVertex) continue;
+
+		// TODO: textures
+		if (sub->psBufferSize) {
+			auto buffer = new PCDX11UberConstantBuffer(32);
+			buffer->assignRow(0, sub->psBufferData, sub->psBufferSize);
+			buffer->syncBuffer(deviceContext); // HACK
+			constantBuffersPs[i] = buffer;
+		}
+
+		if (sub->vsBufferSize) {
+			auto buffer = new PCDX11UberConstantBuffer(32);
+			buffer->assignRow(0, sub->vsBufferData, sub->vsBufferSize);
+			buffer->syncBuffer(deviceContext); // HACK
+			constantBuffersVs[i] = buffer;
+		}
+	}
 }
 
 void PCDX11Material::method_08() {
@@ -20,7 +45,7 @@ void PCDX11Material::method_18() {
 }
 
 void PCDX11Material::setupVertexResources(
-	uint32_t cb4Index,
+	uint32_t subMaterialIndex,
 	MaterialBlobSub* subMat,
 	MeshTab0Ext128Sub10* subExt,
 	char *cbData,
@@ -32,7 +57,7 @@ void PCDX11Material::setupVertexResources(
 	if (doEverything) {
 
 		if (subMat->vsBufferSize)
-			stateManager->setVsConstantBuffer(4, constantBuffersVs[cb4Index]);
+			stateManager->setVsConstantBuffer(4, constantBuffersVs[subMaterialIndex]);
 
 		// assign 0..refIndexEndA from submaterial
 		for (uint32_t i = 0; i < subMat->vsRefIndexEndA; i++)
@@ -78,7 +103,7 @@ void PCDX11Material::setupVertexResources(
 }
 
 void PCDX11Material::setupPixelResources(
-	uint32_t cb3Index,
+	uint32_t subMaterialIndex,
 	MaterialBlobSub* subMat,
 	MeshTab0Ext128Sub10* subExt,
 	char *cbData,
@@ -90,7 +115,7 @@ void PCDX11Material::setupPixelResources(
 	if (doEverything) {
 
 		if (subMat->psBufferSize)
-			stateManager->setPsConstantBuffer(3, constantBuffersPs[cb3Index]);
+			stateManager->setPsConstantBuffer(3, constantBuffersPs[subMaterialIndex]);
 
 		// assign 0..refIndexEndA from submaterial
 		for (uint32_t i = 0; i < subMat->psRefIndexEndA; i++)
@@ -136,17 +161,67 @@ void PCDX11Material::setupPixelResources(
 }
 
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
-	MeshTab0Ext128Sub10*,
+	MeshTab0Ext128Sub10* ext128sub10,
 	void *drawableExtDword50,
 	uint32_t vsSelect,
 	bool arg4,
-	VertexAttributeLayoutA *layout,
+	VertexAttributeLayoutA *layoutA,
 	uint8_t flags,
-	float floatX,
+	float floatX, // opacity scale?
 	float floatY)
 {
 	// TODO
-	return nullptr;
+
+	float opacity = ext128sub10->float10 * floatX;
+	uint32_t subMaterialIndex = 0;
+	if (arg4)
+		subMaterialIndex = 5;
+
+	// TODO
+
+	MaterialBlobSub *subMaterial = materialBlob->subMat4C[subMaterialIndex];
+	bool doEverything = true; // TODO
+	auto *stateManager = deviceManager->getStateManager();
+	uint32_t vertexIndex = vsSelect;
+	if (flags & 8)
+		vertexIndex |= 8;
+
+	// set pixel shader
+	PCDX11PixelShaderTable *pixelTable;
+	uint32_t pixelIndex = 0;
+	if (materialBlob->blendState == 0x7010010) {
+		pixelTable = &renderDevice->shtab_ps_white_27;
+		if (arg4)
+			pixelIndex = 1;
+	} else {
+		pixelTable = static_cast<PCDX11PixelShaderTable*>(static_cast<PCDX11ShaderLib*>(subMaterial->shaderPixel)->table);
+	}
+
+	auto pixelShader = (*pixelTable)[pixelIndex];
+	stateManager->setPixelShader(pixelShader);
+
+	// set vertex shader
+	auto vertexTable = static_cast<PCDX11VertexShaderTable*>(static_cast<PCDX11ShaderLib*>(subMaterial->shaderVertex)->table);
+	auto vertexShader = (*vertexTable)[vertexIndex];
+	stateManager->setVertexShader(vertexShader);
+
+	VertexAttributeLayoutB *layoutB = nullptr; // TODO
+
+	PCDX11StreamDecl *streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
+		layoutA,
+		layoutB,
+		(flags >> 3) & 1,
+		&vertexShader->m_sub);
+
+	// TODO
+	if (true)
+		setupPixelResources(subMaterialIndex, subMaterial, ext128sub10, (char*)drawableExtDword50, doEverything);
+	setupVertexResources(subMaterialIndex, subMaterial, ext128sub10, (char*)drawableExtDword50, doEverything);
+
+	// TODO
+	stateManager->setOpacity(opacity);
+
+	return streamDecl;
 }
 
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl01(

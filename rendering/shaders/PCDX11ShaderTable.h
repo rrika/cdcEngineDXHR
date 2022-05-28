@@ -48,6 +48,8 @@ public:
 			} else
 				vertexShaders[i] = nullptr;
 	}
+
+	PCDX11VertexShader *operator[](size_t i) const { return vertexShaders[i]; }
 };
 
 class PCDX11PixelShaderTable : public PCDX11ShaderTable {
@@ -78,6 +80,8 @@ public:
 					/*takeCopy=*/ hasOwnership,
 					/*isWrapped=*/ true);
 	}
+
+	PCDX11PixelShader *operator[](size_t i) const { return pixelShaders[i]; }
 };
 
 /*

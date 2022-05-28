@@ -2,7 +2,8 @@
 #include "CommonMaterial.h"
 #include "PCDX11RenderExternalResource.h"
 #include "surfaces/PCDX11BitmapTexture.h"
-#include "buffers/PCDX11StaticConstantBuffer.h"
+// #include "buffers/PCDX11StaticConstantBuffer.h"
+#include "buffers/PCDX11UberConstantBuffer.h"
 
 namespace cdc {
 
@@ -17,8 +18,10 @@ class PCDX11Material :
 	unsigned short numTextures = 0; // 1C
 	unsigned short texBits = 0; // 1E
 	// PCDX11BitmapTexture *texture[4]; // 20
-	PCDX11StaticConstantBuffer *constantBuffersPs[16]; // 30
-	PCDX11StaticConstantBuffer *constantBuffersVs[16]; // 70
+	// PCDX11StaticConstantBuffer *constantBuffersPs[16]; // 30
+	// PCDX11StaticConstantBuffer *constantBuffersVs[16]; // 70
+	PCDX11UberConstantBuffer *constantBuffersPs[16]; // 30
+	PCDX11UberConstantBuffer *constantBuffersVs[16]; // 70
 public:
 	PCDX11Material(PCDX11RenderDevice *renderDevice) :
 		PCDX11RenderExternalResource(renderDevice)
