@@ -26,6 +26,8 @@ void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 	}
 	// TODO
 	stateManager->popRenderTargets();
+	if (prevScene)
+		prevScene->drawableListsAndMasks->absorbToBack(*drawableListsAndMasks);
 	renderDevice->scene78 = backupScene;
 }
 

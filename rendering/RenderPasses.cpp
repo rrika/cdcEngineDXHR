@@ -115,6 +115,21 @@ void DrawableList::draw(RenderFunctionSet *funcSet, uint32_t funcSetIndex) {
 	}
 }
 
+void DrawableList::absorbToBack(DrawableList& other) {
+	if (this == &other || other.itemCount == 0)
+		return;
+
+	if (last)
+		last->next = other.first;
+	else
+		first = other.first;
+	last = other.last;
+	itemCount += other.itemCount;
+	other.itemCount = 0;
+	other.first = 0;
+	other.last = 0;
+}
+
 DrawableListsAndMasks::DrawableListsAndMasks(
 	RenderPasses *renderPasses,
 	/*uint32_t,*/
@@ -157,6 +172,28 @@ void DrawableListsAndMasks::add(IRenderDrawable *drawable, uint32_t insertMask) 
 DrawableList *DrawableListsAndMasks::listForPass(uint32_t passId) {
 	// TODO
 	return nullptr;
+}
+
+void DrawableListsAndMasks::absorbToBack(DrawableListsAndMasks& other) {
+	uint32_t thisMask = this->passMask8;
+	uint32_t otherMask = other.passMask8;
+	DrawableList *thisList = this->drawableLists;
+	DrawableList *otherList = other.drawableLists;
+
+	while (thisMask || otherMask) {
+
+		if (thisMask & otherMask & 1)
+			thisList->absorbToBack(*otherList);
+
+		if (thisMask & 1)
+			thisList++;
+
+		if (otherMask & 1)
+			otherList++;
+
+		thisMask >>= 1;
+		otherMask >>= 1;
+	}
 }
 
 }

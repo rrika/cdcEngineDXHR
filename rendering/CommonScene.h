@@ -50,9 +50,9 @@ public:
 	// uint32_t dword3F8;
 	// uint32_t dword3FC;
 	// uint32_t dword400;
-	CommonScene *parentScene;
-	CommonScene *nextScene;
-	CommonScene *prevScene;
+	CommonScene *parentScene; // 404
+	CommonScene *nextScene; // 408
+	CommonScene *prevScene; // 40C
 	float heightFogParams[4];
 	float fogScaleOffset[4];
 	// uint8_t f430[4];

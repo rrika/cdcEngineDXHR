@@ -60,6 +60,7 @@ struct DrawableList { // guessed name
 	void sortSimple();
 	void sortWithFunc(RenderFunctionSet *funcSet, uint32_t funcSetIndex);
 	void draw(RenderFunctionSet *funcSet, uint32_t funcSetIndex);
+	void absorbToBack(DrawableList& other);
 };
 
 struct DrawableListsAndMasks { // guessed name
@@ -81,6 +82,7 @@ struct DrawableListsAndMasks { // guessed name
 	DrawableListsAndMasks(RenderPasses *, /*uint32_t,*/ uint32_t, RingBuffer *);
 	void add(IRenderDrawable *drawable, uint32_t passMask);
 	DrawableList *listForPass(uint32_t);
+	void absorbToBack(DrawableListsAndMasks& other);
 };
 
 }
