@@ -1,5 +1,8 @@
 target_sources(dxhr PRIVATE
 	drawables/PCDX11ClearDrawable.cpp
+	drawables/PCDX11FastBlurDrawable.cpp
+	drawables/PCDX11FXAADrawable.cpp
+	drawables/PCDX11MLAADrawable.cpp
 	drawables/PCDX11SetRTDrawable.cpp
 
 	shaders/PCDX11PixelShader.cpp
