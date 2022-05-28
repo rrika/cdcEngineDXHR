@@ -253,7 +253,7 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl4(
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl038(
 	MeshTab0Ext128Sub10*,
 	void *drawableExtDword50,
-	uint32_t drawableDword24,
+	void *lightConstantBufferData,
 	uint32_t vsSelect,
 	VertexAttributeLayoutA *layout,
 	uint8_t flags,

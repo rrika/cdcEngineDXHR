@@ -6,6 +6,7 @@
 
 namespace cdc {
 
+class CommonLightManager;
 class CommonScene;
 class IMaterial;
 class IRenderPassCallback;
@@ -23,6 +24,9 @@ public:
 	CommonScene *scene78; // 78
 protected:
 	CommonScene *scene7C = nullptr; // 7C
+public:
+	CommonLightManager *lightManager; // 84
+protected:
 	CommonSceneSub114 sceneSub114_8C; // 8C
 public:
 	RenderPasses renderPasses; // 2E8

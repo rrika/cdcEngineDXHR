@@ -66,7 +66,7 @@ public:
 	PCDX11StreamDecl *buildStreamDecl038(
 		MeshTab0Ext128Sub10*,
 		void *drawableExtDword50,
-		uint32_t drawableDword24,
+		void *drawableDword24,
 		uint32_t vsSelect,
 		VertexAttributeLayoutA *layout,
 		uint8_t flags,

@@ -19,9 +19,11 @@ target_sources(dxhr PRIVATE
 	CommonRenderDevice.cpp
 	PCDX11DeviceManager.cpp
 	PCDX11InternalResource.cpp
+	PCDX11LightManager.cpp
 	PCDX11Material.cpp
 	PCDX11ModelDrawable.cpp
 	PCDX11RenderDevice.cpp
+	PCDX11RenderLight.cpp
 	PCDX11RenderModel.cpp
 	PCDX11RenderModelInstance.cpp
 	PCDX11RenderPassCallbacks.cpp

@@ -8,6 +8,7 @@ class PCDX11RenderModel;
 class PCDX11RenderDevice;
 class PCDX11StateManager;
 class PCDX11StreamDecl;
+struct LightReceiverData;
 
 struct ModelDrawableExt {
 	// TODO
@@ -21,8 +22,8 @@ class PCDX11ModelDrawable : public IRenderDrawable {
 	MeshSub *meshSub; // 14
 	MeshTab0 *tab0; // 18
 	MeshTab0Ext128 *tab0Ext128; // 1C
-
-	uint32_t dword24; // 24
+	LightReceiverData *lightReceiverData; // 24
+	float *lightConstantBufferData; // 28
 	float float2C; // 2C
 	float float30; // 30
 	uint32_t flags34; // 34
@@ -32,16 +33,7 @@ public:
 		PCDX11RenderModel *renderModel,
 		MeshSub *meshSub,
 		MeshTab0 *tab0,
-		MeshTab0Ext128 *tab0Ext128)
-	:
-		renderModel(renderModel),
-		meshSub(meshSub),
-		tab0(tab0),
-		tab0Ext128(tab0Ext128)
-	{ // hack
-		word4 = 1; // use RenderModel drawers
-		flags34 = (tab0[0].triangleCount << 8);
-	}
+		MeshTab0Ext128 *tab0Ext128);
 
 	inline bool isUnlit() const { return (flags34 >> 0) & 1; }
 	inline bool getCullMode() const { return (flags34 >> 1) & 1; }

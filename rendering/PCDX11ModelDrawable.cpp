@@ -2,6 +2,7 @@
 #include "buffers/PCDX11IndexBuffer.h"
 #include "buffers/PCDX11SimpleStaticIndexBuffer.h"
 #include "buffers/PCDX11SimpleStaticVertexBuffer.h"
+#include "PCDX11LightManager.h"
 #include "PCDX11Material.h"
 #include "PCDX11ModelDrawable.h"
 #include "PCDX11RenderDevice.h"
@@ -11,6 +12,24 @@
 #include "VertexAttribute.h"
 
 namespace cdc {
+
+PCDX11ModelDrawable::PCDX11ModelDrawable(
+	PCDX11RenderModel *renderModel,
+	MeshSub *meshSub,
+	MeshTab0 *tab0,
+	MeshTab0Ext128 *tab0Ext128)
+:
+	renderModel(renderModel),
+	meshSub(meshSub),
+	tab0(tab0),
+	tab0Ext128(tab0Ext128)
+{ // hack
+	word4 = 1; // use RenderModel drawers
+	flags34 = (tab0[0].triangleCount << 8);
+
+	auto lightManager = static_cast<PCDX11LightManager*>(renderModel->renderDevice->lightManager);
+	lightReceiverData = lightManager->makeReceiver(/*TODO*/);
+}
 
 // for funcset 1: renderpasses 0 and 14 (depth)
 bool PCDX11ModelDrawable::draw1(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
@@ -102,7 +121,7 @@ bool PCDX11ModelDrawable::draw4(uint32_t funcSetIndex, IRenderDrawable *drawable
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl038(
 		&mt0x128->sub10,
 		&thisModel->ext->dword50,
-		thisModel->dword24,
+		thisModel->lightConstantBufferData,
 		mesh->vsSelect4C,
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
@@ -132,7 +151,7 @@ bool PCDX11ModelDrawable::draw56(uint32_t funcSetIndex, IRenderDrawable *drawabl
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl038(
 		&mt0x128->sub10,
 		&thisModel->ext->dword50,
-		thisModel->dword24,
+		thisModel->lightConstantBufferData,
 		mesh->vsSelect4C,
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
@@ -279,7 +298,14 @@ void PCDX11ModelDrawable::buildAndAssignLightBuffer(
 	PCDX11RenderDevice *renderDevice,
 	PCDX11StateManager *stateManager)
 {
-	// TODO
+	auto lightManager = static_cast<PCDX11LightManager*>(renderModel->renderDevice->lightManager);
+    // if (lightManager->lightDataX_E10 != lightReceiverData)
+        lightManager->fillLightBuffer(lightReceiverData);
+
+    if (lightConstantBufferData) {
+        // if (lightManager->mostRecentAssignmentToCommonCB5 != lightConstantBufferData)
+            lightManager->assignCommonCB5((char*)lightConstantBufferData);
+    }
 }
 
 }
