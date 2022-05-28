@@ -8,6 +8,8 @@ PCDX11ShaderLib::PCDX11ShaderLib(
 	PCDX11ShaderLib::Type type,
 	PCDX11RenderDevice *renderDevice,
 	bool wineWorkaround)
+:
+	PCDX11RenderExternalResource(renderDevice)
 {
 	buffer = nullptr;
 	switch (type) {

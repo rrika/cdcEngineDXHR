@@ -10,8 +10,7 @@ namespace cdc {
 
 PCDX11RenderModel::PCDX11RenderModel(PCDX11RenderDevice *renderDevice, uint32_t size) :
 	RenderMesh(),
-	// RenderExternalResource(renderDevice),
-	renderDevice(renderDevice),
+	PCDX11RenderExternalResource(renderDevice),
 	size(size)
 {
 	meshHeader = (MeshHeader*)new char[size];

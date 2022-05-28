@@ -1,6 +1,6 @@
 #pragma once
 #include "RenderMesh.h"
-// #include "PCDX11RenderExternalResource.h"
+#include "PCDX11RenderExternalResource.h"
 
 namespace cdc {
 
@@ -8,12 +8,10 @@ class PCDX11RenderDevice;
 class PCDX11SimpleStaticIndexBuffer;
 
 class PCDX11RenderModel :
-	public RenderMesh
-	// public PCDX11RenderExternalResource
+	public RenderMesh,
+	public PCDX11RenderExternalResource
 {
 public:
-	PCDX11RenderDevice *renderDevice; // in PCDX11RenderExternalResource
-
 	uint32_t size;
 
 	MeshHeader *meshHeader;

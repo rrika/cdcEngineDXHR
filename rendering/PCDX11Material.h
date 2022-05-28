@@ -1,5 +1,6 @@
 #pragma once
 #include "CommonMaterial.h"
+#include "PCDX11RenderExternalResource.h"
 #include "surfaces/PCDX11BitmapTexture.h"
 #include "buffers/PCDX11StaticConstantBuffer.h"
 
@@ -10,11 +11,9 @@ struct MeshTab0Ext128Sub10;
 struct VertexAttributeLayoutA;
 
 class PCDX11Material :
-	public CommonMaterial
-	// public PCDX11RenderExternalResource
+	public CommonMaterial,
+	public PCDX11RenderExternalResource
 {
-	PCDX11RenderDevice *renderDevice; // 14
-
 	unsigned short numTextures = 0; // 1C
 	unsigned short texBits = 0; // 1E
 	// PCDX11BitmapTexture *texture[4]; // 20
@@ -22,7 +21,7 @@ class PCDX11Material :
 	PCDX11StaticConstantBuffer *constantBuffersVs[16]; // 70
 public:
 	PCDX11Material(PCDX11RenderDevice *renderDevice) :
-		renderDevice(renderDevice)
+		PCDX11RenderExternalResource(renderDevice)
 	{}
 
 	void load(MaterialBlob *) override;

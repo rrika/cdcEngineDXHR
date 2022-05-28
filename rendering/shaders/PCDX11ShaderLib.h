@@ -1,14 +1,15 @@
 #pragma once
-#include "PCDX11ShaderTable.h"
+#include "../PCDX11RenderExternalResource.h"
 #include "IShaderLib.h"
+#include "PCDX11ShaderTable.h"
 
 namespace cdc {
 
 class PCDX11RenderDevice;
 
 class PCDX11ShaderLib :
-	public IShaderLib
-	/* public PCDX11RenderExternalResource */
+	public IShaderLib,
+	public PCDX11RenderExternalResource
 {
 public:
 	enum Type {
@@ -21,6 +22,7 @@ public:
 
 	PCDX11ShaderLib(uint32_t size, PCDX11RenderDevice *renderDevice) :
 		IShaderLib(),
+		PCDX11RenderExternalResource(renderDevice),
 		table(nullptr)
 	{
 		buffer = new char[size];

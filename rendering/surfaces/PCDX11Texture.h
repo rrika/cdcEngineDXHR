@@ -1,7 +1,7 @@
 #pragma once
-#include "TextureMap.h"
+#include "../PCDX11RenderExternalResource.h"
 #include "PCDX11BitmapTexture.h"
-// #include "PCDX11RenderExternalResource.h"
+#include "TextureMap.h"
 #include <d3d11_1.h>
 
 namespace cdc {
@@ -35,8 +35,8 @@ struct TextureBlob {
 
 class PCDX11Texture :
 	public TextureMap,
-	public PCDX11BitmapTexture
-	// public PCDX11RenderExternalResource
+	public PCDX11BitmapTexture,
+	public PCDX11RenderExternalResource
 {
 public:
 	uint32_t width; // 18
@@ -58,8 +58,8 @@ public:
 public:
 	PCDX11Texture(PCDX11RenderDevice *renderDevice) :
 		TextureMap(),
-		PCDX11BitmapTexture(renderDevice, 0, 0, 256, 0)
-		// PCDX11RenderExternalResource(renderDevice)
+		PCDX11BitmapTexture(renderDevice, 0, 0, 256, 0),
+		PCDX11RenderExternalResource(renderDevice)
 	{}
 
 	// for RenderResource
