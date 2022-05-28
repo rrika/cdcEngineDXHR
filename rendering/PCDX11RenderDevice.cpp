@@ -1,6 +1,7 @@
 #include "BuiltinResources.h"
 #include "drawables/PCDX11ClearDrawable.h"
 #include "PCDX11DeviceManager.h"
+#include "PCDX11LightManager.h"
 #include "PCDX11Material.h"
 #include "PCDX11ModelDrawable.h"
 #include "PCDX11RenderDevice.h"
@@ -213,6 +214,8 @@ void PCDX11RenderDevice::drawRenderLists() {
 
 bool PCDX11RenderDevice::beginRenderList() {
 	renderList_current = new RenderList(this, /*TODO*/nullptr);
+	auto *lightManager = static_cast<PCDX11LightManager*>(this->lightManager);
+	renderList_current->lightManagerSubB = lightManager->allocateSubB();
 	// TODO
 	return true;
 }
@@ -536,6 +539,10 @@ void PCDX11RenderDevice::dx11_method_48() {
 	// TODO
 }
 
+PCDX11LightManager *PCDX11RenderDevice::getLightManager() {
+	return static_cast<PCDX11LightManager*>(lightManager);
+}
+
 void PCDX11RenderDevice::recordDrawable(IRenderDrawable *drawable, uint32_t mask, bool addToNextScene) {
 	// TODO
 	// drawable->draw(0, nullptr); // hack
@@ -570,6 +577,7 @@ void PCDX11RenderDevice::drawRenderListsInternal(void *arg) {
 		// TODO
 		while (renderList_processing) {
 			// TODO
+			getLightManager()->renderLights(renderList_processing->lightManagerSubB);
 			renderList_processing->drawableList.draw(renderPasses.drawers, /*funcSetIndex=*/0);
 			renderList_processing = renderList_processing->next;
 		}

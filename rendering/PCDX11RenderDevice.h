@@ -11,6 +11,8 @@ namespace cdc {
 class IRenderDrawable;
 class PCDX11BaseTexture;
 class PCDX11Texture;
+class PCDX11LightManager;
+struct LightManagerSubB;
 
 class PCDX11RenderDevice :
 	public PCDX11InternalResource,
@@ -27,7 +29,7 @@ public:
 		// uint32_t subFrameRenderTarget10;
 		// uint32_t dword14;
 		DrawableList drawableList; // 18
-		// LightManagerSubB *dword28;
+		LightManagerSubB *lightManagerSubB; // 28
 		// uint8_t byte2C;
 		// uint8_t byte2D;
 		RenderList *next;
@@ -167,6 +169,7 @@ public:
 
 	ID3D11DeviceContext *d3dDeviceContext111580;
 	ID3D11DeviceContext *getD3DDeviceContext() { return d3dDeviceContext111580; }
+	PCDX11LightManager *getLightManager();
 	void recordDrawable(IRenderDrawable *drawable, uint32_t mask, bool addToNextScene);
 	void clearRenderTargetNow(char mode, float *color, float depth, uint32_t stencil);
 	void setTexture(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown);
