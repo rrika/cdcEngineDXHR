@@ -24,6 +24,7 @@
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11RenderDevice.h"
 #include "rendering/PCDX11RenderModel.h"
+#include "rendering/PCDX11RenderModelInstance.h"
 #include "rendering/PCDX11Scene.h"
 #include "rendering/PCDX11StateManager.h"
 #include "rendering/PCDX11StreamDecl.h"
@@ -502,13 +503,14 @@ int spinnyCube(HWND window,
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     cdc::CommonSceneSub10 commonSceneSub10;
-    commonSceneSub10.mask = 1;
+    commonSceneSub10.mask = 0b11; // pass 0 and 1
 
     SpinnyCubePass cubePass;
     cubePass.viewport = &viewport;
     cubePass.rasterizerState = rasterizerState;
     cubePass.depthStencilState = depthStencilState;
-    renderDevice->renderPasses.addRenderPass(0, 0, 0, 0, 0);
+    renderDevice->renderPasses.addRenderPass(0, 0, 0, 0, 0); // pass 0: function set 0
+    renderDevice->renderPasses.addRenderPass(0, 1, 0, 1, 1); // pass 1: function set 1
     renderDevice->setPassCallback(0, &cubePass);
 
     SpinnyCubeDrawable cubeDrawable;
@@ -584,6 +586,7 @@ int spinnyCube(HWND window,
         float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
         renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
         renderDevice->recordDrawable(&cubeDrawable, /*mask=*/ 1, /*addToParent=*/ 0);
+        static_cast<cdc::PCDX11RenderModelInstance*>(bottleRenderModelInstance)->baseMask = 2;
         bottleRenderModelInstance->recordDrawables();
 
         renderDevice->finishScene();

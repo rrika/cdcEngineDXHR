@@ -39,6 +39,7 @@ public:
 		tab0(tab0),
 		tab0Ext128(tab0Ext128)
 	{ // hack
+		word4 = 1; // use RenderModel drawers
 		flags34 = (tab0[0].triangleCount << 8);
 	}
 

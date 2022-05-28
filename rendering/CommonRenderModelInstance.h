@@ -6,8 +6,9 @@
 namespace cdc {
 
 class CommonRenderModelInstance : public RenderModelInstance {
-protected:
+public:
 	uint32_t baseMask; // 8
+protected:
 	RenderMesh *renderMesh;
 	MeshTab0Ext16 *tab0Ext16; // 24
 	MeshTab0Ext128 *tab0Ext128; // 2C
