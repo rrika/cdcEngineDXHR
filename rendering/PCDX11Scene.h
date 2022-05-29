@@ -25,7 +25,7 @@ public:
 		// TODO
 		uint32_t mask = sub10->mask;
 		// TODO
-		drawableListsAndMasks = renderPasses->createDrawableLists(/*0,*/ mask, renderDevice->getRingBuffer());
+		drawableListsAndMasks = renderPasses->createDrawableLists(/*0,*/ mask, renderDevice->getLinear());
 	}
 
 	void draw(uint32_t funcSetIndex, IRenderDrawable *other) override;

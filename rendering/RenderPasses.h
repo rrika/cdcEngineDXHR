@@ -3,10 +3,10 @@
 
 namespace cdc {
 
-struct RingBuffer;
+class IRenderDrawable;
+class LinearAllocator;
 struct DrawableList;
 struct DrawableListsAndMasks;
-class IRenderDrawable;
 
 using RenderFunc = bool(*)(uint32_t, IRenderDrawable*, IRenderDrawable*);
 
@@ -42,7 +42,7 @@ struct RenderPasses { // guessed name
 	void sort(DrawableList *list, int passId);
 	void draw(DrawableList *list, int passId);
 	void sortAndDraw(/*uint32_t,*/ DrawableListsAndMasks *lists, CommonRenderDevice *renderdevice, uint32_t mask);
-	DrawableListsAndMasks *createDrawableLists(/*uint32_t,*/ uint32_t mask, RingBuffer *ringBuffer);
+	DrawableListsAndMasks *createDrawableLists(/*uint32_t,*/ uint32_t mask, LinearAllocator *linear);
 };
 
 struct DrawableItem { // guessed name
@@ -51,7 +51,7 @@ struct DrawableItem { // guessed name
 };
 
 struct DrawableList { // guessed name
-	RingBuffer *ringBuffer;
+	LinearAllocator *linear;
 	DrawableItem *first;
 	DrawableItem *last;
 	uint32_t itemCount;
@@ -79,7 +79,7 @@ struct DrawableListsAndMasks { // guessed name
 	// uint32_t dword30;
 	// uint32_t dword34;
 
-	DrawableListsAndMasks(RenderPasses *, /*uint32_t,*/ uint32_t, RingBuffer *);
+	DrawableListsAndMasks(RenderPasses *, /*uint32_t,*/ uint32_t, LinearAllocator *);
 	void add(IRenderDrawable *drawable, uint32_t passMask);
 	DrawableList *listForPass(uint32_t);
 	void absorbToBack(DrawableListsAndMasks& other);

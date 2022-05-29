@@ -21,7 +21,7 @@
 namespace cdc {
 
 PCDX11RenderDevice::RenderList::RenderList(PCDX11RenderDevice *renderDevice, uint32_t *dimensions) :
-	drawableList { renderDevice->getRingBuffer() },
+	drawableList { renderDevice->getLinear() },
 	next (nullptr)
 {
 	// TODO
@@ -631,7 +631,14 @@ void PCDX11RenderDevice::setTexture(uint32_t slot, PCDX11BaseTexture *tex, uint3
 
 void PCDX11RenderDevice::drawRenderListsInternal(void *arg) {
 	// TODO
+	auto linear = linear34;
+	linear34 = linear30;
+	linear30 = linear;
+	linear->rewind();
+
+	// TODO
 	renderList_processing = renderList_first;
+
 	// TODO
 	if (arg) {
 		// TODO

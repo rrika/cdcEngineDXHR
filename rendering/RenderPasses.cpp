@@ -1,5 +1,6 @@
-#include "RenderPasses.h"
 #include "IRenderDrawable.h"
+#include "LinearAllocator.h"
+#include "RenderPasses.h"
 
 namespace cdc {
 
@@ -76,15 +77,14 @@ void RenderPasses::sortAndDraw(/*uint32_t,*/ DrawableListsAndMasks *lists, Commo
 	}
 }
 
-DrawableListsAndMasks *RenderPasses::createDrawableLists(/*uint32_t,*/ uint32_t mask, RingBuffer *ringBuffer) {
+DrawableListsAndMasks *RenderPasses::createDrawableLists(/*uint32_t,*/ uint32_t mask, LinearAllocator *linear) {
 	// TODO
-	return new DrawableListsAndMasks(this, mask, ringBuffer);
+	return new DrawableListsAndMasks(this, mask, linear);
 }
 
 void DrawableList::add(IRenderDrawable *drawable) {
 	itemCount++;
-	// TODO: alloc from ringbuffer
-	auto item = new DrawableItem;
+	auto item = linear->alloc<DrawableItem>(2, true);
 	item->drawable = drawable;
 	item->next = nullptr;
 	if (last)
@@ -135,7 +135,7 @@ DrawableListsAndMasks::DrawableListsAndMasks(
 	RenderPasses *renderPasses,
 	/*uint32_t,*/
 	uint32_t passMask,
-	RingBuffer *ringBuffer)
+	LinearAllocator *linear)
 :
 	renderPasses(renderPasses),
 	passMask8(passMask),
@@ -148,10 +148,10 @@ DrawableListsAndMasks::DrawableListsAndMasks(
 		passMask &= passMask-1;
 	}
 	// TODO: use ringbuffer
-	drawableLists = new DrawableList[listCount];
+	drawableLists = (DrawableList*)linear->alloc(sizeof(DrawableList[listCount]), 0, true);
 
 	for (uint32_t i = 0; i<listCount; i++)
-		drawableLists[i] = { ringBuffer, 0, 0, 0 };
+		drawableLists[i] = { linear, 0, 0, 0 };
 }
 
 void DrawableListsAndMasks::add(IRenderDrawable *drawable, uint32_t insertMask) {

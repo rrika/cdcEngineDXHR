@@ -1,8 +1,9 @@
 #pragma once
 #include <stdint.h>
 #include "../types.h"
-#include "RenderPasses.h"
 #include "CommonScene.h"
+#include "LinearAllocator.h"
+#include "RenderPasses.h"
 
 namespace cdc {
 
@@ -19,7 +20,9 @@ class TextureMap;
 class CommonRenderDevice
 {
 protected:
-	RingBuffer *ringBuffer30; // 30
+	LinearAllocator linear4; // 4
+	LinearAllocator *linear30; // 30
+	LinearAllocator *linear34; // 30
 public:
 	CommonScene *scene78; // 78
 protected:
@@ -155,7 +158,7 @@ public:
 	virtual void method_1A0();
 
 	static RenderResource *createResource(uint32_t, uint32_t);
-	RingBuffer *getRingBuffer() { return ringBuffer30; }
+	LinearAllocator *getLinear() { return linear30; }
 };
 
 extern CommonRenderDevice *gRenderDevice;

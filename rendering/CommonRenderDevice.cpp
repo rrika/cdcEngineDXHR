@@ -5,7 +5,11 @@ namespace cdc {
 
 CommonRenderDevice *gRenderDevice = nullptr;
 
-CommonRenderDevice::CommonRenderDevice() {
+CommonRenderDevice::CommonRenderDevice() :
+	linear4(0x20000, false, /*&linearAllocExt,*/ "RenderDevice")
+{
+	linear30 = new LinearAllocator(0x300000, false, "RenderDevice");
+	linear34 = new LinearAllocator(0x300000, false, "RenderDevice");
 	// ensure that the draw function 0 in every func set just calls IRenderDrawable::draw
 	renderPasses.allocFuncIndex("Default");
 }
