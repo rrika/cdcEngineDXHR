@@ -1,12 +1,13 @@
 #pragma once
 #include <windows.h>
+#include "PCDX11InternalResource.h"
 
 namespace cdc {
 
 class PCDX11RenderDevice;
 class PCDX11RenderTarget;
 
-class PCDX11RenderContext {
+class PCDX11RenderContext : public PCDX11InternalResource {
 	PCDX11RenderTarget *renderTarget14 = nullptr; // 14
 	HWND hwnd; // 18
 public:
@@ -34,6 +35,9 @@ public:
 		else
 			return renderTarget2C;
 	}
+
+	bool internalCreate() override { /*TODO*/ return true; }
+	void internalRelease() override { /*TODO*/ }
 };
 
 }
