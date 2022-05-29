@@ -4,6 +4,7 @@
 #include "PCDX11LightManager.h"
 #include "PCDX11Material.h"
 #include "PCDX11ModelDrawable.h"
+#include "PCDX11RenderContext.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11RenderModel.h"
 #include "PCDX11RenderModelInstance.h"
@@ -14,19 +15,43 @@
 #include "shaders/PCDX11ShaderLib.h"
 #include "surfaces/PCDX11DepthBuffer.h"
 #include "surfaces/PCDX11RenderTarget.h"
+#include "surfaces/PCDX11SubFrameRenderTarget.h"
 #include "surfaces/PCDX11Texture.h"
 
 namespace cdc {
 
-PCDX11RenderDevice::RenderList::RenderList(PCDX11RenderDevice *renderDevice, void *dimensions) :
+PCDX11RenderDevice::RenderList::RenderList(PCDX11RenderDevice *renderDevice, uint32_t *dimensions) :
 	drawableList { renderDevice->getRingBuffer() },
 	next (nullptr)
 {
 	// TODO
-	(void)dimensions;
+	if (dimensions) {
+		dword0 = dimensions[0];
+		dword4 = dimensions[1];
+		widthMaybe8 = dimensions[2];
+		heightMaybeC = dimensions[3];
+
+		auto *currentRenderTarget = renderDevice->getRenderContextAny()->getRenderTarget();
+		renderTarget = new PCDX11SubFrameRenderTarget(
+			dimensions[0],
+			dimensions[1],
+			dimensions[2],
+			dimensions[3],
+			renderDevice,
+			renderTarget);
+
+	} else {
+		renderTarget = renderDevice->getRenderContextAny()->getRenderTarget();
+		// dword14 = ...;
+		dword0 = 0;
+		dword4 = 0;
+		if (!renderTarget) return; // HACK
+		widthMaybe8 = renderTarget->getWidth();
+		heightMaybeC = renderTarget->getHeight();
+	}
 }
 
-PCDX11RenderDevice::PCDX11RenderDevice() :
+PCDX11RenderDevice::PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t height) :
 	shtab_vs_wvp_1_0(shad::shader_30_vs, /*takeCopy=*/ false, /*wineWorkaround=*/ true),
 	shtab_vs_ui(shad::shader_29_vs, /*takeCopy=*/ false),
 	shtab_vs_wvp(shad::shader_28_vs, /*takeCopy=*/ false, /*wineWorkaround=*/ true),
@@ -38,6 +63,9 @@ PCDX11RenderDevice::PCDX11RenderDevice() :
 	streamDeclCache(this)
 {
 	d3dDeviceContext111580 = deviceManager->getD3DDeviceContext();
+
+	renderContext_10CEC = new PCDX11RenderContext(hwnd, width, height, 1, /*TODO*/0);
+
 	createDefaultResources();
 	createDefaultVertexAttribLayouts();
 
@@ -212,8 +240,37 @@ void PCDX11RenderDevice::drawRenderLists() {
 	drawRenderListsInternal(/*TODO*/(void*)this);
 }
 
-bool PCDX11RenderDevice::beginRenderList() {
-	renderList_current = new RenderList(this, /*TODO*/nullptr);
+bool PCDX11RenderDevice::beginRenderList(float *scale) {
+
+	uint32_t dimensions[4];
+	uint32_t *dimensionsPtr = nullptr;
+
+	if (scale) {
+		auto *renderContext = getRenderContextAny();
+		uint32_t width = renderContext->width; // via method
+		uint32_t height = renderContext->height; // via method
+		float fwidth = (float)width;
+		float fheight = (float)height;
+		int64_t scaledWidth = scale[0] * fwidth;
+		int64_t scaledHeight = scale[0] * fheight;
+		double widthLimit = fwidth * scale[2] + 0.5;
+		double heightLimit = fheight * scale[3] + 0.5;
+
+		dimensions[0] = scaledWidth;
+		dimensions[1] = scaledHeight;
+		dimensions[2] = width - scaledWidth;
+		dimensions[3] = height - scaledHeight;
+
+		if (dimensions[2] >= widthLimit)
+			dimensions[2] = widthLimit;
+
+		if (dimensions[3] >= heightLimit)
+			dimensions[3] = heightLimit;
+
+		dimensionsPtr = dimensions;
+	}
+
+	renderList_current = new RenderList(this, dimensionsPtr);
 	auto *lightManager = static_cast<PCDX11LightManager*>(this->lightManager);
 	renderList_current->lightManagerSubB = lightManager->allocateSubB();
 	// TODO
@@ -495,8 +552,11 @@ void PCDX11RenderDevice::dx11_method_1C() {
 	// TODO
 }
 
-void PCDX11RenderDevice::dx11_method_20() {
-	// TODO
+PCDX11RenderContext *PCDX11RenderDevice::getRenderContextAny() {
+	if (renderContext_10CE8)
+		return renderContext_10CE8;
+	else
+		return renderContext_10CEC;
 }
 
 void PCDX11RenderDevice::dx11_method_24() {
@@ -586,7 +646,7 @@ void PCDX11RenderDevice::drawRenderListsInternal(void *arg) {
 
 PCDX11RenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown) {
 	// createPCDX11DeviceManager(); // already done, else wouldn't have an hwnd
-	return new PCDX11RenderDevice();
+	return new PCDX11RenderDevice(hwnd, width, height/*, unknown*/);
 }
 
 }

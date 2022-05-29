@@ -3,8 +3,9 @@
 
 namespace cdc {
 
-void PCDX11DefaultRenderTarget::method_24() {
+uint32_t PCDX11DefaultRenderTarget::method_24(uint32_t, uint32_t) {
 	// TODO
+	return 0;
 }
 
 uint32_t PCDX11DefaultRenderTarget::method_28() {
@@ -29,15 +30,12 @@ void PCDX11DefaultRenderTarget::copyFromTexture(void *) {
 	// TODO
 }
 
-void PCDX11DefaultRenderTarget::method_3C() {
+bool PCDX11DefaultRenderTarget::method_3C() {
 	// TODO
+	return false;
 }
 
 void PCDX11DefaultRenderTarget::method_40() {
-	// TODO
-}
-
-void PCDX11DefaultRenderTarget::method_44() {
 	// TODO
 }
 

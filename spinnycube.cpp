@@ -574,7 +574,7 @@ int spinnyCube(HWND window,
         // cdcConstantBuffer.syncBuffer(deviceContext);
 
         renderDevice->resetRenderLists();
-        renderDevice->beginRenderList();
+        renderDevice->beginRenderList(nullptr);
         auto *scene = renderDevice->createSubScene(
             &commonSceneSub10,
             &cdcRenderTarget,

@@ -40,7 +40,7 @@ public:
 	virtual void drawRenderLists() = 0; // 10
 	virtual void method_14();
 	virtual void method_18();
-	virtual bool beginRenderList() = 0;
+	virtual bool beginRenderList(float*) = 0;
 	virtual bool endRenderList() = 0; // 20
 	virtual bool hasRenderList() = 0;
 	virtual void method_28() = 0;

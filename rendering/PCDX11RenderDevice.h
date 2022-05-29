@@ -10,8 +10,10 @@ namespace cdc {
 
 class IRenderDrawable;
 class PCDX11BaseTexture;
-class PCDX11Texture;
 class PCDX11LightManager;
+class PCDX11RenderContext;
+class PCDX11RenderTarget;
+class PCDX11Texture;
 struct LightManagerSubB;
 
 class PCDX11RenderDevice :
@@ -20,13 +22,13 @@ class PCDX11RenderDevice :
 {
 public:
 	struct RenderList {
-		RenderList(PCDX11RenderDevice *renderDevice, void *dimensions);
+		RenderList(PCDX11RenderDevice *renderDevice, uint32_t *dimensions);
 
-		// uint32_t dword0;
-		// uint32_t dword4;
-		// uint32_t widthMaybe8;
-		// uint32_t heightMaybeC;
-		// uint32_t subFrameRenderTarget10;
+		uint32_t dword0;
+		uint32_t dword4;
+		uint32_t widthMaybe8;
+		uint32_t heightMaybeC;
+		PCDX11RenderTarget *renderTarget; // 10
 		// uint32_t dword14;
 		DrawableList drawableList; // 18
 		LightManagerSubB *lightManagerSubB; // 28
@@ -35,10 +37,13 @@ public:
 		RenderList *next;
 	};
 
+	PCDX11RenderContext *renderContext_10CE8 = nullptr;
+	PCDX11RenderContext *renderContext_10CEC;
+
 	RenderList *renderList_current = nullptr; // 10CF8
 	RenderList *renderList_processing = nullptr; // 10CFC
 	RenderList *renderList_first = nullptr; // 10D00
-	RenderList *renderList_last = nullptr; // 10CD04
+	RenderList *renderList_last = nullptr; // 10D04
 
 	PCDX11ShaderLib *shlib_22;
 	PCDX11ShaderLib *shlib_21;
@@ -76,7 +81,7 @@ public:
 	PCDX11Texture *missingTexture; // 1112F0
 
 public:
-	PCDX11RenderDevice();
+	PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t height);
 	void createDefaultResources();
 	void createDefaultVertexAttribLayouts();
 	void setupPassCallbacks();
@@ -89,7 +94,7 @@ public:
 	void method_08() override;
 	void resetRenderLists() override;
 	void drawRenderLists() override;
-	bool beginRenderList() override;
+	bool beginRenderList(float*) override;
 	bool endRenderList() override;
 	bool hasRenderList() override;
 	void method_28() override;
@@ -155,7 +160,7 @@ public:
 	virtual void dx11_method_14();
 	virtual void dx11_method_18();
 	virtual void dx11_method_1C();
-	virtual void dx11_method_20();
+	virtual PCDX11RenderContext *getRenderContextAny();
 	virtual void dx11_method_24();
 	virtual void dx11_method_28();
 	virtual void dx11_method_2C();
