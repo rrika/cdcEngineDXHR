@@ -118,18 +118,21 @@ void PCDX11Material::setupPixelResources(
 			stateManager->setPsConstantBuffer(3, constantBuffersPs[subMaterialIndex]);
 
 		// assign 0..refIndexEndA from submaterial
-		for (uint32_t i = 0; i < subMat->psRefIndexEndA; i++)
+		for (uint32_t i = 0; i < subMat->psRefIndexEndA; i++) {
+			PCDX11Texture* tex = static_cast<PCDX11Texture*>(texref[i].tex);
 			renderDevice->setTexture(
 				texref[i].slotIndex,
-				static_cast<PCDX11Texture*>(texref[i].tex),
+				tex,
 				texref[i].filter,
 				texref[i].unknown4);
+		}
 
 		// assign refIndexEndA..refIndexBeginB from submaterial or CommonSceneSub114
 		CommonScene *scene = renderDevice->scene78;
 		for (uint32_t i = subMat->psRefIndexEndA; i < subMat->psRefIndexBeginB; i++) {
 			auto fi = texref[i].fallbackIndex & 0x1F;
-			PCDX11Texture* tex = static_cast<PCDX11Texture*>(scene->sub114.tex14[fi]);
+			// PCDX11Texture* tex = static_cast<PCDX11Texture*>(scene->sub114.tex14[fi]);
+			PCDX11Texture* tex = nullptr; // HACK
 			if (!tex) tex = static_cast<PCDX11Texture*>(texref[i].tex);
 			renderDevice->setTexture(
 				texref[i].slotIndex,
@@ -143,7 +146,8 @@ void PCDX11Material::setupPixelResources(
 	for (uint32_t i = subMat->psRefIndexBeginB; i < subMat->psRefIndexEndB; i++) {
 		auto extTextures = (PCDX11Texture**)subExt;
 		auto fi = texref[i].fallbackIndex & 0x1F;
-		PCDX11Texture* tex = extTextures[fi - 1];
+		// PCDX11Texture* tex = extTextures[fi - 1];
+		PCDX11Texture* tex = nullptr; // HACK
 		if (!tex) tex = static_cast<PCDX11Texture*>(texref[i].tex);
 		renderDevice->setTexture(
 			texref[i].slotIndex,
