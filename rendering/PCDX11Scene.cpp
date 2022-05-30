@@ -55,6 +55,19 @@ void PCDX11Scene::updateUniforms() {
 	row[3] = 0.0f;
 	sceneBuffer.assignRow(25, row, 1); // SceneBuffer::HeightFogParams
 	sceneBuffer.assignRow(9, fogScaleOffset, 1); // SceneBuffer::FogScaleOffset
+
+	// HACK: needed for the normals submaterial to work
+	row[0] = 1.0f;
+	row[1] = 0.0f;
+	row[2] = 0.0f;
+	row[3] = 0.0f;
+	sceneBuffer.assignRow(38, row, 1); // SceneBuffer::GlobalParams[11]
+	row[0] = 0.0f;
+	row[1] = 1.0f;
+	sceneBuffer.assignRow(39, row, 1); // SceneBuffer::GlobalParams[12]
+	row[1] = 0.0f;
+	row[2] = 1.0f;
+	sceneBuffer.assignRow(40, row, 1); // SceneBuffer::GlobalParams[13]
 }
 
 void PCDX11Scene::addToDrawableList(DrawableList *drawableList) {

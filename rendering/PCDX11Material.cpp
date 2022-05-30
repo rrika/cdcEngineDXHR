@@ -177,7 +177,7 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
 	// TODO
 
 	float opacity = ext128sub10->float10 * floatX;
-	uint32_t subMaterialIndex = 0;
+	uint32_t subMaterialIndex = 7; // HACK: show normals submat (7) instead of 0 or 1
 	if (arg4)
 		subMaterialIndex = 5;
 
@@ -193,7 +193,8 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
 	// set pixel shader
 	PCDX11PixelShaderTable *pixelTable;
 	uint32_t pixelIndex = 0;
-	if (materialBlob->blendState == 0x7010010) {
+	if (false) { // HACK to see anything other than white
+	// if (materialBlob->blendState == 0x7010010) {
 		pixelTable = &renderDevice->shtab_ps_white_27;
 		if (arg4)
 			pixelIndex = 1;
