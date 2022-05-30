@@ -257,12 +257,15 @@ void PCDX11StateManager::setCommonConstantBuffers() {
 	setVsConstantBuffer(0, m_uberConstantBuffer[0]); // WorldBuffer
 	setVsConstantBuffer(1, m_uberConstantBuffer[3]); // SkinningBuffer
 	setVsConstantBuffer(2, m_uberConstantBuffer[1]); // SceneBuffer
+	// 3 StreamDeclBuffer
+	// 4 MaterialBuffer
 	setVsConstantBuffer(5, m_uberConstantBuffer[4]);
 	setVsConstantBuffer(6, m_uberConstantBuffer[5]);
 
 	setPsConstantBuffer(0, m_uberConstantBuffer[0]); // WorldBuffer
 	setPsConstantBuffer(1, m_uberConstantBuffer[2]); // DrawableBuffer
 	setPsConstantBuffer(2, m_uberConstantBuffer[1]); // SceneBuffer
+	// 3 MaterialBuffer
 	setPsConstantBuffer(5, m_uberConstantBuffer[4]);
 	setPsConstantBuffer(6, m_uberConstantBuffer[5]);
 

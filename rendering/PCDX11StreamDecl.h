@@ -9,6 +9,7 @@ class D3D11_INPUT_ELEMENT_DESC;
 
 namespace cdc {
 
+class PCDX11ConstantBuffer;
 class PCDX11RenderDevice;
 class PCDX11VertexBuffer;
 
@@ -29,7 +30,8 @@ public:
 		numElements(numElements),
 		inputLayout(nullptr),
 		shaderSub(shaderSub),
-		vertexBuffer(nullptr)
+		vertexBuffer(nullptr),
+		streamDeclBuffer(nullptr)
 	{
 		// InternalResource::...
 	}
@@ -40,6 +42,7 @@ public:
 	ID3D11InputLayout *inputLayout; // 24
 	PCDX11ShaderSub *shaderSub; // 2C
 	PCDX11VertexBuffer *vertexBuffer; // 34 secondary vertex stream
+	PCDX11ConstantBuffer *streamDeclBuffer; // 38
 
 	void apply();
 

@@ -2,6 +2,7 @@
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11StreamDecl.h"
+#include "PCDX11StateManager.h"
 #include <d3d11.h>
 
 namespace cdc {
@@ -16,7 +17,8 @@ void PCDX11StreamDecl::apply() {
 		uint32_t offset = 0;
 		deviceContext->IASetVertexBuffers(1, 1, &buffer, &stride, &offset);
 	}
-	// TODO: constant buffer
+	if (streamDeclBuffer)
+		deviceManager->getStateManager()->setVsConstantBuffer(3, streamDeclBuffer);
 }
 
 bool PCDX11StreamDecl::internalCreate() {
