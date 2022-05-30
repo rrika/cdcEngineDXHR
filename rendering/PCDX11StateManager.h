@@ -1,6 +1,14 @@
 #pragma once
-#include "PCDX11InternalResource.h"
 #include "../matrix.h"
+#include "CommonMaterial.h" // for StencilSettings
+#include "PCDX11InternalResource.h"
+#include <array>
+#include <cstring>
+#include <unordered_map>
+
+// for std::unordered_map<D3D11_DEPTH_STENCIL_DESC, ...>
+bool operator==(D3D11_DEPTH_STENCILOP_DESC const&, D3D11_DEPTH_STENCILOP_DESC const&);
+bool operator==(D3D11_DEPTH_STENCIL_DESC const&, D3D11_DEPTH_STENCIL_DESC const&);
 
 namespace cdc {
 
@@ -15,6 +23,23 @@ class PCDX11VertexBuffer;
 class PCDX11VertexShader;
 class PCDX11UberConstantBuffer;
 
+struct DepthStencilHash {
+	std::size_t operator()(D3D11_DEPTH_STENCIL_DESC const& depthStencilDesc) const noexcept {
+		static_assert(sizeof(uint32_t[13]) == sizeof(D3D11_DEPTH_STENCIL_DESC));
+		std::array<uint32_t, 13> dwords;
+		memcpy(dwords.data(), &depthStencilDesc, 13 * 4);
+		uint32_t h = 48;
+		for (uint32_t dword : dwords) {
+			uint32_t x = 0x5BD1E995 * dword;
+			h = 0x5BD1E995 * (x ^ (x >> 24)) ^ 0x5BD1E995 * h;
+		}
+		h ^= h >> 13;
+		h *= 0x5BD1E995;
+		h ^= h >> 15;
+		return h;
+	}
+};
+
 class PCDX11StateManager : public PCDX11InternalResource {
 	ID3D11DeviceContext *m_deviceContext; // 10
 	ID3D11Device *m_device; // 14
@@ -22,8 +47,15 @@ class PCDX11StateManager : public PCDX11InternalResource {
 	bool m_dirtyDepthStencilState; // 1A
 	bool m_dirtyBlendState; // 1B
 	bool m_dirtyConstantBuffers; // 1C
+	D3D11_DEPTH_STENCIL_DESC m_depthStencilDesc; // 5C
+	std::unordered_map<
+		D3D11_DEPTH_STENCIL_DESC,
+		ID3D11DepthStencilState*,
+		DepthStencilHash
+	> m_depthStencilStates; // 90
 	int m_topology; // B8
 
+	uint8_t m_renderTargetWriteMask; // CC
 	bool m_dirtyShaderResources; // CE
 	bool m_dirtySamplers; // CF
 	ID3D11SamplerState *m_samplers[16 + 4]; // D0
@@ -46,6 +78,7 @@ class PCDX11StateManager : public PCDX11InternalResource {
 
 	uint32_t m_samplerFilter[16 + 4]; // 248
 	uint32_t m_samplerRepeat[16 + 4]; // 298
+	StencilSettings m_stencilSettings; // 2EC
 
 	float m_materialOpacity; // 300
 	float m_fogColor[4]; // 310
@@ -88,7 +121,8 @@ public:
 	void setPrimitiveTopology(int topology);
 	void setDepthLayer(bool layer);
 	void setCullMode(D3D11_CULL_MODE cullMode, bool frontIsCounterClockwise);
-	void setDepthState(D3D11_COMPARISON_FUNC comparisonFunc, D3D11_DEPTH_WRITE_MASK depthWriteMask);
+	void setDepthState(D3D11_COMPARISON_FUNC comparisonFunc, bool depthWriteMask);
+	void setStencil(StencilSettings*);
 
 	void setSamplerState(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter);
 	void setTextureAndSampler(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown);

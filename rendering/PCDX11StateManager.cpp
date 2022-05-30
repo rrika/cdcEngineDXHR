@@ -14,6 +14,26 @@
 #include "surfaces/PCDX11DepthBuffer.h"
 #include "surfaces/PCDX11RenderTarget.h"
 
+bool operator==(D3D11_DEPTH_STENCILOP_DESC const& a, D3D11_DEPTH_STENCILOP_DESC const& b) {
+	return
+		a.StencilFailOp == b.StencilFailOp &&
+		a.StencilDepthFailOp == b.StencilDepthFailOp &&
+		a.StencilPassOp == b.StencilPassOp &&
+		a.StencilFunc == b.StencilFunc;
+}
+
+bool operator==(D3D11_DEPTH_STENCIL_DESC const& a, D3D11_DEPTH_STENCIL_DESC const& b) {
+	return
+		a.DepthEnable == b.DepthEnable &&
+		a.DepthWriteMask == b.DepthWriteMask &&
+		a.DepthFunc == b.DepthFunc &&
+		a.StencilEnable == b.StencilEnable &&
+		a.StencilReadMask == b.StencilReadMask &&
+		a.StencilWriteMask == b.StencilWriteMask &&
+		a.FrontFace == b.FrontFace &&
+		a.BackFace == b.BackFace;
+}
+
 namespace cdc {
 
 PCDX11StateManager::PCDX11StateManager() {}
@@ -129,8 +149,75 @@ void PCDX11StateManager::setCullMode(D3D11_CULL_MODE cullMode, bool frontIsCount
 	// TODO
 }
 
-void PCDX11StateManager::setDepthState(D3D11_COMPARISON_FUNC comparisonFunc, D3D11_DEPTH_WRITE_MASK depthWriteMask) {
-	// TODO
+void PCDX11StateManager::setDepthState(D3D11_COMPARISON_FUNC comparisonFunc, bool depthWrites) {
+	// untested
+	D3D11_DEPTH_WRITE_MASK depthWriteMask = depthWrites
+		? D3D11_DEPTH_WRITE_MASK_ALL
+		: D3D11_DEPTH_WRITE_MASK_ZERO;
+
+	auto& desc = m_depthStencilDesc;
+	if (desc.DepthFunc != comparisonFunc || desc.DepthWriteMask != depthWriteMask) {
+		desc.DepthFunc = comparisonFunc;
+		desc.DepthWriteMask = depthWriteMask;
+		m_dirtyDepthStencilState = true;
+	}
+}
+
+void PCDX11StateManager::setStencil(StencilSettings *stencilSettings) {
+
+	// untested
+
+	static const D3D11_COMPARISON_FUNC decodeStencilFunc[] = {
+		D3D11_COMPARISON_NEVER,
+		D3D11_COMPARISON_LESS,
+		D3D11_COMPARISON_EQUAL,
+		D3D11_COMPARISON_LESS_EQUAL,
+		D3D11_COMPARISON_GREATER,
+		D3D11_COMPARISON_NOT_EQUAL,
+		D3D11_COMPARISON_GREATER_EQUAL,
+		D3D11_COMPARISON_ALWAYS
+	};
+
+	static const D3D11_STENCIL_OP decodeStencilOp[] = {
+		D3D11_STENCIL_OP_KEEP,
+		D3D11_STENCIL_OP_ZERO,
+		D3D11_STENCIL_OP_REPLACE,
+		D3D11_STENCIL_OP_INCR,
+		D3D11_STENCIL_OP_INCR_SAT,
+		D3D11_STENCIL_OP_DECR,
+		D3D11_STENCIL_OP_DECR_SAT,
+		D3D11_STENCIL_OP_INVERT
+	};
+
+	if (memcmp(&m_stencilSettings, stencilSettings, 12) != 0) {
+		bool stencilEnable = stencilSettings->front & 1 || stencilSettings->back & 1;
+		D3D11_DEPTH_STENCIL_DESC& desc = m_depthStencilDesc;
+		desc.StencilEnable = stencilEnable;
+		desc.StencilReadMask = stencilSettings->stencilReadMask;
+		desc.StencilWriteMask = stencilSettings->stencilWriteMask;
+		if (stencilSettings->front & 1) {
+			desc.FrontFace.StencilFunc = decodeStencilFunc[(stencilSettings->front >> 1) & 7];
+			desc.FrontFace.StencilDepthFailOp = decodeStencilOp[(stencilSettings->front >> 12) & 0xF];
+			desc.FrontFace.StencilFailOp = decodeStencilOp[(stencilSettings->front >> 8) & 0xF];
+			desc.FrontFace.StencilPassOp = decodeStencilOp[(stencilSettings->front >> 4) & 0xF];
+		} else {
+			desc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+			desc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+			desc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+			desc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		}
+		if (stencilSettings->back & 1) {
+			desc.BackFace.StencilFunc = decodeStencilFunc[(stencilSettings->back >> 1) & 7];
+			desc.BackFace.StencilDepthFailOp = decodeStencilOp[(stencilSettings->back >> 12) & 0xF];
+			desc.BackFace.StencilFailOp = decodeStencilOp[(stencilSettings->back >> 8) & 0xF];
+			desc.BackFace.StencilPassOp = decodeStencilOp[(stencilSettings->back >> 4) & 0xF];
+		} else {
+			desc.BackFace = desc.FrontFace;
+		}
+
+		m_stencilSettings = *stencilSettings;
+		m_dirtyDepthStencilState = true;
+	}
 }
 
 void PCDX11StateManager::setSamplerState(
@@ -380,7 +467,25 @@ void PCDX11StateManager::updateRasterizerState() {
 }
 
 void PCDX11StateManager::updateDepthStencilState() {
-	// TODO
+	// untested
+
+	if (m_dirtyDepthStencilState) {
+		ID3D11DepthStencilState *depthStencilState;
+		if (auto it = m_depthStencilStates.find(m_depthStencilDesc); it != m_depthStencilStates.end())
+			depthStencilState = it->second;
+		else {
+			m_device->CreateDepthStencilState(
+				&m_depthStencilDesc,
+				&depthStencilState);
+			m_depthStencilStates[m_depthStencilDesc] = depthStencilState;
+		}
+
+		m_deviceContext->OMSetDepthStencilState(
+			depthStencilState,
+			m_stencilSettings.stencilRef);
+
+		m_dirtyDepthStencilState = false;
+	}
 }
 
 void PCDX11StateManager::updateBlendState() {
