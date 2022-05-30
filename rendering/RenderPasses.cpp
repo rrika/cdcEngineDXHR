@@ -13,13 +13,24 @@ static bool defaultComparator(uint32_t funcSetIndex, IRenderDrawable *drawable, 
 	return drawable->compare(funcSetIndex, prevDrawable);
 }
 
+RenderPasses::RenderPasses() {
+	for (uint32_t i=0; i<32; i++)
+		requestedPassesA[i] = ~0u;
+}
+
 void RenderPasses::addRenderPass(uint32_t arg0, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex, uint32_t firstPassId) {
 	// TODO
 	uint32_t passId = firstPassId;
 	passes[passId].order = order;
 	passes[passId].sortMode = sortMode;
+	passes[passId].useOverrideLists = arg0;
 	passes[passId].funcSetIndex = funcSetIndex;
 	passes[passId].callbacks = nullptr;
+
+	// TODO: insert by order, rather than at end
+	uint32_t *r = requestedPassesA; 
+	while (*r != ~0u) r++;
+	*r = passId;
 }
 
 uint32_t RenderPasses::allocFuncIndex(const char *name) {
@@ -57,24 +68,42 @@ void RenderPasses::draw(DrawableList *list, int passId) {
 	list->draw(&drawers[pass.funcSetIndex], pass.funcSetIndex);
 }
 
-void RenderPasses::sortAndDraw(/*uint32_t,*/ DrawableListsAndMasks *lists, CommonRenderDevice *renderDevice, uint32_t mask) {
-	// TODO
-	for (uint32_t passId = 0; passId < 2; passId++) {
-		RenderPass *pass = &passes[passId];
-		IRenderPassCallback *callbacks = pass->callbacks;
-		DrawableList *list = &lists->drawableLists[passId /*TODO*/];
-		uint32_t drawableCount = list->itemCount;
-		uint32_t priorPasses = 0;
-		if (!callbacks || callbacks->pre(renderDevice, passId, drawableCount, priorPasses)) {
-			priorPasses |= 1 << passId;
-			if (drawableCount) {
-				sort(list, passId);
-				draw(list, passId);
+void RenderPasses::sortAndDraw(
+	// uint32_t passList,
+	DrawableListsAndMasks *lists,
+	CommonRenderDevice *renderDevice,
+	uint32_t mask)
+{
+	uint32_t *reqPass;
+	// if (passList == 2)
+	// 	reqPass = requestedPassesB;
+	// else
+	reqPass = requestedPassesA;
+
+	for (uint32_t passId; (passId = *reqPass) != -1; reqPass++) {
+		if (mask & (1 << passId)) {
+			RenderPass *pass = &passes[passId];
+			DrawableListsAndMasks *activeLists =
+				pass->useOverrideLists ? lists->overrideLists14 : lists;
+			if (activeLists) {
+				IRenderPassCallback *callbacks = pass->callbacks;
+				DrawableList *list = &lists->drawableLists[lists->compactIndices[passId]];
+				uint32_t drawableCount = list->itemCount;
+				uint32_t priorPasses = 0;
+				if (!callbacks || callbacks->pre(renderDevice, passId, drawableCount, priorPasses)) {
+					priorPasses |= 1 << passId;
+					if (drawableCount) {
+						sort(list, passId);
+						draw(list, passId);
+					}
+				}
+				if (callbacks)
+					callbacks->post(renderDevice, passId);
 			}
 		}
-		if (callbacks)
-			callbacks->post(renderDevice, passId);
+		// renderDevice->sub_51EB20(passId);
 	}
+	// renderDevice->sub_51EB20(32);
 }
 
 DrawableListsAndMasks *RenderPasses::createDrawableLists(/*uint32_t,*/ uint32_t mask, LinearAllocator *linear) {
@@ -133,22 +162,35 @@ void DrawableList::absorbToBack(DrawableList& other) {
 
 DrawableListsAndMasks::DrawableListsAndMasks(
 	RenderPasses *renderPasses,
-	/*uint32_t,*/
+	// uint32_t passList,
 	uint32_t passMask,
 	LinearAllocator *linear)
 :
-	renderPasses(renderPasses),
-	passMask8(passMask),
-	passMaskC(passMask)
+	renderPasses(renderPasses)
+	// passList(passList)
 {
-	// TODO: initialize other fields
+	// passMask &= renderPasses->dword408[passList];
+	passMask8 = passMask;
+	passMaskC = passMask;
+	overrideLists14 = nullptr;
+
 	uint32_t listCount = 0;
-	while (passMask) {
-		listCount ++;
-		passMask &= passMask-1;
+	if (passMask) {
+		uint8_t *compactPtr = compactIndices;
+		do {
+			*compactPtr++ = listCount;
+			if (passMask & 1)
+				listCount++;
+			passMask >>= 1;
+		} while (passMask);
 	}
-	// TODO: use ringbuffer
-	drawableLists = (DrawableList*)linear->alloc(sizeof(DrawableList[listCount]), 0, true);
+
+	for (uint32_t i = 0; i < 32; i++)
+
+	if (listCount)
+		drawableLists = (DrawableList*)linear->alloc(sizeof(DrawableList[listCount]), 0, true);
+	else
+		drawableLists = nullptr;
 
 	for (uint32_t i = 0; i<listCount; i++)
 		drawableLists[i] = { linear, 0, 0, 0 };

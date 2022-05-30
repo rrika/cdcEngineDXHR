@@ -495,7 +495,7 @@ int spinnyCube(HWND window,
     float n = 1.0f;                             // near
     float f = 9.0f;                             // far
 
-    float scale = 0.1f;
+    float scale = 0.05f;
     float3 modelRotation    = { 0.0f, 0.0f, 0.0f };
     float3 modelScale       = { scale, scale, scale };
     float3 modelTranslation = { 0.0f, 0.0f, 4.0f };
@@ -503,14 +503,13 @@ int spinnyCube(HWND window,
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     cdc::CommonSceneSub10 commonSceneSub10;
-    commonSceneSub10.mask = 0b11; // pass 0 and 1
+    commonSceneSub10.mask = 0x1001; // pass 0 and 12
+    // pass 12 as initialized by the renderdevice maps to function set 10 (normals)
 
     SpinnyCubePass cubePass;
     cubePass.viewport = &viewport;
     cubePass.rasterizerState = rasterizerState;
     cubePass.depthStencilState = depthStencilState;
-    renderDevice->renderPasses.addRenderPass(0, 0, 0, 0, 0); // pass 0: function set 0
-    renderDevice->renderPasses.addRenderPass(0, 1, 0, 1, 1); // pass 1: function set 1
     renderDevice->setPassCallback(0, &cubePass);
 
     SpinnyCubeDrawable cubeDrawable;
@@ -586,7 +585,7 @@ int spinnyCube(HWND window,
         float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
         renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
         renderDevice->recordDrawable(&cubeDrawable, /*mask=*/ 1, /*addToParent=*/ 0);
-        static_cast<cdc::PCDX11RenderModelInstance*>(bottleRenderModelInstance)->baseMask = 2;
+        static_cast<cdc::PCDX11RenderModelInstance*>(bottleRenderModelInstance)->baseMask = 0x1000; // normals
         bottleRenderModelInstance->recordDrawables();
 
         renderDevice->finishScene();

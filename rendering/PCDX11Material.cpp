@@ -266,7 +266,7 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl038(
 }
 
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl7(
-	MeshTab0Ext128Sub10*,
+	MeshTab0Ext128Sub10 *ext128sub10,
 	void *drawableExtDword50,
 	uint32_t vsSelect,
 	VertexAttributeLayoutA *layout,
@@ -275,7 +275,16 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl7(
 	float floatY)
 {
 	// TODO
-	return nullptr;
+	// return nullptr;
+	return buildStreamDecl015(
+		ext128sub10,
+		drawableExtDword50,
+		vsSelect,
+		0,
+		layout,
+		flags,
+		floatX,
+		floatY);
 }
 
 }

@@ -18,25 +18,24 @@ struct RenderPass { // guessed name
 	bool active;
 	uint32_t order;
 	uint32_t sortMode; // 0, 1, 2
-	// uint32_t dwordC;
+	uint32_t useOverrideLists;
 	uint32_t funcSetIndex;
 	IRenderPassCallback *callbacks;
 };
 
 struct RenderPasses { // guessed name
 	RenderPass passes[32];
-	//uint32_t requestedPassesA[32];
+	uint32_t requestedPassesA[32];
 	//uint32_t dword380;
-	//uint32_t requestedPassesB[32];
+	uint32_t requestedPassesB[32];
 	//uint32_t dword404;
-	//uint32_t dword408;
-	//uint32_t dword40C;
-	//uint32_t dword410;
+	uint32_t dword408[3];
 	//uint32_t dword414;
 	uint32_t activeFuncBitfield; // 418
 	RenderFunctionSet comparators[20]; // 41C
 	RenderFunctionSet drawers[20]; // 91C
 
+	RenderPasses();
 	void addRenderPass(uint32_t arg0, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex, uint32_t firstPassId);
 	uint32_t allocFuncIndex(const char *name);
 	void sort(DrawableList *list, int passId);
@@ -68,16 +67,9 @@ struct DrawableListsAndMasks { // guessed name
 	RenderPasses *renderPasses;
 	uint32_t passMask8;
 	uint32_t passMaskC;
-	// uint32_t dword10;
-	// DrawableListsAndMasks *overrideLists14;
-	// uint32_t dword18;
-	// uint32_t dword1C;
-	// uint32_t dword20;
-	// uint32_t dword24;
-	// uint32_t dword28;
-	// uint32_t dword3C;
-	// uint32_t dword30;
-	// uint32_t dword34;
+	uint32_t passList;
+	DrawableListsAndMasks *overrideLists14;
+	uint8_t compactIndices[32];
 
 	DrawableListsAndMasks(RenderPasses *, /*uint32_t,*/ uint32_t, LinearAllocator *);
 	void add(IRenderDrawable *drawable, uint32_t passMask);
