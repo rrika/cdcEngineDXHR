@@ -4,7 +4,7 @@
 #include "shaders/PCDX11ShaderManager.h"
 
 class ID3D11Device;
-class IDXGIFactory2;
+class IDXGIFactory;
 class ID3D11DeviceContext;
 
 namespace cdc {
@@ -17,9 +17,7 @@ class PCDX11DeviceManager :
 	HMODULE d3d11;
 	HMODULE dxgi;
 	ID3D11Device *device;
-public:
-	IDXGIFactory2 *dxgiFactory;
-private:
+	IDXGIFactory *dxgiFactory;
 	ID3D11DeviceContext *deviceContext;
 	DisplayConfig config1;
 	DisplayConfig config2;
@@ -41,7 +39,7 @@ public:
 	void method_24();
 
 	ID3D11Device *getD3DDevice() { return device; }
-	IDXGIFactory2 *getDxgiFactory() { return dxgiFactory; }
+	IDXGIFactory *getDxgiFactory() { return dxgiFactory; }
 	ID3D11DeviceContext *getD3DDeviceContext() { return deviceContext; }
 	PCDX11StateManager *getStateManager() { return stateManager; }
 	PCDX11ShaderManager *getShaderManager() { return &shaderManager; }

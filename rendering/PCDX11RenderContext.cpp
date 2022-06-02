@@ -1,6 +1,6 @@
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderContext.h"
-#include <d3d11_1.h>
+#include <dxgi.h>
 #include <cstdio>
 
 namespace cdc {

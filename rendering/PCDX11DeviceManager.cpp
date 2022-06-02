@@ -13,16 +13,17 @@ PCDX11DeviceManager::PCDX11DeviceManager(HMODULE d3d11, HMODULE dxgi) :
 
 PCDX11DeviceManager::PCDX11DeviceManager(
 	HMODULE d3d11,
-	HMODULE dxgi, 
-	ID3D11Device* device,
-	ID3D11DeviceContext* deviceContext)
+	HMODULE dxgi,
+	ID3D11Device *device,
+	ID3D11DeviceContext *deviceContext)
 :
 	d3d11(d3d11),
 	dxgi(dxgi),
 	device(device),
 	deviceContext(deviceContext)
 {
-
+	auto createDXGIFactory = (decltype(&CreateDXGIFactory))(GetProcAddress(d3d11, "CreateDXGIFactory"));
+	createDXGIFactory(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
 }
 
 void PCDX11DeviceManager::method_00() {
