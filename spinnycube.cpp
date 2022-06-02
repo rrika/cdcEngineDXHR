@@ -22,6 +22,7 @@
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/IRenderPassCallback.h"
 #include "rendering/PCDX11DeviceManager.h"
+#include "rendering/PCDX11RenderContext.h"
 #include "rendering/PCDX11RenderDevice.h"
 #include "rendering/PCDX11RenderModel.h"
 #include "rendering/PCDX11RenderModelInstance.h"
@@ -309,23 +310,10 @@ int spinnyCube(HWND window,
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
-    swapChainDesc.Width              = 0; // use window width
-    swapChainDesc.Height             = 0; // use window height
-    swapChainDesc.Format             = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
-    swapChainDesc.Stereo             = FALSE;
-    swapChainDesc.SampleDesc.Count   = 1;
-    swapChainDesc.SampleDesc.Quality = 0;
-    swapChainDesc.BufferUsage        = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    swapChainDesc.BufferCount        = 1;
-    swapChainDesc.Scaling            = DXGI_SCALING_STRETCH;
-    swapChainDesc.SwapEffect         = DXGI_SWAP_EFFECT_DISCARD;
-    swapChainDesc.AlphaMode          = DXGI_ALPHA_MODE_UNSPECIFIED;
-    swapChainDesc.Flags              = 0;
-
-    IDXGISwapChain1* swapChain;
-
-    dxgiFactory->CreateSwapChainForHwnd(device, window, &swapChainDesc, nullptr, nullptr, &swapChain);
+    cdc::PCDX11RenderContext *renderContext = renderDevice->getRenderContextAny();
+    cdc::deviceManager->dxgiFactory = dxgiFactory;
+    renderContext->internalCreate();
+    IDXGISwapChain1* swapChain = renderContext->swapChain;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 

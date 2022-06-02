@@ -4,6 +4,7 @@
 #include "PCDX11InternalResource.h"
 #include <array>
 #include <cstring>
+#include <d3d11.h>
 #include <unordered_map>
 
 // for std::unordered_map<D3D11_DEPTH_STENCIL_DESC, ...>

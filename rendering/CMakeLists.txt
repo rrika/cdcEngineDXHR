@@ -23,6 +23,7 @@ target_sources(dxhr PRIVATE
 	PCDX11LightManager.cpp
 	PCDX11Material.cpp
 	PCDX11ModelDrawable.cpp
+	PCDX11RenderContext.cpp
 	PCDX11RenderDevice.cpp
 	PCDX11RenderLight.cpp
 	PCDX11RenderModel.cpp
