@@ -1,8 +1,10 @@
 #pragma once
+#include <cstdint>
 #include <windows.h>
 #include "PCDX11InternalResource.h"
 
-class IDXGISwapChain1;
+struct DXGI_MODE_DESC;
+class IDXGISwapChain;
 
 namespace cdc {
 
@@ -13,12 +15,20 @@ class PCDX11RenderContext : public PCDX11InternalResource {
 public:
 	PCDX11RenderTarget *renderTarget14 = nullptr; // 14
 	HWND hwnd; // 18
-	uint32_t width; // 1C
-	uint32_t height; // 20
+	uint32_t width = 0; // 1C
+	uint32_t height = 0; // 20
+	uint8_t refreshRate; // 24
+	uint8_t enableTripleBuffer; // 27
+	uint32_t bufferCount; // 28
+	bool fullscreen; // 25
 	PCDX11RenderTarget *renderTarget2C = nullptr; // 2C
-	// IDXGISwapChain *swapChain = nullptr; // 34
-	IDXGISwapChain1 *swapChain = nullptr; // 34
+	IDXGISwapChain *swapChain = nullptr; // 34
 	PCDX11RenderDevice *renderDevice; // 68
+
+private:
+	void fillModeDesc(DXGI_MODE_DESC&);
+	bool createRenderTargets();
+
 public:
 
 	PCDX11RenderContext(

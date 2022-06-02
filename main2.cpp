@@ -54,9 +54,17 @@ void createWindow() {
 }
 
 int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
-    loadBuiltinResources();
+	loadBuiltinResources();
 	auto deviceManager = createPCDX11DeviceManager();
 	createWindow();
+	cdc::DisplayConfig *displayConfig = deviceManager->getDisplayConfig();
+	displayConfig->fullscreenRefreshRate = 60;
+	displayConfig->fullscreen = false;
+	displayConfig->fullscreenWidth = 1366;
+	displayConfig->fullscreenHeight = 768;
+	displayConfig->sampleCount = 1;
+	displayConfig->sampleQuality = 0;
+	displayConfig->enableTripleBuffer = false;
 	gRenderDevice = createPCDX11RenderDevice(hwnd, 640, 480, 0);
 
 	if (true)

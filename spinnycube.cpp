@@ -313,7 +313,7 @@ int spinnyCube(HWND window,
     cdc::PCDX11RenderContext *renderContext = renderDevice->getRenderContextAny();
     cdc::deviceManager->dxgiFactory = dxgiFactory;
     renderContext->internalCreate();
-    IDXGISwapChain1* swapChain = renderContext->swapChain;
+    IDXGISwapChain* swapChain = renderContext->swapChain;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 

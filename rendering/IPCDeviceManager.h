@@ -52,8 +52,8 @@ struct DisplayConfig {
 	uint32_t dword68;
 	uint32_t dword6C;
 	uint32_t dx11OutputId;
-	uint8_t byte74;
-	uint32_t dword78;
+	uint8_t sampleCount;
+	uint32_t sampleQuality;
 	uint8_t enableTesselation;
 	uint32_t stereoMode;
 	uint8_t enableDirectX11;
