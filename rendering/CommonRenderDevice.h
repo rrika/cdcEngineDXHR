@@ -72,7 +72,7 @@ public:
 	virtual void method_6C() = 0;
 	virtual void method_70() = 0;
 
-	virtual void addPass();
+	virtual void addPass(uint32_t arg0, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex);
 	virtual void method_78();
 	virtual uint32_t getPassOrder(uint32_t);
 	virtual void method_80();

@@ -14,23 +14,47 @@ static bool defaultComparator(uint32_t funcSetIndex, IRenderDrawable *drawable, 
 }
 
 RenderPasses::RenderPasses() {
-	for (uint32_t i=0; i<32; i++)
+	for (uint32_t i=0; i<32; i++) {
+		passes[i].active = false;
 		requestedPassesA[i] = ~0u;
+	}
 }
 
-void RenderPasses::addRenderPass(uint32_t arg0, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex, uint32_t firstPassId) {
-	// TODO
+uint32_t RenderPasses::addRenderPass(uint32_t arg0, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex, uint32_t firstPassId) {
 	uint32_t passId = firstPassId;
+	while (passId < 32 && passes[passId].active)
+		passId++;
+
+	if (passId >= 32)
+		return -1;
+
+	passes[passId].active = true;
 	passes[passId].order = order;
 	passes[passId].sortMode = sortMode;
 	passes[passId].useOverrideLists = arg0;
 	passes[passId].funcSetIndex = funcSetIndex;
 	passes[passId].callbacks = nullptr;
 
-	// TODO: insert by order, rather than at end
+	// find insertion point by order
 	uint32_t *r = requestedPassesA; 
-	while (*r != ~0u) r++;
-	*r = passId;
+	for (; *r != ~0u; r++)
+		if (passes[*r].order > order)
+			break;
+
+	// shift later elements
+	uint32_t insertedItem = passId;
+	do {
+		uint32_t displacedItem = *r;
+		*r = insertedItem;
+		r++;
+		insertedItem = displacedItem;
+	} while (insertedItem != ~0u);
+
+	dword408[arg0] |= 1 << passId;
+	if (sortMode == 0)
+		dword414 |= 1 << passId;
+
+	return passId;
 }
 
 uint32_t RenderPasses::allocFuncIndex(const char *name) {
