@@ -52,4 +52,8 @@ ID3D11UnorderedAccessView *PCDX11BitmapTexture::createUnorderedAccessView() {
 	return d3dAccessView130;
 }
 
+void PCDX11BitmapTexture::asyncCreate() {
+	// TODO
+}
+
 }

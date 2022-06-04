@@ -64,6 +64,8 @@ PCDX11RenderDevice::PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t heigh
 {
 	d3dDeviceContext111580 = deviceManager->getD3DDeviceContext();
 
+	lightManager = new PCDX11LightManager(this);
+
 	renderContext_10CEC = new PCDX11RenderContext(hwnd, width, height, 1, /*TODO*/0);
 
 	createDefaultResources();
@@ -642,6 +644,7 @@ void PCDX11RenderDevice::drawRenderListsInternal(void *arg) {
 	// TODO
 	if (arg) {
 		// TODO
+		static_cast<PCDX11LightManager*>(lightManager)->setAttenuationSampler();
 		while (renderList_processing) {
 			// TODO
 			getLightManager()->renderLights(renderList_processing->lightManagerSubB);

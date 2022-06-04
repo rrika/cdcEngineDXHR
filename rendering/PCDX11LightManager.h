@@ -131,7 +131,7 @@ class PCDX11LightManager :
 	// uint8_t f324[260];
 	// uint32_t dword428;
 	// uint8_t f42C[4];
-	// PCDX11BitmapTexture *texture430;
+	PCDX11BitmapTexture *attenuationSampler430;
 	// uint32_t dword434;
 	// PCDX11StaticConstantBuffer *staticConstantBuffer438;
 	// LightManagerSubA subA[16]; // 43C
@@ -150,11 +150,14 @@ class PCDX11LightManager :
 	// LightManagerSubC subC;
 
 public:
+	PCDX11LightManager(CommonRenderDevice *renderDevice);
+
 	LightManagerSubB *allocateSubB();
 	void fillLightBuffer(LightReceiverData *receiverData);
 	LightReceiverData *makeReceiver();
 	void renderLights(LightManagerSubB *subB);
 	void assignCommonCB5(char *src);
+	void setAttenuationSampler();
 
 	bool internalCreate() override { /*TODO*/ return true; }
 	void internalRelease() override { /*TODO*/ }

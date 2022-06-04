@@ -1,4 +1,6 @@
+#include "PCDX11DeviceManager.h"
 #include "PCDX11RenderPassCallbacks.h"
+#include "PCDX11StateManager.h"
 
 namespace cdc {
 
@@ -76,6 +78,10 @@ bool PCDX11CompositePassCallbacks::pre(
 	uint32_t drawableCount,
 	uint32_t priorPassesBitfield)
 {
+	// TODO
+	auto *stateManager = deviceManager->getStateManager();
+	PCDX11BaseTexture *shadowBuffer = nullptr;
+	stateManager->setTextureAndSampler(10, shadowBuffer, 0, 0.0f);
 	// TODO
 	return true;
 }

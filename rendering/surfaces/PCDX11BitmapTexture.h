@@ -28,6 +28,8 @@ public:
 	ID3D11ShaderResourceView *createShaderResourceView() override;
 	ID3D11UnorderedAccessView *createUnorderedAccessView() override;
 
+	void asyncCreate() override;
+
 	uint8_t byte3C[4];
 	uint8_t byte40[220];
 	void  *imageData;
