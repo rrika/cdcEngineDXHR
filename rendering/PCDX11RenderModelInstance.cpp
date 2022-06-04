@@ -22,7 +22,7 @@ void PCDX11RenderModelInstance::recordDrawables() {
 			MeshTab0Ext128 *tab0ext128 = &this->tab0Ext128[tab0index];
 
 			uint32_t mask = baseMask; // & tab0ext16->mask8;
-			auto drawable = new PCDX11ModelDrawable(
+			auto drawable = new (renderDevice->getLinear(), 6, true) PCDX11ModelDrawable(
 				getRenderModel(),
 				sub,
 				tab0,

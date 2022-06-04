@@ -131,8 +131,9 @@ void RenderPasses::sortAndDraw(
 }
 
 DrawableListsAndMasks *RenderPasses::createDrawableLists(/*uint32_t,*/ uint32_t mask, LinearAllocator *linear) {
-	// TODO
-	return new DrawableListsAndMasks(this, mask, linear);
+	if (mask /* & ... */)
+		return new (linear, 0, true) DrawableListsAndMasks(this, mask, linear);
+	return nullptr;
 }
 
 void DrawableList::add(IRenderDrawable *drawable) {

@@ -272,7 +272,7 @@ bool PCDX11RenderDevice::beginRenderList(float *scale) {
 		dimensionsPtr = dimensions;
 	}
 
-	renderList_current = new RenderList(this, dimensionsPtr);
+	renderList_current = new (linear30, 0, true) RenderList(this, dimensionsPtr);
 	auto *lightManager = static_cast<PCDX11LightManager*>(this->lightManager);
 	renderList_current->lightManagerSubB = lightManager->allocateSubB();
 	// TODO
@@ -313,7 +313,7 @@ CommonScene *PCDX11RenderDevice::createSubScene(
 	CommonDepthBuffer *depthBuffer
 ) {
 	// TODO
-	auto scene = new PCDX11Scene(
+	auto scene = new (linear30, 1, true) PCDX11Scene(
 		this,
 		scene7C, // parent scene perhaps?
 		sub10,
@@ -371,21 +371,22 @@ void PCDX11RenderDevice::clearRenderTarget(
 	float clearDepth,
 	uint32_t clearStencil)
 {
-	// TODO allocation
+	if (passMask == 0)
+		return;
+
 	uint32_t clearColorI =
 		((int)(clearColor[3] * 255.0) << 24) |
 		((int)(clearColor[0] * 255.0) << 16) |
 		((int)(clearColor[1] * 255.0) <<  8) |
 		((int)(clearColor[2] * 255.0) <<  0);
-	(void)sortOrder; // assign to IRenderDrawable::float8
-	auto clearDrawable = new PCDX11ClearDrawable(
+	auto clearDrawable = new (linear30, 1, true) PCDX11ClearDrawable(
+		sortOrder,
 		this,
 		(flags & 2 | (flags >> 1) & 0xC) >> 1,
 		clearColorI,
 		clearDepth,
 		clearStencil);
 	recordDrawable(clearDrawable, passMask, 0);
-	// TODO: don't leak PCDX11ClearDrawable instances
 }
 
 void PCDX11RenderDevice::setRenderTarget() {
