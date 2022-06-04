@@ -41,13 +41,12 @@ public:
 	);
 	~LinearAllocator();
 
-	template <typename T>
-	inline T *alloc(uint32_t requester=0, bool reportFailure=false) {
-		return (T*)alloc(sizeof(T), requester, reportFailure);
-	}
-
 	char *alloc(uint32_t size, uint32_t requester=0, bool reportFailure=false);
 	void rewind();
 };
 
 };
+
+inline void *operator new(size_t count, cdc::LinearAllocator *linear, uint32_t requester=0, bool reportFailure=false) {
+	return (void*)linear->alloc((uint32_t)count, requester, reportFailure);
+}

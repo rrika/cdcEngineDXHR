@@ -137,7 +137,7 @@ DrawableListsAndMasks *RenderPasses::createDrawableLists(/*uint32_t,*/ uint32_t 
 
 void DrawableList::add(IRenderDrawable *drawable) {
 	itemCount++;
-	auto item = linear->alloc<DrawableItem>(2, true);
+	auto item = new (linear, 2, true) DrawableItem();
 	item->drawable = drawable;
 	item->next = nullptr;
 	if (last)
@@ -212,7 +212,7 @@ DrawableListsAndMasks::DrawableListsAndMasks(
 	for (uint32_t i = 0; i < 32; i++)
 
 	if (listCount)
-		drawableLists = (DrawableList*)linear->alloc(sizeof(DrawableList[listCount]), 0, true);
+		drawableLists = new (linear, 0, true) DrawableList[listCount];
 	else
 		drawableLists = nullptr;
 
