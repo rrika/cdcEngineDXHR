@@ -7,6 +7,7 @@ class CommonStreamDecl;
 class IMaterial;
 class PCDX11Material;
 class PCDX11SimpleStaticVertexBuffer;
+struct StencilSettings;
 
 struct MeshTab0;
 
@@ -117,7 +118,7 @@ struct MeshTab0Ext128Sub10 {
 	float minDepth;
 	float maxDepth;
 	CommonStreamDecl *streamDecls24[16];
-	void *stencilSettings64;
+	StencilSettings *stencilSettings64;
 };
 
 struct MeshTab0Ext128 {

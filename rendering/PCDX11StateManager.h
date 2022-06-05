@@ -41,6 +41,12 @@ struct DepthStencilHash {
 	}
 };
 
+enum class CullMode {
+	none = 0,
+	back = 1,
+	front = 2
+};
+
 class PCDX11StateManager : public PCDX11InternalResource {
 	ID3D11DeviceContext *m_deviceContext; // 10
 	ID3D11Device *m_device; // 14
@@ -121,7 +127,7 @@ public:
 	void setVertexShader(PCDX11VertexShader *vertexShader);
 	void setPrimitiveTopology(int topology);
 	void setDepthLayer(bool layer);
-	void setCullMode(D3D11_CULL_MODE cullMode, bool frontIsCounterClockwise);
+	void setCullMode(CullMode cullMode, bool frontIsCounterClockwise);
 	void setDepthState(D3D11_COMPARISON_FUNC comparisonFunc, bool depthWriteMask);
 	void setStencil(StencilSettings*);
 

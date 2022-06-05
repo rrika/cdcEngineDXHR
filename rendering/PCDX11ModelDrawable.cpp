@@ -266,7 +266,7 @@ void PCDX11ModelDrawable::draw(
 	stateManager->setStreamDecl(streamDecl);
 
 	if (renderTwice) {
-		stateManager->setCullMode(D3D11_CULL_FRONT, getCullMode());
+		stateManager->setCullMode(CullMode::front, getCullMode());
 		stateManager->setDepthState(D3D11_COMPARISON_LESS, D3D11_DEPTH_WRITE_MASK_ZERO);
 	}
 
@@ -280,7 +280,7 @@ void PCDX11ModelDrawable::draw(
 	d3d11DeviceContext->DrawIndexed(indexCount, startIndex, baseVertex);
 
 	if (renderTwice) {
-		stateManager->setCullMode(D3D11_CULL_NONE, getCullMode());
+		stateManager->setCullMode(CullMode::back, getCullMode());
 		stateManager->updateRenderState();
 		d3d11DeviceContext->DrawIndexed(indexCount, startIndex, baseVertex);
 	}

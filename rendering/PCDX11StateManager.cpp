@@ -145,7 +145,7 @@ void PCDX11StateManager::setDepthLayer(bool layer) {
 	// TODO
 }
 
-void PCDX11StateManager::setCullMode(D3D11_CULL_MODE cullMode, bool frontIsCounterClockwise) {
+void PCDX11StateManager::setCullMode(CullMode cullMode, bool frontIsCounterClockwise) {
 	// TODO
 }
 

@@ -164,6 +164,54 @@ void PCDX11Material::setupPixelResources(
 	}
 }
 
+void PCDX11Material::setupStencil(
+	MeshTab0Ext128Sub10 *ext128sub10,
+	bool honorRenderTwice,
+	uint32_t flags)
+{
+	auto *stateManager = deviceManager->getStateManager();
+	StencilSettings *stencilSettings = ext128sub10->stencilSettings64
+		? ext128sub10->stencilSettings64
+		: &materialBlob->stencilSettings34;
+
+	uint32_t matDword18 = materialBlob->dword18;
+	bool frontCounterClockwise = bool(flags & 2);
+	bool stencilDoubleSided = bool(stencilSettings->back & 1);
+	bool ext128DoubleSided = bool(ext128sub10->dword14 & 0x40);
+	bool materialDoubleSided = bool(matDword18 & 0x80);
+	bool materialRenderTwice = bool(matDword18 & 0x800);
+	bool materialCullFront = bool(matDword18 & 0x2000);
+
+	if (stencilDoubleSided || (
+		(materialDoubleSided || ext128DoubleSided) &&
+		!(materialRenderTwice && honorRenderTwice)
+	))
+		stateManager->setCullMode(CullMode::none, frontCounterClockwise);
+	else if (materialCullFront)
+		stateManager->setCullMode(CullMode::front, frontCounterClockwise);
+	else
+		stateManager->setCullMode(CullMode::back, frontCounterClockwise);
+
+	stateManager->setStencil(stencilSettings);
+}
+
+void PCDX11Material::setupMg4(
+	PCDX11RenderDevice *renderDevice,
+	MeshTab0Ext128Sub10 *ext128sub10,
+	uint32_t arg3)
+{
+
+}
+
+void PCDX11Material::setupMg5(
+	PCDX11RenderDevice *renderDevice,
+	MeshTab0Ext128Sub10 *ext128sub10,
+	uint32_t arg3,
+	float arg4)
+{
+
+}
+
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
 	MeshTab0Ext128Sub10* ext128sub10,
 	void *drawableExtDword50,

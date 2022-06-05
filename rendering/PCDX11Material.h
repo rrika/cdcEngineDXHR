@@ -22,6 +22,18 @@ class PCDX11Material :
 	// PCDX11StaticConstantBuffer *constantBuffersVs[16]; // 70
 	PCDX11UberConstantBuffer *constantBuffersPs[16]; // 30
 	PCDX11UberConstantBuffer *constantBuffersVs[16]; // 70
+
+	// mg = material globals
+	static uint32_t mg_state; // 00B37BE0
+	static uint32_t mg_B37BE4;// 00B37BE4
+
+	// these globals might be declared elsewhere
+	static PCDX11StreamDecl *mg_streamDecl;    // 00EAAD18
+	static PCDX11Material *mg_EAAD1C;          // 00EAAD1C
+	static PCDX11Material *mg_material;        // 00EAAD20
+	static void *mg_cbdata;                    // 00EAAD24
+	static MeshTab0Ext128Sub10 mg_ext128sub10; // 00EAAD28
+
 public:
 	PCDX11Material(PCDX11RenderDevice *renderDevice) :
 		PCDX11RenderExternalResource(renderDevice)
@@ -34,6 +46,11 @@ public:
 
 	void setupVertexResources(uint32_t, MaterialBlobSub*, MeshTab0Ext128Sub10*, char*, bool);
 	void setupPixelResources(uint32_t, MaterialBlobSub*, MeshTab0Ext128Sub10*, char*, bool);
+
+	void setupStencil(MeshTab0Ext128Sub10*, bool, uint32_t);
+
+	void setupMg4(PCDX11RenderDevice*, MeshTab0Ext128Sub10*, uint32_t);
+	void setupMg5(PCDX11RenderDevice*, MeshTab0Ext128Sub10*, uint32_t, float);
 
 	PCDX11StreamDecl *buildStreamDecl015(
 		MeshTab0Ext128Sub10*,
