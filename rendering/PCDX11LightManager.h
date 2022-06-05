@@ -145,8 +145,8 @@ class PCDX11LightManager :
 	// LightReceiverData *receiver_E10;
 	// uint32_t *mostRecentAssignmentToCommonCB5; // E14
 	// PCDX11DepthBuffer *depthBuffer; // E18
-	// uint32_t dwordE1C;
-	// uint32_t dwordE20;
+	uint32_t pixelShaderIndexBaseE1C;
+	uint32_t pixelShaderIndexBaseE20;
 	// LightManagerSubC subC;
 
 public:
@@ -159,8 +159,9 @@ public:
 	void assignCommonCB5(char *src);
 	void setAttenuationSampler();
 
-	bool internalCreate() override { /*TODO*/ return true; }
-	void internalRelease() override { /*TODO*/ }
+	bool internalCreate() override;
+	void internalRelease() override;
+	void internalOnSettingsChanged() override;
 
 	void lightManager4() override { /*TODO*/ }
 	void lightManager8() override { /*TODO*/ }

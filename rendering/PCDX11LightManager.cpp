@@ -60,4 +60,30 @@ void PCDX11LightManager::setAttenuationSampler() {
 	deviceManager->getStateManager()->setTextureAndSampler(15, attenuationSampler430, 1, 0.0f);
 }
 
+bool PCDX11LightManager::internalCreate() {
+	pixelShaderIndexBaseE20 = 0;
+	pixelShaderIndexBaseE1C = 0;
+	internalOnSettingsChanged();
+	// depthBufferE18 = new PCDX11DepthBuffer(4096, 3072, /*...*/)
+	return true;
+}
+
+void PCDX11LightManager::internalRelease() {
+	// TODO
+}
+
+void PCDX11LightManager::internalOnSettingsChanged() {
+	auto mode = deviceManager->getDisplayConfig()->shadowMode;
+	if (mode == 0) {
+		pixelShaderIndexBaseE20 = 0;
+		pixelShaderIndexBaseE1C = 0;
+	} else if (mode == 1) {
+		pixelShaderIndexBaseE20 = 1;
+		pixelShaderIndexBaseE1C = 1;
+	} else  if (mode == 2) {
+		pixelShaderIndexBaseE20 = 2;
+		pixelShaderIndexBaseE1C = 1;
+	}
+}
+
 }
