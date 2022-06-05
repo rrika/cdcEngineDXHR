@@ -29,7 +29,7 @@ class CommonScene :
 {
 public:
 	CommonSceneSub10 sub10;
-	// float fogColor[4];
+	float fogColor[4];
 	// float float110;
 	CommonSceneSub114 sub114;
 	// uint8_t byte25C;

@@ -8,6 +8,15 @@
 
 namespace cdc {
 
+
+uint32_t PCDX11Material::mg_state;
+uint32_t PCDX11Material::mg_B37BE4;
+PCDX11StreamDecl *PCDX11Material::mg_streamDecl;
+PCDX11Material *PCDX11Material::mg_EAAD1C;
+PCDX11Material *PCDX11Material::mg_material;
+void *PCDX11Material::mg_cbdata;
+MeshTab0Ext128Sub10 *PCDX11Material::mg_ext128sub10;
+
 void PCDX11Material::load(MaterialBlob *newBlob) {
 	auto deviceContext = renderDevice->getD3DDeviceContext(); // HACK
 	// TODO
@@ -198,9 +207,40 @@ void PCDX11Material::setupStencil(
 void PCDX11Material::setupMg4(
 	PCDX11RenderDevice *renderDevice,
 	MeshTab0Ext128Sub10 *ext128sub10,
-	uint32_t arg3)
+	uint32_t flags)
 {
+	auto *stateManager = deviceManager->getStateManager();
+	setupStencil(ext128sub10, true, flags);
+	// TODO: stateManager->setDepthRange(ext128sub10->minDepth, ext128sub10->maxDepth)
+	if (mg_state != 4) {
+		mg_state = 21;
+		mg_B37BE4 = ~0u;
+		mg_material = 0;
+		mg_cbdata = 0;
+		mg_ext128sub10 = 0;
+		mg_streamDecl = 0;
+		mg_EAAD1C = 0;
+		// TODO: stateManager->setBlendStateAndBlendFactors(117506064, 128, 0);
+		stateManager->setOpacity(1.0);
+		stateManager->setDepthState(D3D11_COMPARISON_EQUAL, 0);
+		stateManager->setFogColor(renderDevice->scene78->fogColor);
+		mg_state = 4;
+	}
 
+	// redo some of what setupStencil did earlier
+	uint32_t matDword18 = materialBlob->dword18;
+	bool frontCounterClockwise = bool(flags & 2);
+	bool ext128DoubleSided = bool(ext128sub10->dword14 & 0x40);
+	bool materialDoubleSided = bool(matDword18 & 0x80);
+	bool materialRenderTwice = bool(matDword18 & 0x800);
+	bool materialCullFront = bool(matDword18 & 0x2000);
+
+	if ((materialDoubleSided || ext128DoubleSided) && !materialRenderTwice)
+		stateManager->setCullMode(CullMode::none, frontCounterClockwise);
+	else if (materialCullFront)
+		stateManager->setCullMode(CullMode::front, frontCounterClockwise);
+	else
+		stateManager->setCullMode(CullMode::back, frontCounterClockwise);
 }
 
 void PCDX11Material::setupMg5(

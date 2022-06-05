@@ -28,11 +28,11 @@ class PCDX11Material :
 	static uint32_t mg_B37BE4;// 00B37BE4
 
 	// these globals might be declared elsewhere
-	static PCDX11StreamDecl *mg_streamDecl;    // 00EAAD18
-	static PCDX11Material *mg_EAAD1C;          // 00EAAD1C
-	static PCDX11Material *mg_material;        // 00EAAD20
-	static void *mg_cbdata;                    // 00EAAD24
-	static MeshTab0Ext128Sub10 mg_ext128sub10; // 00EAAD28
+	static PCDX11StreamDecl *mg_streamDecl;     // 00EAAD18
+	static PCDX11Material *mg_EAAD1C;           // 00EAAD1C
+	static PCDX11Material *mg_material;         // 00EAAD20
+	static void *mg_cbdata;                     // 00EAAD24
+	static MeshTab0Ext128Sub10 *mg_ext128sub10; // 00EAAD28
 
 public:
 	PCDX11Material(PCDX11RenderDevice *renderDevice) :
