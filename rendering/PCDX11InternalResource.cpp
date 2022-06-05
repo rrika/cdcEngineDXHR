@@ -17,7 +17,7 @@ void PCDX11InternalResource::internalResource0C() { internalCreate(); }
 
 void PCDX11InternalResource::internalResource10() { internalRelease(); }
 
-void PCDX11InternalResource::internalResource14() { /* empty */ }
+void PCDX11InternalResource::internalOnSettingsChanged() { /* empty */ }
 
 void PCDX11InternalResource::internalCreateIfDeviceManagerAgrees() {
 	// if (!deviceManager11->byte30)

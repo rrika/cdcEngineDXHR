@@ -74,4 +74,8 @@ void PCDX11RenderContext::internalRelease() {
 	/*TODO*/
 }
 
+void PCDX11RenderContext::internalOnSettingsChanged() {
+	/*TODO*/
+}
+
 }

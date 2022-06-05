@@ -12,7 +12,7 @@ public:
 	virtual void internalRelease() = 0;
 	virtual void internalResource0C();
 	virtual void internalResource10();
-	virtual void internalResource14();
+	virtual void internalOnSettingsChanged();
 
 	void internalCreateIfDeviceManagerAgrees();
 };

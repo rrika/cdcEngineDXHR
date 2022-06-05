@@ -52,6 +52,7 @@ public:
 
 	bool internalCreate() override;
 	void internalRelease() override;
+	void internalOnSettingsChanged() override;
 };
 
 }
