@@ -113,7 +113,8 @@ struct MeshTab0Ext128Sub10 {
 	uint32_t dword8;
 	uint32_t dwordC;
 	float float10;
-	uint32_t dword14;
+	uint32_t dword14; // flags
+	// 0x20000000: see PCDX11Material::setupDepthBias
 	uint32_t dword18;
 	float minDepth;
 	float maxDepth;

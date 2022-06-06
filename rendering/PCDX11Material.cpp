@@ -10,8 +10,8 @@
 namespace cdc {
 
 
-uint32_t PCDX11Material::mg_state;
-uint32_t PCDX11Material::mg_B37BE4;
+uint32_t PCDX11Material::mg_state = 0;
+uint32_t PCDX11Material::mg_vsSelectAndFlags;
 PCDX11StreamDecl *PCDX11Material::mg_streamDecl;
 PCDX11Material *PCDX11Material::mg_EAAD1C;
 PCDX11Material *PCDX11Material::mg_material;
@@ -233,7 +233,7 @@ void PCDX11Material::setupMg4(
 	stateManager->setDepthRange(ext128sub10->minDepth, ext128sub10->maxDepth);
 	if (mg_state != 4) {
 		mg_state = 21;
-		mg_B37BE4 = ~0u;
+		mg_vsSelectAndFlags = ~0u;
 		mg_material = 0;
 		mg_cbdata = 0;
 		mg_ext128sub10 = 0;
@@ -281,65 +281,100 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
 	float floatX, // opacity scale?
 	float floatY)
 {
-	// TODO
+	if (mg_state != 1) {
+		mg_vsSelectAndFlags = -1;
+		mg_material = nullptr;
+		mg_cbdata = nullptr;
+		mg_ext128sub10 = nullptr;
+		mg_streamDecl = nullptr;
+		mg_EAAD1C = 0;
+		mg_state = 1;
+	}
 
 	float opacity = ext128sub10->float10 * floatX;
-	uint32_t subMaterialIndex = 7; // HACK: show normals submat (7) instead of 0 or 1
+	uint32_t blendState = materialBlob->blendState;
+	bool noPixelShader = true;
+	if ((blendState & 1) || (blendState & 0x7000000) != 0x7000000 || opacity < 1.0)
+		noPixelShader = false;
+
+	uint32_t subMaterialIndex;
 	if (arg4)
 		subMaterialIndex = 5;
+	else
+		subMaterialIndex = noPixelShader ? 0 : 1;
 
-	// TODO
+	subMaterialIndex = 7; // HACK: show normals submat (7) instead of 0 or 1
 
 	MaterialBlobSub *subMaterial = materialBlob->subMat4C[subMaterialIndex];
-	bool doEverything = true; // TODO
-	auto *stateManager = deviceManager->getStateManager();
-	uint32_t vertexIndex = vsSelect;
-	if (flags & 8)
-		vertexIndex |= 8;
+	uint32_t vsSelectAndFlags = (vsSelect << 8) | flags;
+	bool materialChange = mg_material != this;
+	materialChange = true; // HACK: missing invalidate of mg_ by spinny cube necessitates this
+	if (materialChange || mg_vsSelectAndFlags != vsSelectAndFlags) {
 
-	// set pixel shader
-	PCDX11PixelShaderTable *pixelTable;
-	uint32_t pixelIndex = 0;
-	if (false) { // HACK to see anything other than white
-	// if (materialBlob->blendState == 0x7010010) {
-		pixelTable = &renderDevice->shtab_ps_white_27;
-		if (arg4)
-			pixelIndex = 1;
+		auto *stateManager = deviceManager->getStateManager();
+		uint32_t vertexIndex = vsSelect;
+		if (flags & 8)
+			vertexIndex |= 8;
+
+		// set pixel shader
+		PCDX11PixelShaderTable *pixelTable;
+		uint32_t pixelIndex = 0;
+		if (false) { // HACK to see anything other than white
+		// if (materialBlob->blendState == 0x7010010) {
+			// TODO: stateManager->setBlendStateAndBlendFactors(0x7010010, 128, 0);
+			pixelTable = &renderDevice->shtab_ps_white_27;
+			if (arg4)
+				pixelIndex = 1;
+		} else {
+			if (arg4) {
+				// TODO: stateManager->setBlendStateAndBlendFactors(0x7010010, 128, 0);
+				stateManager->setAlphaThreshold(materialBlob->alphaThreshold);
+			} else {
+				// TODO: stateManager->setBlendStateAndBlendFactors(0x6010010, materialBlob->alphaThreshold, 0);
+			}
+			pixelTable = static_cast<PCDX11PixelShaderTable*>(static_cast<PCDX11ShaderLib*>(subMaterial->shaderPixel)->table);
+		}
+
+		auto pixelShader = (*pixelTable)[pixelIndex];
+		stateManager->setPixelShader(pixelShader);
+
+		// set vertex shader
+		auto vertexTable = static_cast<PCDX11VertexShaderTable*>(static_cast<PCDX11ShaderLib*>(subMaterial->shaderVertex)->table);
+		auto vertexShader = (*vertexTable)[vertexIndex];
+		stateManager->setVertexShader(vertexShader);
+
+		mg_vsSelectAndFlags = vsSelectAndFlags;
+		mg_material = this;
+
+		auto *streamDecl = static_cast<PCDX11StreamDecl*>(ext128sub10->streamDecls24[subMaterialIndex]);
+		if (!streamDecl) {
+			VertexAttributeLayoutB *layoutB = nullptr; // TODO
+
+			streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
+				layoutA,
+				layoutB,
+				(flags >> 3) & 1,
+				&vertexShader->m_sub);
+		}
+
+		mg_streamDecl = streamDecl;
+
 	} else {
-		pixelTable = static_cast<PCDX11PixelShaderTable*>(static_cast<PCDX11ShaderLib*>(subMaterial->shaderPixel)->table);
+		if (mg_cbdata == drawableExtDword50 || mg_ext128sub10 == ext128sub10)
+			return mg_streamDecl;
 	}
 
-	auto pixelShader = (*pixelTable)[pixelIndex];
-	stateManager->setPixelShader(pixelShader);
-
-	// set vertex shader
-	auto vertexTable = static_cast<PCDX11VertexShaderTable*>(static_cast<PCDX11ShaderLib*>(subMaterial->shaderVertex)->table);
-	auto vertexShader = (*vertexTable)[vertexIndex];
-	stateManager->setVertexShader(vertexShader);
-
-
-	auto *streamDecl = static_cast<PCDX11StreamDecl*>(ext128sub10->streamDecls24[subMaterialIndex]);
-	if (!streamDecl) {
-		VertexAttributeLayoutB *layoutB = nullptr; // TODO
-		
-		streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
-			layoutA,
-			layoutB,
-			(flags >> 3) & 1,
-			&vertexShader->m_sub);
-	}
-
-	// TODO
-	if (true)
-		setupPixelResources(subMaterialIndex, subMaterial, ext128sub10, (char*)drawableExtDword50, doEverything);
-	setupVertexResources(subMaterialIndex, subMaterial, ext128sub10, (char*)drawableExtDword50, doEverything);
-
-	// TODO
+	if (!noPixelShader)
+		setupPixelResources(subMaterialIndex, subMaterial, ext128sub10, (char*)drawableExtDword50, materialChange);
+	setupVertexResources(subMaterialIndex, subMaterial, ext128sub10, (char*)drawableExtDword50, materialChange);
 
 	setupDepthBias(ext128sub10);
 	deviceManager->getStateManager()->setDepthRange(ext128sub10->minDepth, ext128sub10->maxDepth);
 	deviceManager->getStateManager()->setOpacity(opacity);
-	return streamDecl;
+	mg_ext128sub10 = ext128sub10;
+	mg_cbdata = drawableExtDword50;
+
+	return mg_streamDecl;
 }
 
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl01(

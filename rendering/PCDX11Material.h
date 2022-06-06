@@ -25,7 +25,7 @@ class PCDX11Material :
 
 	// mg = material globals
 	static uint32_t mg_state; // 00B37BE0
-	static uint32_t mg_B37BE4;// 00B37BE4
+	static uint32_t mg_vsSelectAndFlags;// 00B37BE4
 
 	// these globals might be declared elsewhere
 	static PCDX11StreamDecl *mg_streamDecl;     // 00EAAD18

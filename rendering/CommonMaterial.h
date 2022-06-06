@@ -84,7 +84,7 @@ struct MaterialBlob {
 	int dword20;
 	int dword24;
 	uint8_t byte_28;
-	uint8_t byte_29;
+	uint8_t alphaThreshold; // 29
 	uint8_t byte_2A;
 	uint8_t byte_2B;
 	int negDepthBias;
