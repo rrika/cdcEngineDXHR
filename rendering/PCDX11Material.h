@@ -47,6 +47,7 @@ public:
 	void setupVertexResources(uint32_t, MaterialBlobSub*, MeshTab0Ext128Sub10*, char*, bool);
 	void setupPixelResources(uint32_t, MaterialBlobSub*, MeshTab0Ext128Sub10*, char*, bool);
 
+	void setupDepthBias(MeshTab0Ext128Sub10*);
 	void setupStencil(MeshTab0Ext128Sub10*, bool, uint32_t);
 
 	void setupMg4(PCDX11RenderDevice*, MeshTab0Ext128Sub10*, uint32_t);

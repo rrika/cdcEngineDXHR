@@ -220,6 +220,24 @@ void PCDX11StateManager::setStencil(StencilSettings *stencilSettings) {
 	}
 }
 
+void PCDX11StateManager::setDepthRange(float minDepth, float maxDepth) {
+	(void)minDepth;
+	(void)maxDepth;
+	// TODO
+}
+
+void PCDX11StateManager::setDepthBias(int32_t) {
+	// TODO
+}
+
+void PCDX11StateManager::setDepthBiasClamp(float) {
+	// TODO
+}
+
+void PCDX11StateManager::setSlopeScaledDepthBias(float) {
+	// TODO
+}
+
 void PCDX11StateManager::setSamplerState(
 	uint32_t slot,
 	PCDX11BaseTexture *tex,

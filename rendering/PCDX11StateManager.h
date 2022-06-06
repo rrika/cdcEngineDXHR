@@ -130,6 +130,10 @@ public:
 	void setCullMode(CullMode cullMode, bool frontIsCounterClockwise);
 	void setDepthState(D3D11_COMPARISON_FUNC comparisonFunc, bool depthWriteMask);
 	void setStencil(StencilSettings*);
+	void setDepthRange(float, float);
+	void setDepthBias(int32_t);
+	void setDepthBiasClamp(float);
+	void setSlopeScaledDepthBias(float);
 
 	void setSamplerState(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter);
 	void setTextureAndSampler(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown);

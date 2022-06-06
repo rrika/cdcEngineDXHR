@@ -173,6 +173,24 @@ void PCDX11Material::setupPixelResources(
 	}
 }
 
+void PCDX11Material::setupDepthBias(MeshTab0Ext128Sub10 *ext128sub10) {
+	float depthBias = 0.0f;
+	float slopeScaledDepthBias = 0.0f;
+
+	if (materialBlob->negDepthBias) {
+		depthBias = -materialBlob->negDepthBias;
+		slopeScaledDepthBias = -materialBlob->negSlopeScaledDepthBias;
+	} else if (ext128sub10->dword14 & 0x20000000) {
+		depthBias = -1.0f;
+		slopeScaledDepthBias = -10.0f;
+	}
+
+	auto *stateManager = deviceManager->getStateManager();
+	stateManager->setDepthBias(int32_t(depthBias));
+	stateManager->setDepthBiasClamp(0.0f);
+	stateManager->setSlopeScaledDepthBias(slopeScaledDepthBias);
+}
+
 void PCDX11Material::setupStencil(
 	MeshTab0Ext128Sub10 *ext128sub10,
 	bool honorRenderTwice,
@@ -211,7 +229,7 @@ void PCDX11Material::setupMg4(
 {
 	auto *stateManager = deviceManager->getStateManager();
 	setupStencil(ext128sub10, true, flags);
-	// TODO: stateManager->setDepthRange(ext128sub10->minDepth, ext128sub10->maxDepth)
+	stateManager->setDepthRange(ext128sub10->minDepth, ext128sub10->maxDepth);
 	if (mg_state != 4) {
 		mg_state = 21;
 		mg_B37BE4 = ~0u;
@@ -312,8 +330,10 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
 	setupVertexResources(subMaterialIndex, subMaterial, ext128sub10, (char*)drawableExtDword50, doEverything);
 
 	// TODO
-	stateManager->setOpacity(opacity);
 
+	setupDepthBias(ext128sub10);
+	deviceManager->getStateManager()->setDepthRange(ext128sub10->minDepth, ext128sub10->maxDepth);
+	deviceManager->getStateManager()->setOpacity(opacity);
 	return streamDecl;
 }
 
