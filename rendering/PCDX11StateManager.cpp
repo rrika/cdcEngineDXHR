@@ -238,6 +238,14 @@ void PCDX11StateManager::setSlopeScaledDepthBias(float) {
 	// TODO
 }
 
+void PCDX11StateManager::setBlendStateAndBlendFactors(
+	uint32_t blendState,
+	uint8_t alphaThreshold,
+	uint32_t)
+{
+	// TODO
+}
+
 void PCDX11StateManager::setSamplerState(
 	uint32_t slot,
 	PCDX11BaseTexture *tex,

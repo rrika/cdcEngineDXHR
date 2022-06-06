@@ -134,6 +134,7 @@ public:
 	void setDepthBias(int32_t);
 	void setDepthBiasClamp(float);
 	void setSlopeScaledDepthBias(float);
+	void setBlendStateAndBlendFactors(uint32_t blendState, uint8_t alphaThreshold, uint32_t);
 
 	void setSamplerState(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter);
 	void setTextureAndSampler(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown);

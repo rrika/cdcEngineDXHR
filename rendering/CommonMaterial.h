@@ -75,14 +75,14 @@ struct MaterialBlob {
 	uint16_t word2;
 	int dword4;
 	int renderTargetWriteMask;
-	int blendState;
+	int blendStateC; // for submat 0, 1, 5
 	int dword10;
 	uint16_t word14;
 	uint16_t word16;
 	int dword18; // flags, bit 11 controls renderTwice in ModelDrawable
 	int dword1C;
 	int dword20;
-	int dword24;
+	uint32_t blendState24; // for submat 4
 	uint8_t byte_28;
 	uint8_t alphaThreshold; // 29
 	uint8_t byte_2A;
