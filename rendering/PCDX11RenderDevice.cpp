@@ -219,6 +219,10 @@ void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain2() {
 	registerDrawer(funcIndex, 10, todoDrawA);
 }
 
+void PCDX11RenderDevice::setupShadowBuffer() {
+	// TODO
+}
+
 void PCDX11RenderDevice::refCountDec() {
 	// TODO
 }
@@ -515,7 +519,9 @@ void PCDX11RenderDevice::method_180() {
 }
 
 bool PCDX11RenderDevice::internalCreate() {
+	deviceContext = deviceManager->getD3DDeviceContext();
 	// TODO
+	setupShadowBuffer();
 	return true;
 }
 

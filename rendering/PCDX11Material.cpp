@@ -13,7 +13,7 @@ namespace cdc {
 uint32_t PCDX11Material::mg_state = 0;
 uint32_t PCDX11Material::mg_vsSelectAndFlags;
 PCDX11StreamDecl *PCDX11Material::mg_streamDecl;
-PCDX11Material *PCDX11Material::mg_EAAD1C;
+VertexAttributeLayoutA *PCDX11Material::mg_layoutA;
 PCDX11Material *PCDX11Material::mg_material;
 void *PCDX11Material::mg_cbdata;
 MeshTab0Ext128Sub10 *PCDX11Material::mg_ext128sub10;
@@ -238,7 +238,7 @@ void PCDX11Material::setupMg4(
 		mg_cbdata = 0;
 		mg_ext128sub10 = 0;
 		mg_streamDecl = 0;
-		mg_EAAD1C = 0;
+		mg_layoutA = 0;
 		stateManager->setBlendStateAndBlendFactors(0x7010010, 128, 0);
 		stateManager->setOpacity(1.0);
 		stateManager->setDepthState(D3D11_COMPARISON_EQUAL, 0);
@@ -287,7 +287,7 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
 		mg_cbdata = nullptr;
 		mg_ext128sub10 = nullptr;
 		mg_streamDecl = nullptr;
-		mg_EAAD1C = 0;
+		mg_layoutA = nullptr;
 		mg_state = 1;
 	}
 

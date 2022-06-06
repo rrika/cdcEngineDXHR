@@ -29,7 +29,7 @@ class PCDX11Material :
 
 	// these globals might be declared elsewhere
 	static PCDX11StreamDecl *mg_streamDecl;     // 00EAAD18
-	static PCDX11Material *mg_EAAD1C;           // 00EAAD1C
+	static VertexAttributeLayoutA *mg_layoutA;  // 00EAAD1C
 	static PCDX11Material *mg_material;         // 00EAAD20
 	static void *mg_cbdata;                     // 00EAAD24
 	static MeshTab0Ext128Sub10 *mg_ext128sub10; // 00EAAD28

@@ -80,6 +80,8 @@ public:
 	PCDX11StreamDeclCache streamDeclCache; // 1112D4
 	PCDX11Texture *missingTexture; // 1112F0
 
+	ID3D11DeviceContext *deviceContext; // 111580
+
 public:
 	PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t height);
 	void createDefaultResources();
@@ -88,6 +90,7 @@ public:
 	void registerComparatorsAndDrawersModel();
 	void registerComparatorsAndDrawersTerrain1();
 	void registerComparatorsAndDrawersTerrain2();
+	void setupShadowBuffer();
 
 	// incomplete
 	void refCountDec() override;
