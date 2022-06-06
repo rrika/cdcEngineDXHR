@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <d3d11.h>
 #include "PCDX11InternalResource.h"
-// #include "CommonStreamDecl.h"
+#include "CommonStreamDecl.h"
 #include "shaders/PCDX11Shader.h"
 
 class D3D11_INPUT_ELEMENT_DESC;
@@ -14,8 +14,8 @@ class PCDX11RenderDevice;
 class PCDX11VertexBuffer;
 
 class PCDX11StreamDecl :
-	public PCDX11InternalResource
-	// public CommonStreamDecl
+	public PCDX11InternalResource,
+	public CommonStreamDecl
 {
 public:
 	PCDX11StreamDecl(

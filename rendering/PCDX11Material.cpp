@@ -2,6 +2,7 @@
 #include "PCDX11Material.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11StateManager.h"
+#include "PCDX11StreamDecl.h" // for CommonStreamDecl to PCDX11StreamDecl cast
 #include "RenderMesh.h"
 #include "surfaces/PCDX11Texture.h"
 #include "buffers/PCDX11UberConstantBuffer.h"
@@ -316,13 +317,17 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
 	auto vertexShader = (*vertexTable)[vertexIndex];
 	stateManager->setVertexShader(vertexShader);
 
-	VertexAttributeLayoutB *layoutB = nullptr; // TODO
 
-	PCDX11StreamDecl *streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
-		layoutA,
-		layoutB,
-		(flags >> 3) & 1,
-		&vertexShader->m_sub);
+	auto *streamDecl = static_cast<PCDX11StreamDecl*>(ext128sub10->streamDecls24[subMaterialIndex]);
+	if (!streamDecl) {
+		VertexAttributeLayoutB *layoutB = nullptr; // TODO
+		
+		streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
+			layoutA,
+			layoutB,
+			(flags >> 3) & 1,
+			&vertexShader->m_sub);
+	}
 
 	// TODO
 	if (true)

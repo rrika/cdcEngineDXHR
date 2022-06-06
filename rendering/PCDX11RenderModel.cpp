@@ -119,6 +119,11 @@ void PCDX11RenderModel::resConstruct() {
 		tab0Ext128Byte = new MeshTab0Ext128[count0];
 		for (uint32_t i=0; i<count0; i++) {
 			// TODO
+
+			// HACK
+			tab0Ext128Byte[i].material = nullptr;
+			for (uint32_t j=0; j<16; j++)
+				tab0Ext128Byte[i].sub10.streamDecls24[j] = nullptr;
 		}
 		tab0Ext16Byte = new MeshTab0Ext16[count0];
 		for (uint32_t i=0; i<count0; i++) {
