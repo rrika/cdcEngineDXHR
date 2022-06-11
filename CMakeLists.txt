@@ -51,3 +51,21 @@ add_subdirectory(input)
 add_subdirectory(miniz)
 add_subdirectory(rendering)
 add_subdirectory(scene)
+
+include_directories(imgui)
+target_sources(dxhr PRIVATE
+	imgui/imgui.cpp
+	imgui/imgui_draw.cpp
+	imgui/imgui_tables.cpp
+	imgui/imgui_widgets.cpp
+	imgui/backends/imgui_impl_dx11.cpp
+	imgui/backends/imgui_impl_win32.cpp)
+
+# clang-cl doesn't find _mm_set_ss
+add_compile_definitions(
+	IMGUI_DISABLE_SSE=1)
+
+set_property(
+	SOURCE imgui/imgui_draw.cpp
+	PROPERTY COMPILE_DEFINITIONS
+	_CRT_USE_BUILTIN_OFFSETOF=1)

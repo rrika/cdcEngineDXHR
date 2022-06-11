@@ -1,5 +1,6 @@
 #include <windows.h>
 #include "rendering/BuiltinResources.h"
+#include "imgui/imgui.h"
 #include "main.h"
 #include "main2.h"
 #include "spinnycube.h"
@@ -9,7 +10,17 @@
 
 using namespace cdc;
 
+#if ENABLE_IMGUI
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+#endif
+
 LRESULT CALLBACK gameWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+
+#if ENABLE_IMGUI
+    if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
+        return true;
+#endif
+
 	switch (uMsg)
 	{
 	case WM_DESTROY:

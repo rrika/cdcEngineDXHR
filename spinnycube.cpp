@@ -38,6 +38,12 @@
 #include "rendering/surfaces/PCDX11Texture.h"
 #include "rendering/VertexAttribute.h"
 
+#if ENABLE_IMGUI
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_win32.h"
+#include "imgui/backends/imgui_impl_dx11.h"
+#endif
+
 float VertexData[] = // float4 position, float3 normal, float2 texcoord, float3 color
 {
     -1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
@@ -350,6 +356,17 @@ int spinnyCube(HWND window,
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+#if ENABLE_IMGUI
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplWin32_Init(window);
+    ImGui_ImplDX11_Init(baseDevice, baseDeviceContext);
+#endif
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     ID3DBlob* vsBlob;
 
     D3DCompile(shaders, sizeof(shaders), "shaders.hlsl", nullptr, nullptr, "vs_main", "vs_5_0", 0, 0, &vsBlob, nullptr);
@@ -511,6 +528,10 @@ int spinnyCube(HWND window,
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+#if ENABLE_IMGUI
+    bool showImguiWindow = true;
+#endif
+
     while (true)
     {
         MSG msg;
@@ -520,10 +541,10 @@ int spinnyCube(HWND window,
             TranslateMessage(&msg);
             if (msg.message == WM_DESTROY) {
                 PostQuitMessage(0);
-                return 0;
+                goto end;
             }
             if (msg.message == WM_QUIT) {
-                return 0;
+                goto end;
             }
 
             mouseKeyboard->processWndProc(msg.message, msg.wParam, msg.lParam);
@@ -531,6 +552,12 @@ int spinnyCube(HWND window,
             //if (msg.message == WM_KEYDOWN) return 0;
             DispatchMessageA(&msg);
         }
+
+#if ENABLE_IMGUI
+        ImGui_ImplDX11_NewFrame();
+        ImGui_ImplWin32_NewFrame();
+        ImGui::NewFrame();
+#endif
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -578,12 +605,30 @@ int spinnyCube(HWND window,
         renderDevice->finishScene();
         renderDevice->endRenderList();
 
+#if ENABLE_IMGUI
+        if (showImguiWindow) {
+            ImGui::Begin("Another Window", &showImguiWindow);
+            ImGui::Text("Hello!");
+            if (ImGui::Button("Close Me"))
+                showImguiWindow = false;
+            ImGui::End();
+        }
+        ImGui::Render();
+#endif
+
         renderDevice->drawRenderLists();
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
         swapChain->Present(1, 0);
     }
+end:
+#if ENABLE_IMGUI 
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
+#endif
+    return 0;
 }
 
 bool SpinnyCubePass::pre(
@@ -636,4 +681,10 @@ void SpinnyCubeDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
     stateManager->updateSamplers();
 
     renderDevice->getD3DDeviceContext()->DrawIndexed(ARRAYSIZE(IndexData), 0, 0);
+
+#if ENABLE_IMGUI
+    stateManager->setVertexShader(nullptr);
+    stateManager->setPixelShader(nullptr);
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#endif
 }
