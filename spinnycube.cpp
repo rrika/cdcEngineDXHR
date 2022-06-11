@@ -257,6 +257,7 @@ public:
     cdc::PCDX11IndexBuffer *cdcIndexBuffer;
     cdc::PCDX11StreamDecl *streamDecl;
     cdc::PCDX11VertexBuffer *cdcVertexBuffer;
+    cdc::PCDX11Texture *texture;
     void draw(uint32_t funcSetIndex, IRenderDrawable *other) override;
     uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *other) override { /*TODO*/ return 0; };
 };
@@ -459,8 +460,6 @@ int spinnyCube(HWND window,
     bottleTexture->asyncCreate();
     printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
 
-    stateManager.setTextureAndSampler(0, bottleTexture, 0, 0.0f);
-
     auto bottleRenderModel = (cdc::PCDX11RenderModel*)renderResourceSection.getWrapped(0xA301);
     printf("have bottle cdc render model: %p\n", bottleRenderModel);
     printf("have bottle cdc mesh blob: %p\n", bottleRenderModel->getMesh());
@@ -508,6 +507,7 @@ int spinnyCube(HWND window,
     cubeDrawable.cdcIndexBuffer = &cdcIndexBuffer;
     cubeDrawable.streamDecl = &streamDecl;
     cubeDrawable.cdcVertexBuffer = &cdcVertexBuffer;
+    cubeDrawable.texture = bottleTexture;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -611,6 +611,9 @@ void SpinnyCubePass::post(
 }
 
 void SpinnyCubeDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
+
+    stateManager->setTextureAndSampler(0, texture, 0, 0.0f);
+
     stateManager->updateMatrices();
     stateManager->updateConstantBuffers();
 
