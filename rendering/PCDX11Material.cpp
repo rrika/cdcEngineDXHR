@@ -271,6 +271,16 @@ void PCDX11Material::setupMg5(
 
 }
 
+void PCDX11Material::setupMg21() {
+	mg_state = 21;
+	mg_vsSelectAndFlags = 0xffffffff;
+	mg_material = nullptr;
+	mg_cbdata = nullptr;
+	mg_ext128sub10 = nullptr;
+	mg_streamDecl = nullptr;
+	mg_layoutA = nullptr;
+}
+
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
 	MeshTab0Ext128Sub10* ext128sub10,
 	void *drawableExtDword50,
@@ -308,7 +318,6 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
 	MaterialBlobSub *subMaterial = materialBlob->subMat4C[subMaterialIndex];
 	uint32_t vsSelectAndFlags = (vsSelect << 8) | flags;
 	bool materialChange = mg_material != this;
-	materialChange = true; // HACK: missing invalidate of mg_ by spinny cube necessitates this
 	if (materialChange || mg_vsSelectAndFlags != vsSelectAndFlags) {
 
 		auto *stateManager = deviceManager->getStateManager();

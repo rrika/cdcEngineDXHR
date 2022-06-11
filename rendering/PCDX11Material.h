@@ -52,6 +52,7 @@ public:
 
 	void setupMg4(PCDX11RenderDevice*, MeshTab0Ext128Sub10*, uint32_t);
 	void setupMg5(PCDX11RenderDevice*, MeshTab0Ext128Sub10*, uint32_t, float);
+	static void setupMg21();
 
 	PCDX11StreamDecl *buildStreamDecl015(
 		MeshTab0Ext128Sub10*,

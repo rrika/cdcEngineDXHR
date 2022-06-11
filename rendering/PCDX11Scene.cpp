@@ -1,5 +1,6 @@
 #include "buffers/PCDX11UberConstantBuffer.h"
 #include "PCDX11DeviceManager.h"
+#include "PCDX11Material.h"
 #include "PCDX11Scene.h"
 #include "PCDX11StateManager.h"
 #include "surfaces/PCDX11DepthBuffer.h"
@@ -29,6 +30,8 @@ void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 	if (prevScene)
 		prevScene->drawableListsAndMasks->absorbToBack(*drawableListsAndMasks);
 	renderDevice->scene78 = backupScene;
+
+	PCDX11Material::setupMg21();
 }
 
 void PCDX11Scene::updateUniforms() {

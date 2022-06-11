@@ -1,6 +1,8 @@
 #include "PCDX11DeviceManager.h"
+#include "PCDX11Material.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11RenderPassCallbacks.h"
+#include "PCDX11Scene.h"
 #include "PCDX11StateManager.h"
 #include "surfaces/PCDX11DepthBuffer.h" // for CommonDepthBuffer to PCDX11DepthBuffer cast
 
@@ -128,7 +130,8 @@ void PCDX11CompositePassCallbacks::post(
 	CommonRenderDevice *renderDevice,
 	uint32_t passId)
 {
-	// TODO
+	CommonScene *commonScene = renderDevice->scene78;
+	commonScene->byte25C = 0;
 }
 
 
@@ -146,7 +149,8 @@ void PCDX11OpaquePassCallbacks::post(
 	CommonRenderDevice *renderDevice,
 	uint32_t passId)
 {
-	// TODO
+	CommonScene *commonScene = renderDevice->scene78;
+	commonScene->byte25C = 0;
 }
 
 
@@ -164,7 +168,8 @@ void PCDX11TranslucentPassCallbacks::post(
 	CommonRenderDevice *renderDevice,
 	uint32_t passId)
 {
-	// TODO
+	CommonScene *commonScene = renderDevice->scene78;
+	commonScene->byte25C = 0;
 }
 
 
@@ -182,7 +187,9 @@ void PCDX11AlphaBloomFSXPassCallbacks::post(
 	CommonRenderDevice *renderDevice,
 	uint32_t passId)
 {
-	// TODO
+	CommonScene *commonScene = renderDevice->scene78;
+	commonScene->byte25C = 0;
+	PCDX11Material::setupMg21();
 }
 
 
@@ -210,15 +217,14 @@ bool PCDX11FullScreenFXPassCallbacks::pre(
 	uint32_t drawableCount,
 	uint32_t priorPassesBitfield)
 {
-	// TODO
-	return true;
+	return drawableCount != 0;
 }
 
 void PCDX11FullScreenFXPassCallbacks::post(
 	CommonRenderDevice *renderDevice,
 	uint32_t passId)
 {
-	// TODO
+	// empty
 }
 
 
@@ -228,15 +234,23 @@ bool PCDX11PostFSXPassCallbacks::pre(
 	uint32_t drawableCount,
 	uint32_t priorPassesBitfield)
 {
-	// TODO
-	return true;
+	return drawableCount != 0;
 }
 
 void PCDX11PostFSXPassCallbacks::post(
 	CommonRenderDevice *renderDevice,
 	uint32_t passId)
 {
+	CommonScene *commonScene = renderDevice->scene78;
+	PCDX11Scene *scene = static_cast<PCDX11Scene*>(commonScene);
 	// TODO
+	// if (scene->hasPostFsxRelated7A1) {
+	// 	if (scene->postFsxRelated7A4) {
+	// 		(*(void (**)(void))(*(_DWORD *)scene->postFsxRelated7A4 + 12))();
+	// 		scene->postFsxRelated7A4 = 0;
+	// 	}
+	// 	scene->base.sub114.dword38 = 0;
+	// }
 }
 
 
@@ -246,15 +260,16 @@ bool PCDX11DepthDependentPassCallbacks::pre(
 	uint32_t drawableCount,
 	uint32_t priorPassesBitfield)
 {
-	// TODO
-	return true;
+	return drawableCount != 0;
 }
 
 void PCDX11DepthDependentPassCallbacks::post(
 	CommonRenderDevice *renderDevice,
 	uint32_t passId)
 {
-	// TODO
+	CommonScene *commonScene = renderDevice->scene78;
+	PCDX11Scene *scene = static_cast<PCDX11Scene*>(commonScene);
+	scene->updateUniforms();
 }
 
 }

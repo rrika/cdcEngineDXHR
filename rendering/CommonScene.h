@@ -34,7 +34,7 @@ public:
 	float fogColor[4];
 	// float float110;
 	CommonSceneSub114 sub114;
-	// uint8_t byte25C;
+	uint8_t byte25C; // reset by PCDX11CompositePassCallbacks::post
 	// uint8_t f25D[2];
 	// Matrix4x4 mat260;
 	// char field_29F;
