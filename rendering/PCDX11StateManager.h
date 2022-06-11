@@ -62,7 +62,7 @@ class PCDX11StateManager : public PCDX11InternalResource {
 	> m_depthStencilStates; // 90
 	int m_topology; // B8
 
-	uint8_t m_renderTargetWriteMask; // CC
+	uint16_t m_renderTargetWriteMask; // CC
 	bool m_dirtyShaderResources; // CE
 	bool m_dirtySamplers; // CF
 	ID3D11SamplerState *m_samplers[16 + 4]; // D0
@@ -135,6 +135,7 @@ public:
 	void setDepthBiasClamp(float);
 	void setSlopeScaledDepthBias(float);
 	void setBlendStateAndBlendFactors(uint32_t blendState, uint8_t alphaThreshold, uint32_t);
+	void setRenderTargetWriteMask(uint32_t);
 
 	void setSamplerState(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter);
 	void setTextureAndSampler(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown);

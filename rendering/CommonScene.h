@@ -16,11 +16,13 @@ class RenderPasses;
 struct CommonSceneSub10 {
 	float cameraDirection[4]; // 50
 	float cameraPosition[4]; // 60
+	uint32_t dwordC0; // C0, for PCDX11DepthPassCallbacks::pre
 	uint32_t mask; // E0
 };
 
 struct CommonSceneSub114 {
 	TextureMap *tex14[1]; // 14
+	TextureMap *depthRenderTexture; // 3C
 };
 
 class CommonScene :

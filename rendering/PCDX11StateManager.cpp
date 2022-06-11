@@ -246,6 +246,14 @@ void PCDX11StateManager::setBlendStateAndBlendFactors(
 	// TODO
 }
 
+void PCDX11StateManager::setRenderTargetWriteMask(uint32_t mask) {
+	mask &= 15;
+	if (mask != m_renderTargetWriteMask) {
+		m_renderTargetWriteMask = mask;
+		m_dirtyBlendState = true;
+	}
+}
+
 void PCDX11StateManager::setSamplerState(
 	uint32_t slot,
 	PCDX11BaseTexture *tex,

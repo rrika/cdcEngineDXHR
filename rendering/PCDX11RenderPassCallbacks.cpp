@@ -1,6 +1,8 @@
 #include "PCDX11DeviceManager.h"
+#include "PCDX11RenderDevice.h"
 #include "PCDX11RenderPassCallbacks.h"
 #include "PCDX11StateManager.h"
+#include "surfaces/PCDX11DepthBuffer.h" // for CommonDepthBuffer to PCDX11DepthBuffer cast
 
 namespace cdc {
 
@@ -55,20 +57,56 @@ void PCDX11DeferredShadingPassCallbacks::post(
 
 
 bool PCDX11DepthPassCallbacks::pre(
-	CommonRenderDevice *renderDevice,
+	CommonRenderDevice *commonRenderDevice,
 	uint32_t passId,
 	uint32_t drawableCount,
 	uint32_t priorPassesBitfield)
 {
-	// TODO
+	if (drawableCount == 0)
+		return false;
+
+	auto *renderDevice = static_cast<PCDX11RenderDevice*>(commonRenderDevice);
+	auto *stateManager = deviceManager->getStateManager();
+	CommonScene *scene = renderDevice->scene78;
+
+	if (scene->depthBuffer) {
+		// TODO: scene->depthBuffer->byte14 = 0;
+		uint32_t dwordC0 = scene->sub10.dwordC0;
+		if (dwordC0 == 24 || dwordC0 == 26) {
+			float color[] = {0.0f, 0.0f, 0.0f, 0.0f};
+			renderDevice->clearRenderTargetNow(2, color, 1.0, 0);
+		}
+	}
+
+	stateManager->pushRenderTargets(nullptr, static_cast<PCDX11DepthBuffer*>(scene->depthBuffer));
+	stateManager->setRenderTargetWriteMask(0);
+	stateManager->setDepthState(D3D11_COMPARISON_LESS_EQUAL, 1);
+
 	return true;
 }
 
 void PCDX11DepthPassCallbacks::post(
-	CommonRenderDevice *renderDevice,
+	CommonRenderDevice *commonRenderDevice,
 	uint32_t passId)
 {
-	// TODO
+	auto *renderDevice = static_cast<PCDX11RenderDevice*>(commonRenderDevice);
+	auto *stateManager = deviceManager->getStateManager();
+
+	stateManager->popRenderTargets();
+	// TODO:
+	// StencilSettings stencilSettings {
+	// 	0xFF00000E,
+	// 	0xFF00000E,
+	// 	0x0000FFFF,
+	// 	0x00000000
+	// };
+	// stateManager->setStencil(&stencilSettings);
+
+	CommonScene *scene = renderDevice->scene78;
+	if (scene->depthBuffer) {
+		// TODO: scene->depthBuffer->byte14 = 1;
+		scene->sub114.depthRenderTexture = scene->depthBuffer->getRenderTexture();
+	}
 }
 
 
