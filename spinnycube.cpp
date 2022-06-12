@@ -268,6 +268,11 @@ public:
     uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *other) override { /*TODO*/ return 0; };
 };
 
+class ImGuiDrawable : public cdc::IRenderDrawable {
+    void draw(uint32_t funcSetIndex, IRenderDrawable *other) override;
+    uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *other) override { /*TODO*/ return 0; };
+};
+
 class SpinnyCubePass : public cdc::IRenderPassCallback {
 public:
     D3D11_VIEWPORT *viewport;
@@ -506,8 +511,9 @@ int spinnyCube(HWND window,
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     cdc::CommonSceneSub10 commonSceneSub10;
-    commonSceneSub10.mask = 0x1001; // pass 0 and 12
+    commonSceneSub10.mask = 0x1101; // pass 0, 12 and 8
     // pass 12 as initialized by the renderdevice maps to function set 10 (normals)
+    // pass 8 runs last and is where I put imgui since it messes with the render state
 
     SpinnyCubePass cubePass;
     cubePass.viewport = &viewport;
@@ -525,6 +531,8 @@ int spinnyCube(HWND window,
     cubeDrawable.streamDecl = &streamDecl;
     cubeDrawable.cdcVertexBuffer = &cdcVertexBuffer;
     cubeDrawable.texture = bottleTexture;
+
+    ImGuiDrawable imGuiDrawable;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -601,6 +609,7 @@ int spinnyCube(HWND window,
         renderDevice->recordDrawable(&cubeDrawable, /*mask=*/ 1, /*addToParent=*/ 0);
         static_cast<cdc::PCDX11RenderModelInstance*>(bottleRenderModelInstance)->baseMask = 0x1000; // normals
         bottleRenderModelInstance->recordDrawables();
+        renderDevice->recordDrawable(&imGuiDrawable, /*mask=*/ 0x100, /*addToParent=*/ 0);
 
         renderDevice->finishScene();
         renderDevice->endRenderList();
@@ -681,7 +690,9 @@ void SpinnyCubeDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
     stateManager->updateSamplers();
 
     renderDevice->getD3DDeviceContext()->DrawIndexed(ARRAYSIZE(IndexData), 0, 0);
+}
 
+void ImGuiDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 #if ENABLE_IMGUI
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 #endif
