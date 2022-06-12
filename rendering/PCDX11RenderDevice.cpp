@@ -651,6 +651,10 @@ void PCDX11RenderDevice::drawRenderListsInternal(void *arg) {
 	// TODO
 	if (arg) {
 		// TODO
+		auto stateManager = deviceManager->getStateManager();
+		stateManager->reset();
+		stateManager->setCommonConstantBuffers();
+
 		static_cast<PCDX11LightManager*>(lightManager)->setAttenuationSampler();
 		while (renderList_processing) {
 			// TODO

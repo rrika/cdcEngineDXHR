@@ -68,6 +68,46 @@ PCDX11StateManager::PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D1
 }
 
 
+void PCDX11StateManager::reset() {
+	// TODO
+
+	m_dirtyShaderResourcesFirst = 0;
+	m_dirtySamplersFirst = 0;
+
+	m_renderTarget = nullptr;
+	m_depthBuffer = nullptr;
+	m_renderTargetStackIndex = 0;
+
+	m_dirtyRasterizerState = true;
+	m_dirtyDepthStencilState = true;
+	m_dirtyBlendState = true;
+	m_dirtyConstantBuffers = true;
+	m_dirtyShaderResources = true;
+	m_dirtySamplers = true;
+
+	m_topology = 0;
+	m_vertexStride = 0;
+	m_streamDecl = nullptr;
+	m_indexBufferD3D = nullptr;
+	m_vertexBufferD3D = nullptr;
+	m_pixelShader = nullptr;
+	m_vertexShader = nullptr;
+
+	// TODO
+
+	for (int i=0; i<7; i++)
+		m_constantBufferPs[i] = nullptr;
+	for (int i=0; i<7; i++)
+		m_constantBufferVs[i] = nullptr;
+
+	// TODO
+
+	m_alphaThreshold = 1.0f;
+	m_materialOpacity = 0.0f;
+
+	// TODO
+}
+
 void PCDX11StateManager::setIndexBuffer(PCDX11IndexBuffer *indexBuffer) {
 	ID3D11Buffer *buffer = nullptr;
 	if (indexBuffer)

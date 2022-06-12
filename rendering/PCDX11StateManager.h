@@ -120,6 +120,7 @@ public:
 	PCDX11StateManager();
 	PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D11Device *device);
 
+	void reset();
 	void setIndexBuffer(PCDX11IndexBuffer *indexBuffer);
 	void setVertexBuffer(PCDX11VertexBuffer *vertexBuffer);
 	void setStreamDecl(PCDX11StreamDecl *streamDecl);

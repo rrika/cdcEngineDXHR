@@ -683,8 +683,6 @@ void SpinnyCubeDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
     renderDevice->getD3DDeviceContext()->DrawIndexed(ARRAYSIZE(IndexData), 0, 0);
 
 #if ENABLE_IMGUI
-    stateManager->setVertexShader(nullptr);
-    stateManager->setPixelShader(nullptr);
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 #endif
 }
