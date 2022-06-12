@@ -17,6 +17,7 @@ target_sources(dxhr PRIVATE
 	BuiltinResources.cpp
 	CommonMaterial.cpp
 	CommonRenderDevice.cpp
+	Inspector.cpp
 	LinearAllocator.cpp
 	PCDX11DeviceManager.cpp
 	PCDX11InternalResource.cpp

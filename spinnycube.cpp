@@ -42,6 +42,7 @@
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_win32.h"
 #include "imgui/backends/imgui_impl_dx11.h"
+#include "rendering/Inspector.h"
 #endif
 
 float VertexData[] = // float4 position, float3 normal, float2 texcoord, float3 color
@@ -616,10 +617,8 @@ int spinnyCube(HWND window,
 
 #if ENABLE_IMGUI
         if (showImguiWindow) {
-            ImGui::Begin("Another Window", &showImguiWindow);
-            ImGui::Text("Hello!");
-            if (ImGui::Button("Close Me"))
-                showImguiWindow = false;
+            ImGui::Begin("Scene drawables", &showImguiWindow);
+            buildUI(scene->drawableListsAndMasks);            
             ImGui::End();
         }
         ImGui::Render();
