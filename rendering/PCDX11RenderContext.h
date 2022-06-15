@@ -4,6 +4,7 @@
 #include "PCDX11InternalResource.h"
 
 struct DXGI_MODE_DESC;
+class ID3D11Texture2D;
 class IDXGISwapChain;
 
 namespace cdc {
@@ -23,6 +24,7 @@ public:
 	bool fullscreen; // 25
 	PCDX11RenderTarget *renderTarget2C = nullptr; // 2C
 	IDXGISwapChain *swapChain = nullptr; // 34
+	ID3D11Texture2D *frameBuffer = nullptr;
 	PCDX11RenderDevice *renderDevice; // 68
 
 private:

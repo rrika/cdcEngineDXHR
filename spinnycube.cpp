@@ -329,9 +329,7 @@ int spinnyCube(HWND window,
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    ID3D11Texture2D* frameBuffer;
-
-    swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&frameBuffer));
+    ID3D11Texture2D* frameBuffer = renderContext->frameBuffer;
 
     ID3D11RenderTargetView* frameBufferView;
 

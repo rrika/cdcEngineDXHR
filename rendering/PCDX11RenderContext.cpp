@@ -1,6 +1,6 @@
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderContext.h"
-#include <dxgi.h>
+#include <d3d11.h>
 #include <cstdio>
 
 namespace cdc {
@@ -24,6 +24,11 @@ void PCDX11RenderContext::fillModeDesc(DXGI_MODE_DESC& modeDesc) {
 }
 
 bool PCDX11RenderContext::createRenderTargets() {
+	if (swapChain) {
+		swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&frameBuffer));
+	} else {
+
+	}
 	// TODO
 	return true;
 }
