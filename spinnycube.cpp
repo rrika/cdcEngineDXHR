@@ -308,27 +308,12 @@ int spinnyCube(HWND window,
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    IDXGIDevice1* dxgiDevice;
-
-    device->QueryInterface(__uuidof(IDXGIDevice1), reinterpret_cast<void**>(&dxgiDevice));
-
-    IDXGIAdapter* dxgiAdapter;
-
-    dxgiDevice->GetAdapter(&dxgiAdapter);
-
-    IDXGIFactory2* dxgiFactory;
-
-    dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(&dxgiFactory));
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
     cdc::PCDX11RenderContext *renderContext = renderDevice->getRenderContextAny();
     renderContext->internalCreate();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     D3D11_TEXTURE2D_DESC depthBufferDesc;
-
     renderContext->frameBuffer->GetDesc(&depthBufferDesc); // base on framebuffer properties
 
     cdc::PCDX11RenderTarget& cdcRenderTarget = *renderContext->renderTarget2C;
@@ -408,18 +393,6 @@ int spinnyCube(HWND window,
     ID3D11RasterizerState1* rasterizerState;
 
     device->CreateRasterizerState1(&rasterizerDesc, &rasterizerState);
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    // struct Constants
-    // {
-    //     float4x4 WorldViewProject;
-    //     float4x4 World;
-    //     float4x4 ViewProject;
-    // };
-
-    // cdc::PCDX11ConstantBufferPool cbPool{renderDevice};
-    // cdc::PCDX11UberConstantBuffer cdcConstantBuffer((sizeof(Constants) + 15) / 16);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
