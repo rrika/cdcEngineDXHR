@@ -11,6 +11,7 @@ namespace cdc {
 
 class PCDX11RenderDevice;
 class PCDX11RenderTarget;
+class PCDX11DepthBuffer;
 
 class PCDX11RenderContext : public PCDX11InternalResource {
 public:
@@ -23,6 +24,7 @@ public:
 	uint32_t bufferCount; // 28
 	bool fullscreen; // 25
 	PCDX11RenderTarget *renderTarget2C = nullptr; // 2C
+	PCDX11DepthBuffer *depthBuffer = nullptr; // 30
 	IDXGISwapChain *swapChain = nullptr; // 34
 	ID3D11Texture2D *frameBuffer = nullptr;
 	PCDX11RenderDevice *renderDevice; // 68

@@ -1,6 +1,7 @@
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderContext.h"
 #include "surfaces/PCDX11DefaultRenderTarget.h"
+#include "surfaces/PCDX11DepthBuffer.h"
 #include <d3d11.h>
 #include <cstdio>
 
@@ -32,12 +33,15 @@ bool PCDX11RenderContext::createRenderTargets() {
 		// TODO
 	}
 	// TODO
-	uint32_t width = 0; // TODO
-	uint32_t height = 0; // TODO
+	uint32_t width = this->width; // TODO
+	uint32_t height = this->height; // TODO
 	uint32_t format = 0; // TODO
 	renderTarget2C = new PCDX11DefaultRenderTarget(
 		width, height, 1, format, renderDevice, frameBuffer, 0);
 	// TODO
+	uint32_t depthFormat = DXGI_FORMAT_D24_UNORM_S8_UINT; // HACK
+	depthBuffer = new PCDX11DepthBuffer(
+		width, height, /*unknown=*/ 1, depthFormat, renderDevice);
 	return true;
 }
 
