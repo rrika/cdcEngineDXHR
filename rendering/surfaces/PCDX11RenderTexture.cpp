@@ -4,6 +4,20 @@
 
 namespace cdc {
 
+PCDX11RenderTexture::PCDX11RenderTexture(
+	uint16_t width, uint16_t height,
+	uint32_t unknown1, uint32_t isDepthBuffer,
+	PCDX11RenderDevice *renderDevice, uint32_t unknown2)
+:
+	PCDX11BaseTexture(width, height, 0),
+	shortWidth(width),
+	shortHeight(height),
+	isDepthBuffer(isDepthBuffer),
+	renderDevice(renderDevice)
+{
+
+	// TODO
+}
 void PCDX11RenderTexture::ensureRenderTargetView() {
 	// TODO
 	auto *device = deviceManager->getD3DDevice();
@@ -36,6 +50,7 @@ ID3D11View *PCDX11RenderTexture::getView() {
 
 void PCDX11RenderTexture::initForRenderTarget(IRenderSurface *renderSurface, uint32_t format, ID3D11Texture2D *texture) {
 	// TODO
+	textureFormat = format;
 	resource = texture;
 }
 

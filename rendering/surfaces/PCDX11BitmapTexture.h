@@ -16,9 +16,9 @@ class PCDX11BitmapTexture :
 public:
 	PCDX11BitmapTexture(
 		PCDX11RenderDevice *renderDevice,
-		uint32_t a, uint32_t b, uint32_t c, uint32_t d)
+		uint32_t format, uint32_t b, uint32_t c, uint32_t d)
 	:
-		PCDX11BaseTexture(),
+		PCDX11BaseTexture(0, 0, format),
 		PCDX11AsyncCreateResource()
 	{
 		repeatmode = 7; // wrap in all axes (rather than clamp)

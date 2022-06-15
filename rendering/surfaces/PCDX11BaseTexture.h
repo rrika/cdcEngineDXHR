@@ -21,6 +21,12 @@ protected:
 	PCDX11RenderDevice *renderDevice;
 	uint16_t mipLevels;
 public:
+	PCDX11BaseTexture(uint32_t width, uint32_t height, uint32_t dxgiFormat) :
+		width(width),
+		height(height),
+		textureFormat(dxgiFormat)
+	{} // TODO: incomplete
+
 	virtual ID3D11Resource *getTextureResource() = 0;
 	virtual ID3D11ShaderResourceView *createShaderResourceView() = 0;
 	virtual ID3D11UnorderedAccessView *createUnorderedAccessView() = 0;

@@ -23,10 +23,15 @@ public:
 	// uint8_t byte4D;
 	// uint8_t byte4E;
 	// uint8_t byte4F;
-	// uint16_t word50;
-	// uint16_t word52;
+	uint16_t shortWidth;
+	uint16_t shortHeight;
 	uint32_t isDepthBuffer = 0;
 	// PCDX11RenderBuffer *renderBuffer; // 58
+
+	PCDX11RenderTexture(
+		uint16_t width, uint16_t height,
+		uint32_t unknown1, uint32_t isDepthBuffer,
+		PCDX11RenderDevice *renderDevice, uint32_t unknown2);
 
 	void ensureRenderTargetView();
 	void ensureBuffer();
