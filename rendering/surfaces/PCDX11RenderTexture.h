@@ -9,16 +9,14 @@ class PCDX11RenderTexture :
 	public PCDX11BaseTexture
 {
 public:
-	uint32_t width; // 18
-	uint32_t height; // 1C
 	PCDX11RenderDevice *renderDevice; // 2C
 	// uint32_t dword30;
 	// uint32_t dword34;
-	ID3D11Resource *resource; // 38
-	ID3D11View *view; // 3C (color or depth)
-	ID3D11ShaderResourceView *shaderResourceView; // 40
-	ID3D11UnorderedAccessView *unorderedAccessView; // 44
-	// uint32_t dword48;
+	ID3D11Resource *resource = nullptr; // 38
+	ID3D11View *view = nullptr; // 3C (color or depth)
+	ID3D11ShaderResourceView *shaderResourceView = nullptr; // 40
+	ID3D11DepthStencilView *depthStencilView = nullptr; // 44
+	ID3D11UnorderedAccessView *unorderedAccessView = nullptr; // 48
 	// uint8_t byte4C;
 	// uint8_t byte4D;
 	// uint8_t byte4E;
@@ -49,6 +47,8 @@ public:
 	ID3D11Resource *getTextureResource() override;
 	ID3D11ShaderResourceView *createShaderResourceView() override;
 	ID3D11UnorderedAccessView *createUnorderedAccessView() override;
+
+	ID3D11RenderTargetView *createRenderTargetView();
 };
 
 }

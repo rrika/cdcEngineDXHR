@@ -6,10 +6,21 @@ namespace cdc {
 
 void PCDX11RenderTexture::ensureRenderTargetView() {
 	// TODO
+	auto *device = deviceManager->getD3DDevice();
+	if (!view) {
+		ID3D11RenderTargetView* frameBufferView;
+		device->CreateRenderTargetView(resource, nullptr, &frameBufferView);
+		view = frameBufferView;
+	}
+	// TODO
 }
 
 void PCDX11RenderTexture::ensureBuffer() {
 	// TODO
+	if (!view || !shaderResourceView) {
+		// TODO
+		ensureRenderTargetView();
+	}
 }
 
 ID3D11View *PCDX11RenderTexture::getView() {
@@ -59,6 +70,11 @@ ID3D11UnorderedAccessView *PCDX11RenderTexture::createUnorderedAccessView() {
 		// TODO
 	}
 	return unorderedAccessView;
+}
+
+ID3D11RenderTargetView *PCDX11RenderTexture::createRenderTargetView() {
+	ensureBuffer();
+	return static_cast<ID3D11RenderTargetView*>(view);
 }
 
 }

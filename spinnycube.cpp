@@ -330,9 +330,9 @@ int spinnyCube(HWND window,
 
     ID3D11Texture2D* frameBuffer = renderContext->frameBuffer;
 
-    ID3D11RenderTargetView* frameBufferView;
-
-    device->CreateRenderTargetView(frameBuffer, nullptr, &frameBufferView);
+    PCDX11RenderTexture renderTexture;
+    renderTexture.resource = frameBuffer;
+    ID3D11RenderTargetView* frameBufferView = renderTexture.createRenderTargetView();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
