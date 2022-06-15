@@ -25,7 +25,7 @@ public:
 	// uint8_t byte4F;
 	// uint16_t word50;
 	// uint16_t word52;
-	// uint32_t dword54;
+	uint32_t isDepthBuffer = 0;
 	// PCDX11RenderBuffer *renderBuffer; // 58
 
 	void ensureRenderTargetView();
@@ -52,6 +52,7 @@ public:
 	ID3D11UnorderedAccessView *createUnorderedAccessView() override;
 
 	ID3D11RenderTargetView *createRenderTargetView();
+	ID3D11DepthStencilView *createDepthStencilView();
 };
 
 }

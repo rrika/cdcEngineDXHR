@@ -11,6 +11,7 @@ target_sources(dxhr PRIVATE
 
 	surfaces/PCDX11BitmapTexture.cpp
 	surfaces/PCDX11DefaultRenderTarget.cpp
+	surfaces/PCDX11DepthBuffer.cpp
 	surfaces/PCDX11RenderTexture.cpp
 	surfaces/PCDX11Texture.cpp
 

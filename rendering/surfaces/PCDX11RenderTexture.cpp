@@ -8,9 +8,16 @@ void PCDX11RenderTexture::ensureRenderTargetView() {
 	// TODO
 	auto *device = deviceManager->getD3DDevice();
 	if (!view) {
-		ID3D11RenderTargetView* frameBufferView;
-		device->CreateRenderTargetView(resource, nullptr, &frameBufferView);
-		view = frameBufferView;
+		if (isDepthBuffer == false) {
+			ID3D11RenderTargetView* frameBufferView;
+			device->CreateRenderTargetView(resource, /*TODO*/ nullptr, &frameBufferView);
+			view = frameBufferView;
+		} else {
+			ID3D11DepthStencilView* depthStencilView;
+			device->CreateDepthStencilView(resource, /*TODO*/ nullptr, &depthStencilView);
+			this->view = depthStencilView;
+			this->depthStencilView = depthStencilView;
+		}
 	}
 	// TODO
 }
@@ -81,6 +88,11 @@ ID3D11UnorderedAccessView *PCDX11RenderTexture::createUnorderedAccessView() {
 ID3D11RenderTargetView *PCDX11RenderTexture::createRenderTargetView() {
 	ensureBuffer();
 	return static_cast<ID3D11RenderTargetView*>(view);
+}
+
+ID3D11DepthStencilView *PCDX11RenderTexture::createDepthStencilView() {
+	ensureBuffer();
+	return depthStencilView;
 }
 
 }

@@ -9,6 +9,8 @@ class PCDX11DepthBuffer : public CommonDepthBuffer {
 public:
 	PCDX11RenderTexture renderTexture; // 18
 
+	PCDX11DepthBuffer();
+
 	TextureMap *getRenderTexture() override { return &renderTexture; };
 	uint32_t getWidth() override { return renderTexture.getWidth(); };
 	uint32_t getHeight() override { return renderTexture.getHeight(); };
