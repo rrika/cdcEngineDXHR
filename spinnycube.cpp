@@ -324,17 +324,12 @@ int spinnyCube(HWND window,
 
     cdc::PCDX11RenderContext *renderContext = renderDevice->getRenderContextAny();
     renderContext->internalCreate();
-    IDXGISwapChain* swapChain = renderContext->swapChain;
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    ID3D11Texture2D* frameBuffer = renderContext->frameBuffer;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     D3D11_TEXTURE2D_DESC depthBufferDesc;
 
-    frameBuffer->GetDesc(&depthBufferDesc); // base on framebuffer properties
+    renderContext->frameBuffer->GetDesc(&depthBufferDesc); // base on framebuffer properties
 
     depthBufferDesc.Format    = DXGI_FORMAT_D24_UNORM_S8_UINT;
     depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
@@ -609,7 +604,7 @@ int spinnyCube(HWND window,
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
-        swapChain->Present(1, 0);
+        renderContext->present();
     }
 end:
 #if ENABLE_IMGUI 

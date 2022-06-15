@@ -76,6 +76,7 @@ int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
 	displayConfig->sampleCount = 1;
 	displayConfig->sampleQuality = 0;
 	displayConfig->enableTripleBuffer = false;
+	displayConfig->enableVsync = true;
 	gRenderDevice = createPCDX11RenderDevice(hwnd, 640, 480, 0);
 
 	if (true)

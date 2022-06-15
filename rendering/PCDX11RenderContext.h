@@ -45,12 +45,14 @@ public:
 
 	}
 
-	PCDX11RenderTarget *getRenderTarget() {
+	inline PCDX11RenderTarget *getRenderTarget() {
 		if (renderTarget14)
 			return renderTarget14;
 		else
 			return renderTarget2C;
 	}
+
+	bool present();
 
 	bool internalCreate() override;
 	void internalRelease() override;

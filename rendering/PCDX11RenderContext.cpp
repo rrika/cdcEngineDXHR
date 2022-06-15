@@ -41,6 +41,13 @@ bool PCDX11RenderContext::createRenderTargets() {
 	return true;
 }
 
+bool PCDX11RenderContext::present() {
+	DisplayConfig *displayConfig = deviceManager->getDisplayConfig();
+	uint32_t syncInterval = displayConfig->enableVsync ? 1 : 0;
+	// TODO: stereo
+	return swapChain && swapChain->Present(syncInterval, /*flags=*/0) >= 0;
+}
+
 bool PCDX11RenderContext::internalCreate() {
 	// byte64 = 0;
 	auto *device = deviceManager->getD3DDevice();
