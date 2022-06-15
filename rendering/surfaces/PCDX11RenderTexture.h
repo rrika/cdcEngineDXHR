@@ -21,8 +21,8 @@ public:
 	ID3D11UnorderedAccessView *unorderedAccessView = nullptr; // 48
 	// uint8_t byte4C;
 	// uint8_t byte4D;
-	// uint8_t byte4E;
-	// uint8_t byte4F;
+	uint8_t sampleCount;
+	uint8_t sampleQuality;
 	uint16_t shortWidth;
 	uint16_t shortHeight;
 	uint32_t isDepthBuffer = 0;
@@ -33,6 +33,7 @@ public:
 		uint32_t unknown1, uint32_t isDepthBuffer,
 		PCDX11RenderDevice *renderDevice, uint32_t unknown2);
 
+	void ensureResource();
 	void ensureRenderTargetView();
 	void ensureBuffer();
 	ID3D11View *getView();

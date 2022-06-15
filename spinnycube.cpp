@@ -331,19 +331,13 @@ int spinnyCube(HWND window,
 
     renderContext->frameBuffer->GetDesc(&depthBufferDesc); // base on framebuffer properties
 
-    depthBufferDesc.Format    = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-
-    ID3D11Texture2D* depthBuffer;
-
-    device->CreateTexture2D(&depthBufferDesc, nullptr, &depthBuffer);
-
     cdc::PCDX11RenderTarget& cdcRenderTarget = *renderContext->renderTarget2C;
     cdc::PCDX11DepthBuffer cdcDepthBuffer(
         depthBufferDesc.Width, depthBufferDesc.Height,
         /*TODO*/ 0, DXGI_FORMAT_D24_UNORM_S8_UINT,
         renderDevice);
-    cdcDepthBuffer.renderTexture.resource = depthBuffer;
+    cdcDepthBuffer.renderTexture.sampleCount = depthBufferDesc.SampleDesc.Count;
+    cdcDepthBuffer.renderTexture.sampleQuality = depthBufferDesc.SampleDesc.Quality;
 
     cdcRenderTarget.getRenderTexture11()->createRenderTargetView();
     cdcDepthBuffer.renderTexture.createDepthStencilView();

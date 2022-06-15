@@ -18,6 +18,34 @@ PCDX11RenderTexture::PCDX11RenderTexture(
 
 	// TODO
 }
+
+void PCDX11RenderTexture::ensureResource() {
+	if (!resource) {
+		D3D11_TEXTURE2D_DESC desc;
+		desc.Width = getWidth();
+		desc.Height = getHeight();
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = (DXGI_FORMAT) textureFormat; // from PCDX11BaseTexture
+		desc.SampleDesc.Count = sampleCount;
+		desc.SampleDesc.Quality = sampleQuality;
+		desc.Usage = (D3D11_USAGE) 0;
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		desc.CPUAccessFlags = 0;
+		desc.MiscFlags = 0;
+		if (isDepthBuffer == false)
+			desc.BindFlags |= D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS;
+		else if (isDepthBuffer == true)
+			desc.BindFlags |= D3D11_BIND_DEPTH_STENCIL;
+
+		auto *device = deviceManager->getD3DDevice();
+		ID3D11Texture2D *texture;
+		device->CreateTexture2D(&desc, nullptr, &texture);
+		resource = texture;
+		// TODO
+	}
+}
+
 void PCDX11RenderTexture::ensureRenderTargetView() {
 	// TODO
 	auto *device = deviceManager->getD3DDevice();
@@ -37,6 +65,10 @@ void PCDX11RenderTexture::ensureRenderTargetView() {
 }
 
 void PCDX11RenderTexture::ensureBuffer() {
+	// TODO
+	if (!resource) {
+		ensureResource();
+	}
 	// TODO
 	if (!view || !shaderResourceView) {
 		// TODO
