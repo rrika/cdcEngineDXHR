@@ -27,6 +27,12 @@ ID3D11View *PCDX11RenderTexture::getView() {
 	return view;
 }
 
+void PCDX11RenderTexture::initForRenderTarget(IRenderSurface *renderSurface, uint32_t format, ID3D11Texture2D *texture) {
+	// TODO
+	resource = texture;
+}
+
+
 void PCDX11RenderTexture::resRegisterAtRenderDevice() {
 	// TODO
 }

@@ -330,10 +330,6 @@ int spinnyCube(HWND window,
 
     ID3D11Texture2D* frameBuffer = renderContext->frameBuffer;
 
-    PCDX11RenderTexture renderTexture;
-    renderTexture.resource = frameBuffer;
-    ID3D11RenderTargetView* frameBufferView = renderTexture.createRenderTargetView();
-
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     D3D11_TEXTURE2D_DESC depthBufferDesc;
@@ -351,10 +347,13 @@ int spinnyCube(HWND window,
 
     device->CreateDepthStencilView(depthBuffer, nullptr, &depthBufferView);
 
-    cdc::PCDX11DefaultRenderTarget cdcRenderTarget;
+    cdc::PCDX11DefaultRenderTarget cdcRenderTarget(
+        0, 0, 0, false, // TODO
+        renderDevice, frameBuffer,
+        0); // TODO
     cdc::PCDX11DepthBuffer cdcDepthBuffer;
 
-    cdcRenderTarget.renderTexture.view = static_cast<ID3D11View*>(frameBufferView);
+    cdcRenderTarget.renderTexture.createRenderTargetView();
     cdcDepthBuffer.renderTexture.view = static_cast<ID3D11View*>(depthBufferView);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -403,8 +402,7 @@ int spinnyCube(HWND window,
     delete[] (char*)layout;
 
     cdc::PCDX11StreamDecl streamDecl(
-        static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice),
-        inputElementDesc, numAttr, &cdcVertexShader.m_sub);
+        renderDevice, inputElementDesc, numAttr, &cdcVertexShader.m_sub);
     streamDecl.internalCreate();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

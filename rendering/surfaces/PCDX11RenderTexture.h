@@ -4,6 +4,8 @@
 
 namespace cdc {
 
+class IRenderSurface;
+
 class PCDX11RenderTexture :
 	public TextureMap,
 	public PCDX11BaseTexture
@@ -29,6 +31,7 @@ public:
 	void ensureRenderTargetView();
 	void ensureBuffer();
 	ID3D11View *getView();
+	void initForRenderTarget(IRenderSurface *renderSurface, uint32_t format, ID3D11Texture2D *texture);
 
 	void resRegisterAtRenderDevice() override;
 	void resFill(void* src, size_t size, size_t offset) override;

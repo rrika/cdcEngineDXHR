@@ -3,6 +3,16 @@
 
 namespace cdc {
 
+PCDX11DefaultRenderTarget::PCDX11DefaultRenderTarget(
+	uint32_t width, uint32_t height,
+	uint32_t unknown1, uint32_t format,
+	PCDX11RenderDevice *renderDevice, ID3D11Texture2D *texture, uint32_t unknown2)
+{
+	// TODO
+	renderTexture.initForRenderTarget(this, format, texture);
+}
+
+
 uint32_t PCDX11DefaultRenderTarget::method_24(uint32_t, uint32_t) {
 	// TODO
 	return 0;
