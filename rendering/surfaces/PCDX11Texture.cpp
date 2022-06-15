@@ -18,9 +18,10 @@ static uint32_t bytesForTextureDim(TextureFormat fmt, uint32_t width, uint32_t h
 			return 4 * width * height;
 		case TextureFormat::GrayScaleMaybe:
 			return width * height;
+		default:
+			//__builtin_unreachable();
+			return 0;
 	}
-	//__builtin_unreachable();
-	return 0;
 }
 
 static uint32_t bytesForTextureDimMips(int width, int height, int depthMinusOne, int mipLevels, TextureFormat textureFormat) {
