@@ -278,7 +278,6 @@ class SpinnyCubePass : public cdc::IRenderPassCallback {
 public:
     D3D11_VIEWPORT *viewport;
     ID3D11RasterizerState1* rasterizerState;
-    ID3D11DepthStencilState* depthStencilState;
 
     bool pre(
         cdc::CommonRenderDevice *renderDevice,
@@ -431,17 +430,6 @@ int spinnyCube(HWND window,
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
-    depthStencilDesc.DepthEnable    = TRUE;
-    depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    depthStencilDesc.DepthFunc      = D3D11_COMPARISON_LESS;
-
-    ID3D11DepthStencilState* depthStencilState;
-
-    device->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
     // struct Constants
     // {
     //     float4x4 WorldViewProject;
@@ -460,6 +448,7 @@ int spinnyCube(HWND window,
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     cdc::PCDX11StateManager stateManager(deviceContext, device);
+    stateManager.internalCreate();
     cdc::PCDX11SimpleStaticIndexBuffer cdcIndexBuffer(sizeof(IndexData)/2, IndexData);
     cdc::deviceManager->stateManager = &stateManager; // hack
 
@@ -517,7 +506,6 @@ int spinnyCube(HWND window,
     SpinnyCubePass cubePass;
     cubePass.viewport = &viewport;
     cubePass.rasterizerState = rasterizerState;
-    cubePass.depthStencilState = depthStencilState;
     renderDevice->setPassCallback(0, &cubePass);
 
     SpinnyCubeDrawable cubeDrawable;
@@ -648,7 +636,7 @@ bool SpinnyCubePass::pre(
     deviceContext->RSSetViewports(1, viewport);
     deviceContext->RSSetState(rasterizerState);
 
-    deviceContext->OMSetDepthStencilState(depthStencilState, 0);
+    cdc::deviceManager->getStateManager()->setDepthState(D3D11_COMPARISON_LESS, true);
     deviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff); // use default blend mode (i.e. disable)
 
     return true;

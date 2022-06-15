@@ -679,7 +679,19 @@ void PCDX11StateManager::updateViewport() {
 	// TODO
 }
 
-bool PCDX11StateManager::internalCreate() { return true; };
-void PCDX11StateManager::internalRelease() {};
+bool PCDX11StateManager::internalCreate() {
+	// TODO
+	memset((void*)&m_depthStencilDesc, 0, sizeof(m_depthStencilDesc));
+	m_depthStencilDesc.DepthEnable = true;
+	m_depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	m_depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	m_depthStencilDesc.StencilEnable = false;
+	m_depthStencilDesc.StencilReadMask = 255;
+	m_depthStencilDesc.StencilWriteMask = 255;
+	// TODO
+	return true;
+}
+
+void PCDX11StateManager::internalRelease() {}
 
 }
