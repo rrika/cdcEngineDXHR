@@ -585,7 +585,8 @@ int spinnyCube(HWND window,
 #if ENABLE_IMGUI
         if (showImguiWindow) {
             ImGui::Begin("Scene drawables", &showImguiWindow);
-            buildUI(scene->drawableListsAndMasks);            
+            // buildUI(scene->drawableListsAndMasks);
+            buildUI(&renderDevice->renderPasses, scene->drawableListsAndMasks);
             ImGui::End();
         }
         ImGui::Render();

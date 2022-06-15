@@ -7,11 +7,8 @@ void buildUI(IRenderDrawable *drawable) {
 }
 
 void buildUI(DrawableList *drawableList) {
-	if (ImGui::TreeNode("list", "list %p", drawableList)) {
-		for (auto item = drawableList->first; item; item = item->next)
-			buildUI(item->drawable);
-		ImGui::TreePop();
-	}
+	for (auto item = drawableList->first; item; item = item->next)
+		buildUI(item->drawable);
 }
 
 void buildUI(DrawableListsAndMasks *drawableList) {
@@ -20,12 +17,31 @@ void buildUI(DrawableListsAndMasks *drawableList) {
 	uint32_t index = 0;
 	while (mask) {
 		if (mask & 1) {
-			if (ImGui::TreeNode("pass", "pass %d", index)) {
+			if (ImGui::TreeNode("pass", "pass %d: list %p", index, list)) {
 				buildUI(list++);
 				ImGui::TreePop();
 			}
 		}
 		index++;
 		mask >>= 1;
+	}
+}
+
+void buildUI(RenderPasses *renderPasses, DrawableListsAndMasks *lists) {
+	uint32_t *reqPass;
+	reqPass = renderPasses->requestedPassesA;
+
+	for (uint32_t passId; (passId = *reqPass) != -1; reqPass++) {
+		RenderPass *pass = &renderPasses->passes[passId];
+		DrawableListsAndMasks *activeLists =
+			pass->useOverrideLists ? lists->overrideLists14 : lists;
+		if (activeLists && (activeLists->passMask8 & 1 << passId)) {
+			IRenderPassCallback *callbacks = pass->callbacks;
+			DrawableList *list = &activeLists->drawableLists[activeLists->compactIndices[passId]];
+			if (ImGui::TreeNode("pass", "pass %d: list %p", passId, list)) {
+				buildUI(list);
+				ImGui::TreePop();
+			}
+		}
 	}
 }
