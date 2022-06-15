@@ -347,13 +347,10 @@ int spinnyCube(HWND window,
 
     device->CreateDepthStencilView(depthBuffer, nullptr, &depthBufferView);
 
-    cdc::PCDX11DefaultRenderTarget cdcRenderTarget(
-        0, 0, 0, false, // TODO
-        renderDevice, frameBuffer,
-        0); // TODO
+    cdc::PCDX11RenderTarget& cdcRenderTarget = *renderContext->renderTarget2C;
     cdc::PCDX11DepthBuffer cdcDepthBuffer;
 
-    cdcRenderTarget.renderTexture.createRenderTargetView();
+    cdcRenderTarget.getRenderTexture11()->createRenderTargetView();
     cdcDepthBuffer.renderTexture.view = static_cast<ID3D11View*>(depthBufferView);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

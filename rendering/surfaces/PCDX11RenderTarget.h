@@ -14,6 +14,10 @@ public:
 	virtual void copyFromTexture(void*) = 0;
 	virtual bool method_3C() = 0;
 	virtual void method_40() = 0;
+
+	inline PCDX11RenderTexture *getRenderTexture11() {
+		return static_cast<PCDX11RenderTexture*>(getRenderTexture());
+	}
 };
 
 }

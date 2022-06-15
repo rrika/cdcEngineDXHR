@@ -1,5 +1,6 @@
 #include "PCDX11DeviceManager.h"
 #include "PCDX11RenderContext.h"
+#include "surfaces/PCDX11DefaultRenderTarget.h"
 #include <d3d11.h>
 #include <cstdio>
 
@@ -24,11 +25,18 @@ void PCDX11RenderContext::fillModeDesc(DXGI_MODE_DESC& modeDesc) {
 }
 
 bool PCDX11RenderContext::createRenderTargets() {
+	// TODO
 	if (swapChain) {
 		swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&frameBuffer));
 	} else {
-
+		// TODO
 	}
+	// TODO
+	uint32_t width = 0; // TODO
+	uint32_t height = 0; // TODO
+	uint32_t format = 0; // TODO
+	renderTarget2C = new PCDX11DefaultRenderTarget(
+		width, height, 1, format, renderDevice, frameBuffer, 0);
 	// TODO
 	return true;
 }
