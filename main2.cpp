@@ -84,7 +84,7 @@ void createWindow() {
 	WNDCLASSW wndClass = { sizeof(wndClass) };
 	wndClass.lpfnWndProc = (WNDPROC)gameWndProc;
 	wndClass.hInstance = GetModuleHandleW(0);
-	// wndClass.hIcon = LoadIconW(wndClass.hInstance, (LPCWSTR)0x66);
+	wndClass.hIcon = LoadIconW(wndClass.hInstance, (LPCWSTR)0x66);
 	// if ( !wndClass.hIcon )
 	// 	wndClass.hIcon = LoadIconW(0, (LPCWSTR)0x7F00);
 	wndClass.lpszClassName = L"DeusExHRDCE";

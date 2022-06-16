@@ -6,6 +6,7 @@ set(CMAKE_C_COMPILER_TARGET ${triple})
 set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_COMPILER_TARGET ${triple})
 set(CMAKE_LINKER lld-link) # ignored for C / CXX
+ENABLE_LANGUAGE(RC)
 
 project(dxhr)
 
@@ -51,6 +52,9 @@ add_subdirectory(input)
 add_subdirectory(miniz)
 add_subdirectory(rendering)
 add_subdirectory(scene)
+
+target_sources(dxhr PRIVATE
+	res/resources.rc)
 
 include_directories(imgui)
 target_sources(dxhr PRIVATE
