@@ -508,6 +508,14 @@ int spinnyCube(HWND window,
         ImGui::NewFrame();
 #endif
 
+        // cubePass.viewport ->
+        viewport = {
+            0.0f, 0.0f,
+            static_cast<float>(renderContext->width),
+            static_cast<float>(renderContext->height),
+            0.0f, 1.0f };
+        float w = viewport.Width / viewport.Height; // width (aspect ratio)
+
         ///////////////////////////////////////////////////////////////////////////////////////////
 
         float4x4 rotateX   = { 1, 0, 0, 0, 0, static_cast<float>(cos(modelRotation.x)), -static_cast<float>(sin(modelRotation.x)), 0, 0, static_cast<float>(sin(modelRotation.x)), static_cast<float>(cos(modelRotation.x)), 0, 0, 0, 0, 1 };
