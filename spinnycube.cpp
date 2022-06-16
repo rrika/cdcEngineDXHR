@@ -9,6 +9,7 @@
 #include "spinnycube.h"
 #include "types.h"
 #include "matrix.h"
+#include "main2.h" // for yellowCursor
 #include "drm/ResolveReceiver.h"
 #include "drm/sections/MaterialSection.h"
 #include "drm/sections/RenderResourceSection.h"
@@ -504,8 +505,9 @@ int spinnyCube(HWND window,
 
 #if ENABLE_IMGUI
         ImGui_ImplDX11_NewFrame();
-        ImGui_ImplWin32_NewFrame();
+        ImGui_ImplWin32_NewFrame(); // this will reset our pretty cursor
         ImGui::NewFrame();
+        SetCursor((HCURSOR)yellowCursor); // ahh, much better
 #endif
 
         // cubePass.viewport ->

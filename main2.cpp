@@ -79,6 +79,7 @@ LRESULT CALLBACK gameWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 DisplayConfig displayConfig;
 HWND hwnd;
+void *yellowCursor;
 
 void createWindow() {
 	WNDCLASSW wndClass = { sizeof(wndClass) };
@@ -89,7 +90,19 @@ void createWindow() {
 	// 	wndClass.hIcon = LoadIconW(0, (LPCWSTR)0x7F00);
 	wndClass.lpszClassName = L"DeusExHRDCE";
 	// wndClass.hbrBackground = (HBRUSH)GetStockObject(5);
-	// wndClass.hCursor = LoadCursorW(0, (LPCWSTR)0x7F00);
+	wndClass.hCursor = LoadCursorW(0, (LPCWSTR)0x7F00); // normal cursor
+
+	if (true) { // HACK
+		ICONINFO ii;
+		auto pointerIcon = LoadIconA(wndClass.hInstance, (LPCSTR)109);
+		GetIconInfo(pointerIcon, &ii);
+		ii.fIcon = 0;
+		ii.xHotspot = 5;
+		ii.yHotspot = 5;
+		wndClass.hCursor = CreateIconIndirect(&ii); // new and improved (yellow) cursor
+	}
+
+	yellowCursor = wndClass.hCursor;
 
 	RegisterClassW(&wndClass);
 
