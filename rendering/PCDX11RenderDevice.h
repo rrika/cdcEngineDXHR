@@ -172,7 +172,7 @@ public:
 	virtual void dx11_method_38();
 	virtual void dx11_method_3C();
 	virtual void dx11_method_40();
-	virtual void dx11_method_44();
+	virtual void handleResize(int32_t width, int32_t height);
 	virtual void dx11_method_48();
 
 	ID3D11DeviceContext *d3dDeviceContext111580;

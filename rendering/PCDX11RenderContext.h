@@ -54,6 +54,7 @@ public:
 			return renderTarget2C;
 	}
 
+	void handleResize(int32_t width, int32_t height);
 	bool present();
 
 	bool internalCreate() override;

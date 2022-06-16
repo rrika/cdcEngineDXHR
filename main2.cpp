@@ -17,13 +17,59 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 LRESULT CALLBACK gameWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 #if ENABLE_IMGUI
-    if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
-        return true;
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
+		return true;
 #endif
+
+	// if (uMsg == WM_DEUS_EX_GCS_FEEDBACK) { /*TODO*/ }
 
 	switch (uMsg)
 	{
-	case WM_DESTROY:
+	case WM_CHAR:
+		// TODO
+		break;
+	case WM_SIZE:
+		// TODO
+		break;
+	case WM_ACTIVATE:
+		// TODO
+		break;
+	case WM_KEYUP:
+		// TODO
+		break;
+	case WM_PAINT:
+		// TODO
+		break;
+	case WM_CLOSE:
+		// TODO
+		break;
+	case WM_MOVE: {
+		RECT rect;
+		GetClientRect(hwnd, &rect);
+		if (gRenderDevice)
+			static_cast<PCDX11RenderDevice*>(gRenderDevice)->handleResize(rect.right, rect.bottom);
+		// TODO
+		break;
+	}
+	case 0xBB8:
+		// TODO
+		break;
+	case 0x8000:
+		// TODO
+		break;
+	case WM_SIZING:
+		// TODO
+		break;
+	case WM_SYSKEYDOWN:
+		// TODO
+		break;
+	case WM_SYSCOMMAND:
+		// TODO
+		break;
+	case WM_MOUSEFIRST:
+		// TODO
+		break;
+	case WM_DESTROY: // hack
 		PostQuitMessage(0);
 		return 0;
 	}
@@ -77,6 +123,7 @@ int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
 	displayConfig->sampleQuality = 0;
 	displayConfig->enableTripleBuffer = false;
 	displayConfig->enableVsync = true;
+	displayConfig->lockWindowResolution = false;
 	gRenderDevice = createPCDX11RenderDevice(hwnd, 640, 480, 0);
 
 	if (true)

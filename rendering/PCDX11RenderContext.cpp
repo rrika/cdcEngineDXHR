@@ -45,6 +45,32 @@ bool PCDX11RenderContext::createRenderTargets() {
 	return true;
 }
 
+void PCDX11RenderContext::handleResize(int32_t newWidth, int32_t newHeight) {
+	if (!swapChain)
+		return;
+
+	printf("resize to %dx%d\n", newWidth, newHeight);
+
+	// TODO
+	width = newWidth;
+	height = newHeight;
+	// TODO
+	delete renderTarget2C; renderTarget2C = nullptr;
+	delete renderTarget14; renderTarget14 = nullptr;
+	delete depthBuffer; depthBuffer = nullptr;
+	frameBuffer->Release(); frameBuffer = nullptr;
+
+	swapChain->ResizeBuffers(bufferCount, width, height,
+		DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, // TODO
+		0);
+
+	createRenderTargets();
+	// TODO
+
+	renderTarget2C->getRenderTexture11()->createRenderTargetView(); // HACK
+	depthBuffer->renderTexture.createDepthStencilView(); // HACK
+}
+
 bool PCDX11RenderContext::present() {
 	DisplayConfig *displayConfig = deviceManager->getDisplayConfig();
 	uint32_t syncInterval = displayConfig->enableVsync ? 1 : 0;

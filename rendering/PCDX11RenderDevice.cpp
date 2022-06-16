@@ -600,8 +600,18 @@ void PCDX11RenderDevice::dx11_method_40() {
 	// TODO
 }
 
-void PCDX11RenderDevice::dx11_method_44() {
-	// TODO
+void PCDX11RenderDevice::handleResize(int32_t width, int32_t height) {
+	deviceManager->method_1C();
+
+	if (width < 1) width = 1;
+	if (height < 1) height = 1;
+
+	if (!deviceManager->getDisplayConfig()->lockWindowResolution && renderContext_10CEC) {
+		if (d3dDeviceContext111580)
+			d3dDeviceContext111580->ClearState();
+
+		renderContext_10CEC->handleResize(width, height);
+	}
 }
 
 void PCDX11RenderDevice::dx11_method_48() {
