@@ -6,6 +6,7 @@ set(CMAKE_C_COMPILER_TARGET ${triple})
 set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_COMPILER_TARGET ${triple})
 set(CMAKE_LINKER lld-link) # ignored for C / CXX
+set(CMAKE_RC_COMPILER llvm-rc)
 ENABLE_LANGUAGE(RC)
 
 project(dxhr)
