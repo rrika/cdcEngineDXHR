@@ -91,8 +91,8 @@ void loadBuiltinResources() {
 
 	auto probeShader = [&](uint32_t offset) {
 		auto *data = (uint32_t*)(shaderBlob.data() + offset);
-		printf("%08x %08x %08x %08x %08x\n",
-			offset, data[0], data[1], data[2], data[3]);
+		// printf("%08x %08x %08x %08x %08x\n",
+		// 	offset, data[0], data[1], data[2], data[3]);
 
 		return (char*)data;
 	};
