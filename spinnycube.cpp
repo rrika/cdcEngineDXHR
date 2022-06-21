@@ -14,6 +14,7 @@
 #include "drm/sections/MaterialSection.h"
 #include "drm/sections/RenderResourceSection.h"
 #include "drm/sections/ShaderLibSection.h"
+#include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileUserBufferReceiver.h"
 #include "filesystem/HackFileSystem.h"
 #include "input/PCMouseKeyboard.h"
@@ -419,9 +420,16 @@ int spinnyCube(HWND window,
     resolveSections[10] = &materialSection;
     resolveSections[12] = &renderResourceSection; // meshes
 
+    const char *bigfilePath = getenv("BIGFILE");
+    if (!bigfilePath) {
+        printf("\nspecify path to BIGFILE.000 through BIGFILE environment variable\n\n");
+        return 0;
+    }
     HackFileSystem fs;
-    hackResolveReceiver(&fs, "pickup_dns_156600946691c80e_dx11.drm", resolveSections);
-    hackResolveReceiver(&fs, "alc_beer_bottle_a.drm", resolveSections);
+    ArchiveFileSystem arc(&fs);
+    arc.readIndex(bigfilePath, 0);
+    hackResolveReceiver(&arc, "pc-w\\shaderlibs\\pickup_dns_156600946691c80e_dx11.drm", resolveSections);
+    hackResolveReceiver(&arc, "pc-w\\alc_beer_bottle_a.drm", resolveSections);
 
     auto bottleTexture = (cdc::PCDX11Texture*)renderResourceSection.getWrapped(0x0396);
     printf("have bottle cdc texture: %p\n", bottleTexture);
