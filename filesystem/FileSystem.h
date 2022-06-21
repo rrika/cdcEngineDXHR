@@ -1,37 +1,37 @@
 #pragma once
+#include <cstdint>
 
 namespace cdc {
 
-struct FileRequest;
+class FileRequest;
 class FileReceiver;
+
+class File {
+public:
+	virtual FileRequest *createRequest(FileReceiver *receiver, const char *path, uint32_t offset) = 0;
+	virtual uint32_t getSize() = 0;
+	virtual ~File() = default;
+};
+
+class FileRequest {
+public:
+	virtual void submit() = 0; // 04
+	virtual void setCompressedSize(uint32_t) = 0; // 08
+	virtual void setReadAmount(uint32_t) = 0; // 0C
+	virtual ~FileRequest() = default; // 24
+};
 
 class FileSystem {
 public:
-	virtual FileRequest *method_00(FileReceiver*, const char*, uint32_t);
-	virtual void method_04();
-	virtual bool fileExists(const char *path);
-	virtual void method_0C();
-	virtual void method_10();
-	virtual void method_14();
-	virtual void method_18();
-	virtual void method_1C();
-	virtual void setLanguageMask(uint32_t);
-	virtual uint32_t getLanguageMask();
-	virtual void method_24();
-	virtual void method_28();
-	virtual void method_2C();
-	virtual void method_30();
-	virtual void method_34();
-	virtual void method_38();
-	virtual void method_3C();
-	virtual void method_40();
-	virtual void method_44();
-	virtual void method_48();
-	virtual void method_4C();
-	virtual void method_50();
-	virtual void method_54();
-	virtual void method_58();
-	virtual void method_5C();
+	virtual FileRequest *createRequest(FileReceiver*, const char*, uint32_t) = 0; // 00
+	virtual File *createFile(const char*) = 0; // 04
+	virtual bool hasRequests() = 0; // 2C
+	virtual void processRequest() = 0; // 30
+	virtual inline void processAll() { // 34
+		while (hasRequests())
+			processRequest();
+	}
+	virtual ~FileSystem() = default; // 60
 };
 
 }

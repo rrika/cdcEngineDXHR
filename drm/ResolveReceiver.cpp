@@ -6,6 +6,8 @@
 #include "ResolveReceiver.h"
 #include "ResolveSection.h"
 #include "DRM.h"
+#include "../filesystem/FileSystem.h"
+#include "../filesystem/FileUserBufferReceiver.h"
 
 extern "C" {
 #include "../miniz/miniz.h"
@@ -217,15 +219,19 @@ void hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSection
 	}
 }
 
-void hackResolveReceiver(const char *path, ResolveSection **resolveSections) {
+void hackResolveReceiver(FileSystem *fs, const char *path, ResolveSection **resolveSections) {
 	printf("loading %s\n", path);
-	FILE *f = fopen(path, "rb");
-	fseek(f, 0, SEEK_END);
-	size_t size = ftell(f);
-	fseek(f, 0, SEEK_SET);
+
+	File *file = fs->createFile(path);
+	uint32_t size = file->getSize();
 	std::vector<char> buffer(size);
-	fread(buffer.data(), size, 1, f);
-	fclose(f);
+	FileReceiver *rec = FileUserBufferReceiver::create(buffer.data());
+	FileRequest *req = file->createRequest(rec, path, 0);
+	req->setReadAmount(size);
+	req->submit();
+	fs->processAll();
+	// req is owned by fs which takes care of it in processAll()
+	delete file;
 
 	hackResolveReceiver(buffer, resolveSections);
 }

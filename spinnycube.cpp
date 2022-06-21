@@ -14,6 +14,8 @@
 #include "drm/sections/MaterialSection.h"
 #include "drm/sections/RenderResourceSection.h"
 #include "drm/sections/ShaderLibSection.h"
+#include "filesystem/FileUserBufferReceiver.h"
+#include "filesystem/HackFileSystem.h"
 #include "input/PCMouseKeyboard.h"
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
 #include "rendering/buffers/PCDX11IndexBuffer.h"
@@ -417,8 +419,9 @@ int spinnyCube(HWND window,
     resolveSections[10] = &materialSection;
     resolveSections[12] = &renderResourceSection; // meshes
 
-    hackResolveReceiver("pickup_dns_156600946691c80e_dx11.drm", resolveSections);
-    hackResolveReceiver("alc_beer_bottle_a.drm", resolveSections);
+    HackFileSystem fs;
+    hackResolveReceiver(&fs, "pickup_dns_156600946691c80e_dx11.drm", resolveSections);
+    hackResolveReceiver(&fs, "alc_beer_bottle_a.drm", resolveSections);
 
     auto bottleTexture = (cdc::PCDX11Texture*)renderResourceSection.getWrapped(0x0396);
     printf("have bottle cdc texture: %p\n", bottleTexture);
