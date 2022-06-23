@@ -55,7 +55,7 @@ void GameHeapAllocator::method_30() {
 	// TODO
 }
 
-void *GameHeapAllocator::alloc(uint32_t, uint32_t) {
+void *GameHeapAllocator::alloc(uint32_t, AllocRequester) {
 	// TODO
 	return nullptr;
 }

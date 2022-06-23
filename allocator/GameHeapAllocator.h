@@ -19,7 +19,7 @@ public:
 	void method_28() override;
 	void method_2C() override;
 	void method_30() override;
-	void *alloc(uint32_t, uint32_t) override;
+	void *alloc(uint32_t, AllocRequester) override;
 	void free(void*) override;
 
 	virtual void method_3C();

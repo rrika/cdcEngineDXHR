@@ -15,7 +15,7 @@ void ThreadSafeMemHeapAllocator::method_2C() {
 	// TODO
 }
 
-void *ThreadSafeMemHeapAllocator::alloc(uint32_t, uint32_t) {
+void *ThreadSafeMemHeapAllocator::alloc(uint32_t, AllocRequester) {
 	// TODO
 	return nullptr;
 }

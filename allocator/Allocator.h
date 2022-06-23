@@ -3,6 +3,23 @@
 
 namespace cdc {
 
+enum AllocRequester {
+	kAllocMisc,
+	kAllocDebug,
+	kAllocContainer,
+	kAllocList,
+	kAllocSList,
+	kAllocQueue,
+	kAllocStack,
+	kAllocArray,
+	kAllocSArray,
+	kAllocArrayMap,
+	kAllocFixedArray,
+	kAllocFixedHash,
+	kAllocFixedHashMap,
+	kAllocFixedHashSet
+};
+
 class Allocator {
 public:
 	virtual ~Allocator() = default;
@@ -18,7 +35,7 @@ public:
 	virtual void method_28();
 	virtual void method_2C();
 	virtual void method_30();
-	virtual void *alloc(uint32_t, uint32_t) = 0;
+	virtual void *alloc(uint32_t, AllocRequester) = 0;
 	virtual void free(void*) = 0;
 };
 
