@@ -25,6 +25,7 @@ class FileSystem {
 public:
 	virtual FileRequest *createRequest(FileReceiver*, const char*, uint32_t) = 0; // 00
 	virtual File *createFile(const char*) = 0; // 04
+	virtual uint32_t getSize(const char*) = 0; // 0C
 	virtual bool hasRequests() = 0; // 2C
 	virtual void processRequest() = 0; // 30
 	virtual inline void processAll() { // 34

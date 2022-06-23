@@ -139,3 +139,13 @@ File *ArchiveFileSystem::createFile(const char *path) {
 	}
 	return nullptr;
 }
+
+uint32_t ArchiveFileSystem::getSize(const char *path) {
+	if (strnicmp("\\\\local\\", path, 6) == 0)
+		return wrapped->getSize(path);
+	else if (auto *entry = lookupEntry(path))
+		return entry->uncompressedSize;
+	else
+		return 0;
+}
+

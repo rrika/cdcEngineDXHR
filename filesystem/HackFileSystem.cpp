@@ -46,6 +46,12 @@ File *HackFileSystem::createFile(const char *path) {
 	return new HackFile(this, std::make_shared<FileWrapper>(f));
 }
 
+uint32_t HackFileSystem::getSize(const char *path) {
+	FILE *f = fopen(path, "rb");
+	HackFile hf(this, std::make_shared<FileWrapper>(f));
+	return hf.getSize();
+}
+
 bool HackFileSystem::hasRequests() {
 	return !requests.empty();
 }

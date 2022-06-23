@@ -45,4 +45,5 @@ public:
 
 	FileRequest *createRequest(FileReceiver *receiver, const char *path, uint32_t offset) override;
 	File *createFile(const char *path) override;
+	uint32_t getSize(const char *path) override;
 };
