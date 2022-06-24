@@ -24,6 +24,7 @@ target_sources(dxhr PRIVATE
 	PCDX11InternalResource.cpp
 	PCDX11LightManager.cpp
 	PCDX11Material.cpp
+	PCDX11MatrixState.cpp
 	PCDX11ModelDrawable.cpp
 	PCDX11RenderContext.cpp
 	PCDX11RenderDevice.cpp

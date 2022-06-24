@@ -204,8 +204,8 @@ void CommonRenderDevice::method_124() {
 	// TODO
 }
 
-void CommonRenderDevice::method_128() {
-	// TODO
+void *CommonRenderDevice::linearAlloc30(uint32_t size, uint32_t requester) {
+	return (void*)linear30->alloc(size, requester, /*reportFailure=*/true);
 }
 
 RenderResource *CommonRenderDevice::method_140(uint32_t) {

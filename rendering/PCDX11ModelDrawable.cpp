@@ -4,6 +4,7 @@
 #include "buffers/PCDX11SimpleStaticVertexBuffer.h"
 #include "PCDX11LightManager.h"
 #include "PCDX11Material.h"
+#include "PCDX11MatrixState.h" // for PoseData
 #include "PCDX11ModelDrawable.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11RenderModel.h"
@@ -13,16 +14,21 @@
 
 namespace cdc {
 
+// use of this global variable makes this class thread-unsafe
+static float matrixStagingBuffer[40 * 16];
+
 PCDX11ModelDrawable::PCDX11ModelDrawable(
 	PCDX11RenderModel *renderModel,
 	MeshSub *meshSub,
 	MeshTab0 *tab0,
-	MeshTab0Ext128 *tab0Ext128)
+	MeshTab0Ext128 *tab0Ext128,
+	PoseData *poseData)
 :
 	renderModel(renderModel),
 	meshSub(meshSub),
 	tab0(tab0),
-	tab0Ext128(tab0Ext128)
+	tab0Ext128(tab0Ext128),
+	poseData(poseData)
 { // hack
 	word4 = 1; // use RenderModel drawers
 	flags34 = (tab0[0].triangleCount << 8);
@@ -286,12 +292,60 @@ void PCDX11ModelDrawable::draw(
 	}
 }
 
-void PCDX11ModelDrawable::setMatrices(
+bool PCDX11ModelDrawable::setMatrices(
 	PCDX11StateManager *stateManager,
 	PCDX11ModelDrawable *prevDrawable,
 	bool hasBones)
 {
-	// TODO
+	MeshSub *prevMeshSub = prevDrawable ? prevDrawable->meshSub : nullptr;
+	PoseData *prevPoseData = prevDrawable ? prevDrawable->poseData : nullptr;
+	if (hasBones) {
+		if (meshSub != prevMeshSub || poseData != prevPoseData) {
+			for (uint32_t i = 0; i < meshSub->commonCb3_numMatrices; i++) {
+				uint32_t j = meshSub->matrixGatherOffsets[i];
+				float *matrix = poseData->getMatrix(j);
+				float *vector = poseData->getVector(j);
+
+				// transpose
+				matrixStagingBuffer[0] = matrix[0];
+				matrixStagingBuffer[1] = matrix[4];
+				matrixStagingBuffer[2] = matrix[8];
+				matrixStagingBuffer[3] = matrix[12];
+
+				matrixStagingBuffer[4] = matrix[1];
+				matrixStagingBuffer[5] = matrix[5];
+				matrixStagingBuffer[6] = matrix[9];
+				matrixStagingBuffer[7] = matrix[13];
+
+				matrixStagingBuffer[8] = matrix[2];
+				matrixStagingBuffer[9] = matrix[6];
+				matrixStagingBuffer[10] = matrix[10];
+				matrixStagingBuffer[11] = matrix[14];
+
+				// last row is different
+				matrixStagingBuffer[12] = vector[0];
+				matrixStagingBuffer[13] = vector[1];
+				matrixStagingBuffer[14] = vector[2];
+				matrixStagingBuffer[15] = vector[3];
+			}
+			auto &skinningBuffer = stateManager->accessCommonCB(3);
+			skinningBuffer.assignRow(0, matrixStagingBuffer, 4 * meshSub->commonCb3_numMatrices);
+		}
+	}
+
+	// ModelDrawableExt *currentExt = ext && ext->projectMatrixValid ? ext : nullptr;
+	// ModelDrawableExt *prevExt = prevDrawable && prevDrawable->ext && prevDrawable->ext->projectMatrixValid
+	// 	? prevDrawable->ext : nullptr;
+
+	if (poseData != prevPoseData) { // || currentExt != prevExt) {
+		// stateManager->setProjectMatrix(currentExt->projectMatrix);
+		// TODO: don't reinterpret cast
+		stateManager->setWorldMatrix(*reinterpret_cast<float4x4*>(poseData->getMatrix(0)));
+		stateManager->updateMatrices();
+		return poseData != prevPoseData;
+	}
+
+	return false;
 }
 
 void PCDX11ModelDrawable::buildAndAssignLightBuffer(

@@ -3,9 +3,11 @@
 
 namespace cdc {
 
+class IMatrixState;
+
 class RenderModelInstance : public RenderResource {
 public:
-	virtual void recordDrawables() = 0; // 84
+	virtual void recordDrawables(IMatrixState*) = 0; // 84
 };
 
 }

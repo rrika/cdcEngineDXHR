@@ -125,7 +125,7 @@ public:
 	virtual void method_11C();
 	virtual void method_120();
 	virtual void method_124();
-	virtual void method_128();
+	virtual void *linearAlloc30(uint32_t, uint32_t); // 128
 	virtual IMaterial *createMaterial() = 0;
 	virtual TextureMap *createTexture(uint32_t) = 0;
 	virtual void createProceduralTexture() = 0;

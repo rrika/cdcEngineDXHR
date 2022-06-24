@@ -8,6 +8,7 @@ class PCDX11RenderModel;
 class PCDX11RenderDevice;
 class PCDX11StateManager;
 class PCDX11StreamDecl;
+class PoseData;
 struct LightReceiverData;
 
 struct ModelDrawableExt {
@@ -22,6 +23,7 @@ class PCDX11ModelDrawable : public IRenderDrawable {
 	MeshSub *meshSub; // 14
 	MeshTab0 *tab0; // 18
 	MeshTab0Ext128 *tab0Ext128; // 1C
+	PoseData *poseData; // 20
 	LightReceiverData *lightReceiverData; // 24
 	float *lightConstantBufferData; // 28
 	float float2C; // 2C
@@ -33,7 +35,8 @@ public:
 		PCDX11RenderModel *renderModel,
 		MeshSub *meshSub,
 		MeshTab0 *tab0,
-		MeshTab0Ext128 *tab0Ext128);
+		MeshTab0Ext128 *tab0Ext128,
+		PoseData *poseData);
 
 	inline bool isUnlit() const { return (flags34 >> 0) & 1; }
 	inline bool getCullMode() const { return (flags34 >> 1) & 1; }
@@ -59,7 +62,7 @@ public:
 		PCDX11StateManager *stateManager,
 		PCDX11StreamDecl *streamDecl,
 		bool renderTwice);
-	void setMatrices(
+	bool setMatrices(
 		PCDX11StateManager *stateManager,
 		PCDX11ModelDrawable *prevDrawable,
 		bool hasBones);

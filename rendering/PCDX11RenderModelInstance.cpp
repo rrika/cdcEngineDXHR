@@ -1,11 +1,12 @@
 #include "PCDX11RenderModelInstance.h"
+#include "PCDX11MatrixState.h"
 #include "PCDX11ModelDrawable.h"
 #include "PCDX11RenderDevice.h"
 // #include <cstdio>
 
 namespace cdc {
 
-void PCDX11RenderModelInstance::recordDrawables() {
+void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 	// TODO
 	uint32_t baseMask = this->baseMask;
 	if (baseMask == 0)
@@ -13,6 +14,7 @@ void PCDX11RenderModelInstance::recordDrawables() {
 	bool addToNextScene = false;
 	Mesh *mesh = getRenderModel()->getMesh();
 	uint32_t tab0index = 0;
+	PoseData *poseData = static_cast<PCDX11MatrixState*>(matrixState)->poseData;
 	for (uint32_t i=0; i<mesh->meshCount; i++) {
 		MeshSub *sub = &mesh->meshTable[i];
 		for (uint32_t j=0; j<mesh->table0Count; j++, tab0index++) {
@@ -26,7 +28,8 @@ void PCDX11RenderModelInstance::recordDrawables() {
 				getRenderModel(),
 				sub,
 				tab0,
-				tab0ext128);
+				tab0ext128,
+				poseData);
 			renderDevice->recordDrawable(drawable, mask, addToNextScene);
 		}
 	}

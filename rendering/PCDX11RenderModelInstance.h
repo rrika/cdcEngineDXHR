@@ -27,7 +27,7 @@ public:
 	void resConstruct() override { /*empty*/ };
 	void resMethod10() override { /*empty*/ };
 
-	void recordDrawables() override; // 84
+	void recordDrawables(IMatrixState*) override; // 84
 
 private:
 	PCDX11RenderModel *getRenderModel() { return static_cast<PCDX11RenderModel*>(renderMesh); }

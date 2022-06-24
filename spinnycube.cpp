@@ -26,6 +26,7 @@
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/IRenderPassCallback.h"
 #include "rendering/PCDX11DeviceManager.h"
+#include "rendering/PCDX11MatrixState.h"
 #include "rendering/PCDX11RenderContext.h"
 #include "rendering/PCDX11RenderDevice.h"
 #include "rendering/PCDX11RenderModel.h"
@@ -543,7 +544,7 @@ int spinnyCube(HWND window,
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
-        float4x4 world = scale * rotateZ * rotateY * rotateX;
+        float4x4 world = rotateZ * rotateY * rotateX;
         float4x4 project = { 2 * n / w, 0, 0, 0, 0, 2 * n / h, 0, 0, 0, 0, f / (f - n), 1, 0, 0, n * f / (n - f), 0 };
 
         // Constants constants;
@@ -565,12 +566,17 @@ int spinnyCube(HWND window,
         scene->viewMatrix = translate;
         scene->projectMatrix = project;
 
+        PCDX11MatrixState matrixState(renderDevice);
+        matrixState.resize(1);
+        auto *bottleWorldMatrix = reinterpret_cast<float4x4*>(matrixState.poseData->getMatrix(0));
+        *bottleWorldMatrix = scale * world;
+
         // add drawables to the scene
         float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
         renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
         renderDevice->recordDrawable(&cubeDrawable, /*mask=*/ 1, /*addToParent=*/ 0);
         static_cast<cdc::PCDX11RenderModelInstance*>(bottleRenderModelInstance)->baseMask = 0x1000; // normals
-        bottleRenderModelInstance->recordDrawables();
+        bottleRenderModelInstance->recordDrawables(&matrixState);
         renderDevice->recordDrawable(&imGuiDrawable, /*mask=*/ 0x100, /*addToParent=*/ 0);
 
         renderDevice->finishScene();

@@ -34,7 +34,7 @@ struct MeshSub {
 	uint32_t tab0EntryCount_30;
 	uint16_t commonCb3_numMatrices;
 	uint16_t word36;
-	uint32_t matrixGatherOffsets; // 38
+	uint32_t *matrixGatherOffsets; // 38
 	uint32_t vertices; // 3C, offset patched to pointer
 	// PCDX11StaticVertexBuffer *staticVertexBuffer;
 	PCDX11SimpleStaticVertexBuffer *staticVertexBuffer; // hack
