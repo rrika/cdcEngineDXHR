@@ -44,7 +44,7 @@ public:
 		height(height),
 		renderDevice(renderDevice)
 	{
-
+		fullscreen = false; // hack
 	}
 
 	inline PCDX11RenderTarget *getRenderTarget() {

@@ -18,6 +18,7 @@ RenderPasses::RenderPasses() {
 		passes[i].active = false;
 		requestedPassesA[i] = ~0u;
 	}
+	activeFuncBitfield = 0;
 }
 
 uint32_t RenderPasses::addRenderPass(uint32_t arg0, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex, uint32_t firstPassId) {
