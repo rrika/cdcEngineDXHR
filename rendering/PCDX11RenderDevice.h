@@ -44,6 +44,7 @@ public:
 	RenderList *renderList_processing = nullptr; // 10CFC
 	RenderList *renderList_first = nullptr; // 10D00
 	RenderList *renderList_last = nullptr; // 10D04
+	RenderList *renderList_override = nullptr; // own addition
 
 	PCDX11ShaderLib *shlib_22;
 	PCDX11ShaderLib *shlib_21;
@@ -151,6 +152,11 @@ public:
 	void getWindowSize(uint *width, uint *height) override;
 	void method_17C() override;
 	void method_180() override;
+
+	// our own additions
+	void *captureRenderLists() override;
+	void revisitRenderLists(void*) override;
+	void freeRenderLists(void*) override;
 
 	bool internalCreate() override;
 	void internalRelease() override;

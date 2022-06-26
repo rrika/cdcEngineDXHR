@@ -495,7 +495,9 @@ int spinnyCube(HWND window,
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 #if ENABLE_IMGUI
-	bool showImguiWindow = true;
+	bool showDrawablesWindow = false;
+	std::vector<std::pair<void*, CommonScene*>> captures { { nullptr, nullptr } };
+	uint32_t selectedCapture = 0;
 #endif
 
 	while (true)
@@ -587,10 +589,37 @@ int spinnyCube(HWND window,
 		renderDevice->endRenderList();
 
 #if ENABLE_IMGUI
-		if (showImguiWindow) {
-			ImGui::Begin("Scene drawables", &showImguiWindow);
-			// buildUI(scene->drawableListsAndMasks);
-			buildUI(&renderDevice->renderPasses, scene->drawableListsAndMasks);
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("Windows")) {
+				if (ImGui::MenuItem("Show drawables")) { showDrawablesWindow = true; }
+				if (ImGui::MenuItem("Show filesystem")) { }
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
+		}
+		if (showDrawablesWindow) {
+			CommonScene *xscene = captures[selectedCapture].second;
+			if (!xscene)
+				xscene = scene;
+			ImGui::Begin("Scene drawables", &showDrawablesWindow);
+            ImGui::BeginChild("capture list", ImVec2(0, 150), true);
+			for (uint32_t i = 0; i < captures.size(); i++) {
+				ImGui::PushID(i);
+				const char *name = i ? "capture" : "live";
+				if (ImGui::Selectable(name, i == selectedCapture)) {
+					selectedCapture = i;
+					renderDevice->revisitRenderLists(captures[i].first);
+				}
+				ImGui::PopID();
+			}
+			ImGui::EndChild();
+			if (ImGui::Button("Capture frame")) {
+				selectedCapture = captures.size();
+				captures.push_back({renderDevice->captureRenderLists(), scene});
+			}
+			// buildUI(xscene->drawableListsAndMasks);
+			buildUI(&renderDevice->renderPasses, xscene->drawableListsAndMasks);
 			ImGui::End();
 		}
 		ImGui::Render();

@@ -518,6 +518,33 @@ void PCDX11RenderDevice::method_180() {
 	// TODO
 }
 
+struct Capture {
+	LinearAllocator *linear;
+	PCDX11RenderDevice::RenderList *list;
+	~Capture() { delete linear; }
+};
+
+void *PCDX11RenderDevice::captureRenderLists() {
+	auto *capture = new Capture;
+	capture->linear = linear30; // steal the allocator
+	linear30 = new LinearAllocator(0x300000, false, "RenderDevice"); // replace with a fresh one
+	capture->list = renderList_first;
+	renderList_override = renderList_first;
+	renderList_first = nullptr;
+	return (void*)capture;
+}
+
+void PCDX11RenderDevice::revisitRenderLists(void *capture) {
+	if (capture)
+		renderList_override = reinterpret_cast<Capture*>(capture)->list;
+	else
+		renderList_override = nullptr;
+}
+
+void PCDX11RenderDevice::freeRenderLists(void *capture) {
+	delete reinterpret_cast<Capture*>(capture);
+}
+
 bool PCDX11RenderDevice::internalCreate() {
 	deviceContext = deviceManager->getD3DDeviceContext();
 	// TODO
@@ -656,7 +683,10 @@ void PCDX11RenderDevice::drawRenderListsInternal(void *arg) {
 	linear->rewind();
 
 	// TODO
-	renderList_processing = renderList_first;
+	if (renderList_override)
+		renderList_processing = renderList_override;
+	else
+		renderList_processing = renderList_first;
 
 	// TODO
 	if (arg) {

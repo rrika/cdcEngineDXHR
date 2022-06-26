@@ -157,6 +157,11 @@ public:
 	virtual void method_19C();
 	virtual void method_1A0();
 
+	// our own additions
+	virtual void *captureRenderLists() = 0;
+	virtual void revisitRenderLists(void*) = 0;
+	virtual void freeRenderLists(void*) = 0;
+
 	static RenderResource *createResource(uint32_t, uint32_t);
 	LinearAllocator *getLinear() { return linear30; }
 };
