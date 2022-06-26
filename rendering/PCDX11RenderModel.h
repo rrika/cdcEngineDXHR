@@ -36,7 +36,7 @@ public:
 	PCDX11RenderModel(PCDX11RenderDevice *renderDevice, uint32_t size);
 
 	void resRegisterAtRenderDevice() override { /*TODO*/ }
-	void resFill(void* src, size_t size, size_t offset) override;
+	void resFill(void* src, uint32_t size, uint32_t offset) override;
 	char *resGetBuffer() override;
 	void resConstruct() override;
 	// void resMethod10();

@@ -16,7 +16,7 @@ PCDX11RenderModel::PCDX11RenderModel(PCDX11RenderDevice *renderDevice, uint32_t 
 	meshHeader = (MeshHeader*)new char[size];
 }
 
-void PCDX11RenderModel::resFill(void* src, size_t size, size_t offset) {
+void PCDX11RenderModel::resFill(void* src, uint32_t size, uint32_t offset) {
 	memcpy((char*)meshHeader + offset, src, size);
 }
 
