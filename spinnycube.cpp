@@ -12,6 +12,7 @@
 #include "matrix.h"
 #include "main2.h" // for yellowCursor
 #include "drm/ResolveReceiver.h"
+#include "drm/sections/DTPDataSection.h"
 #include "drm/sections/MaterialSection.h"
 #include "drm/sections/RenderResourceSection.h"
 #include "drm/sections/ShaderLibSection.h"
@@ -413,11 +414,13 @@ int spinnyCube(HWND window,
 	cdc::deviceManager->stateManager = &stateManager; // hack
 
 	cdc::RenderResourceSection renderResourceSection;
+	cdc::DTPDataSection dtpDataSection;
 	cdc::ShaderLibSection shaderLibSection;
 	cdc::MaterialSection materialSection;
 
 	cdc::ResolveSection *resolveSections[16] = {nullptr};
 	resolveSections[5] = &renderResourceSection; // textures
+	resolveSections[7] = &dtpDataSection;
 	resolveSections[9] = &shaderLibSection;
 	resolveSections[10] = &materialSection;
 	resolveSections[12] = &renderResourceSection; // meshes
