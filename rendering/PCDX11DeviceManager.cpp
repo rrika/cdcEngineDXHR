@@ -1,3 +1,4 @@
+#include <iterator>
 #include <windows.h>
 #include <d3d11_1.h>
 #include "PCDX11DeviceManager.h"
@@ -93,7 +94,7 @@ PCDX11DeviceManager *createPCDX11DeviceManager() {
 		nullptr,
 		0,
 		featureLevels,
-		ARRAYSIZE(featureLevels),
+		std::size(featureLevels),
 		D3D11_SDK_VERSION,
 		&baseDevice,
 		&chosenFeatureLevel,

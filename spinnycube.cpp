@@ -1,6 +1,7 @@
 #include <cmath>
 #include <cstdio>
 #include <memory>
+#include <iterator>
 
 #include <windows.h>
 #include <d3d11_1.h>
@@ -656,7 +657,7 @@ void SpinnyCubeDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
     stateManager->updateShaderResources();
     stateManager->updateSamplers();
 
-    renderDevice->getD3DDeviceContext()->DrawIndexed(ARRAYSIZE(IndexData), 0, 0);
+    renderDevice->getD3DDeviceContext()->DrawIndexed(std::size(IndexData), 0, 0);
 }
 
 void ImGuiDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *other) {

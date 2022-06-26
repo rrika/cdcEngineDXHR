@@ -1,3 +1,4 @@
+#include <cstring> // for memcpy
 #include "MaterialSection.h"
 #include "../../rendering/CommonRenderDevice.h"
 #include "../../rendering/IMaterial.h"

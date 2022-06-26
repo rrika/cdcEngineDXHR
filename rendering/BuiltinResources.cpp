@@ -1,5 +1,7 @@
 #include "BuiltinResources.h"
 #include <cstdio>
+#include <cstdint>
+#include <cstddef>
 #include <vector>
 
 // is it okay to cast pointer to vector::data() to a struct with uint32_t? (generally, yes)

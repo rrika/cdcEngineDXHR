@@ -1,6 +1,6 @@
 #define NOMINMAX
 #include <d3d11_1.h>
-#include <climits>
+#include <cfloat>
 #include <algorithm>
 #include "buffers/PCDX11ConstantBuffer.h"
 #include "buffers/PCDX11IndexBuffer.h"
