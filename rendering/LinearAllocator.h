@@ -51,3 +51,7 @@ public:
 inline void *operator new(size_t count, cdc::LinearAllocator *linear, uint32_t requester=0, bool reportFailure=false) {
 	return (void*)linear->alloc((uint32_t)count, requester, reportFailure);
 }
+
+inline void *operator new[](size_t count, cdc::LinearAllocator *linear, uint32_t requester=0, bool reportFailure=false) {
+	return (void*)linear->alloc((uint32_t)count, requester, reportFailure);
+}
