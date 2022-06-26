@@ -26,7 +26,7 @@ uint32_t RenderResourceSection::allocate(uint32_t sectionId, uint32_t sectionSub
 	}
 }
 
-void RenderResourceSection::fill(uint32_t sectionId, void* src, size_t size, size_t offset) {
+void RenderResourceSection::fill(uint32_t sectionId, void* src, uint32_t size, uint32_t offset) {
 	RenderResource *res = resources[sectionId].resource;
 	if (sectionId == 0x1F6E)
 		return; // huh, interesting

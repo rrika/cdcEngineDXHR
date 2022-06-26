@@ -21,7 +21,7 @@ uint32_t ShaderLibSection::realize(uint32_t sectionId, uint32_t unknown6, uint32
 	}
 }
 
-void ShaderLibSection::fill(uint32_t sectionId, void* src, size_t size, size_t offset) {
+void ShaderLibSection::fill(uint32_t sectionId, void* src, uint32_t size, uint32_t offset) {
 	auto &entry = shaders[sectionId];
 	bool done = offset + size == entry.size;
 	entry.shaderlib->fill((char*)src, offset, size, done);

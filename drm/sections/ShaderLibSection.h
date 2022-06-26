@@ -16,7 +16,7 @@ class ShaderLibSection : public ResolveSection {
 public:
 	uint32_t realize(uint32_t sectionId, uint32_t unknown, uint32_t size, bool& alreadyLoaded) override;
 	// inherit allocate
-	void fill(uint32_t id, void* src, size_t size, size_t offset) override;
+	void fill(uint32_t id, void* src, uint32_t size, uint32_t offset) override;
 	void* getWrapped(uint32_t) override;
 	// inherit getBlob
 	uint32_t getDomainId(uint32_t) override;
