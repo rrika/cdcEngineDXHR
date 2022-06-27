@@ -324,13 +324,18 @@ int spinnyCube(HWND window,
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
 	renderContext->frameBuffer->GetDesc(&depthBufferDesc); // base on framebuffer properties
 
-	cdc::PCDX11RenderTarget& cdcRenderTarget = *renderContext->renderTarget2C;
-	cdc::PCDX11DepthBuffer& cdcDepthBuffer = *renderContext->depthBuffer;
-	cdcDepthBuffer.renderTexture.sampleCount = depthBufferDesc.SampleDesc.Count;
-	cdcDepthBuffer.renderTexture.sampleQuality = depthBufferDesc.SampleDesc.Quality;
+	{
+		cdc::PCDX11RenderTarget& cdcRenderTarget = *renderContext->renderTarget2C;
+		cdc::PCDX11DepthBuffer& cdcDepthBuffer = *renderContext->depthBuffer;
+		cdcDepthBuffer.renderTexture.sampleCount = depthBufferDesc.SampleDesc.Count;
+		cdcDepthBuffer.renderTexture.sampleQuality = depthBufferDesc.SampleDesc.Quality;
 
-	cdcRenderTarget.getRenderTexture11()->createRenderTargetView();
-	cdcDepthBuffer.renderTexture.createDepthStencilView();
+		cdcRenderTarget.getRenderTexture11()->createRenderTargetView();
+		cdcDepthBuffer.renderTexture.createDepthStencilView();
+
+		// do not keep the cdcRenderTarget and cdcDepthBuffer references around
+		// these objects get destroyed on window resize
+	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -568,8 +573,8 @@ int spinnyCube(HWND window,
 		renderDevice->beginRenderList(nullptr);
 		auto *scene = renderDevice->createSubScene(
 			&commonSceneSub10,
-			&cdcRenderTarget,
-			&cdcDepthBuffer);
+			renderContext->renderTarget2C,
+			renderContext->depthBuffer);
 		scene->viewMatrix = translate;
 		scene->projectMatrix = project;
 
