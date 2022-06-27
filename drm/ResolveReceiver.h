@@ -6,7 +6,7 @@ namespace cdc {
 class FileSystem;
 
 class ResolveSection;
-void hackResolveReceiver(std::vector<char> data, ResolveSection **sections);
-void hackResolveReceiver(FileSystem *fs, const char *path, ResolveSection **sections);
+std::vector<DRMSectionHeader> hackResolveReceiver(std::vector<char> data, ResolveSection **sections);
+void hackResolveReceiver(FileSystem *fs, const char *path, ResolveSection **sections, DRMIndex *index=nullptr);
 
 }

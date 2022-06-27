@@ -12,6 +12,7 @@
 #include "types.h"
 #include "matrix.h"
 #include "main2.h" // for yellowCursor
+#include "drm/DRMIndex.h"
 #include "drm/ResolveReceiver.h"
 #include "drm/sections/DTPDataSection.h"
 #include "drm/sections/MaterialSection.h"
@@ -439,8 +440,9 @@ int spinnyCube(HWND window,
 	HackFileSystem fs;
 	ArchiveFileSystem arc(&fs);
 	arc.readIndex(bigfilePath, 0);
-	hackResolveReceiver(&arc, "pc-w\\shaderlibs\\pickup_dns_156600946691c80e_dx11.drm", resolveSections);
-	hackResolveReceiver(&arc, "pc-w\\alc_beer_bottle_a.drm", resolveSections);
+	DRMIndex drmIndex;
+	hackResolveReceiver(&arc, "pc-w\\shaderlibs\\pickup_dns_156600946691c80e_dx11.drm", resolveSections, &drmIndex);
+	hackResolveReceiver(&arc, "pc-w\\alc_beer_bottle_a.drm", resolveSections, &drmIndex);
 
 	auto bottleTexture = (cdc::PCDX11Texture*)renderResourceSection.getWrapped(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);
@@ -502,6 +504,8 @@ int spinnyCube(HWND window,
 
 #if ENABLE_IMGUI
 	bool showDrawablesWindow = false;
+	bool showFilesystemWindow = false;
+	bool showDRMWindow = false;
 	std::vector<std::pair<void*, CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
 #endif
@@ -599,7 +603,8 @@ int spinnyCube(HWND window,
 		{
 			if (ImGui::BeginMenu("Windows")) {
 				if (ImGui::MenuItem("Show drawables")) { showDrawablesWindow = true; }
-				if (ImGui::MenuItem("Show filesystem")) { }
+				if (ImGui::MenuItem("Show filesystem")) { showFilesystemWindow = true; }
+				if (ImGui::MenuItem("Show DRMs")) { showDRMWindow = true; }
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
@@ -626,6 +631,41 @@ int spinnyCube(HWND window,
 			}
 			// buildUI(xscene->drawableListsAndMasks);
 			buildUI(&renderDevice->renderPasses, xscene->drawableListsAndMasks);
+			ImGui::End();
+		}
+		if (showFilesystemWindow) {
+			// TODO
+		}
+		if (showDRMWindow) {
+			ImGui::Begin("DRMs", &showDRMWindow);
+			for (auto& entry : drmIndex.sectionHeaders) {
+				if (ImGui::TreeNode(entry.first.c_str())) {
+					uint32_t i=0;
+					for (auto& section : entry.second) {
+						const char *names[] = {
+							"Generic",
+							"Empty",
+							"Animation",
+							"",
+							"",
+							"RenderResource",
+							"FMODSoundBank",
+							"DTPData",
+							"Script",
+							"ShaderLib",
+							"Material",
+							"Object",
+							"RenderMesh",
+							"CollisionMesh",
+							"StreamGroupList",
+							"AnyType",
+						};
+						ImGui::Text("%3d: %04x %s unk6:%x (%d bytes)",
+							i++, section.id, names[section.type], section.unknown06, section.payloadSize);
+					}
+					ImGui::TreePop();
+				}
+			}
 			ImGui::End();
 		}
 		ImGui::Render();

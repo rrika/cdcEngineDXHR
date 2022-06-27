@@ -3,9 +3,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <vector>
+#include "DRM.h"
+#include "DRMIndex.h"
 #include "ResolveReceiver.h"
 #include "ResolveSection.h"
-#include "DRM.h"
 #include "../filesystem/FileSystem.h"
 #include "../filesystem/FileUserBufferReceiver.h"
 
@@ -157,7 +158,7 @@ static std::vector<char> decompressCDRM(std::vector<char>& data) {
 	return output;
 }
 
-void hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSections) {
+std::vector<DRMSectionHeader> hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSections) {
 	data = decompressCDRM(data);
 	DRMHeader header;
 	memcpy(&header, data.data(), sizeof(header));
@@ -217,9 +218,11 @@ void hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSection
 		if (resolveSection && (sectionHeader.languageBits >> 30) != 1)
 			resolveSection->construct(sectionDomainIds[i], nullptr);
 	}
+
+	return sectionHeaders;
 }
 
-void hackResolveReceiver(FileSystem *fs, const char *path, ResolveSection **resolveSections) {
+void hackResolveReceiver(FileSystem *fs, const char *path, ResolveSection **resolveSections, DRMIndex *index) {
 	printf("loading %s\n", path);
 
 	File *file = fs->createFile(path);
@@ -233,7 +236,9 @@ void hackResolveReceiver(FileSystem *fs, const char *path, ResolveSection **reso
 	// req is owned by fs which takes care of it in processAll()
 	delete file;
 
-	hackResolveReceiver(buffer, resolveSections);
+	auto sectionHeaders = hackResolveReceiver(buffer, resolveSections);
+	if (index)
+		index->sectionHeaders[std::string(path)] = std::move(sectionHeaders);
 }
 
 }

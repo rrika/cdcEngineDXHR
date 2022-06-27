@@ -17,10 +17,12 @@ void buildUI(DrawableListsAndMasks *drawableList) {
 	uint32_t index = 0;
 	while (mask) {
 		if (mask & 1) {
+			ImGui::PushID(index);
 			if (ImGui::TreeNode("pass", "pass %d: list %p", index, list)) {
 				buildUI(list++);
 				ImGui::TreePop();
 			}
+			ImGui::PopID();
 		}
 		index++;
 		mask >>= 1;
@@ -38,10 +40,12 @@ void buildUI(RenderPasses *renderPasses, DrawableListsAndMasks *lists) {
 		if (activeLists && (activeLists->passMask8 & 1 << passId)) {
 			IRenderPassCallback *callbacks = pass->callbacks;
 			DrawableList *list = &activeLists->drawableLists[activeLists->compactIndices[passId]];
+			ImGui::PushID(passId);
 			if (ImGui::TreeNode("pass", "pass %d: list %p", passId, list)) {
 				buildUI(list);
 				ImGui::TreePop();
 			}
+			ImGui::PopID();
 		}
 	}
 }
