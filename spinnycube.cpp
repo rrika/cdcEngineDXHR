@@ -7,6 +7,7 @@
 #include <d3d11_1.h>
 #include <d3dcompiler.h>
 
+#include "config.h" // for ENABLE_IMGUI
 #include "spinnycube.h"
 #include "types.h"
 #include "matrix.h"

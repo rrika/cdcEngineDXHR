@@ -14,6 +14,7 @@ project(dxhr)
 option(ENABLE_STEAM "Build with Steam integration" OFF)
 option(ENABLE_MCE "Build with Windows Media Center integration" OFF)
 option(ENABLE_GCS "Build with whatever GCS is" OFF)
+option(ENABLE_IMGUI "Build with ImGui" ON)
 
 add_compile_options(-g -target ${triple}
 	-Wno-ignored-pragma-intrinsic
@@ -58,20 +59,22 @@ add_subdirectory(scene)
 target_sources(dxhr PRIVATE
 	res/resources.rc)
 
-include_directories(imgui)
-target_sources(dxhr PRIVATE
-	imgui/imgui.cpp
-	imgui/imgui_draw.cpp
-	imgui/imgui_tables.cpp
-	imgui/imgui_widgets.cpp
-	imgui/backends/imgui_impl_dx11.cpp
-	imgui/backends/imgui_impl_win32.cpp)
+if (ENABLE_IMGUI)
+	include_directories(imgui)
+	target_sources(dxhr PRIVATE
+		imgui/imgui.cpp
+		imgui/imgui_draw.cpp
+		imgui/imgui_tables.cpp
+		imgui/imgui_widgets.cpp
+		imgui/backends/imgui_impl_dx11.cpp
+		imgui/backends/imgui_impl_win32.cpp)
 
-# clang-cl doesn't find _mm_set_ss
-add_compile_definitions(
-	IMGUI_DISABLE_SSE=1)
+	# clang-cl doesn't find _mm_set_ss
+	add_compile_definitions(
+		IMGUI_DISABLE_SSE=1)
 
-set_property(
-	SOURCE imgui/imgui_draw.cpp
-	PROPERTY COMPILE_DEFINITIONS
-	_CRT_USE_BUILTIN_OFFSETOF=1)
+	set_property(
+		SOURCE imgui/imgui_draw.cpp
+		PROPERTY COMPILE_DEFINITIONS
+		_CRT_USE_BUILTIN_OFFSETOF=1)
+endif()

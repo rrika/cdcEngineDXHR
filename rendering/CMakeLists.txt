@@ -18,7 +18,6 @@ target_sources(dxhr PRIVATE
 	BuiltinResources.cpp
 	CommonMaterial.cpp
 	CommonRenderDevice.cpp
-	Inspector.cpp
 	LinearAllocator.cpp
 	PCDX11DeviceManager.cpp
 	PCDX11InternalResource.cpp
@@ -39,3 +38,8 @@ target_sources(dxhr PRIVATE
 	RenderPasses.cpp
 	RenderResource.cpp
 	VertexAttribute.cpp)
+
+if (ENABLE_IMGUI)
+	target_sources(dxhr PRIVATE
+		Inspector.cpp)
+endif()
