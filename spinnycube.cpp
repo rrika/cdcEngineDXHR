@@ -11,6 +11,9 @@
 #include <d3dcompiler.h>
 #endif
 
+#include "fmod/fmod.hpp"
+#include "fmod/fmod_errors.h"
+
 #include "spinnycube.h"
 #include "types.h"
 #include "drm/DRMIndex.h"
@@ -124,6 +127,13 @@ cdc::ResolveObject *requestDRM(
 int spinnyCube(HWND window,
 	ID3D11Device *baseDevice,
 	ID3D11DeviceContext *baseDeviceContext) {
+
+
+	if (true) { // to confirm linking with fmod is successful
+		FMOD::System *fmodSystem;
+		FMOD_RESULT result;
+		result = FMOD::System_Create(&fmodSystem);
+	}
 
 	std::unique_ptr<cdc::PCMouseKeyboard> mouseKeyboard(cdc::PCMouseKeyboard::create(window));
 	auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);

@@ -64,7 +64,13 @@ if (NATIVE_BUILD)
 		dxvk_d3d11 SDL2)
 	set_target_properties(dxhr PROPERTIES
 		CXX_STANDARD 17)
-elseif(MSVC)
+
+	target_link_directories(dxhr PRIVATE
+		fmod)
+	target_link_libraries(dxhr PRIVATE
+		fmodex)
+
+elseif (MSVC)
 	configure_file(DXHRDC.shad DXHRDC.shad COPYONLY)
 
 	add_executable(dxhr WIN32
@@ -83,6 +89,14 @@ elseif(MSVC)
 
 	target_sources(dxhr PRIVATE
 		res/resources.rc)
+
+	target_link_directories(dxhr PRIVATE
+		fmod)
+	target_link_libraries(dxhr PRIVATE
+		fmodex_vc)
+	file(COPY fmod/fmodex.dll
+		DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 else()
 	add_compile_options(-g)
 
@@ -117,6 +131,13 @@ else()
 		CXX_STANDARD 17)
 	target_sources(dxhr PRIVATE
 		res/resources.rc)
+
+	target_link_directories(dxhr PRIVATE
+		fmod)
+	target_link_libraries(dxhr PRIVATE
+		-lfmodex_vc)
+	file(COPY fmod/fmodex.dll
+		DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
 configure_file(config.h.in config/config.h)
