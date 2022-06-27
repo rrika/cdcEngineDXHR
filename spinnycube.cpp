@@ -18,6 +18,7 @@
 #include "drm/sections/MaterialSection.h"
 #include "drm/sections/RenderResourceSection.h"
 #include "drm/sections/ShaderLibSection.h"
+#include "drm/sections/WaveSection.h"
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileUserBufferReceiver.h"
 #include "filesystem/HackFileSystem.h"
@@ -421,12 +422,14 @@ int spinnyCube(HWND window,
 	cdc::deviceManager->stateManager = &stateManager; // hack
 
 	cdc::RenderResourceSection renderResourceSection;
+	cdc::WaveSection waveSection;
 	cdc::DTPDataSection dtpDataSection;
 	cdc::ShaderLibSection shaderLibSection;
 	cdc::MaterialSection materialSection;
 
 	cdc::ResolveSection *resolveSections[16] = {nullptr};
 	resolveSections[5] = &renderResourceSection; // textures
+	resolveSections[6] = &waveSection;
 	resolveSections[7] = &dtpDataSection;
 	resolveSections[9] = &shaderLibSection;
 	resolveSections[10] = &materialSection;
