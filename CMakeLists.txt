@@ -27,6 +27,7 @@ add_executable(dxhr
 	main.cpp
 	main2.cpp
 	matrix.cpp
+	RingBuffer.cpp
 	spinnycube.cpp)
 configure_file(config.h.in config/config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/config)
