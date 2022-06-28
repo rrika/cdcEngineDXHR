@@ -1,3 +1,4 @@
+#include <cstring>
 #include "WaveSection.h"
 
 namespace cdc {
@@ -5,8 +6,24 @@ namespace cdc {
 WaveSectionEntry *WaveSection::lookupEntry(
 	uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded)
 {
-	// TODO
-	return &entries[sectionId];
+	if (sectionId < 4096) {
+		auto &entry = entries[sectionId];
+		entry.refCount++;
+		if (entry.sample)
+			alreadyLoaded = true;
+		else {
+			entry.size = size - 16; // minus the header
+			entry.byteC = 100; // volume?
+			loadingState = 0;
+			alreadyLoaded = false;
+		}
+
+		return &entry;
+
+	} else {
+		alreadyLoaded = true;
+		return nullptr;
+	}
 }
 
 uint32_t WaveSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
@@ -17,8 +34,77 @@ uint32_t WaveSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t si
 	return sectionId;
 }
 
-void WaveSection::fill(uint32_t sectionId, void *src, uint32_t size, uint32_t offset) {
-	// TODO
+void WaveSection::fill(uint32_t sectionId, void *vsrc, uint32_t size, uint32_t ignoredOffset) {
+	if (size == 0)
+		return;
+
+	char *src = (char*)vsrc;
+	WaveSectionEntry &entry = entries[sectionId];
+	uint32_t offset = 0;
+	uint32_t bytesLeftToProcess = size;
+	while (size && bytesLeftToProcess) {
+		switch (loadingState) {
+		case 0:
+			readTarget = (char*)&soundBlobHeader;
+			readAmount = sizeof(soundBlobHeader);
+			loadingState = 1;
+			// fall through
+		case 1:
+			if (bytesLeftToProcess >= readAmount) {
+				memcpy(readTarget, src + offset, readAmount);
+				bytesLeftToProcess -= readAmount;
+				offset += readAmount;
+
+				entry.byteC = soundBlobHeader.dwordC;
+				// TODO
+
+				entry.sample = Sample::Create(0,
+					entry.size,
+					soundBlobHeader.loopStart,
+					soundBlobHeader.loopEnd,
+					soundBlobHeader.sampleRate);
+
+				if (entry.sample) {
+					loadingState = 2;
+					loadingId = sectionId;
+				} else {
+					loadingState = 3;
+				}
+
+				totalSoundBytes = 0;
+				break;
+
+			} else {
+				memcpy(readTarget, src + offset, bytesLeftToProcess);
+				readTarget += bytesLeftToProcess;
+				readAmount -= bytesLeftToProcess;
+				return; // size;
+			}
+
+		case 2: {
+			uint32_t availableBytes;
+			if (ringbuffer.getBuffer()) {
+				ringbuffer.push(src + offset, bytesLeftToProcess);
+				availableBytes = ringbuffer.getAvailableBytes();
+			} else
+				availableBytes = bytesLeftToProcess;
+
+			if (availableBytes == entry.size) {
+				char *buffer = ringbuffer.getBuffer();
+				if (!buffer)
+					buffer = src + offset;
+				entry.sample->Upload(totalSoundBytes, buffer, entry.size);
+				// TODO
+			}
+		}
+
+		case 3:
+			return; // size;
+		default:
+			break;
+		}
+	}
+	return; // size - bytesLeftToProcess;
 }
 
 void *WaveSection::getWrapped(uint32_t sectionId) {

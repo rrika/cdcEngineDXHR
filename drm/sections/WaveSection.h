@@ -1,26 +1,13 @@
 #pragma once
 #include "../ResolveSection.h"
 #include "../../sound/RingBuffer.h"
+#include "../../sound/Sample.h"
 
 namespace cdc {
 
-struct Sound {
-	void *fmodSoundBank;
-	void *fmodSound;
-	uint32_t dword8;
-	uint32_t length; // C
-	uint32_t loopStart; // 10
-	uint32_t loopEnd; // 14
-	uint32_t dword18;
-	uint8_t byte1C;
-	uint32_t dword20;
-	uint32_t dword24;
-	uint32_t dword28;
-};
-
 struct WaveSectionEntry {
-	uint32_t refCount;
-	Sound *sound; // 4
+	uint32_t refCount; // 0
+	Sample *sample; // 4
 	uint32_t size; // 8
 	uint8_t byteC;
 	uint8_t byteD;
@@ -29,7 +16,7 @@ struct WaveSectionEntry {
 };
 
 struct SoundBlobHeader {
-	uint32_t dword0;
+	uint32_t sampleRate;
 	uint32_t loopStart;
 	uint32_t loopEnd;
 	uint32_t dwordC;
@@ -37,17 +24,17 @@ struct SoundBlobHeader {
 
 class WaveSection : public ResolveSection {
 	uint32_t dword4;
-	WaveSectionEntry entries[4096];
-	SoundBlobHeader soundBlobHeader;
+	WaveSectionEntry entries[4096]; // 8
+	SoundBlobHeader soundBlobHeader; // 18008
 	char *readTarget; // 18018
 	uint32_t readAmount; // 1801C
 
 	RingBuffer ringbuffer; // 18020
 	uint32_t loadingId; // 1803C
 	uint32_t loadingState; // 18040
-	uint32_t dword18044;
+	uint32_t totalSoundBytes; // 18044
 
-	WaveSectionEntry *table[4096];
+	WaveSectionEntry *table[4096]; // dword18048
 	uint32_t dword1C048;
 
 	uint32_t dword1C04C;

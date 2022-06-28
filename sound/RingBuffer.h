@@ -11,6 +11,8 @@ class RingBuffer {
 	uint32_t writeCursor; // 14 
 	// _DWORD dword18;
 public:
+	uint32_t getAvailableBytes() { return availableBytes; }
+	char *getBuffer() { return buffer; }
 	virtual void push(char *src, uint32_t amount);
 	virtual void pull(char *dst, uint32_t amount);
 };
