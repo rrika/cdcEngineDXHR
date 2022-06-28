@@ -15,6 +15,7 @@
 #include "drm/DRMIndex.h"
 #include "drm/ResolveReceiver.h"
 #include "drm/sections/DTPDataSection.h"
+#include "drm/sections/GenericSection.h"
 #include "drm/sections/MaterialSection.h"
 #include "drm/sections/RenderResourceSection.h"
 #include "drm/sections/ShaderLibSection.h"
@@ -421,6 +422,7 @@ int spinnyCube(HWND window,
 	cdc::PCDX11SimpleStaticIndexBuffer cdcIndexBuffer(sizeof(IndexData)/2, IndexData);
 	cdc::deviceManager->stateManager = &stateManager; // hack
 
+	cdc::GenericSection genericSection;
 	cdc::RenderResourceSection renderResourceSection;
 	cdc::WaveSection waveSection;
 	cdc::DTPDataSection dtpDataSection;
@@ -428,6 +430,7 @@ int spinnyCube(HWND window,
 	cdc::MaterialSection materialSection;
 
 	cdc::ResolveSection *resolveSections[16] = {nullptr};
+	resolveSections[0] = &genericSection;
 	resolveSections[5] = &renderResourceSection; // textures
 	resolveSections[6] = &waveSection;
 	resolveSections[7] = &dtpDataSection;
@@ -446,6 +449,7 @@ int spinnyCube(HWND window,
 	DRMIndex drmIndex;
 	hackResolveReceiver(&arc, "pc-w\\shaderlibs\\pickup_dns_156600946691c80e_dx11.drm", resolveSections, &drmIndex);
 	hackResolveReceiver(&arc, "pc-w\\alc_beer_bottle_a.drm", resolveSections, &drmIndex);
+	hackResolveReceiver(&arc, "pc-w\\scenario_database.drm", resolveSections, &drmIndex);
 
 	auto bottleTexture = (cdc::PCDX11Texture*)renderResourceSection.getWrapped(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);
