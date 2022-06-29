@@ -295,6 +295,21 @@ public:
 		uint32_t passId) override;
 };
 
+void requestDRM(const char *path, DRMIndex *drmIndex) {
+	printf("loading %s\n", path);
+
+	File *file = archiveFileSystem_default->createFile(path);
+	uint32_t size = file->getSize();
+	std::vector<char> buffer(size);
+	ResolveReceiver rr(path, drmIndex);
+	FileRequest *req = file->createRequest(&rr, path, 0);
+	req->setReadAmount(size);
+	req->submit();
+	archiveFileSystem_default->processAll();
+	// req is owned by fs which takes care of it in processAll()
+	delete file;
+}
+
 int spinnyCube(HWND window,
 	ID3D11Device *baseDevice,
 	ID3D11DeviceContext *baseDeviceContext) {
@@ -418,9 +433,9 @@ int spinnyCube(HWND window,
 	cdc::deviceManager->stateManager = &stateManager; // hack
 
 	DRMIndex drmIndex;
-	hackResolveReceiver(archiveFileSystem_default, "pc-w\\shaderlibs\\pickup_dns_156600946691c80e_dx11.drm", resolveSections, &drmIndex);
-	hackResolveReceiver(archiveFileSystem_default, "pc-w\\alc_beer_bottle_a.drm", resolveSections, &drmIndex);
-	hackResolveReceiver(archiveFileSystem_default, "pc-w\\scenario_database.drm", resolveSections, &drmIndex);
+	requestDRM("pc-w\\shaderlibs\\pickup_dns_156600946691c80e_dx11.drm", &drmIndex);
+	requestDRM("pc-w\\alc_beer_bottle_a.drm", &drmIndex);
+	requestDRM("pc-w\\scenario_database.drm", &drmIndex);
 
 	auto bottleTexture = (cdc::PCDX11Texture*)resolveSections[5]->getWrapped(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);

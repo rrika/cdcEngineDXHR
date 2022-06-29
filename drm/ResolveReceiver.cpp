@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdint>
+#include <cstring>
+#include <cstdlib>
 #include <vector>
 #include "DRM.h"
 #include "DRMIndex.h"
@@ -9,6 +9,7 @@
 #include "ResolveSection.h"
 #include "../filesystem/FileSystem.h"
 #include "../filesystem/FileUserBufferReceiver.h"
+#include "../mainloop.h" // for resolveSections
 
 extern "C" {
 #include "../miniz/miniz.h"
@@ -237,6 +238,27 @@ void hackResolveReceiver(FileSystem *fs, const char *path, ResolveSection **reso
 	delete file;
 
 	auto sectionHeaders = hackResolveReceiver(buffer, resolveSections);
+	if (index)
+		index->sectionHeaders[std::string(path)] = std::move(sectionHeaders);
+}
+
+void ResolveReceiver::process(FileRequest*, void *input, uint32_t size, uint32_t offset) {
+	if (offset != buffer.size()) {
+		fprintf(stderr, "ResolveReceiver::process got random chunk of data %d vs %d\n",
+			(int)offset, (int)buffer.size());
+		return;
+	}
+
+	buffer.resize(buffer.size() + size);
+	memcpy(buffer.data() + offset, input, size);
+}
+
+void ResolveReceiver::requestFailed(FileRequest *req) {
+	// TODO
+}
+
+void ResolveReceiver::requestComplete(FileRequest *req) {
+	auto sectionHeaders = hackResolveReceiver(std::move(buffer), resolveSections);
 	if (index)
 		index->sectionHeaders[std::string(path)] = std::move(sectionHeaders);
 }
