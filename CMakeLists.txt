@@ -26,6 +26,7 @@ add_link_options(-g -target ${triple} -fuse-ld=lld-link)
 add_executable(dxhr
 	main.cpp
 	main2.cpp
+	mainloop.cpp
 	matrix.cpp
 	RingBuffer.cpp
 	spinnycube.cpp)

@@ -5,11 +5,11 @@
 #include "imgui/imgui.h"
 #include "main.h"
 #include "main2.h"
+#include "mainloop.h"
 #include "rendering/BuiltinResources.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11RenderDevice.h"
-#include "spinnycube.h"
 
 using namespace cdc;
 
@@ -65,8 +65,19 @@ void createHigherFileSystems() {
 		cdcError("Unable to open bigfile BIGFILE.DAT!");
 }
 
+char buildType[16];
+char pathPrefix[36];
+const char *audioPrefix;
+const char *cinematicPrefix;
+
 void setupPrefixes(const char *prefix) {
+	strcpy(buildType, prefix);
+	sprintf(pathPrefix, "%s\\", prefix);
 	// TODO
+}
+
+void buildDRMPath(char *buffer, const char *name) {
+	sprintf(buffer, "%s%s.drm", pathPrefix, name);
 }
 
 bool hasSSE;
@@ -289,21 +300,9 @@ int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
 
 	*deviceManager->getDisplayConfig() = g_displayConfig; // HACK
 
-	if (true)
-		return spinnyCube(
-			hwnd1,
-			deviceManager->getD3DDevice(),
-			deviceManager->getD3DDeviceContext());
+	// TODO
+	mainloop();
 
-	MSG msg;
-
-	while (GetMessageA(&msg, nullptr, 0, 0))
-	{
-		TranslateMessage(&msg);
-		if (msg.message == WM_QUIT)
-			return 0;
-		DispatchMessageA(&msg);
-	}
-
+	// TODO
 	return 0;
 }

@@ -12,14 +12,10 @@
 #include "types.h"
 #include "matrix.h"
 #include "main2.h" // for yellowCursor and archiveFileSystem_default
+#include "mainloop.h" // for resolveSections
 #include "drm/DRMIndex.h"
 #include "drm/ResolveReceiver.h"
-#include "drm/sections/DTPDataSection.h"
-#include "drm/sections/GenericSection.h"
-#include "drm/sections/MaterialSection.h"
-#include "drm/sections/RenderResourceSection.h"
-#include "drm/sections/ShaderLibSection.h"
-#include "drm/sections/WaveSection.h"
+#include "drm/ResolveSection.h"
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileUserBufferReceiver.h"
 #include "input/PCMouseKeyboard.h"
@@ -421,33 +417,17 @@ int spinnyCube(HWND window,
 	cdc::PCDX11SimpleStaticIndexBuffer cdcIndexBuffer(sizeof(IndexData)/2, IndexData);
 	cdc::deviceManager->stateManager = &stateManager; // hack
 
-	cdc::GenericSection genericSection;
-	cdc::RenderResourceSection renderResourceSection;
-	cdc::WaveSection waveSection;
-	cdc::DTPDataSection dtpDataSection;
-	cdc::ShaderLibSection shaderLibSection;
-	cdc::MaterialSection materialSection;
-
-	cdc::ResolveSection *resolveSections[16] = {nullptr};
-	resolveSections[0] = &genericSection;
-	resolveSections[5] = &renderResourceSection; // textures
-	resolveSections[6] = &waveSection;
-	resolveSections[7] = &dtpDataSection;
-	resolveSections[9] = &shaderLibSection;
-	resolveSections[10] = &materialSection;
-	resolveSections[12] = &renderResourceSection; // meshes
-
 	DRMIndex drmIndex;
 	hackResolveReceiver(archiveFileSystem_default, "pc-w\\shaderlibs\\pickup_dns_156600946691c80e_dx11.drm", resolveSections, &drmIndex);
 	hackResolveReceiver(archiveFileSystem_default, "pc-w\\alc_beer_bottle_a.drm", resolveSections, &drmIndex);
 	hackResolveReceiver(archiveFileSystem_default, "pc-w\\scenario_database.drm", resolveSections, &drmIndex);
 
-	auto bottleTexture = (cdc::PCDX11Texture*)renderResourceSection.getWrapped(0x0396);
+	auto bottleTexture = (cdc::PCDX11Texture*)resolveSections[5]->getWrapped(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);
 	bottleTexture->asyncCreate();
 	printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
 
-	auto bottleRenderModel = (cdc::PCDX11RenderModel*)renderResourceSection.getWrapped(0xA301);
+	auto bottleRenderModel = (cdc::PCDX11RenderModel*)resolveSections[12]->getWrapped(0xA301);
 	printf("have bottle cdc render model: %p\n", bottleRenderModel);
 	printf("have bottle cdc mesh blob: %p\n", bottleRenderModel->getMesh());
 
