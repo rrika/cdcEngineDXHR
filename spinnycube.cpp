@@ -14,6 +14,7 @@
 #include "main2.h" // for yellowCursor and archiveFileSystem_default
 #include "mainloop.h" // for resolveSections
 #include "drm/DRMIndex.h"
+#include "drm/ResolveObject.h"
 #include "drm/ResolveReceiver.h"
 #include "drm/ResolveSection.h"
 #include "filesystem/ArchiveFileSystem.h"
@@ -295,19 +296,29 @@ public:
 		uint32_t passId) override;
 };
 
-void requestDRM(const char *path, DRMIndex *drmIndex) {
+ResolveObject *requestDRM(
+	const char *path,
+	DRMIndex *drmIndex,
+	void (*callback)(void*, void*, void*, ResolveObject*) = nullptr,
+	void *callbackArg1 = nullptr,
+	void *callbackArg2 = nullptr
+) {
 	printf("loading %s\n", path);
 
+	ResolveObject *ro = new ResolveObject(path);
 	File *file = archiveFileSystem_default->createFile(path);
 	uint32_t size = file->getSize();
 	std::vector<char> buffer(size);
-	ResolveReceiver rr(path, drmIndex);
-	FileRequest *req = file->createRequest(&rr, path, 0);
+	auto *rr = new ResolveReceiver(ro, drmIndex, callback, callbackArg1, callbackArg2);
+	FileRequest *req = file->createRequest(rr, path, 0);
 	req->setReadAmount(size);
 	req->submit();
 	archiveFileSystem_default->processAll();
 	// req is owned by fs which takes care of it in processAll()
+	// rr self-deletes
 	delete file;
+
+	return ro;
 }
 
 int spinnyCube(HWND window,

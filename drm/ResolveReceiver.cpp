@@ -5,15 +5,18 @@
 #include <vector>
 #include "DRM.h"
 #include "DRMIndex.h"
+#include "ResolveObject.h"
 #include "ResolveReceiver.h"
 #include "ResolveSection.h"
 #include "../filesystem/FileSystem.h"
 #include "../filesystem/FileUserBufferReceiver.h"
-#include "../mainloop.h" // for resolveSections
 
 extern "C" {
 #include "../miniz/miniz.h"
 }
+
+// this should justify moving the definition to one of the files in drm/
+extern cdc::ResolveSection *resolveSections[16];
 
 namespace cdc {
 
@@ -159,7 +162,7 @@ static std::vector<char> decompressCDRM(std::vector<char>& data) {
 	return output;
 }
 
-std::vector<DRMSectionHeader> hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSections) {
+std::vector<DRMSectionHeader> hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSections, ResolveObject *resolveObject) {
 	data = decompressCDRM(data);
 	DRMHeader header;
 	memcpy(&header, data.data(), sizeof(header));
@@ -220,10 +223,22 @@ std::vector<DRMSectionHeader> hackResolveReceiver(std::vector<char> data, Resolv
 			resolveSection->construct(sectionDomainIds[i], nullptr);
 	}
 
+	// what the hell is a "read det", what was I thinking?
+	auto dets = new DRMReadDet[header.sectionCount];
+	resolveObject->drmReadDets = new DRMReadDets;
+	resolveObject->drmReadDets->dets = dets;
+	resolveObject->drmReadDets->numDets = header.sectionCount;
+	resolveObject->rootSection = header.rootSection;
+	for (uint32_t i = 0; i < header.sectionCount; i++) {
+		dets[i].domainID = sectionDomainIds[i];
+		dets[i].contentType = sectionHeaders[i].type;
+		dets[i].sectionID = sectionHeaders[i].id;
+	}
+
 	return sectionHeaders;
 }
 
-void hackResolveReceiver(FileSystem *fs, const char *path, ResolveSection **resolveSections, DRMIndex *index) {
+void hackResolveReceiver(FileSystem *fs, const char *path, ResolveSection **resolveSections, ResolveObject *resolveObject, DRMIndex *index) {
 	printf("loading %s\n", path);
 
 	File *file = fs->createFile(path);
@@ -237,7 +252,7 @@ void hackResolveReceiver(FileSystem *fs, const char *path, ResolveSection **reso
 	// req is owned by fs which takes care of it in processAll()
 	delete file;
 
-	auto sectionHeaders = hackResolveReceiver(buffer, resolveSections);
+	auto sectionHeaders = hackResolveReceiver(buffer, resolveSections, resolveObject);
 	if (index)
 		index->sectionHeaders[std::string(path)] = std::move(sectionHeaders);
 }
@@ -258,9 +273,23 @@ void ResolveReceiver::requestFailed(FileRequest *req) {
 }
 
 void ResolveReceiver::requestComplete(FileRequest *req) {
-	auto sectionHeaders = hackResolveReceiver(std::move(buffer), resolveSections);
-	if (index)
-		index->sectionHeaders[std::string(path)] = std::move(sectionHeaders);
+	auto sectionHeaders = hackResolveReceiver(std::move(buffer), resolveSections, resolveObject);
+
+	if (callback) {
+		void *wrapped = nullptr;
+		if (resolveObject->rootSection != ~0u) {
+			auto& rootSection = sectionHeaders[resolveObject->rootSection];
+			wrapped = resolveSections[rootSection.type]->getWrapped(
+				resolveObject->drmReadDets->dets[resolveObject->rootSection].domainID // TODO
+			);
+		}
+		callback(wrapped, callbackArg1, callbackArg2, resolveObject);
+	}
+
+	if (index) // custom addition
+		index->sectionHeaders[std::string(resolveObject->path)] = std::move(sectionHeaders);
+
+	delete this;
 }
 
 }
