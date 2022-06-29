@@ -67,10 +67,11 @@ struct MonitorInfo {
 };
 
 class IPCDeviceManager {
+public:
 	virtual void method_00() = 0;
 	virtual DisplayConfig *getDisplayConfig() = 0;
 	virtual void setBrightness(float) = 0;
-	virtual void method_0C() = 0;
+	virtual bool isConfigAcceptable(DisplayConfig*) = 0;
 	virtual void method_10() = 0;
 	virtual void method_14() = 0;
 	virtual void method_18() = 0;

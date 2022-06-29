@@ -30,7 +30,7 @@ public:
 	void method_00();
 	DisplayConfig *getDisplayConfig();
 	void setBrightness(float brightness);
-	void method_0C();
+	bool isConfigAcceptable(DisplayConfig*);
 	void method_10();
 	void method_14();
 	void method_18();

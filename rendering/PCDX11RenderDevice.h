@@ -190,6 +190,6 @@ public:
 	void drawRenderListsInternal(void *arg);
 };
 
-PCDX11RenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown);
+CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown);
 
 }

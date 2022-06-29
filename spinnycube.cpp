@@ -11,7 +11,7 @@
 #include "spinnycube.h"
 #include "types.h"
 #include "matrix.h"
-#include "main2.h" // for yellowCursor
+#include "main2.h" // for yellowCursor and archiveFileSystem_default
 #include "drm/DRMIndex.h"
 #include "drm/ResolveReceiver.h"
 #include "drm/sections/DTPDataSection.h"
@@ -22,7 +22,6 @@
 #include "drm/sections/WaveSection.h"
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileUserBufferReceiver.h"
-#include "filesystem/HackFileSystem.h"
 #include "input/PCMouseKeyboard.h"
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
 #include "rendering/buffers/PCDX11IndexBuffer.h"
@@ -438,18 +437,10 @@ int spinnyCube(HWND window,
 	resolveSections[10] = &materialSection;
 	resolveSections[12] = &renderResourceSection; // meshes
 
-	const char *bigfilePath = getenv("BIGFILE");
-	if (!bigfilePath) {
-		printf("\nspecify path to BIGFILE.000 through BIGFILE environment variable\n\n");
-		return 0;
-	}
-	HackFileSystem fs;
-	ArchiveFileSystem arc(&fs);
-	arc.readIndex(bigfilePath, 0);
 	DRMIndex drmIndex;
-	hackResolveReceiver(&arc, "pc-w\\shaderlibs\\pickup_dns_156600946691c80e_dx11.drm", resolveSections, &drmIndex);
-	hackResolveReceiver(&arc, "pc-w\\alc_beer_bottle_a.drm", resolveSections, &drmIndex);
-	hackResolveReceiver(&arc, "pc-w\\scenario_database.drm", resolveSections, &drmIndex);
+	hackResolveReceiver(archiveFileSystem_default, "pc-w\\shaderlibs\\pickup_dns_156600946691c80e_dx11.drm", resolveSections, &drmIndex);
+	hackResolveReceiver(archiveFileSystem_default, "pc-w\\alc_beer_bottle_a.drm", resolveSections, &drmIndex);
+	hackResolveReceiver(archiveFileSystem_default, "pc-w\\scenario_database.drm", resolveSections, &drmIndex);
 
 	auto bottleTexture = (cdc::PCDX11Texture*)renderResourceSection.getWrapped(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);

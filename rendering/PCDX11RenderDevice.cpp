@@ -705,9 +705,10 @@ void PCDX11RenderDevice::drawRenderListsInternal(void *arg) {
 	}
 }
 
-PCDX11RenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown) {
+CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown) {
 	// createPCDX11DeviceManager(); // already done, else wouldn't have an hwnd
-	return new PCDX11RenderDevice(hwnd, width, height/*, unknown*/);
+	g_renderDevice = new PCDX11RenderDevice(hwnd, width, height/*, unknown*/);
+	return g_renderDevice;
 }
 
 }

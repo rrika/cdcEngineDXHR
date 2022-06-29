@@ -54,7 +54,7 @@ uint32_t ArchiveFile::getSize() {
 	return entry->uncompressedSize;
 }
 
-void ArchiveFileSystem::readIndex(const char *basePath, int i) {
+bool ArchiveFileSystem::readIndex(const char *basePath, int i) {
 	char path[160];
 	replaceNumberSuffix(basePath, path, i);
 	File *file000 = wrapped->createFile(path);
@@ -94,6 +94,8 @@ void ArchiveFileSystem::readIndex(const char *basePath, int i) {
 		replaceNumberSuffix(basePath, path, i);
 		bigfiles[i] = wrapped->createFile(path);
 	}
+
+	return true;
 }
 
 BigfileEntry *ArchiveFileSystem::lookupEntry(const char *path) {
@@ -110,6 +112,10 @@ BigfileEntry *ArchiveFileSystem::lookupEntry(const char *path) {
 	auto *entry = &entries[c-hashes];
 	// printf("found entry: offset=%08x size=%x\n", entry->offset, entry->uncompressedSize);
 	return entry;
+}
+
+const char *ArchiveFileSystem::getPrefix() {
+	return prefix[0] ? prefix : nullptr;
 }
 
 FileRequest *ArchiveFileSystem::createRequest(

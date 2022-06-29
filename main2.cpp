@@ -1,14 +1,116 @@
+#include <cstdio>
 #include <windows.h>
-#include "rendering/BuiltinResources.h"
+#include "filesystem/ArchiveFileSystem.h"
+#include "filesystem/HackFileSystem.h"
 #include "imgui/imgui.h"
 #include "main.h"
 #include "main2.h"
-#include "spinnycube.h"
+#include "rendering/BuiltinResources.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11RenderDevice.h"
+#include "spinnycube.h"
 
 using namespace cdc;
+
+DisplayConfig g_displayConfig;
+
+void cdcError(const char *format, ...) {
+	va_list args;
+	va_start(args, format);
+	vfprintf(stderr, format, args);
+	va_end(args);
+	fputs("", stderr); // newline
+}
+
+void initDisplayConfig() {
+	// TODO
+	g_displayConfig.fullscreenRefreshRate = 60;
+	g_displayConfig.fullscreen = false;
+	g_displayConfig.fullscreenWidth = 1366;
+	g_displayConfig.fullscreenHeight = 768;
+	g_displayConfig.sampleCount = 1;
+	g_displayConfig.sampleQuality = 0;
+	g_displayConfig.enableTripleBuffer = false;
+	g_displayConfig.enableVsync = true;
+	g_displayConfig.lockWindowResolution = false;
+}
+
+void initDisplayConfigFromDisplay() {
+	// TODO
+}
+
+FileSystem *lowerFileSystem;
+FileSystem *threadedLowerFileSystem;
+
+void createLowerFileSystems() {
+	// TODO
+	lowerFileSystem = new HackFileSystem();
+	threadedLowerFileSystem = lowerFileSystem;
+}
+
+ArchiveFileSystem *archiveFileSystem_default;
+
+void createHigherFileSystems() {
+	const char *bigfilePath = getenv("BIGFILE");
+	if (!bigfilePath) {
+		printf("\nspecify path to BIGFILE.000 through BIGFILE environment variable\n\n");
+		return;
+	}
+
+	archiveFileSystem_default = new ArchiveFileSystem(lowerFileSystem);
+	bool indexOk = archiveFileSystem_default->readIndex(bigfilePath, 0);
+	
+	if (!indexOk)
+		cdcError("Unable to open bigfile BIGFILE.DAT!");
+}
+
+void setupPrefixes(const char *prefix) {
+	// TODO
+}
+
+bool hasSSE;
+bool hasMMX;
+bool haveDX9Device;
+bool haveDX11Device;
+
+bool createDeviceManager() {
+	hasSSE = true; // TODO
+	hasMMX = true; // TODO
+
+	haveDX9Device = false; // TODO
+	haveDX11Device = createPCDX11DeviceManager() != nullptr;
+
+	return haveDX9Device || haveDX11Device;
+}
+
+IPCDeviceManager *deviceManager9 = nullptr;
+uint32_t useDX11 = 1;
+
+IPCDeviceManager *getDeviceManager() {
+	if (useDX11 == 0)
+		return deviceManager9;
+	if (useDX11 == 1)
+		return deviceManager;
+	return nullptr;
+}
+
+bool showSetup() {
+	// TODO
+	return true;
+}
+
+bool showSetupIfNecessary(uint32_t unknown, uint32_t showSetupOrConfig) {
+	if (getDeviceManager()->isConfigAcceptable(&g_displayConfig)) {
+		if (showSetupOrConfig == 0) {
+			// registrySetTopmostAndForceFeedback();
+			return true;
+		}
+	} else {
+		initDisplayConfigFromDisplay();
+	}
+	return showSetup(); // TODO
+}
 
 #if ENABLE_IMGUI
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -78,7 +180,9 @@ LRESULT CALLBACK gameWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 DisplayConfig displayConfig;
-HWND hwnd;
+HWND hwnd1;
+HWND hwnd2;
+HWND hwnd3;
 void *yellowCursor;
 
 void createWindow() {
@@ -108,7 +212,7 @@ void createWindow() {
 
 	wchar_t windowName[] = L"Deus Ex: Human Revolution - Director's Cut";
 
-	hwnd = CreateWindowExW(
+	hwnd1 = hwnd2 = hwnd3 = CreateWindowExW(
 		0, // 8
 		L"DeusExHRDCE",
 		windowName,
@@ -123,25 +227,71 @@ void createWindow() {
 		nullptr);
 }
 
+uint32_t g_width = 640;
+uint32_t g_height = 480;
+
+void createRenderDevice2(HWND hwnd) {
+	if (useDX11 == 0)
+		; // createPCRenderDevice(hwnd, g_width, g_height, 0);
+	if (useDX11 == 1)
+		createPCDX11RenderDevice(hwnd, g_width, g_height, 0);
+	// TODO: ShaderUsageDX11.bin
+}
+
+bool createRenderDevice() {
+	// TODO: decrease ref count on device manager
+	createRenderDevice2(hwnd1);
+	// TODO: DX11DeviceCallback
+	return true;
+}
+
 int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
-	loadBuiltinResources();
-	auto deviceManager = createPCDX11DeviceManager();
+	loadBuiltinResources(); // specific to this decompile
+
+	uint32_t showSetupOrConfig = 0;
+	if (strstr(lpCmdLine, "-setup"))
+		showSetupOrConfig = 1;
+	if (strstr(lpCmdLine, "-config"))
+		showSetupOrConfig = 2;
+	#if ENABLE_MCE
+		if (strstr(lpCmdLine, "-relaunchmce"))
+			relaunchMce = 1;
+	#endif
+
+	initDisplayConfig();
+
+	// TODO
+	createLowerFileSystems();
+
+	// TODO
+	createHigherFileSystems();
+	if (archiveFileSystem_default) {
+		setupPrefixes(archiveFileSystem_default->getPrefix());
+	}
+
+	// TODO
+	if (!createDeviceManager()) {
+		// TODO: This game requires a DirectX9.0c capable graphics card. Your card or driver does not support DirectX9.0c 3D Acceleration.		
+	}
+	if (!hasSSE) {
+		// TODO: Deus Ex: Human Revolution - Director's Cut can only be played on a PC that supports the SSE instruction set. Please read the readme.rtf or contact Square Enix technical support.
+	}
+	if (!hasMMX) {
+		// TODO: Deus Ex: Human Revolution - Director's Cut can only be played on a PC that supports the MMX instruction set. Please read the readme.rtf or contact Square Enix technical support.
+	}
+
+	showSetupIfNecessary(1, showSetupOrConfig);
+
 	createWindow();
-	cdc::DisplayConfig *displayConfig = deviceManager->getDisplayConfig();
-	displayConfig->fullscreenRefreshRate = 60;
-	displayConfig->fullscreen = false;
-	displayConfig->fullscreenWidth = 1366;
-	displayConfig->fullscreenHeight = 768;
-	displayConfig->sampleCount = 1;
-	displayConfig->sampleQuality = 0;
-	displayConfig->enableTripleBuffer = false;
-	displayConfig->enableVsync = true;
-	displayConfig->lockWindowResolution = false;
-	g_renderDevice = createPCDX11RenderDevice(hwnd, 640, 480, 0);
+	if (!createRenderDevice()) {
+		// TODO: Failed to initialize Direct3D with current settings
+	}
+
+	*deviceManager->getDisplayConfig() = g_displayConfig; // HACK
 
 	if (true)
 		return spinnyCube(
-			hwnd,
+			hwnd1,
 			deviceManager->getD3DDevice(),
 			deviceManager->getD3DDeviceContext());
 

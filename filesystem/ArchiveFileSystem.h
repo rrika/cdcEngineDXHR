@@ -40,8 +40,9 @@ protected:
 	char prefix[64];
 public:
 	ArchiveFileSystem(FileSystem *wrapped) : FileSystemLayer(wrapped) {}
-	void readIndex(const char *basePath, int i);
+	bool readIndex(const char *basePath, int i);
 	BigfileEntry *lookupEntry(const char *path);
+	const char *getPrefix();
 
 	FileRequest *createRequest(FileReceiver *receiver, const char *path, uint32_t offset) override;
 	File *createFile(const char *path) override;

@@ -39,8 +39,9 @@ void PCDX11DeviceManager::setBrightness(float brightness) {
 	config1.brightness = brightness;
 }
 
-void PCDX11DeviceManager::method_0C() {
+bool PCDX11DeviceManager::isConfigAcceptable(DisplayConfig*) {
 	// TODO
+	return true;
 }
 
 void PCDX11DeviceManager::method_10() {
