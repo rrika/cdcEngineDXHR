@@ -13,7 +13,7 @@ uint32_t ShaderLibSection::realize(uint32_t sectionId, uint32_t unknown6, uint32
 		return sectionId;
 
 	} else {
-		entry.shaderlib = gRenderDevice->createShaderLib(size);
+		entry.shaderlib = g_renderDevice->createShaderLib(size);
 		entry.size = size;
 		entry.refCount = 1;
 		alreadyLoaded = false;

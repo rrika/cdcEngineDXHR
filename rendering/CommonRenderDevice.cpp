@@ -3,7 +3,7 @@
 
 namespace cdc {
 
-CommonRenderDevice *gRenderDevice = nullptr;
+CommonRenderDevice *g_renderDevice = nullptr;
 
 CommonRenderDevice::CommonRenderDevice() :
 	linear4(0x20000, false, /*&linearAllocExt,*/ "RenderDevice")
@@ -248,10 +248,10 @@ void CommonRenderDevice::method_1A0() {
 
 RenderResource *CommonRenderDevice::createResource(uint32_t type, uint32_t arg) {
 	switch (type) {
-		case 5: return gRenderDevice->createTexture(arg);
-		case 24: return gRenderDevice->createRenderTerrain(arg);
-		case 26: return gRenderDevice->createRenderModel(arg);
-		case 27: return gRenderDevice->method_140(arg);
+		case 5: return g_renderDevice->createTexture(arg);
+		case 24: return g_renderDevice->createRenderTerrain(arg);
+		case 26: return g_renderDevice->createRenderModel(arg);
+		case 27: return g_renderDevice->method_140(arg);
 		default: return nullptr;
 	}
 }

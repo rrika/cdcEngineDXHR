@@ -166,6 +166,6 @@ public:
 	LinearAllocator *getLinear() { return linear30; }
 };
 
-extern CommonRenderDevice *gRenderDevice;
+extern CommonRenderDevice *g_renderDevice;
 
 }

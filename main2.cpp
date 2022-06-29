@@ -46,8 +46,8 @@ LRESULT CALLBACK gameWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_MOVE: {
 		RECT rect;
 		GetClientRect(hwnd, &rect);
-		if (gRenderDevice)
-			static_cast<PCDX11RenderDevice*>(gRenderDevice)->handleResize(rect.right, rect.bottom);
+		if (g_renderDevice)
+			static_cast<PCDX11RenderDevice*>(g_renderDevice)->handleResize(rect.right, rect.bottom);
 		// TODO
 		break;
 	}
@@ -137,7 +137,7 @@ int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
 	displayConfig->enableTripleBuffer = false;
 	displayConfig->enableVsync = true;
 	displayConfig->lockWindowResolution = false;
-	gRenderDevice = createPCDX11RenderDevice(hwnd, 640, 480, 0);
+	g_renderDevice = createPCDX11RenderDevice(hwnd, 640, 480, 0);
 
 	if (true)
 		return spinnyCube(

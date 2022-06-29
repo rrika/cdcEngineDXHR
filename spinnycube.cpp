@@ -305,7 +305,7 @@ int spinnyCube(HWND window,
 	ID3D11DeviceContext *baseDeviceContext) {
 
 	std::unique_ptr<cdc::PCMouseKeyboard> mouseKeyboard(cdc::PCMouseKeyboard::create(window));
-	auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice);
+	auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -699,7 +699,7 @@ bool SpinnyCubePass::pre(
 	uint32_t drawableCount,
 	uint32_t priorPassesBitfield)
 {
-	auto *deviceContext = static_cast<cdc::PCDX11RenderDevice*>(cdc::gRenderDevice)->getD3DDeviceContext();
+	auto *deviceContext = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice)->getD3DDeviceContext();
 
 	deviceContext->RSSetViewports(1, viewport);
 	deviceContext->RSSetState(rasterizerState);

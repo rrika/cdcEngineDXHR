@@ -14,7 +14,7 @@ uint32_t MaterialSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_
 		return sectionId;
 
 	} else {
-		entry.material = gRenderDevice->createMaterial();
+		entry.material = g_renderDevice->createMaterial();
 		entry.blob = new char[size]; // TODO
 		entry.refCount = 1;
 		entry.size = size;
