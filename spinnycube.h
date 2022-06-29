@@ -1,7 +1,7 @@
 #pragma once
 
-class ID3D11Device;
-class ID3D11DeviceContext;
+struct ID3D11Device;
+struct ID3D11DeviceContext;
 
 int spinnyCube(
 	HWND hwnd,

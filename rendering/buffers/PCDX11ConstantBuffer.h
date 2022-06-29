@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <cstring>
 
-class ID3D11Buffer;
+struct ID3D11Buffer;
 struct float4x4;
 
 namespace cdc {

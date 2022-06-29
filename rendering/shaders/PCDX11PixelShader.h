@@ -3,7 +3,7 @@
 #include "../PCDX11InternalResource.h"
 #include "PCDX11Shader.h"
 
-class ID3D11PixelShader;
+struct ID3D11PixelShader;
 
 namespace cdc {
 

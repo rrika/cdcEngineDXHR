@@ -3,9 +3,9 @@
 #include "IPCDeviceManager.h"
 #include "shaders/PCDX11ShaderManager.h"
 
-class ID3D11Device;
-class IDXGIFactory;
-class ID3D11DeviceContext;
+struct ID3D11Device;
+struct IDXGIFactory;
+struct ID3D11DeviceContext;
 
 namespace cdc {
 

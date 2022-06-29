@@ -4,7 +4,7 @@
 #include "PCDX11InternalResource.h"
 
 struct DXGI_MODE_DESC;
-class ID3D11Texture2D;
+struct ID3D11Texture2D;
 class IDXGISwapChain;
 
 namespace cdc {
