@@ -298,6 +298,7 @@ public:
 ResolveObject *requestDRM(
 	const char *path,
 	DRMIndex *drmIndex,
+	void **rootPtr = nullptr,
 	void (*callback)(void*, void*, void*, ResolveObject*) = nullptr,
 	void *callbackArg1 = nullptr,
 	void *callbackArg2 = nullptr
@@ -308,7 +309,7 @@ ResolveObject *requestDRM(
 	File *file = archiveFileSystem_default->createFile(path);
 	uint32_t size = file->getSize();
 	std::vector<char> buffer(size);
-	auto *rr = new ResolveReceiver(ro, drmIndex, callback, callbackArg1, callbackArg2);
+	auto *rr = new ResolveReceiver(callback, callbackArg1, callbackArg2, rootPtr, ro, drmIndex);
 	FileRequest *req = file->createRequest(rr, path, 0);
 	req->setReadAmount(size);
 	req->submit();

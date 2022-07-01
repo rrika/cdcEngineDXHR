@@ -20,11 +20,19 @@ class ResolveReceiver : public FileReceiver {
 	void (*callback)(void*, void*, void*, ResolveObject*);
 	void *callbackArg1;
 	void *callbackArg2;
+	void **rootSectionPtr;
 	ResolveObject *resolveObject;
 
 public:
-	ResolveReceiver(ResolveObject *object, DRMIndex *index, decltype(callback) callback=nullptr, void *arg1=nullptr, void *arg2=nullptr) :
-		resolveObject(object), index(index), callback(callback), callbackArg1(arg1), callbackArg2(arg2) {}
+	ResolveReceiver(
+		decltype(callback) callback, void *arg1, void *arg2,
+		void **rootSectionPtr,
+		ResolveObject *object,
+		DRMIndex *index)
+	:
+		callback(callback), callbackArg1(arg1), callbackArg2(arg2), rootSectionPtr(rootSectionPtr),
+		resolveObject(object), index(index)
+	{}
 	void process(FileRequest*, void *input, uint32_t size, uint32_t offset) override;
 	void requestFailed(FileRequest*) override;
 	void requestComplete(FileRequest*) override;

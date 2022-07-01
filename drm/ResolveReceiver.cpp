@@ -272,16 +272,20 @@ void ResolveReceiver::requestFailed(FileRequest *req) {
 void ResolveReceiver::requestComplete(FileRequest *req) {
 	auto sectionHeaders = hackResolveReceiver(std::move(buffer), g_resolveSections, resolveObject);
 
-	if (callback) {
-		void *wrapped = nullptr;
-		if (resolveObject->rootSection != ~0u) {
-			auto& rootSection = sectionHeaders[resolveObject->rootSection];
+	void *wrapped = nullptr;
+	if (resolveObject->rootSection != ~0u) {
+		auto& rootSection = sectionHeaders[resolveObject->rootSection];
+		if (g_resolveSections[rootSection.type]) // HACK
 			wrapped = g_resolveSections[rootSection.type]->getWrapped(
 				resolveObject->drmReadDets->dets[resolveObject->rootSection].domainID // TODO
 			);
-		}
-		callback(wrapped, callbackArg1, callbackArg2, resolveObject);
 	}
+
+	if (rootSectionPtr)
+		*rootSectionPtr = wrapped;
+
+	if (callback)
+		callback(wrapped, callbackArg1, callbackArg2, resolveObject);
 
 	if (index) // custom addition
 		index->sectionHeaders[std::string(resolveObject->path)] = std::move(sectionHeaders);
