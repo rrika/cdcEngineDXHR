@@ -33,6 +33,10 @@ void HackFileRequest::setReadAmount(uint32_t size) {
 	this->size = size;
 }
 
+uint32_t HackFileRequest::getCompletionStatus() {
+	return completionStatus;	
+}
+
 void HackFileRequest::submit(uint8_t arg) {
 	fs->requests.push_back(this);
 }
@@ -76,6 +80,7 @@ void HackFileSystem::processRequest() {
 	fread(buffer, req->size, 1, req->f->f);
 	req->receiver->process(req, buffer, req->size, 0);
 	req->receiver->requestComplete(req);
+	req->completionStatus = 3;
 
 	delete[] buffer;
 	req->decrRefCount();

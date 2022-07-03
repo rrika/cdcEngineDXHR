@@ -37,6 +37,7 @@ class HackFileRequest : public FileRequest {
 	uint32_t offset;
 	uint32_t size = 0;
 	uint32_t refCount = 2;
+	uint32_t completionStatus = 0;
 
 	HackFileRequest(HackFileSystem *fs, std::shared_ptr<FileWrapper> f, FileReceiver *receiver, uint32_t offset) :
 		fs(fs), f(f), receiver(receiver), offset(offset) {}
@@ -46,6 +47,7 @@ public:
 	void decrRefCount() override;
 	void setCompressedSize(uint32_t) override;
 	void setReadAmount(uint32_t) override;
+	uint32_t getCompletionStatus() override;
 	void submit(uint8_t) override;
 };
 

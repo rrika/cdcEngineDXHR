@@ -19,6 +19,7 @@ public:
 	virtual void decrRefCount() = 0; // 04
 	virtual void setCompressedSize(uint32_t) = 0; // 08
 	virtual void setReadAmount(uint32_t) = 0; // 0C
+	virtual uint32_t getCompletionStatus() = 0; // 14
 	virtual void submit(uint8_t arg) = 0; // 18
 		// 3 - complete
 		// 4 - failed
@@ -34,6 +35,10 @@ public:
 	virtual void processRequest() = 0; // 30
 	virtual inline void processAll() { // 34
 		while (hasRequests())
+			processRequest();
+	}
+	virtual inline void processUntil(FileRequest *request) { // 38
+		while (request->getCompletionStatus() != 3)
 			processRequest();
 	}
 	virtual ~FileSystem() = default; // 60
