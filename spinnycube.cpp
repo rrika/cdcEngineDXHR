@@ -12,7 +12,6 @@
 #include "types.h"
 #include "matrix.h"
 #include "main2.h" // for yellowCursor and archiveFileSystem_default
-#include "mainloop.h" // for resolveSections
 #include "drm/DRMIndex.h"
 #include "drm/ResolveObject.h"
 #include "drm/ResolveReceiver.h"
@@ -448,12 +447,12 @@ int spinnyCube(HWND window,
 	requestDRM("pc-w\\alc_beer_bottle_a.drm", &drmIndex);
 	requestDRM("pc-w\\scenario_database.drm", &drmIndex);
 
-	auto bottleTexture = (cdc::PCDX11Texture*)resolveSections[5]->getWrapped(0x0396);
+	auto bottleTexture = (cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);
 	bottleTexture->asyncCreate();
 	printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
 
-	auto bottleRenderModel = (cdc::PCDX11RenderModel*)resolveSections[12]->getWrapped(0xA301);
+	auto bottleRenderModel = (cdc::PCDX11RenderModel*)g_resolveSections[12]->getWrapped(0xA301);
 	printf("have bottle cdc render model: %p\n", bottleRenderModel);
 	printf("have bottle cdc mesh blob: %p\n", bottleRenderModel->getMesh());
 

@@ -1,3 +1,4 @@
+#include "drm/ResolveSection.h"
 #include "drm/sections/DTPDataSection.h"
 #include "drm/sections/GenericSection.h"
 #include "drm/sections/MaterialSection.h"
@@ -10,18 +11,16 @@
 #include "mainloop.h"
 #include "spinnycube.h"
 
-cdc::ResolveSection *resolveSections[16] = {nullptr};
-
 void setupResolveSections() {
 	auto *renderResourceSection = new cdc::RenderResourceSection;
 
-	resolveSections[0] = new cdc::GenericSection();
-	resolveSections[5] = renderResourceSection; // textures
-	resolveSections[6] = new cdc::WaveSection();
-	resolveSections[7] = new cdc::DTPDataSection();
-	resolveSections[9] = new cdc::ShaderLibSection();
-	resolveSections[10] = new cdc::MaterialSection();
-	resolveSections[12] = renderResourceSection; // meshes
+	g_resolveSections[0] = new cdc::GenericSection();
+	g_resolveSections[5] = renderResourceSection; // textures
+	g_resolveSections[6] = new cdc::WaveSection();
+	g_resolveSections[7] = new cdc::DTPDataSection();
+	g_resolveSections[9] = new cdc::ShaderLibSection();
+	g_resolveSections[10] = new cdc::MaterialSection();
+	g_resolveSections[12] = renderResourceSection; // meshes
 }
 
 void setups() {

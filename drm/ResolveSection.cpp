@@ -2,6 +2,8 @@
 
 namespace cdc {
 
+cdc::ResolveSection *g_resolveSections[16] = {nullptr};
+
 ResolveSection::~ResolveSection() {}
 
 uint32_t ResolveSection::realize(

@@ -17,4 +17,6 @@ public:
 	virtual uint32_t getDomainId(uint32_t) = 0; // 0x44
 };
 
+extern cdc::ResolveSection *g_resolveSections[16];
+
 }

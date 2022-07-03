@@ -15,9 +15,6 @@ extern "C" {
 #include "../miniz/miniz.h"
 }
 
-// this should justify moving the definition to one of the files in drm/
-extern cdc::ResolveSection *resolveSections[16];
-
 namespace cdc {
 
 static void applyRelocs(
@@ -273,13 +270,13 @@ void ResolveReceiver::requestFailed(FileRequest *req) {
 }
 
 void ResolveReceiver::requestComplete(FileRequest *req) {
-	auto sectionHeaders = hackResolveReceiver(std::move(buffer), resolveSections, resolveObject);
+	auto sectionHeaders = hackResolveReceiver(std::move(buffer), g_resolveSections, resolveObject);
 
 	if (callback) {
 		void *wrapped = nullptr;
 		if (resolveObject->rootSection != ~0u) {
 			auto& rootSection = sectionHeaders[resolveObject->rootSection];
-			wrapped = resolveSections[rootSection.type]->getWrapped(
+			wrapped = g_resolveSections[rootSection.type]->getWrapped(
 				resolveObject->drmReadDets->dets[resolveObject->rootSection].domainID // TODO
 			);
 		}
