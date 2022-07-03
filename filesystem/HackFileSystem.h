@@ -36,15 +36,17 @@ class HackFileRequest : public FileRequest {
 	FileReceiver *receiver;
 	uint32_t offset;
 	uint32_t size = 0;
-	bool submitted = false;
+	uint32_t refCount = 2;
 
 	HackFileRequest(HackFileSystem *fs, std::shared_ptr<FileWrapper> f, FileReceiver *receiver, uint32_t offset) :
 		fs(fs), f(f), receiver(receiver), offset(offset) {}
 
 public:
-	void submit() override;
+	void incrRefCount() override;
+	void decrRefCount() override;
 	void setCompressedSize(uint32_t) override;
 	void setReadAmount(uint32_t) override;
+	void submit(uint8_t) override;
 };
 
 class HackFileSystem : public FileSystem {

@@ -16,9 +16,13 @@ uint32_t HackFile::getSize() {
 }
 
 
+void HackFileRequest::incrRefCount() {
+	refCount++;
+}
 
-void HackFileRequest::submit() {
-	fs->requests.push_back(this);
+void HackFileRequest::decrRefCount() {
+	if (--refCount == 0)
+		delete this;
 }
 
 void HackFileRequest::setCompressedSize(uint32_t) {
@@ -27,6 +31,10 @@ void HackFileRequest::setCompressedSize(uint32_t) {
 
 void HackFileRequest::setReadAmount(uint32_t size) {
 	this->size = size;
+}
+
+void HackFileRequest::submit(uint8_t arg) {
+	fs->requests.push_back(this);
 }
 
 
@@ -70,7 +78,7 @@ void HackFileSystem::processRequest() {
 	req->receiver->requestComplete(req);
 
 	delete[] buffer;
-	delete req;
+	req->decrRefCount();
 }
 
 }

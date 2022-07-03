@@ -244,7 +244,8 @@ void hackResolveReceiver(FileSystem *fs, const char *path, ResolveSection **reso
 	FileReceiver *rec = FileUserBufferReceiver::create(buffer.data());
 	FileRequest *req = file->createRequest(rec, path, 0);
 	req->setReadAmount(size);
-	req->submit();
+	req->submit(3);
+	req->decrRefCount();
 	fs->processAll();
 	// req is owned by fs which takes care of it in processAll()
 	delete file;

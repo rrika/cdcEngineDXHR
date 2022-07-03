@@ -15,9 +15,13 @@ public:
 
 class FileRequest {
 public:
-	virtual void submit() = 0; // 04
+	virtual void incrRefCount() = 0; // 00
+	virtual void decrRefCount() = 0; // 04
 	virtual void setCompressedSize(uint32_t) = 0; // 08
 	virtual void setReadAmount(uint32_t) = 0; // 0C
+	virtual void submit(uint8_t arg) = 0; // 18
+		// 3 - complete
+		// 4 - failed
 	virtual ~FileRequest() = default; // 24
 };
 

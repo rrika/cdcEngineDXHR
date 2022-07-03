@@ -63,8 +63,8 @@ bool ArchiveFileSystem::readIndex(const char *basePath, int i) {
 	auto headerReceiver = FileUserBufferReceiver::create((void*)&header);
 	auto headerRequest = wrapped->createRequest(headerReceiver, path, 0);
 	headerRequest->setReadAmount(sizeof(ArchiveHeader));
-	// headerRequest->method_18(3);
-	headerRequest->submit();
+	headerRequest->submit(3);
+	headerRequest->decrRefCount();
 	wrapped->processAll();
 
 	if (header.chunkSize)
@@ -77,9 +77,9 @@ bool ArchiveFileSystem::readIndex(const char *basePath, int i) {
 	fullIndex = new uint32_t[18 + fileCount * 5]; // sizeof(ArchiveHeader) / 4 + 1*count + 4*count
 	auto indexReceiver = FileUserBufferReceiver::create((void*)fullIndex);
 	auto indexRequest = wrapped->createRequest(headerReceiver, path, 0);
-	headerRequest->setReadAmount(72 + fileCount * 20);
-	// headerRequest->method_18(3);
-	headerRequest->submit();
+	indexRequest->setReadAmount(72 + fileCount * 20);
+	indexRequest->submit(3);
+	indexRequest->decrRefCount();
 	wrapped->processAll();
 
 	hashes = fullIndex + 18;

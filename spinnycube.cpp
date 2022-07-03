@@ -306,17 +306,13 @@ ResolveObject *requestDRM(
 	printf("loading %s\n", path);
 
 	ResolveObject *ro = new ResolveObject(path);
-	File *file = archiveFileSystem_default->createFile(path);
-	uint32_t size = file->getSize();
-	std::vector<char> buffer(size);
 	auto *rr = new ResolveReceiver(callback, callbackArg1, callbackArg2, rootPtr, ro, drmIndex);
-	FileRequest *req = file->createRequest(rr, path, 0);
-	req->setReadAmount(size);
-	req->submit();
+	FileRequest *req = archiveFileSystem_default->createRequest(rr, path, 0);
+	req->submit(3);
+	req->decrRefCount();
 	archiveFileSystem_default->processAll();
 	// req is owned by fs which takes care of it in processAll()
 	// rr self-deletes
-	delete file;
 
 	return ro;
 }
