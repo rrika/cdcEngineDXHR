@@ -28,6 +28,16 @@ void setupResolveSections() {
 void setups() {
 	// TODO
 	readAndParseObjectList(); // called indirectly
+
+	uint32_t generalBankId = objectIdByName("generalbank");
+	uint32_t globalSoundInfoId = objectIdByName("globalsoundinfo");
+	uint32_t globalAnimInfoId = objectIdByName("globalaniminfo");
+
+	requestObject3(generalBankId);
+	requestObject3(globalSoundInfoId);
+	requestObject3(globalAnimInfoId);
+
+	getDefaultFileSystem()->processAll();
 }
 
 void mainloop() {
