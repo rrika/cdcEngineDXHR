@@ -19,4 +19,6 @@ uint32_t objectIdByName(const char *name);
 void requestObject1(uint32_t id);
 void requestObject3(uint32_t id);
 
+void buildObjectsUI();
+
 }

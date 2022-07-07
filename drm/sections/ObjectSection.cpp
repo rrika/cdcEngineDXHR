@@ -2,6 +2,11 @@
 #include <cstring>
 #include "ObjectSection.h"
 #include "../ResolveObject.h"
+#include "config.h"
+
+#ifdef ENABLE_IMGUI
+#include "../../imgui/imgui.h"
+#endif
 
 char *readFileBlocking(const char *path);
 void buildDRMPath(char *buffer, const char *name);
@@ -242,6 +247,18 @@ void requestObject1(uint32_t id) {
 
 void requestObject3(uint32_t id) {
 	requestObject(id, 3);
+}
+
+void buildObjectsUI() {
+#if ENABLE_IMGUI
+	if (!g_objectList || !g_objectList->objectListEntries) return;
+	auto e = g_objectList->objectListEntries;
+	for (int32_t i = 0; i < e->count; i++) {
+		if (e->entries[i].name && e->entries[i].slot != ~0u)
+			ImGui::Text("%4d %s %d",
+				i+1, e->entries[i].name, e->entries[i].slot);
+	}
+#endif
 }
 
 uint32_t ObjectSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {

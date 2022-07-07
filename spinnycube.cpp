@@ -16,6 +16,7 @@
 #include "drm/ResolveObject.h"
 #include "drm/ResolveReceiver.h"
 #include "drm/ResolveSection.h"
+#include "drm/sections/ObjectSection.h" // for buildObjectsUI
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileUserBufferReceiver.h"
 #include "input/PCMouseKeyboard.h"
@@ -537,6 +538,7 @@ int spinnyCube(HWND window,
 #if ENABLE_IMGUI
 	bool showDrawablesWindow = false;
 	bool showFilesystemWindow = false;
+	bool showObjectsWindow = false;
 	bool showDRMWindow = false;
 	std::vector<std::pair<void*, CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
@@ -636,6 +638,7 @@ int spinnyCube(HWND window,
 			if (ImGui::BeginMenu("Windows")) {
 				if (ImGui::MenuItem("Show drawables")) { showDrawablesWindow = true; }
 				if (ImGui::MenuItem("Show filesystem")) { showFilesystemWindow = true; }
+				if (ImGui::MenuItem("Show objects")) { showObjectsWindow = true; }
 				if (ImGui::MenuItem("Show DRMs")) { showDRMWindow = true; }
 				ImGui::EndMenu();
 			}
@@ -667,6 +670,11 @@ int spinnyCube(HWND window,
 		}
 		if (showFilesystemWindow) {
 			// TODO
+		}
+		if (showObjectsWindow) {
+			ImGui::Begin("Objects", &showObjectsWindow);
+			buildObjectsUI();
+			ImGui::End();
 		}
 		if (showDRMWindow) {
 			ImGui::Begin("DRMs", &showDRMWindow);
