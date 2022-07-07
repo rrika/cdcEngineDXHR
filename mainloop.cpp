@@ -1,3 +1,4 @@
+#include "drm/ResolveObject.h"
 #include "drm/ResolveSection.h"
 #include "drm/sections/DTPDataSection.h"
 #include "drm/sections/GenericSection.h"
@@ -25,9 +26,58 @@ void setupResolveSections() {
 	g_resolveSections[12] = renderResourceSection; // meshes
 }
 
+void *objectiveDatabase;
+void *logicActionResourceDatabase;
+void *tutorialDatabase;
+
+void loadDatabases() {
+	char objectivePath[256];
+	char logicActionResourcePath[256];
+	char tutorialPath[256];
+	
+	buildDRMPath(objectivePath, "objective_database");
+	cdc::ResolveObject::create(
+		objectivePath, nullptr, nullptr, nullptr,
+		&objectiveDatabase, nullptr, nullptr, 0, 3);
+
+	buildDRMPath(logicActionResourcePath, "logicactionresource_database");
+	cdc::ResolveObject::create(
+		logicActionResourcePath, nullptr, nullptr, nullptr,
+		&logicActionResourceDatabase, nullptr, nullptr, 0, 3);
+
+	buildDRMPath(tutorialPath, "tutorial_database");
+	cdc::ResolveObject::create(
+		tutorialPath, nullptr, nullptr, nullptr,
+		&tutorialDatabase, nullptr, nullptr, 0, 3);
+
+	getDefaultFileSystem()->processAll();
+
+	uint32_t globalSmartScriptsId = objectIdByName("GlobalSmartScripts");
+	requestObject3(globalSmartScriptsId);
+
+	uint32_t globalDatabaseId = objectIdByName("GlobalDatabase");
+	requestObject3(globalDatabaseId);
+
+	// this seems to crash
+	// uint32_t globalPlayerInfoId = objectIdByName("GlobalPlayerInfo");
+	// requestObject3(globalPlayerInfoId);
+
+	uint32_t globalDLCInfoId = objectIdByName("GlobalDLCInfo");
+	if (globalDLCInfoId)
+		requestObject3(globalDLCInfoId);
+
+	uint32_t globalScriptingId = objectIdByName("GlobalScripting");
+	requestObject3(globalScriptingId);
+
+	// TODO
+}
+
 void setups() {
 	// TODO
+
 	readAndParseObjectList(); // called indirectly
+
+	// TODO
 
 	uint32_t generalBankId = objectIdByName("generalbank");
 	uint32_t globalSoundInfoId = objectIdByName("globalsoundinfo");
@@ -38,6 +88,12 @@ void setups() {
 	requestObject3(globalAnimInfoId);
 
 	getDefaultFileSystem()->processAll();
+
+	// TODO
+
+	loadDatabases();
+
+	// TODO
 }
 
 void mainloop() {
