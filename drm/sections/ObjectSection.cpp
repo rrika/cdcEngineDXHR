@@ -4,6 +4,7 @@
 #include "../ResolveObject.h"
 
 char *readFileBlocking(const char *path);
+void buildDRMPath(char *buffer, const char *name);
 extern char buildType[16];
 
 namespace cdc {
@@ -20,6 +21,11 @@ struct PendingObject {
 		// 1 - valid
 		// 2 - valid and allocated
 	uint32_t refCount; // 14
+
+	void increaseCountOnResolveObject() {
+		// if (resolveObject)
+		// 	resolveObject->dword14++;
+	}
 };
 
 static PendingObject objects[604];
@@ -179,6 +185,63 @@ static PendingObject *allocObjectSlot(int32_t id, uint16_t state) {
 	g_objectList->objectListEntries->entries[id-1].slot = i;
 
 	return obj;
+}
+
+static void objectLoadCallback(void*, void*, void*, ResolveObject* resolveObject) {
+	printf("objectLoadCallback %p %s\n", resolveObject, resolveObject->path);
+	// TODO
+}
+
+static void objectUnloadCallback(PendingObject*, ResolveObject*) {
+	// TODO
+}
+
+uint32_t objectIdByName(const char *name) {
+	if (int32_t(g_objectList->objectListEntries->count) <= 0)
+		return 0;
+	for (int32_t i=0; i < g_objectList->objectListEntries->count; i++)
+		if (stricmp(name, g_objectList->objectListEntries->entries[i].name) == 0)
+			return i+1;
+	return 0;
+}
+
+static void requestObject(uint32_t id, uint8_t fsMethod18Arg) {
+	PendingObject *pendingObject = getByObjectListIndex(id);
+
+	if (!pendingObject) {
+		pendingObject = allocObjectSlot(id, 1);
+
+	} else if (pendingObject->resolveObject) {
+		pendingObject->increaseCountOnResolveObject();
+		return;
+	}
+
+	if (id > g_objectList->objectListEntries->count)
+		readAndParseObjectList();
+
+	char path[256];
+	char *objname = g_objectList->objectListEntries->entries[id-1].name;
+	buildDRMPath(path, objname);
+	printf("requesting object %s pobj=%p ", objname, pendingObject);
+	pendingObject->resolveObject = ResolveObject::create(
+		path,
+		&objectLoadCallback,
+		nullptr,
+		nullptr,
+		nullptr,
+		&objectUnloadCallback,
+		pendingObject,
+		0,
+		fsMethod18Arg);
+	printf("robj=%p\n", pendingObject->resolveObject);
+}
+
+void requestObject1(uint32_t id) {
+	requestObject(id, 1);
+}
+
+void requestObject3(uint32_t id) {
+	requestObject(id, 3);
 }
 
 uint32_t ObjectSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
