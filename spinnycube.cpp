@@ -440,9 +440,41 @@ int spinnyCube(HWND window,
 	cdc::deviceManager->stateManager = &stateManager; // hack
 
 	DRMIndex drmIndex;
-	requestDRM("pc-w\\shaderlibs\\pickup_dns_156600946691c80e_dx11.drm", &drmIndex);
-	requestDRM("pc-w\\alc_beer_bottle_a.drm", &drmIndex);
-	requestDRM("pc-w\\scenario_database.drm", &drmIndex);
+	auto obj1 = ResolveObject::create(
+		"pc-w\\shaderlibs\\pickup_dns_156600946691c80e_dx11.drm",
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		0,
+		3
+	);
+	auto obj2 = ResolveObject::create(
+		"pc-w\\alc_beer_bottle_a.drm",
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		0,
+		3
+	);
+	auto obj3 = ResolveObject::create(
+		"pc-w\\scenario_database.drm",
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		0,
+		3
+	);
+
+	archiveFileSystem_default->processAll();
 
 	auto bottleTexture = (cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);
