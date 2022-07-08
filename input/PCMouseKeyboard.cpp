@@ -27,7 +27,7 @@ void PCMouseKeyboard::processWndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		GetRawInputData((HRAWINPUT)lParam, RID_INPUT, &input, &inputSize, sizeof(RAWINPUTHEADER));
 	}
 
-	printf("WM_INPUT with type %lu\n", input.header.dwType);
+	// printf("WM_INPUT with type %lu\n", input.header.dwType);
 }
 
 // signature is bool create() in original binary
