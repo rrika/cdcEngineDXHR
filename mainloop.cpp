@@ -27,6 +27,7 @@ void setupResolveSections() {
 
 void setups() {
 	// TODO
+	readAndParseObjectList(); // called indirectly
 }
 
 void mainloop() {

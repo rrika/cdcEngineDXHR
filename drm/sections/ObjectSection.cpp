@@ -1,6 +1,10 @@
+#include <cstdio>
 #include <cstring>
 #include "ObjectSection.h"
 #include "../ResolveObject.h"
+
+char *readFileBlocking(const char *path);
+extern char buildType[16];
 
 namespace cdc {
 
@@ -45,11 +49,6 @@ struct ObjectList {
 
 	ObjectList() {
 		memset(objects, 0, sizeof(objects));
-
-		// HACK
-		uint32_t reverseMapCount = 2000;
-		objectListEntries = (ObjectListEntries*) new uint32_t[1 + 2*reverseMapCount];
-		objectListEntries->count = reverseMapCount;
 	}
 };
 
@@ -58,6 +57,99 @@ static ObjectList *g_objectList = nullptr;
 void ensureObjectList() {
 	if (!g_objectList)
 		g_objectList = new ObjectList();
+}
+
+static char *copyLine(char *dst, char *src) {
+	if (*src != '\n') {
+		while (*src != '\r') {
+			*dst++ = *src++;
+			if (*src == '\n') {
+				src++;
+				break;
+			}
+		}
+	}
+	while (*src == '\n' || *src == '\r')
+		src++;
+	*dst = '\0';
+	return src;
+}
+
+void readAndParseObjectList() {
+	char path[80];
+	sprintf(path, "%s\\objectlist.txt", buildType);
+	char *filelist = readFileBlocking(path);
+
+	int numLines; 
+
+	char buffer[512];
+	auto *cursor = copyLine(buffer, filelist);
+	auto *afterFirstLine = cursor;
+	sscanf(buffer, "%d", &numLines);
+
+	int maxObject = 0;
+
+	for (int32_t i=0; i<numLines; i++) {
+		int number;
+		cursor = copyLine(buffer, cursor);
+		sscanf(buffer, "%d,", &number);
+		if (number > maxObject)
+			maxObject = number;
+	}
+
+	// have to reallocate
+	if (g_objectList->objectListEntries) {
+		// TODO
+	}
+
+	// example
+	// 2
+	// 1,foo
+	// 2,bar
+	//
+	// memory layout
+	//  0 objectListEntries.count           = 2
+	//  4 objectListEntries.byteSize        = 0x20 or more
+	//  8 objectListEntries.entries[0].name = &'foo\0'
+	//  C objectListEntries.entries[0].slot = 0xffffffff
+	// 10 objectListEntries.entries[1].name = &'bar\0'
+	// 14 objectListEntries.entries[1].slot = 0xffffffff
+	// 18 'foo\0'
+	// 1C 'bar\0'
+
+	uint32_t size = 8 + 8 * maxObject + (cursor - filelist);
+	auto *allocation = new char[size];
+	g_objectList->objectListEntries = (ObjectListEntries*) allocation;
+	char *strings = allocation + (8 + 8 * maxObject);
+
+	g_objectList->objectListEntries->count = maxObject;
+	g_objectList->objectListEntries->byteSize = size;
+
+	for (int32_t i=0; i<maxObject; i++) {
+		g_objectList->objectListEntries->entries[i].name = 0;
+		g_objectList->objectListEntries->entries[i].slot = ~0u;
+	}
+
+	// rewind
+	cursor = afterFirstLine;
+
+	for (int32_t i=0; i<numLines; i++) {
+		int number;
+		cursor = copyLine(buffer, cursor);
+		sscanf(buffer, "%d,%s", &number, strings);
+		g_objectList->objectListEntries->entries[number-1].name = strings;
+		if (char *comma = strchr(strings, ','))
+			*comma = '\0';
+
+		strings += strlen(strings) + 1;
+	}
+
+	// auto *e = g_objectList->objectListEntries->entries;
+	// for (int32_t i=0; i<maxObject; i++) {
+	// 	printf("%4d %08x %s\n", i, e[i].slot, e[i].name);
+	// }
+
+	delete[] filelist;
 }
 
 static PendingObject *getByObjectListIndex(uint32_t objectListIndex) {

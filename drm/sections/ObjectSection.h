@@ -14,5 +14,6 @@ public:
 };
 
 void ensureObjectList();
+void readAndParseObjectList();
 
 }
