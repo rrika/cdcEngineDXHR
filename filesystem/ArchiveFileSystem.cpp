@@ -28,7 +28,7 @@ static uint32_t crc32(const char *data, uint32_t length) {
 	return (uint32_t)~hash;
 }
 
-static uint32_t pathCrc32(const char *path) {
+uint32_t pathCrc32(const char *path) {
 	char buffer[256];
 	strcpy(buffer, path);
 	strlwr(buffer);
