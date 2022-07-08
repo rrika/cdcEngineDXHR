@@ -7,6 +7,7 @@ namespace cdc {
 
 class FileSystem;
 class ResolveObject;
+struct PendingObject;
 
 class ResolveSection;
 std::vector<DRMSectionHeader> hackResolveReceiver(std::vector<char> data, ResolveSection **sections);
@@ -17,20 +18,26 @@ class ResolveReceiver : public FileReceiver {
 	std::vector<char> buffer;
 	DRMIndex *index; // custom addition
 
-	void (*callback)(void*, void*, void*, ResolveObject*);
-	void *callbackArg1;
-	void *callbackArg2;
-	void **rootSectionPtr;
-	ResolveObject *resolveObject;
+	ResolveObject *resolveObject; // 4
+	void (*callback)(void*, void*, void*, ResolveObject*); // 6C
+	void *callbackArg1; // 70
+	void *callbackArg2; // 74
+	void **rootSectionPtr; // 78
+	void (*unloadCallback)(PendingObject*, ResolveObject*); // 7C
+	PendingObject *pendingObject; // 80
 
 public:
 	ResolveReceiver(
 		decltype(callback) callback, void *arg1, void *arg2,
 		void **rootSectionPtr,
+		void (*unloadCallback)(PendingObject*, ResolveObject*),
+		PendingObject *pendingObject,
 		ResolveObject *object,
-		DRMIndex *index)
+		uint8_t unknown,
+		DRMIndex *index = nullptr)
 	:
 		callback(callback), callbackArg1(arg1), callbackArg2(arg2), rootSectionPtr(rootSectionPtr),
+		unloadCallback(unloadCallback), pendingObject(pendingObject),
 		resolveObject(object), index(index)
 	{}
 	void process(FileRequest*, void *input, uint32_t size, uint32_t offset) override;

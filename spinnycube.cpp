@@ -306,7 +306,7 @@ ResolveObject *requestDRM(
 	printf("loading %s\n", path);
 
 	ResolveObject *ro = new ResolveObject(path);
-	auto *rr = new ResolveReceiver(callback, callbackArg1, callbackArg2, rootPtr, ro, drmIndex);
+	auto *rr = new ResolveReceiver(callback, callbackArg1, callbackArg2, rootPtr, nullptr, nullptr, ro, 0, drmIndex);
 	FileRequest *req = archiveFileSystem_default->createRequest(rr, path, 0);
 	req->submit(3);
 	req->decrRefCount();
