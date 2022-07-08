@@ -20,6 +20,7 @@
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileUserBufferReceiver.h"
 #include "input/PCMouseKeyboard.h"
+#include "object/Object.h"
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
 #include "rendering/buffers/PCDX11IndexBuffer.h"
 #include "rendering/buffers/PCDX11SimpleStaticIndexBuffer.h"
@@ -452,17 +453,10 @@ int spinnyCube(HWND window,
 		0,
 		3
 	);
-	auto obj2 = ResolveObject::create(
-		"pc-w\\alc_beer_bottle_a.drm",
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		0,
-		3
-	);
+
+	auto bottleIndex = objectIdByName("alc_beer_bottle_a");
+	requestObject3(bottleIndex);
+
 	auto obj3 = ResolveObject::create(
 		"pc-w\\scenario_database.drm",
 		nullptr,
@@ -477,13 +471,21 @@ int spinnyCube(HWND window,
 
 	archiveFileSystem_default->processAll();
 
+	ResolveSection *objectSection = g_resolveSections[11];
+	ObjectBlob *bottleObject = (ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(0x04a8));
+	printf("have bottle object: %p\n", bottleObject);
+
 	auto bottleTexture = (cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);
 	bottleTexture->asyncCreate();
 	printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
 
-	auto bottleRenderModel = (cdc::PCDX11RenderModel*)g_resolveSections[12]->getWrapped(0xA301);
-	printf("have bottle cdc render model: %p\n", bottleRenderModel);
+	auto bottleRenderModel_direct = (cdc::PCDX11RenderModel*)g_resolveSections[12]->getWrapped(0xA301);
+	auto bottleRenderModel = (cdc::PCDX11RenderModel*)bottleObject->models[0]->renderMesh;
+
+
+	printf("have bottle cdc render model: %p (directly)\n", bottleRenderModel_direct);
+	printf("have bottle cdc render model: %p (via object)\n", bottleRenderModel);
 	printf("have bottle cdc mesh blob: %p\n", bottleRenderModel->getMesh());
 
 	for (uint32_t i = 0; i < bottleRenderModel->count0; i++)
