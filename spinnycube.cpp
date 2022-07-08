@@ -296,9 +296,10 @@ public:
 		uint32_t passId) override;
 };
 
+DRMIndex drmIndex;
+
 ResolveObject *requestDRM(
 	const char *path,
-	DRMIndex *drmIndex,
 	void **rootPtr = nullptr,
 	void (*callback)(void*, void*, void*, ResolveObject*) = nullptr,
 	void *callbackArg1 = nullptr,
@@ -307,7 +308,7 @@ ResolveObject *requestDRM(
 	printf("loading %s\n", path);
 
 	ResolveObject *ro = new ResolveObject(path);
-	auto *rr = new ResolveReceiver(callback, callbackArg1, callbackArg2, rootPtr, nullptr, nullptr, ro, 0, drmIndex);
+	auto *rr = new ResolveReceiver(callback, callbackArg1, callbackArg2, rootPtr, nullptr, nullptr, ro, 0, &drmIndex);
 	FileRequest *req = archiveFileSystem_default->createRequest(rr, path, 0);
 	req->submit(3);
 	req->decrRefCount();
@@ -440,7 +441,6 @@ int spinnyCube(HWND window,
 	cdc::PCDX11SimpleStaticIndexBuffer cdcIndexBuffer(sizeof(IndexData)/2, IndexData);
 	cdc::deviceManager->stateManager = &stateManager; // hack
 
-	DRMIndex drmIndex;
 	auto obj1 = ResolveObject::create(
 		"pc-w\\shaderlibs\\pickup_dns_156600946691c80e_dx11.drm",
 		nullptr,

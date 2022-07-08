@@ -55,7 +55,7 @@ ResolveObject *ResolveObject::create(
 	auto *resolveReceiver = new ResolveReceiver(
 		callback, callbackArg1, callbackArg2,
 		outPtrWrapped, unloadCallback, pendingObject,
-		resolveObject, y);
+		resolveObject, y, &drmIndex);
 
 	// auto *fs = getFileSystem();
 	auto *fs = archiveFileSystem_default; // HACK

@@ -10,3 +10,5 @@ class DRMIndex {
 public:
 	std::unordered_map<std::string, std::vector<cdc::DRMSectionHeader>> sectionHeaders;
 };
+
+extern DRMIndex drmIndex;
