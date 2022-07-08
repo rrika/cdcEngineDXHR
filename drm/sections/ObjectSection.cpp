@@ -3,6 +3,7 @@
 #include "ObjectSection.h"
 #include "../ResolveObject.h"
 #include "../../filesystem/FileSystem.h"
+#include "../../object/Object.h"
 #include "config.h"
 
 #ifdef ENABLE_IMGUI
@@ -15,8 +16,6 @@ void buildDRMPath(char *buffer, const char *name);
 extern char buildType[16];
 
 namespace cdc {
-
-using ObjectBlob = char;
 
 struct PendingObject {
 	ResolveObject *resolveObject; // 0
@@ -290,7 +289,7 @@ uint32_t ObjectSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t 
 		entry->state = 2;
 	}
 
-	entry->objBlob = new char[size];
+	entry->objBlob = (ObjectBlob*) new char[size];
 	return entry - objects;
 }
 
@@ -300,8 +299,30 @@ void ObjectSection::fill(uint32_t domainId, void* src, size_t size, size_t offse
 	// return size;
 }
 
-void ObjectSection::construct(uint32_t sectionId, void *) {
-	// TODO
+void ObjectSection::construct(uint32_t domainId, void *) {
+	PendingObject *pendingObject = &objects[domainId];
+	ObjectBlob *objBlob = pendingObject->objBlob;
+	printf("domainId      = %x\n", domainId);
+	printf("pendingObject = %p\n", pendingObject);
+	printf("objBlob       = %p\n", objBlob);
+	printf("dtpData       = %p\n", objBlob->dtpData);
+	if (objBlob->dtpData) {
+		// TODO
+		printf("numModels     = %d\n", objBlob->dtpData->numModels);
+		objBlob->numModels = objBlob->dtpData->numModels;
+		// TODO
+		printf("models        = %p\n", objBlob->dtpData->models);
+		objBlob->models = objBlob->dtpData->models;
+		if (objBlob->models && objBlob->numModels != 0)
+			printf("models[0]     = %p\n", objBlob->models[0]);
+
+		// TODO		
+		printf("dwordBC       = %08x\n", objBlob->dtpData->dwordBC);
+		if (auto dwordBC = objBlob->dtpData->dwordBC) {
+			objBlob->dword58 = dwordBC;
+			objBlob->dword54 = (uint32_t)objBlob->dtpData;
+		}
+	}
 }
 
 void* ObjectSection::getWrapped(uint32_t domainId) {
