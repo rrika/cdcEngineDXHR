@@ -2,6 +2,7 @@
 #include "drm/sections/DTPDataSection.h"
 #include "drm/sections/GenericSection.h"
 #include "drm/sections/MaterialSection.h"
+#include "drm/sections/ObjectSection.h"
 #include "drm/sections/RenderResourceSection.h"
 #include "drm/sections/ShaderLibSection.h"
 #include "drm/sections/WaveSection.h"
@@ -20,6 +21,7 @@ void setupResolveSections() {
 	g_resolveSections[7] = new cdc::DTPDataSection();
 	g_resolveSections[9] = new cdc::ShaderLibSection();
 	g_resolveSections[10] = new cdc::MaterialSection();
+	g_resolveSections[11] = new cdc::ObjectSection();
 	g_resolveSections[12] = renderResourceSection; // meshes
 }
 
@@ -35,6 +37,7 @@ void mainloop() {
 	else
 		prefix = ""; // TODO
 	setupPrefixes(prefix); // WinMain2 already does this
+	ensureObjectList();
 
 	// TODO
 	setupResolveSections();
