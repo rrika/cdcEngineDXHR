@@ -2,6 +2,7 @@
 #include <cstring>
 #include "ObjectSection.h"
 #include "../ResolveObject.h"
+#include "../../filesystem/FileSystem.h"
 #include "config.h"
 
 #ifdef ENABLE_IMGUI
@@ -9,6 +10,7 @@
 #endif
 
 char *readFileBlocking(const char *path);
+cdc::FileSystem *getDefaultFileSystem();
 void buildDRMPath(char *buffer, const char *name);
 extern char buildType[16];
 
@@ -251,12 +253,25 @@ void requestObject3(uint32_t id) {
 
 void buildObjectsUI() {
 #if ENABLE_IMGUI
+	static bool onlyLoaded = true;
+	ImGui::Checkbox("Only show loaded objects", &onlyLoaded);
 	if (!g_objectList || !g_objectList->objectListEntries) return;
 	auto e = g_objectList->objectListEntries;
 	for (int32_t i = 0; i < e->count; i++) {
-		if (e->entries[i].name && e->entries[i].slot != ~0u)
+		bool isLoaded = e->entries[i].slot != ~0u;
+		if (e->entries[i].name && (isLoaded || !onlyLoaded)) {
 			ImGui::Text("%4d %s %d",
 				i+1, e->entries[i].name, e->entries[i].slot);
+			if (!isLoaded) {
+				ImGui::PushID(i);
+				ImGui::SameLine();
+				if (ImGui::SmallButton("Load")) {
+					requestObject3(i+1);
+					getDefaultFileSystem()->processAll();
+				}
+				ImGui::PopID();
+			}
+		}
 	}
 #endif
 }
