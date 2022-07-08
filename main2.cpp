@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <windows.h>
 #include "filesystem/ArchiveFileSystem.h"
+#include "filesystem/FileUserBufferReceiver.h"
 #include "filesystem/HackFileSystem.h"
 #include "imgui/imgui.h"
 #include "main.h"
@@ -63,6 +64,30 @@ void createHigherFileSystems() {
 	
 	if (!indexOk)
 		cdcError("Unable to open bigfile BIGFILE.DAT!");
+}
+
+void destroyFileSystems() {
+	// TODO
+}
+
+FileSystem *getDefaultFileSystem() {
+	// TODO
+	return archiveFileSystem_default;
+}
+
+char *readFileBlocking(const char *path) {
+	auto fs = archiveFileSystem_default; // HACK
+	uint32_t size = fs->getSize(path);
+
+	char *buffer = new char[size+1];
+	FileReceiver *rec = FileUserBufferReceiver::create(buffer);
+	FileRequest *req = fs->createRequest(rec, path, 0);
+	req->submit(1);
+	fs->processUntil(req);
+	req->decrRefCount();
+	// req is owned by fs which takes care of it in processAll()
+
+	return buffer;
 }
 
 char buildType[16];
