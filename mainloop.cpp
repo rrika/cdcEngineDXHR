@@ -12,6 +12,10 @@
 #include "main2.h"
 #include "mainloop.h"
 #include "spinnycube.h"
+#include "config.h"
+#if ENABLE_IMGUI
+#include "imgui/imgui.h"
+#endif
 
 void setupResolveSections() {
 	auto *renderResourceSection = new cdc::RenderResourceSection;
@@ -72,10 +76,58 @@ void loadDatabases() {
 	// TODO
 }
 
+extern char buildType[16];
+
+struct ObjListEntry {
+	char name[128];
+	uint16_t *data;
+};
+
+struct ObjList {
+	uint32_t count;
+	ObjListEntry entries[];
+};
+
+ObjList *objList;
+
+void readObjectAndUnitList() {
+	// TODO
+
+	// read object names
+	readAndParseObjectList();
+
+	// read unit names
+	char objListPath[300];
+	sprintf(objListPath, "%s\\objlist.dat", buildType);
+	if (getDefaultFileSystem()->getSize(objListPath)) {
+		objList = (ObjList*) readFileBlocking(objListPath);
+		uint32_t count = objList->count;
+		ObjListEntry *entry = objList->entries;
+		uint16_t *data = (uint16_t*)&objList->entries[objList->count];
+		while (count--) {
+			if (entry->name[0] != '\0') {
+				entry->data = data;
+				data += 1 + *data;
+			}
+			entry++;
+		}
+	}
+
+	// TODO
+}
+
+void buildUnitsUI() {
+#if ENABLE_IMGUI
+	for (uint32_t i = 0; i < objList->count; i++) {
+		ImGui::Text("%s", objList->entries[i].name);
+	}
+#endif
+}
+
 void setups() {
 	// TODO
 
-	readAndParseObjectList(); // called indirectly
+	readObjectAndUnitList();
 
 	// TODO
 

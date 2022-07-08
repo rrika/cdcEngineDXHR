@@ -12,6 +12,7 @@
 #include "types.h"
 #include "matrix.h"
 #include "main2.h" // for yellowCursor and archiveFileSystem_default
+#include "mainloop.h" // for buildUnitsUI
 #include "drm/DRMIndex.h"
 #include "drm/ResolveObject.h"
 #include "drm/ResolveReceiver.h"
@@ -542,6 +543,7 @@ int spinnyCube(HWND window,
 	bool showFilesystemWindow = false;
 	bool showObjectsWindow = false;
 	bool showDRMWindow = false;
+	bool showUnitsWindow = false;
 	std::vector<std::pair<void*, CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
 #endif
@@ -642,6 +644,7 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Show filesystem")) { showFilesystemWindow = true; }
 				if (ImGui::MenuItem("Show objects")) { showObjectsWindow = true; }
 				if (ImGui::MenuItem("Show DRMs")) { showDRMWindow = true; }
+				if (ImGui::MenuItem("Show units")) { showUnitsWindow = true; }
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
@@ -708,6 +711,11 @@ int spinnyCube(HWND window,
 					ImGui::TreePop();
 				}
 			}
+			ImGui::End();
+		}
+		if (showUnitsWindow) {
+			ImGui::Begin("Units", &showUnitsWindow);
+			buildUnitsUI();
 			ImGui::End();
 		}
 		ImGui::Render();
