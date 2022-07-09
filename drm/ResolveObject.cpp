@@ -1,5 +1,7 @@
+#include <unordered_map>
 #include "ResolveObject.h"
 #include "ResolveReceiver.h"
+#include "ResolveSection.h" // for g_resolveSections
 #include "../filesystem/ArchiveFileSystem.h"
 #include "../main2.h"
 
@@ -35,6 +37,8 @@ ResolveObject *ResolveObject::create(
 	);
 }
 
+std::unordered_map<uint32_t, ResolveObject *> cachedObjects;
+
 ResolveObject *ResolveObject::create(
 	uint32_t pathCrc,
 	const char *path,
@@ -47,7 +51,21 @@ ResolveObject *ResolveObject::create(
 	uint8_t y,
 	uint32_t fsMethod18Arg
 ) {
-	// TODO: cache
+	if (auto it = cachedObjects.find(pathCrc); it != cachedObjects.end()) {
+		auto *resolveObject = it->second;
+
+		if (outPtrWrapped && resolveObject->drmReadDets && resolveObject->drmReadDets->numDets)
+			*outPtrWrapped = resolveObject->getRootWrapped();
+
+		if (unloadCallback)
+			if (auto rr = resolveObject->resolveReceiver) {
+				rr->unloadCallback = unloadCallback;
+				rr->pendingObject = pendingObject;
+			}
+
+		// TODO
+		return resolveObject;
+	}
 
 	path = strdup(path); // HACK
 
@@ -65,6 +83,28 @@ ResolveObject *ResolveObject::create(
 	// TODO
 
 	return resolveObject;
+}
+
+void *ResolveObject::getRootWrapped() {
+	if (rootSection == ~0u)
+		return nullptr;
+	DRMReadDet &det = drmReadDets->dets[rootSection];
+	return g_resolveSections[det.contentType]->getWrapped(det.domainID);
+}
+
+void ResolveObject::markForRetry(uint32_t missingDeps, ResolveReceiver *rr) {
+	(void)rr;
+	// numPendingDependencies = missingDeps;
+	// byte34 = true;
+	// fileRequest->method_1C();
+	fileRequest = nullptr;
+}
+
+
+bool isLoaded(ResolveObject *ro) {
+	if (ro)
+		return !ro->fileRequest; // && !ro->byte34;
+	return true;
 }
 
 }

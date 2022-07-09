@@ -42,6 +42,11 @@ public:
 	);
 
 	ResolveObject(const char *path) : path(path) {}
+
+	void *getRootWrapped();
+	void markForRetry(uint32_t missingDeps, ResolveReceiver *rr);
 };
+
+bool isLoaded(ResolveObject *);
 
 }

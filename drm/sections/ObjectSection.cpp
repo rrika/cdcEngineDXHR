@@ -193,12 +193,12 @@ static PendingObject *allocObjectSlot(int32_t id, uint16_t state) {
 	return obj;
 }
 
-static void objectLoadCallback(void*, void*, void*, ResolveObject* resolveObject) {
+void objectLoadCallback(void*, void*, void*, ResolveObject* resolveObject) {
 	printf("objectLoadCallback %p %s\n", resolveObject, resolveObject->path);
 	// TODO
 }
 
-static void objectUnloadCallback(PendingObject*, ResolveObject*) {
+void objectUnloadCallback(PendingObject*, ResolveObject*) {
 	// TODO
 }
 

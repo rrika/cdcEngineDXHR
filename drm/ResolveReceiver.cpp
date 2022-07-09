@@ -15,6 +15,8 @@ extern "C" {
 #include "../miniz/miniz.h"
 }
 
+extern char pathPrefix[36];
+
 namespace cdc {
 
 static void applyRelocs(
@@ -159,15 +161,67 @@ static std::vector<char> decompressCDRM(std::vector<char>& data) {
 	return output;
 }
 
-std::vector<DRMSectionHeader> hackResolveReceiver(std::vector<char> data, ResolveSection **resolveSections, ResolveObject *resolveObject) {
+// from ObjectSection.cpp
+void objectLoadCallback(void*, void*, void*, ResolveObject* resolveObject);
+void objectUnloadCallback(PendingObject*, ResolveObject*);
+
+std::vector<DRMSectionHeader> hackResolveReceiver(
+	std::vector<char> data,
+	ResolveSection **resolveSections,
+	ResolveObject *resolveObject,
+	bool requestDependencies)
+{
 	data = decompressCDRM(data);
 	DRMHeader header;
 	memcpy(&header, data.data(), sizeof(header));
 	std::vector<DRMSectionHeader> sectionHeaders(header.sectionCount);
 	memcpy(sectionHeaders.data(), data.data() + sizeof(header), sizeof(DRMSectionHeader) * header.sectionCount);
 
-	uint32_t cursor = 32 + header.sectionCount*20 + header.dependencyDrmListSize + header.dependencyObjListSize;
+	uint32_t cursor = 32 + header.sectionCount*20;
+	uint32_t dependencyDrmListOffset = cursor; cursor += header.dependencyDrmListSize;
+	uint32_t dependencyObjListOffset = cursor; cursor += header.dependencyObjListSize;
 	cursor = (cursor+15) & ~15;
+
+	if (requestDependencies) {
+		char *dep = data.data() + dependencyDrmListOffset;
+		char *end = dep + header.dependencyDrmListSize;
+		uint32_t missingDeps = 0;
+		for (; dep < end; dep += strlen(dep) + 1) {
+			char path[512];
+			sprintf(path, "%s%s", pathPrefix, dep); // HACK
+
+			auto depResolveObject = ResolveObject::create(
+				path,
+				&objectLoadCallback,
+				nullptr,
+				nullptr,
+				nullptr,
+				nullptr,
+				nullptr,
+				0,
+				1);
+			// TODO
+			if (!isLoaded(depResolveObject)) {
+				missingDeps++;
+				// TODO
+			}
+		}
+		if (missingDeps != 0) {
+			// recreate this receiver, for a time when the dependencies have arrived
+			/*auto newRr = new ResolveReceiver(
+				callback,
+				callbackArg1,
+				callbackArg2,
+				rootSectionPtr,
+				unloadCallback,
+				pendingObject,
+				object,
+				unknown,
+				index);
+
+			resolveObject->markForRetry(missingDeps, newRr);*/
+		}
+	}
 
 	std::vector<uint32_t> sectionDomainIds;
 	std::vector<char*> relocPtrs;
@@ -272,6 +326,10 @@ void ResolveReceiver::requestFailed(FileRequest *req) {
 
 void ResolveReceiver::requestComplete(FileRequest *req) {
 	auto sectionHeaders = hackResolveReceiver(std::move(buffer), g_resolveSections, resolveObject);
+
+	req->decrRefCount();
+	resolveObject->fileRequest = nullptr;
+	resolveObject->resolveReceiver = nullptr;
 
 	void *wrapped = nullptr;
 	if (resolveObject->rootSection != ~0u) {

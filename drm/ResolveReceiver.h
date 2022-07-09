@@ -10,7 +10,7 @@ class ResolveObject;
 struct PendingObject;
 
 class ResolveSection;
-std::vector<DRMSectionHeader> hackResolveReceiver(std::vector<char> data, ResolveSection **sections);
+std::vector<DRMSectionHeader> hackResolveReceiver(std::vector<char> data, ResolveSection **sections, ResolveObject *resolveObject, bool requestDependencies=true);
 void hackResolveReceiver(FileSystem *fs, const char *path, ResolveSection **sections, ResolveObject *resolveObject, DRMIndex *index=nullptr);
 
 class ResolveReceiver : public FileReceiver {
@@ -25,6 +25,8 @@ class ResolveReceiver : public FileReceiver {
 	void **rootSectionPtr; // 78
 	void (*unloadCallback)(PendingObject*, ResolveObject*); // 7C
 	PendingObject *pendingObject; // 80
+
+	friend class ResolveObject; // need to mess with unloadCallback etc.
 
 public:
 	ResolveReceiver(
