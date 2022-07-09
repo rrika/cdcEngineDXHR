@@ -21,8 +21,8 @@ public:
 	ID3D11UnorderedAccessView *unorderedAccessView = nullptr; // 48
 	// uint8_t byte4C;
 	// uint8_t byte4D;
-	uint8_t sampleCount;
-	uint8_t sampleQuality;
+	uint8_t sampleCount = 0;
+	uint8_t sampleQuality = 0;
 	uint16_t shortWidth;
 	uint16_t shortHeight;
 	uint32_t isDepthBuffer = 0;
