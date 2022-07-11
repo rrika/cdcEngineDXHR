@@ -142,8 +142,8 @@ public:
 	virtual void createMatrixState() = 0;
 	virtual void createVertexBuffer() = 0;
 	virtual void createIndexBuffer() = 0;
-	virtual void method_16C() = 0;
-	virtual void createDepthBuffer() = 0;
+	virtual IRenderTarget *createRenderTarget(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t) = 0;
+	virtual IDepthBuffer *createDepthBuffer() = 0;
 	virtual void method_174() = 0;
 	virtual void getWindowSize(uint *width, uint *height) = 0;
 	virtual void method_17C() = 0;
@@ -152,7 +152,7 @@ public:
 	virtual bool isInStereoMode();
 	virtual void method_18C();
 	virtual void method_190();
-	virtual void method_194();
+	virtual bool useAlternateLinearAlloc();
 	virtual void method_198();
 	virtual void method_19C();
 	virtual void method_1A0();

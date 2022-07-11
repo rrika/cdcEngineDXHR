@@ -146,8 +146,8 @@ public:
 	void createMatrixState() override;
 	void createVertexBuffer() override;
 	void createIndexBuffer() override;
-	void method_16C() override;
-	void createDepthBuffer() override;
+	IRenderTarget *createRenderTarget(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t) override;
+	IDepthBuffer *createDepthBuffer() override;
 	void method_174() override;
 	void getWindowSize(uint *width, uint *height) override;
 	void method_17C() override;
@@ -174,7 +174,12 @@ public:
 	virtual void dx11_method_28();
 	virtual void dx11_method_2C();
 	virtual void dx11_method_30();
-	virtual void dx11_method_34();
+	virtual PCDX11RenderTarget *dx11_createRenderTarget(
+		uint32_t width,
+		uint32_t height,
+		uint32_t dxgiFormat,
+		uint32_t,
+		uint32_t);
 	virtual void dx11_method_38();
 	virtual void dx11_method_3C();
 	virtual void dx11_method_40();

@@ -1,5 +1,6 @@
 #include "BuiltinResources.h"
 #include "drawables/PCDX11ClearDrawable.h"
+#include "LinearAllocator.h"
 #include "PCDX11DeviceManager.h"
 #include "PCDX11LightManager.h"
 #include "PCDX11Material.h"
@@ -13,7 +14,9 @@
 #include "PCDX11StateManager.h"
 #include "RenderPasses.h"
 #include "shaders/PCDX11ShaderLib.h"
+#include "surfaces/PCDX11DefaultRenderTarget.h"
 #include "surfaces/PCDX11DepthBuffer.h"
+// #include "surfaces/PCDX11HeapRenderTarget.h"
 #include "surfaces/PCDX11RenderTarget.h"
 #include "surfaces/PCDX11SubFrameRenderTarget.h"
 #include "surfaces/PCDX11Texture.h"
@@ -494,12 +497,23 @@ void PCDX11RenderDevice::createIndexBuffer() {
 	// TODO
 }
 
-void PCDX11RenderDevice::method_16C() {
-	// TODO
+IRenderTarget *PCDX11RenderDevice::createRenderTarget(
+	uint32_t width,
+	uint32_t height,
+	uint32_t arg3,
+	uint32_t cdcFormat,
+	uint32_t ignored6,
+	uint32_t arg7
+) {
+	uint32_t dxgiFormat = decodeFormat(cdcFormat);
+	if (dxgiFormat == 0)
+		dxgiFormat = 0x1C; // DXGI_FORMAT_R8G8B8A8_UNORM
+	return dx11_createRenderTarget(width, height, dxgiFormat, arg3, arg7);
 }
 
-void PCDX11RenderDevice::createDepthBuffer() {
+IDepthBuffer *PCDX11RenderDevice::createDepthBuffer() {
 	// TODO
+	return nullptr;
 }
 
 void PCDX11RenderDevice::method_174() {
@@ -611,8 +625,22 @@ void PCDX11RenderDevice::dx11_method_30() {
 	// TODO
 }
 
-void PCDX11RenderDevice::dx11_method_34() {
-	// TODO
+PCDX11RenderTarget *PCDX11RenderDevice::dx11_createRenderTarget(
+	uint32_t width,
+	uint32_t height,
+	uint32_t dxgiFormat,
+	uint32_t arg4,
+	uint32_t arg5)
+{
+	if (arg4 & 0x10) {
+		auto *linear = useAlternateLinearAlloc() ? linear34 : linear30;
+		return new (linear, 12, true)
+			PCDX11DefaultRenderTarget(width, height, arg4 & ~4, dxgiFormat, this, 0, arg5);
+
+	} else {
+		// return new PCDX11HeapRenderTarget(width, height, arg4, dxgiFormat, this, arg5);
+		return nullptr;
+	}
 }
 
 void PCDX11RenderDevice::dx11_method_38() {

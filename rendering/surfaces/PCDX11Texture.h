@@ -19,6 +19,8 @@ enum class TextureFormat { // DXGI_FORMAT ?
 	GrayScaleMaybe = 0x41,
 };
 
+uint32_t decodeFormat(uint32_t format);
+
 struct TextureBlob {
 	uint32_t magic;
 	uint32_t format;

@@ -36,6 +36,7 @@ static uint32_t bytesForTextureDimMips(int width, int height, int depthMinusOne,
 	return total;
 }
 
+// cdc format to dxgi format
 uint32_t decodeFormat(uint32_t format) {
 	switch (format) {
 		case '1TXD':

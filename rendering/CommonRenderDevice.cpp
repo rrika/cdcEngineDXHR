@@ -230,8 +230,9 @@ void CommonRenderDevice::method_190() {
 	// TODO
 }
 
-void CommonRenderDevice::method_194() {
+bool CommonRenderDevice::useAlternateLinearAlloc() {
 	// TODO
+	return false;
 }
 
 void CommonRenderDevice::method_198() {
