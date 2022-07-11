@@ -695,6 +695,15 @@ int spinnyCube(HWND window,
 						};
 						ImGui::Text("%3d: %04x %s unk6:%x (%d bytes)",
 							i++, section.id, names[section.type], section.unknown06, section.payloadSize);
+						if (section.type == 5) {
+							ImGui::Text("    ");
+							ImGui::SameLine();
+							auto *resource = (cdc::RenderResource*)g_resolveSections[5]->getWrapped(section.id);
+							if (auto tex = dynamic_cast<cdc::PCDX11Texture*>(resource)) {
+								ImGui::Image(
+									tex->createShaderResourceView(), ImVec2(256, 256));
+							}
+						}
 					}
 					ImGui::TreePop();
 				}
