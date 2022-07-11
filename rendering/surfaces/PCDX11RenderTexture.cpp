@@ -1,4 +1,5 @@
 #include "../PCDX11DeviceManager.h"
+#include "../PCDX11RenderDevice.h"
 #include "PCDX11RenderTexture.h"
 #include <d3d11.h>
 
@@ -6,10 +7,11 @@ namespace cdc {
 
 PCDX11RenderTexture::PCDX11RenderTexture(
 	uint16_t width, uint16_t height,
-	uint32_t unknown1, uint32_t isDepthBuffer,
+	uint32_t flags, uint32_t isDepthBuffer,
 	PCDX11RenderDevice *renderDevice, uint32_t unknown2)
 :
 	PCDX11BaseTexture(width, height, 0),
+	flags30(flags),
 	shortWidth(width),
 	shortHeight(height),
 	isDepthBuffer(isDepthBuffer),
@@ -70,13 +72,21 @@ void PCDX11RenderTexture::ensureRenderTargetView() {
 
 void PCDX11RenderTexture::ensureBuffer() {
 	// TODO
-	if (!resource) {
-		ensureResource();
+	if (!borrowedResource) {
+		if (!resource) {
+			ensureResource();
+		}
 	}
 	// TODO
 	if (!view || !shaderResourceView) {
 		// TODO
 		ensureRenderTargetView();
+	}
+
+	if (!registeredForDeletionAfterFrame && (flags30 & 4) == 0) {
+		auto& num = renderDevice->numTemporarySurfaces;
+		renderDevice->temporarySurfaces[num++] = originRenderSurface; 
+		registeredForDeletionAfterFrame = true;
 	}
 }
 
@@ -87,12 +97,50 @@ ID3D11View *PCDX11RenderTexture::getView() {
 void PCDX11RenderTexture::initForRenderTarget(IRenderSurface *renderSurface, uint32_t format, ID3D11Texture2D *texture) {
 	// TODO
 	textureFormat = format;
-	resource = texture;
+	originRenderSurface = renderSurface;
+	if (texture) {
+		resource = texture;
+		borrowedResource = true;
+	}
 }
 
 
 void PCDX11RenderTexture::resFree() {
-	// TODO
+	// HACK
+	if (!borrowedResource) {
+		if (view)
+			view->Release();
+		if (depthStencilView)
+			depthStencilView->Release();
+		if (shaderResourceView)
+			shaderResourceView->Release();
+		resource->Release();
+}
+
+	if (borrowedResource) {
+		if (view) {
+			view->Release();
+			view = nullptr;
+		}
+
+		if (shaderResourceView) {
+			shaderResourceView->Release();
+			shaderResourceView = nullptr;
+		}
+
+	} else {
+		resource = nullptr;
+	}
+
+	if (unorderedAccessView) {
+		unorderedAccessView->Release();
+		unorderedAccessView = nullptr;
+	}
+
+	view = nullptr;
+	shaderResourceView = nullptr;
+	depthStencilView = nullptr;
+	registeredForDeletionAfterFrame = false;
 }
 
 void PCDX11RenderTexture::resFill(void* src, size_t size, size_t offset) {

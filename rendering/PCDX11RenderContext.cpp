@@ -37,11 +37,11 @@ bool PCDX11RenderContext::createRenderTargets() {
 	uint32_t height = this->height; // TODO
 	uint32_t format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB; // TODO
 	renderTarget2C = new PCDX11DefaultRenderTarget(
-		width, height, 1, format, renderDevice, frameBuffer, 0);
+		width, height, /*flags=*/ 4 /*HACK*/ | 1, format, renderDevice, frameBuffer, 0);
 	// TODO
 	uint32_t depthFormat = DXGI_FORMAT_D24_UNORM_S8_UINT; // HACK
 	depthBuffer = new PCDX11DepthBuffer(
-		width, height, /*unknown=*/ 1, depthFormat, renderDevice);
+		width, height, /*flags=*/ 4 /*HACK*/ |1, depthFormat, renderDevice);
 	return true;
 }
 

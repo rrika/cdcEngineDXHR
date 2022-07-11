@@ -14,12 +14,16 @@ public:
 		uint32_t, uint32_t,
 		PCDX11RenderDevice*, ID3D11Texture2D*, uint32_t);
 
+	uint32_t flags14;
 	PCDX11RenderTexture renderTexture; // 1C
 
 	TextureMap *getRenderTexture() override { return &renderTexture; }
 	uint32_t getWidth() override { return renderTexture.getWidth(); }
 	uint32_t getHeight() override { return renderTexture.getHeight(); }
-	void freeResource() override { /*TODO*/ }
+	void freeResource() override {
+		if ((flags14 & 4) == 0)
+			renderTexture.resFree();
+	}
 	void registerAtScene(void *ptr) override { /*TODO*/ }
 	void method_14() override { /*empty*/ }
 

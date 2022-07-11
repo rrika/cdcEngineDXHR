@@ -15,15 +15,15 @@ class PCDX11RenderTexture :
 {
 public:
 	PCDX11RenderDevice *renderDevice; // 2C
-	// uint32_t dword30;
-	// uint32_t dword34;
+	uint32_t flags30;
+	IRenderSurface *originRenderSurface;
 	ID3D11Resource *resource = nullptr; // 38
 	ID3D11View *view = nullptr; // 3C (color or depth)
 	ID3D11ShaderResourceView *shaderResourceView = nullptr; // 40
 	ID3D11DepthStencilView *depthStencilView = nullptr; // 44
 	ID3D11UnorderedAccessView *unorderedAccessView = nullptr; // 48
-	// uint8_t byte4C;
-	// uint8_t byte4D;
+	bool registeredForDeletionAfterFrame = false; // 4C
+	bool borrowedResource = false; // 4D
 	uint8_t sampleCount = 0;
 	uint8_t sampleQuality = 0;
 	uint16_t shortWidth;

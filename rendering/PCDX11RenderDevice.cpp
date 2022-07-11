@@ -69,7 +69,7 @@ PCDX11RenderDevice::PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t heigh
 
 	lightManager = new PCDX11LightManager(this);
 
-	renderContext_10CEC = new PCDX11RenderContext(hwnd, width, height, 1, /*TODO*/0);
+	renderContext_10CEC = new PCDX11RenderContext(hwnd, width, height, 1, this);
 
 	createDefaultResources();
 	createDefaultVertexAttribLayouts();

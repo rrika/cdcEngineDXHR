@@ -9,6 +9,7 @@ class PCDX11RenderDevice;
 
 class PCDX11DepthBuffer : public CommonDepthBuffer {
 public:
+	uint32_t flagsC = 0;
 	PCDX11RenderTexture renderTexture; // 18
 
 	PCDX11DepthBuffer(
@@ -19,7 +20,10 @@ public:
 	TextureMap *getRenderTexture() override { return &renderTexture; };
 	uint32_t getWidth() override { return renderTexture.getWidth(); };
 	uint32_t getHeight() override { return renderTexture.getHeight(); };
-	void freeResource() override { /*TODO*/ };
+	void freeResource() override {
+		if ((flagsC & 4) == 0)
+			renderTexture.resFree();
+	};
 	void registerAtScene(void *ptr) override { /*TODO*/ };
 	void method_14() override { /*TODO*/ };
 

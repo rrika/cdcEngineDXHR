@@ -291,6 +291,7 @@ class SpinnyCubePass : public cdc::IRenderPassCallback {
 public:
 	D3D11_VIEWPORT *viewport;
 	ID3D11RasterizerState1* rasterizerState;
+	ID3D11BlendState1 *keepAlphaBlend;
 
 	bool pre(
 		cdc::CommonRenderDevice *renderDevice,
@@ -435,6 +436,22 @@ int spinnyCube(HWND window,
 
 	device->CreateRasterizerState1(&rasterizerDesc, &rasterizerState);
 
+	ID3D11BlendState1* keepAlphaBlend = NULL;
+
+	D3D11_BLEND_DESC1 BlendState;
+	ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC1));
+	BlendState.AlphaToCoverageEnable = false;
+	BlendState.IndependentBlendEnable = false;
+	BlendState.RenderTarget[0].BlendEnable = true;
+	BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	BlendState.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+	BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO; // ignore shader
+	BlendState.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE; // keep RT value
+	BlendState.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	device->CreateBlendState1(&BlendState, &keepAlphaBlend);
+
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	UINT stride = 12 * 4; // vertex size (11 floats: float4 position, float3 normal, float2 texcoord, float3 color)
@@ -518,6 +535,7 @@ int spinnyCube(HWND window,
 	SpinnyCubePass cubePass;
 	cubePass.viewport = &viewport;
 	cubePass.rasterizerState = rasterizerState;
+	cubePass.keepAlphaBlend = keepAlphaBlend;
 	renderDevice->setPassCallback(0, &cubePass);
 
 	SpinnyCubeDrawable cubeDrawable;
@@ -766,7 +784,7 @@ bool SpinnyCubePass::pre(
 	deviceContext->RSSetState(rasterizerState);
 
 	cdc::deviceManager->getStateManager()->setDepthState(D3D11_COMPARISON_LESS, true);
-	deviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff); // use default blend mode (i.e. disable)
+	deviceContext->OMSetBlendState(keepAlphaBlend, nullptr, 0xffffffff);
 
 	return true;
 }

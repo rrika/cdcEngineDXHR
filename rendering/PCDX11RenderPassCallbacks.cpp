@@ -24,12 +24,33 @@ PCDX11DepthDependentPassCallbacks depthDependentPassCallbacks;
 
 
 bool PCDX11NormalPassCallbacks::pre(
-	CommonRenderDevice *renderDevice,
+	CommonRenderDevice *commonRenderDevice,
 	uint32_t passId,
 	uint32_t drawableCount,
 	uint32_t priorPassesBitfield)
 {
 	// TODO
+	CommonScene *scene = commonRenderDevice->scene78;
+	auto *renderDevice = static_cast<PCDX11RenderDevice*>(commonRenderDevice);
+	auto *stateManager = deviceManager->getStateManager();
+
+	auto *rt = scene->getRenderTarget();
+	auto *db = scene->getDepthBuffer();
+
+	// make a new color buffer for this purpose
+	rt = renderDevice->createRenderTarget(
+		rt->getWidth(),
+		rt->getHeight(),
+		0x11 /*TODO*/, 0, 0, 4);
+	static_cast<PCDX11RenderTarget*>(rt)->getRenderTexture11()->createRenderTargetView(); // HACK
+
+	stateManager->pushRenderTargets(
+		static_cast<PCDX11RenderTarget*>(rt),
+		static_cast<PCDX11DepthBuffer*>(db));
+
+	float color[] = {0.5, 0.5, 0.5, 1.0f}; // HACK
+	renderDevice->clearRenderTargetNow(1, color, 0, 0); // HACK
+
 	return true;
 }
 
@@ -43,7 +64,7 @@ void PCDX11NormalPassCallbacks::post(
 
 	auto *rt = stateManager->m_renderTarget;
 	auto *db = stateManager->m_depthBuffer;
-	// stateManager->popRenderTargets();
+	stateManager->popRenderTargets();
 
 	scene->setSharedTextureToRenderTarget(rt, 6, 0);
 	scene->setSharedTextureToDepthBuffer(db, 5);

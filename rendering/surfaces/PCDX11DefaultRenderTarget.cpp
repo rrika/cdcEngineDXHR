@@ -5,10 +5,11 @@ namespace cdc {
 
 PCDX11DefaultRenderTarget::PCDX11DefaultRenderTarget(
 	uint32_t width, uint32_t height,
-	uint32_t unknown1, uint32_t format,
+	uint32_t flags, uint32_t format,
 	PCDX11RenderDevice *renderDevice, ID3D11Texture2D *texture, uint32_t unknown2)
 :
-	renderTexture(width, height, unknown1, /*isDepthBuffer=*/ false, renderDevice, unknown2)
+	flags14(flags),
+	renderTexture(width, height, flags, /*isDepthBuffer=*/ false, renderDevice, unknown2)
 {
 	// TODO
 	renderTexture.initForRenderTarget(this, format, texture);
