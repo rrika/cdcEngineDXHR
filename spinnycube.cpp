@@ -469,6 +469,11 @@ int spinnyCube(HWND window,
 	bottleTexture->asyncCreate();
 	printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
 
+	// create the other four textures
+	((cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x0395))->asyncCreate();
+	((cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x005b))->asyncCreate();
+	((cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x0061))->asyncCreate();
+
 	auto bottleRenderModel_direct = (cdc::PCDX11RenderModel*)g_resolveSections[12]->getWrapped(0xA301);
 	auto bottleRenderModel = (cdc::PCDX11RenderModel*)bottleObject->models[0]->renderMesh;
 
