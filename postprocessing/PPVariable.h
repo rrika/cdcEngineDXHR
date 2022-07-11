@@ -1,6 +1,15 @@
 #pragma once
 #include <cstdint>
 
+struct PPVariableBlob {
+	uint32_t dword0;
+	uint32_t dword4;
+	float float8;
+	float floatC;
+	float float10;
+	float float14;
+};
+
 class PPVariable {
 public:
 	uint32_t dword4;

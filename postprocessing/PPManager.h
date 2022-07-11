@@ -1,27 +1,88 @@
 #pragma once
 #include <cstdint>
-#include <vector>
+#include "../sys/Vector.h"
 
-struct PPUnknown1 {
-	// TODO (sizeof=88)
+class PPTexture;
+class PPVariable;
+struct PPUnknown3;
+struct PPVariableUnk2Link;
+
+struct PPVariableUnk2Link {
+	uint32_t variableIndex;
+	uint32_t type4;
+	uint32_t dword8;
+	float floatC;
+	float float10;
+	float float14;
+	float float18;
+	uint32_t blendMode1C;
+};
+
+struct PPUnknown1 { // aka PPActiveSet
+	char *name;
+	PPUnknown3 *unknown3;
+	uint32_t numLinks8;
+	PPVariableUnk2Link *linksC;
+
+	uint32_t alwaysActivePassCount;
+	uint32_t *alwaysActivePassIndices;
+
+	uint32_t dword18;
+	void *dword1C;
+
+	uint32_t dword20;
+	void *dword24;
+
+	uint32_t dof1PassCount;
+	uint32_t *dof1PassIndices;
+
+	uint32_t dof2PassCount;
+	uint32_t *dof2PassIndices;
+
+	uint32_t antialiasPassCount;
+	uint32_t *antialiasPassIndices;
+
+	uint32_t antialias2PassCount;
+	uint32_t *antialias2PassIndices;
+
+	uint32_t neverActivePassCount;
+	uint32_t *neverActivePassIndices;
+
+	uint32_t dword50;
+	float float54;
 };
 
 struct PPUnknown2 {
-	// TODO (sizeof=48)
+	uint32_t dword0;
+	uint32_t dword4;
+	uint32_t dword8;
+	uint32_t dwordC;
+	uint32_t dword10;
+	uint32_t dword14;
+	uint32_t dword18;
+	uint32_t dword1C;
+	uint32_t dword20;
+	uint32_t dword24;
+	uint32_t dword28;
+	uint32_t dword2C;
 };
 
 class PPManager {
 public:
-	std::vector<PPUnknown1*> unknowns1; // 4
-	std::vector<PPTexture*> textures; // 10
-	std::vector<PPVariable*> variables; // 1C
-	uint32_t dword28;
-	uint8_t char2C[128];
-	uint8_t charAC[128];
-	uint8_t char12C[128];
-	uint32_t dword1AC;
-	uint32_t dword1B0;
-	std::vector<PPUnknown2*> unknown2; // 1B4
+	Vector<PPUnknown1*> unknowns1; // 4
+	Vector<PPTexture*> textures; // 10
+	Vector<PPVariable*> variables; // 1C
+	uint32_t rootPasses28;
+	uint32_t dwords2C[32];
+	uint32_t dwordsAC[32];
+	uint32_t dwords12C[32];
+	uint32_t width;
+	uint32_t height;
+	Vector<PPUnknown2*> unknowns2; // 1B4
 
+	PPManager();
 	virtual ~PPManager() = default;
+
+	void prepare();
+	void addUnknown1(PPUnknown1 *unk1, float f);
 };
