@@ -5,6 +5,7 @@
 #include "PCDX11Scene.h"
 #include "PCDX11StateManager.h"
 #include "surfaces/PCDX11DepthBuffer.h" // for CommonDepthBuffer to PCDX11DepthBuffer cast
+#include "surfaces/PCDX11RenderTarget.h" // for PCDX11RenderTarget to CommonRenderTarget cast
 
 namespace cdc {
 
@@ -37,6 +38,15 @@ void PCDX11NormalPassCallbacks::post(
 	uint32_t passId)
 {
 	// TODO
+	CommonScene *scene = renderDevice->scene78;
+	auto *stateManager = deviceManager->getStateManager();
+
+	auto *rt = stateManager->m_renderTarget;
+	auto *db = stateManager->m_depthBuffer;
+	// stateManager->popRenderTargets();
+
+	scene->setSharedTextureToRenderTarget(rt, 6, 0);
+	scene->setSharedTextureToDepthBuffer(db, 5);
 }
 
 
@@ -107,7 +117,7 @@ void PCDX11DepthPassCallbacks::post(
 	CommonScene *scene = renderDevice->scene78;
 	if (scene->depthBuffer) {
 		// TODO: scene->depthBuffer->byte14 = 1;
-		scene->sub114.depthRenderTexture = scene->depthBuffer->getRenderTexture();
+		scene->sub114.tex14[10] = scene->depthBuffer->getRenderTexture();
 	}
 }
 

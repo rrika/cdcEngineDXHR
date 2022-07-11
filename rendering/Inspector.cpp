@@ -1,9 +1,18 @@
+#include <typeinfo>
 #include "../imgui/imgui.h"
+#include "surfaces/PCDX11RenderTexture.h"
 #include "Inspector.h"
+#include "PCDX11Scene.h"
 #include "RenderPasses.h"
 
 void buildUI(IRenderDrawable *drawable) {
-	ImGui::Text("drawable %p", drawable);
+	if (auto scene = dynamic_cast<PCDX11Scene*>(drawable)) {
+		if (ImGui::TreeNode("scene", "scene %p", scene)) {
+			ImGui::TreePop();
+		}
+	} else {
+		ImGui::Text("drawable %p %s", drawable, typeid(*drawable).name());
+	}
 }
 
 void buildUI(DrawableList *drawableList) {
@@ -46,6 +55,20 @@ void buildUI(RenderPasses *renderPasses, DrawableListsAndMasks *lists) {
 				ImGui::TreePop();
 			}
 			ImGui::PopID();
+		}
+	}
+}
+
+void buildUI(CommonScene *scene) {
+	for (uint32_t i=0; i<13; i++) {
+		TextureMap *t = scene->sub114.tex14[i];
+		ImGui::Text("shared texture %d: %p", i, t);
+		if (auto renderTexture = dynamic_cast<PCDX11RenderTexture*>(t)) {
+			auto s = renderTexture->createShaderResourceView();
+			if (s)
+				ImGui::Image(s, ImVec2(256, 256));
+			else
+				ImGui::Text("  createShaderResourceView returned nullptr");
 		}
 	}
 }

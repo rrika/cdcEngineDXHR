@@ -664,6 +664,10 @@ int spinnyCube(HWND window,
 			}
 			// buildUI(xscene->drawableListsAndMasks);
 			buildUI(&renderDevice->renderPasses, xscene->drawableListsAndMasks);
+			if (scene == xscene)
+				ImGui::Text("intermediate buffers are unavailable in live view");
+			else
+				buildUI(xscene);
 			ImGui::End();
 		}
 		if (showFilesystemWindow) {

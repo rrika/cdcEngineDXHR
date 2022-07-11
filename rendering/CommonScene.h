@@ -21,8 +21,20 @@ struct CommonSceneSub10 {
 };
 
 struct CommonSceneSub114 {
-	TextureMap *tex14[1]; // 14
-	TextureMap *depthRenderTexture; // 3C
+	TextureMap *tex14[13] = {0}; // 14
+	// 14 [0]
+	// 18 [1]
+	// 1C [2]
+	// 20 [3]
+	// 24 [4]
+	// 28 [5]
+	// 2C [6]
+	// 30 [7]
+	// 34 [8]
+	// 38 [9]
+	// 3C [10] depthRenderTexture
+	// 40 [11]
+	// 44 [12]
 };
 
 class CommonScene :
@@ -141,6 +153,19 @@ public:
 
 	// void draw(uint32_t funcSetIndex, IRenderDrawable *other) = 0;
 	uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *other) override { return true; }
+
+	void setSharedTextureToRenderTarget(CommonRenderTarget *rt, uint32_t slot, uint32_t) {
+		if (rt) {
+			sub114.tex14[slot + 5] = rt->getRenderTexture();
+			// TODO
+		}
+	}
+	void setSharedTextureToDepthBuffer(CommonDepthBuffer *db, uint32_t slot) {
+		if (db) {
+			sub114.tex14[slot + 5] = db->getRenderTexture();
+			// TODO
+		}
+	}
 };
 
 }

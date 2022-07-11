@@ -35,7 +35,7 @@ bool PCDX11RenderContext::createRenderTargets() {
 	// TODO
 	uint32_t width = this->width; // TODO
 	uint32_t height = this->height; // TODO
-	uint32_t format = 0; // TODO
+	uint32_t format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB; // TODO
 	renderTarget2C = new PCDX11DefaultRenderTarget(
 		width, height, 1, format, renderDevice, frameBuffer, 0);
 	// TODO
