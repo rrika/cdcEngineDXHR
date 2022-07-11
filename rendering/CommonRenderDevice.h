@@ -32,6 +32,10 @@ public:
 protected:
 	CommonSceneSub114 sceneSub114_8C; // 8C
 public:
+
+	IRenderSurface *temporarySurfaces[64]; // 1E4
+	uint32_t numTemporarySurfaces = 0; // 2E4
+
 	RenderPasses renderPasses; // 2E8
 public:
 	CommonRenderDevice();
@@ -164,6 +168,7 @@ public:
 
 	static RenderResource *createResource(uint32_t, uint32_t);
 	LinearAllocator *getLinear() { return linear30; }
+	void freeTemporarySurfaces();
 };
 
 extern CommonRenderDevice *g_renderDevice;

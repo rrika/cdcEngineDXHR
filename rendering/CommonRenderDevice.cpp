@@ -257,4 +257,11 @@ RenderResource *CommonRenderDevice::createResource(uint32_t type, uint32_t arg) 
 	}
 }
 
+void CommonRenderDevice::freeTemporarySurfaces() {
+	for (uint32_t i = 0; i < numTemporarySurfaces; i++) {
+		temporarySurfaces[i]->freeResource();
+}
+	numTemporarySurfaces = 0;
+}
+
 }

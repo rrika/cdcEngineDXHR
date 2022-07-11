@@ -731,6 +731,8 @@ void PCDX11RenderDevice::drawRenderListsInternal(void *arg) {
 			renderList_processing = renderList_processing->next;
 		}
 	}
+
+	freeTemporarySurfaces();
 }
 
 CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown) {
