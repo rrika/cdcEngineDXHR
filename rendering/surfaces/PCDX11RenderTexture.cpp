@@ -61,6 +61,10 @@ void PCDX11RenderTexture::ensureRenderTargetView() {
 			this->depthStencilView = depthStencilView;
 		}
 	}
+
+	if (!shaderResourceView)
+		createShaderResourceView_internal(resource, &shaderResourceView);
+
 	// TODO
 }
 
@@ -140,6 +144,20 @@ ID3D11RenderTargetView *PCDX11RenderTexture::createRenderTargetView() {
 ID3D11DepthStencilView *PCDX11RenderTexture::createDepthStencilView() {
 	ensureBuffer();
 	return depthStencilView;
+}
+
+void PCDX11RenderTexture::createShaderResourceView_internal(
+	ID3D11Resource *resource, ID3D11ShaderResourceView **pShaderResourceView)
+{
+	auto *device = deviceManager->getD3DDevice();
+	D3D11_SHADER_RESOURCE_VIEW_DESC desc = {};
+	desc.ViewDimension = sampleCount > 1
+		? D3D11_SRV_DIMENSION_TEXTURE2DMS
+		: D3D11_SRV_DIMENSION_TEXTURE2D;
+	desc.Format = (DXGI_FORMAT)PCDX11BaseTexture::textureFormat; // TODO
+	desc.Texture2D.MipLevels = -1;
+
+	device->CreateShaderResourceView(resource, &desc, pShaderResourceView);
 }
 
 }

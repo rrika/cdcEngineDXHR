@@ -2,6 +2,9 @@
 #include "PCDX11BaseTexture.h"
 #include "TextureMap.h"
 
+struct ID3D11Resource;
+struct ID3D11ShaderResourceView;
+
 namespace cdc {
 
 class IRenderSurface;
@@ -59,6 +62,7 @@ public:
 
 	ID3D11RenderTargetView *createRenderTargetView();
 	ID3D11DepthStencilView *createDepthStencilView();
+	void createShaderResourceView_internal(ID3D11Resource *, ID3D11ShaderResourceView **);
 };
 
 }
