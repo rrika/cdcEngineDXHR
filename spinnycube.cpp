@@ -1,7 +1,8 @@
 #include <cmath>
 #include <cstdio>
-#include <memory>
+#include <functional>
 #include <iterator>
+#include <memory>
 
 #include <windows.h>
 #include <d3d11_1.h>
@@ -279,6 +280,9 @@ public:
 };
 
 class ImGuiDrawable : public cdc::IRenderDrawable {
+public:
+	std::function<void()> lastMinuteAdditions;
+
 	void draw(uint32_t funcSetIndex, IRenderDrawable *other) override;
 	uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *other) override { /*TODO*/ return 0; };
 };
@@ -633,8 +637,13 @@ int spinnyCube(HWND window,
 		if (ImGui::BeginMainMenuBar())
 		{
 			if (ImGui::BeginMenu("Windows")) {
+				if (ImGui::MenuItem("Capture frame")) {
+
+					selectedCapture = captures.size();
+					captures.push_back({renderDevice->captureRenderLists(), scene});
+				}
 				if (ImGui::MenuItem("Show drawables")) { showDrawablesWindow = true; }
-				if (ImGui::MenuItem("Show filesystem")) { showFilesystemWindow = true; }
+				// if (ImGui::MenuItem("Show filesystem")) { showFilesystemWindow = true; }
 				if (ImGui::MenuItem("Show objects")) { showObjectsWindow = true; }
 				if (ImGui::MenuItem("Show DRMs")) { showDRMWindow = true; }
 				if (ImGui::MenuItem("Show units")) { showUnitsWindow = true; }
@@ -642,34 +651,38 @@ int spinnyCube(HWND window,
 			}
 			ImGui::EndMainMenuBar();
 		}
-		if (showDrawablesWindow) {
-			CommonScene *xscene = captures[selectedCapture].second;
-			if (!xscene)
-				xscene = scene;
-			ImGui::Begin("Scene drawables", &showDrawablesWindow);
-            ImGui::BeginChild("capture list", ImVec2(0, 150), true);
-			for (uint32_t i = 0; i < captures.size(); i++) {
-				ImGui::PushID(i);
-				const char *name = i ? "capture" : "live";
-				if (ImGui::Selectable(name, i == selectedCapture)) {
-					selectedCapture = i;
-					renderDevice->revisitRenderLists(captures[i].first);
+
+		imGuiDrawable.lastMinuteAdditions = [&]() {
+			if (showDrawablesWindow) {
+				CommonScene *xscene = captures[selectedCapture].second;
+				if (!xscene)
+					xscene = scene;
+				ImGui::Begin("Scene drawables", &showDrawablesWindow);
+				ImGui::BeginChild("capture list", ImVec2(0, 150), true);
+				for (uint32_t i = 0; i < captures.size(); i++) {
+					ImGui::PushID(i);
+					const char *name = i ? "capture" : "live";
+					if (ImGui::Selectable(name, i == selectedCapture)) {
+						selectedCapture = i;
+						renderDevice->revisitRenderLists(captures[i].first);
+					}
+					ImGui::PopID();
 				}
-				ImGui::PopID();
-			}
-			ImGui::EndChild();
-			if (ImGui::Button("Capture frame")) {
-				selectedCapture = captures.size();
-				captures.push_back({renderDevice->captureRenderLists(), scene});
-			}
-			// buildUI(xscene->drawableListsAndMasks);
-			buildUI(&renderDevice->renderPasses, xscene->drawableListsAndMasks);
-			if (scene == xscene)
-				ImGui::Text("intermediate buffers are unavailable in live view");
-			else
+				ImGui::EndChild();
+
+				ImGui::Text("Note: 'Capture frame' is in main menu for now");
+				// doesn't work within lastMinuteAdditions
+				// if (ImGui::Button("Capture frame")) {
+				// 	selectedCapture = captures.size();
+				// 	captures.push_back({renderDevice->captureRenderLists(), scene});
+				// }
+
+				// buildUI(xscene->drawableListsAndMasks);
+				buildUI(&renderDevice->renderPasses, xscene->drawableListsAndMasks);
 				buildUI(xscene);
-			ImGui::End();
-		}
+				ImGui::End();
+			}
+		};
 		if (showFilesystemWindow) {
 			// TODO
 		}
@@ -724,7 +737,6 @@ int spinnyCube(HWND window,
 			buildUnitsUI();
 			ImGui::End();
 		}
-		ImGui::Render();
 #endif
 
 		renderDevice->drawRenderLists();
@@ -796,6 +808,9 @@ void SpinnyCubeDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 
 void ImGuiDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 #if ENABLE_IMGUI
+	if (lastMinuteAdditions)
+		lastMinuteAdditions();
+	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 #endif
 }
