@@ -41,6 +41,10 @@ void HackFileRequest::submit(uint8_t arg) {
 	fs->requests.push_back(this);
 }
 
+void HackFileRequest::cancel() {
+	completionStatus = 4;
+}
+
 
 
 FileRequest *HackFileSystem::createRequest(FileReceiver *receiver, const char *path, uint32_t offset) {
@@ -79,8 +83,13 @@ void HackFileSystem::processRequest() {
 	fseek(req->f->f, req->offset, SEEK_SET);
 	fread(buffer, req->size, 1, req->f->f);
 	req->receiver->process(req, buffer, req->size, 0);
-	req->receiver->requestComplete(req);
-	req->completionStatus = 3;
+
+	if (req->completionStatus == 4)
+		req->receiver->requestFailed(req);
+	else {
+		req->receiver->requestComplete(req);
+		req->completionStatus = 3;
+	}
 
 	delete[] buffer;
 	req->decrRefCount();

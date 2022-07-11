@@ -96,7 +96,7 @@ void ResolveObject::markForRetry(uint32_t missingDeps, ResolveReceiver *rr) {
 	(void)rr;
 	numPendingDependencies = missingDeps;
 	// byte34 = true;
-	// fileRequest->method_1C();
+	fileRequest->cancel();
 	fileRequest = nullptr;
 }
 

@@ -20,9 +20,10 @@ public:
 	virtual void setCompressedSize(uint32_t) = 0; // 08
 	virtual void setReadAmount(uint32_t) = 0; // 0C
 	virtual uint32_t getCompletionStatus() = 0; // 14
-	virtual void submit(uint8_t arg) = 0; // 18
 		// 3 - complete
 		// 4 - failed
+	virtual void submit(uint8_t arg) = 0; // 18
+	virtual void cancel() = 0; // 1C
 	virtual ~FileRequest() = default; // 24
 };
 

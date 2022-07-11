@@ -49,6 +49,7 @@ public:
 	void setReadAmount(uint32_t) override;
 	uint32_t getCompletionStatus() override;
 	void submit(uint8_t) override;
+	void cancel() override;
 };
 
 class HackFileSystem : public FileSystem {
