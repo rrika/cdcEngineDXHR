@@ -141,7 +141,7 @@ struct MeshHeader {
 
 class RenderMesh : public RenderResource {
 public:
-	// void resRegisterAtRenderDevice() override;
+	// void resFree() override;
 	// void resFill(void* src, size_t size, size_t offset) override;
 	// char *resGetBuffer() override;
 	// void resConstruct() override;

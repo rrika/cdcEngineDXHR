@@ -42,7 +42,7 @@ public:
 	ID3D11View *getView();
 	void initForRenderTarget(IRenderSurface *renderSurface, uint32_t format, ID3D11Texture2D *texture);
 
-	void resRegisterAtRenderDevice() override;
+	void resFree() override;
 	void resFill(void* src, size_t size, size_t offset) override;
 	char *resGetBuffer() override;
 	void resConstruct() override;

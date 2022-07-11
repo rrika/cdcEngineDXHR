@@ -91,7 +91,7 @@ void PCDX11RenderTexture::initForRenderTarget(IRenderSurface *renderSurface, uin
 }
 
 
-void PCDX11RenderTexture::resRegisterAtRenderDevice() {
+void PCDX11RenderTexture::resFree() {
 	// TODO
 }
 

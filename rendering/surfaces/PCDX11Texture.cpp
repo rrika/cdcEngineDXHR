@@ -100,7 +100,7 @@ uint32_t PCDX11Texture::getHeight() {
 }
 
 
-void PCDX11Texture::resRegisterAtRenderDevice() {
+void PCDX11Texture::resFree() {
 	// TODO
 }
 

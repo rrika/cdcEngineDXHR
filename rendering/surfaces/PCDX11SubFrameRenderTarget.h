@@ -30,7 +30,7 @@ public:
 	TextureMap *getRenderTexture() override { return renderTarget->getRenderTexture(); }
 	uint32_t getWidth() override { return width10; }
 	uint32_t getHeight() override { return height14; }
-	void registerAtRenderDevice() override { /*empty*/ }
+	void freeResource() override { /*empty*/ }
 	void registerAtScene(void *) override { /*empty*/ }
 	void method_14() override { /*empty*/ }
 	// inherit bool method_18() { return false; };

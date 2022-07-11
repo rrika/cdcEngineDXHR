@@ -21,7 +21,7 @@ public:
 		baseMask = 1; // hack
 	}
 
-	void resRegisterAtRenderDevice() override { /*TODO*/ };
+	void resFree() override { /*TODO*/ };
 	void resFill(void* src, uint32_t size, uint32_t offset) override { /*empty*/ };
 	char *resGetBuffer() override { return nullptr; };
 	void resConstruct() override { /*empty*/ };
