@@ -34,14 +34,16 @@ public:
 		void **rootSectionPtr,
 		void (*unloadCallback)(PendingObject*, ResolveObject*),
 		PendingObject *pendingObject,
-		ResolveObject *object,
+		ResolveObject *resolveObject,
 		uint8_t unknown,
 		DRMIndex *index = nullptr)
 	:
 		callback(callback), callbackArg1(arg1), callbackArg2(arg2), rootSectionPtr(rootSectionPtr),
 		unloadCallback(unloadCallback), pendingObject(pendingObject),
-		resolveObject(object), index(index)
-	{}
+		resolveObject(resolveObject), index(index)
+	{
+		resolveObject->resolveReceiver = this;
+	}
 	void process(FileRequest*, void *input, uint32_t size, uint32_t offset) override;
 	void requestFailed(FileRequest*) override;
 	void requestComplete(FileRequest*) override;

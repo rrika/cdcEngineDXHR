@@ -443,18 +443,6 @@ int spinnyCube(HWND window,
 	cdc::PCDX11SimpleStaticIndexBuffer cdcIndexBuffer(sizeof(IndexData)/2, IndexData);
 	cdc::deviceManager->stateManager = &stateManager; // hack
 
-	auto obj1 = ResolveObject::create(
-		"pc-w\\shaderlibs\\pickup_dns_156600946691c80e_dx11.drm",
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		0,
-		3
-	);
-
 	auto bottleIndex = objectIdByName("alc_beer_bottle_a");
 	requestObject3(bottleIndex);
 

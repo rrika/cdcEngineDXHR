@@ -200,10 +200,13 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 				nullptr,
 				0,
 				1);
-			// TODO
+			resolveObject->addDependency(depResolveObject);
 			if (!isLoaded(depResolveObject)) {
+				printf("  - %s\n", dep);
 				missingDeps++;
-				// TODO
+				depResolveObject->addDependant(resolveObject);
+			} else {
+				printf("  + %s\n", dep);
 			}
 		}
 		if (missingDeps != 0) {
@@ -220,6 +223,8 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 				index);
 
 			resolveObject->markForRetry(missingDeps, newRr);*/
+
+			return {};
 		}
 	}
 
@@ -325,11 +330,34 @@ void ResolveReceiver::requestFailed(FileRequest *req) {
 }
 
 void ResolveReceiver::requestComplete(FileRequest *req) {
+	printf("loading %s\n", resolveObject->path);
 	auto sectionHeaders = hackResolveReceiver(std::move(buffer), g_resolveSections, resolveObject);
+
+	if (sectionHeaders.empty()) {
+		// recreate this receiver, for a time when the dependencies have arrived
+		auto newRr = new ResolveReceiver(
+			callback,
+			callbackArg1,
+			callbackArg2,
+			rootSectionPtr,
+			unloadCallback,
+			pendingObject,
+			resolveObject,
+			0, // unknown,
+			index);
+
+		resolveObject->markForRetry(1 /*missingDeps*/, newRr);
+		
+		req->decrRefCount();
+		delete this;
+		return;
+	}
 
 	req->decrRefCount();
 	resolveObject->fileRequest = nullptr;
 	resolveObject->resolveReceiver = nullptr;
+
+	resolveObject->notifyDependants();
 
 	void *wrapped = nullptr;
 	if (resolveObject->rootSection != ~0u) {

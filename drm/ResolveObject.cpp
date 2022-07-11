@@ -70,13 +70,13 @@ ResolveObject *ResolveObject::create(
 	path = strdup(path); // HACK
 
 	auto *resolveObject = new ResolveObject(path);
+	cachedObjects[pathCrc] = resolveObject;
 	auto *resolveReceiver = new ResolveReceiver(
 		callback, callbackArg1, callbackArg2,
 		outPtrWrapped, unloadCallback, pendingObject,
 		resolveObject, y, &drmIndex);
 
-	// auto *fs = getFileSystem();
-	auto *fs = archiveFileSystem_default; // HACK
+	auto *fs = getDefaultFileSystem();
 	auto *req = fs->createRequest(resolveReceiver, path, 0);
 	resolveObject->fileRequest = req;
 	req->submit(fsMethod18Arg);
@@ -94,10 +94,33 @@ void *ResolveObject::getRootWrapped() {
 
 void ResolveObject::markForRetry(uint32_t missingDeps, ResolveReceiver *rr) {
 	(void)rr;
-	// numPendingDependencies = missingDeps;
+	numPendingDependencies = missingDeps;
 	// byte34 = true;
 	// fileRequest->method_1C();
 	fileRequest = nullptr;
+}
+
+void ResolveObject::addDependency(ResolveObject *other) {
+	dependencies.insert(other);
+}
+
+void ResolveObject::addDependant(ResolveObject *other) {
+	dependants.insert(other);
+}
+
+void ResolveObject::notifyDependants() {
+	for (auto *dependant : dependants) {
+		if (--dependant->numPendingDependencies == 0) {
+			printf("ready to load %s now (ro=%p, ro->rr=%p)\n", dependant->path, dependant, dependant->resolveReceiver);
+			auto req = getDefaultFileSystem()->createRequest(
+				dependant->resolveReceiver,
+				dependant->path,
+				0);
+			dependant->fileRequest = req;
+			req->submit(0);
+			// dependant->byte34 = false;
+		}
+	}
 }
 
 
