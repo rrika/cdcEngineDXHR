@@ -1,4 +1,5 @@
 #pragma once
+#include "Vector.h"
 
 template <typename T>
 struct Link {
@@ -19,7 +20,7 @@ struct LinkedList {
 	Link<T> *head = nullptr;
 
 	inline void insert(T item) {
-		head = new Link<T>{head, item};
+		head = new /*(alloc8)*/ Link<T>{head, item};
 	}
 
 	inline LinkIterator<T> begin() { return {head}; }
