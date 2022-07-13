@@ -1,5 +1,6 @@
 #pragma once
 #include "../math/Math.h" // for float4x4
+#include "buffers/PCDX11UberConstantBuffer.h"
 #include "CommonLightManager.h"
 #include "PCDX11InternalResource.h"
 #include "RenderPasses.h" // for DrawableList
@@ -134,6 +135,7 @@ class PCDX11LightManager :
 	PCDX11BitmapTexture *attenuationSampler430;
 	// uint32_t dword434;
 	// PCDX11StaticConstantBuffer *staticConstantBuffer438;
+	PCDX11UberConstantBuffer staticConstantBuffer438 {69}; // HACK
 	// LightManagerSubA subA[16]; // 43C
 	// uint32_t dword5FC;
 	// char char600;

@@ -142,8 +142,7 @@ void PCDX11Material::setupPixelResources(
 		CommonScene *scene = renderDevice->scene78;
 		for (uint32_t i = subMat->psRefIndexEndA; i < subMat->psRefIndexBeginB; i++) {
 			auto fi = texref[i].fallbackIndex & 0x1F;
-			// PCDX11Texture* tex = static_cast<PCDX11Texture*>(scene->sub114.tex14[fi]);
-			PCDX11Texture* tex = nullptr; // HACK
+			PCDX11Texture* tex = static_cast<PCDX11Texture*>(scene->sub114.tex14[fi]);
 			if (!tex) tex = static_cast<PCDX11Texture*>(texref[i].tex);
 			renderDevice->setTexture(
 				texref[i].slotIndex,
@@ -449,18 +448,53 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl4(
 }
 
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl038(
-	MaterialInstanceData*,
+	MaterialInstanceData *ext128sub10,
 	void *drawableExtDword50,
 	void *lightConstantBufferData,
 	uint32_t vsSelect,
-	VertexAttributeLayoutA *layout,
+	VertexAttributeLayoutA *layoutA,
 	uint8_t flags,
 	bool flag,
 	float floatX,
 	float floatY)
 {
-	// TODO
-	return nullptr;
+	auto *stateManager = deviceManager->getStateManager();
+	const uint32_t subMaterialIndex = 3;
+	MaterialBlobSub *subMaterial = materialBlob->subMat4C[subMaterialIndex];
+
+	setupDepthBias(ext128sub10);
+	//setupStencil(ext128sub10, true, flags);
+	stateManager->setDepthRange(ext128sub10->minDepth, ext128sub10->maxDepth);
+	stateManager->setBlendStateAndBlendFactors(materialBlob->blendState24, 0, 0);
+
+	uint32_t vertexIndex = vsSelect;
+	if (flags & 8)
+		vertexIndex |= 8;
+	uint32_t pixelIndex = 0;
+
+	auto pixelTable = static_cast<PCDX11PixelShaderTable*>(static_cast<PCDX11ShaderLib*>(subMaterial->shaderPixel)->table);
+	auto pixelShader = (*pixelTable)[pixelIndex];
+	stateManager->setPixelShader(pixelShader);
+
+	auto vertexTable = static_cast<PCDX11VertexShaderTable*>(static_cast<PCDX11ShaderLib*>(subMaterial->shaderVertex)->table);
+	auto vertexShader = (*vertexTable)[vertexIndex];
+	stateManager->setVertexShader(vertexShader);
+
+	setupPixelResources(subMaterialIndex, subMaterial, ext128sub10, (char*)drawableExtDword50, true);
+	setupVertexResources(subMaterialIndex, subMaterial, ext128sub10, (char*)drawableExtDword50, true);
+
+	auto *streamDecl = static_cast<PCDX11StreamDecl*>(ext128sub10->streamDecls24[subMaterialIndex]);
+	if (!streamDecl) {
+		VertexAttributeLayoutB *layoutB = subMaterial->vsLayout[vsSelect];
+
+		streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
+			layoutA,
+			layoutB,
+			(flags >> 3) & 1,
+			&vertexShader->m_sub);
+	}
+
+	return streamDecl;
 }
 
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl7(

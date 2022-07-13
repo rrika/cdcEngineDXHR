@@ -529,8 +529,10 @@ int spinnyCube(HWND window,
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	cdc::CommonSceneSub10 commonSceneSub10;
-	commonSceneSub10.mask = 0x1101; // pass 0, 12 and 8
-	// pass 12 as initialized by the renderdevice maps to function set 10 (normals)
+	commonSceneSub10.mask = 0x3103; // pass 0, 12. 13, 1, and 8
+	// pass 12 normals (function set 10, draw bottle normals)
+	// pass 13 deferred shading (just contains a cleardrawable)
+	// pass 1 composite (draw bottle textures)
 	// pass 8 runs last and is where I put imgui since it messes with the render state
 
 	SpinnyCubePass cubePass;
@@ -643,9 +645,12 @@ int spinnyCube(HWND window,
 
 		// add drawables to the scene
 		float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
+		// float lightAccumulation[4] = {0.9f, 0.9f, 0.9f, 1.0f};
+		float lightAccumulation[4] = {0.5f, 0.5f, 0.5f, 0.0f};
 		renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
+		renderDevice->clearRenderTarget(10, /*mask=*/ 0x2000, 0.0f, lightAccumulation, 1.0f, 0); // deferred shading buffer
 		renderDevice->recordDrawable(&cubeDrawable, /*mask=*/ 1, /*addToParent=*/ 0);
-		static_cast<cdc::PCDX11RenderModelInstance*>(bottleRenderModelInstance)->baseMask = 0x1000; // normals
+		static_cast<cdc::PCDX11RenderModelInstance*>(bottleRenderModelInstance)->baseMask = 0x1002; // normals & composite
 		bottleRenderModelInstance->recordDrawables(&matrixState);
 		renderDevice->recordDrawable(&imGuiDrawable, /*mask=*/ 0x100, /*addToParent=*/ 0);
 

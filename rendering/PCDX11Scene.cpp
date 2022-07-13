@@ -60,6 +60,20 @@ void PCDX11Scene::updateUniforms() {
 	sceneBuffer.assignRow(25, row, 1); // SceneBuffer::HeightFogParams
 	sceneBuffer.assignRow(9, fogScaleOffset, 1); // SceneBuffer::FogScaleOffset
 
+	// HACK: needed for the composite submaterial to work
+	row[0] = 0.0f;
+	row[1] = 0.0f;
+	row[2] = 0.0f;
+	sceneBuffer.assignRow(27, row, 1); // SceneBuffer::GlobalParams[0] (ambient or rim light)
+	row[0] = 0.0f;
+	row[1] = 0.0f;
+	row[2] = 0.0f;
+	sceneBuffer.assignRow(28, row, 1); // SceneBuffer::GlobalParams[1] (how much pearl appearance)
+	row[0] = 0.0f;
+	sceneBuffer.assignRow(29, row, 1); // SceneBuffer::GlobalParams[2] (unsure what this does)
+	row[0] = 0.0f;
+	sceneBuffer.assignRow(33, row, 1); // SceneBuffer::GlobalParams[6] (unsure what this does)
+
 	// HACK: needed for the normals submaterial to work
 	row[0] = 1.0f;
 	row[1] = 0.0f;

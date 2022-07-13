@@ -22,9 +22,9 @@ struct VertexAttributeLayoutA {
 };
 
 struct VertexAttributeB {
-	uint32_t attribKind;
-	uint32_t dword04;
-	uint16_t order;
+	uint32_t attribKindA; // hash
+	uint32_t nextAttribIndex;
+	uint16_t attribKindB; // enum
 	uint16_t field_A;
 	float vx;
 	float vy;
@@ -40,10 +40,18 @@ struct VertexAttributeLayoutB {
 	VertexAttributeB attr[];
 };
 
+uint16_t getLayoutAIndexFromHash(
+	VertexAttributeLayoutA *layoutA,
+	uint32_t hash);
+
 void decodeVertexAttribA(
 	D3D11_INPUT_ELEMENT_DESC *dst,
 	VertexAttributeA *src,
 	uint32_t count,
 	bool wineWorkaround);
+
+void semanticFromEnum(
+	D3D11_INPUT_ELEMENT_DESC *elem,
+	int e);
 
 }

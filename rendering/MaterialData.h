@@ -46,14 +46,7 @@ struct MaterialBlobSub { // = cdc::PassData
 	uint8_t vsBufferFirstRow; // 36
 	uint8_t vsBufferNumRows; // 37
 
-	VertexAttributeLayoutB *layout38;
-	VertexAttributeLayoutB *layout3C;
-	VertexAttributeLayoutB *layout40;
-	uint32_t dword44;
-	uint32_t dword48;
-	uint32_t dword4C;
-	uint32_t dword50;
-	uint32_t dword54;
+	VertexAttributeLayoutB *vsLayout[8]; // 38
 };
 
 struct MaterialBlob {

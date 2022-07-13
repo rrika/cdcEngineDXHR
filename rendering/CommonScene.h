@@ -127,6 +127,9 @@ public:
 	{
 		this->sub10 = *sub10;
 		this->sub114 = *sub114;
+
+		fogScaleOffset[0] = 0.0f;
+		fogScaleOffset[1] = 0.0f;
 	}
 
 	float4x4& getViewMatrix() override { return viewMatrix; }

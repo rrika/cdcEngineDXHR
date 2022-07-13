@@ -3,7 +3,18 @@
 
 namespace cdc {
 
-static DXGI_FORMAT decodeFormat(uint16_t format) {
+uint16_t getLayoutAIndexFromHash(
+	VertexAttributeLayoutA *layoutA,
+	uint32_t hash)
+{
+	for (uint32_t i=0; i<layoutA->numAttr; i++) {
+		if (layoutA->attrib[i].attribKind == hash)
+			return (uint16_t)i;
+	}
+	return 0xffff;
+}
+
+DXGI_FORMAT decodeFormat(uint16_t format) {
 	switch (format) {
 		case 0: return DXGI_FORMAT_R32_FLOAT; // 41
 		case 1: return DXGI_FORMAT_R32G32_FLOAT; // 16
@@ -37,6 +48,12 @@ static DXGI_FORMAT decodeFormat(uint16_t format) {
 			return DXGI_FORMAT_UNKNOWN;
 	}
 }
+
+// very confusingly, the mesh will sometimes have two inputs called
+// Texcoord1 and Texcoord2, which when decoded using decodeVertexAttribA
+// will turn into the same semantics in d3d.
+// But when using semanticFromEnum they will be mapped to Texcoord0 and
+// Texcoord1, which is what the pixel shader expects.
 
 static const uint32_t Position_crc32 = 0xD2F7D823;
 static const uint32_t Normal_crc32 = 0x36F5E414;
@@ -80,7 +97,81 @@ void decodeVertexAttribA(D3D11_INPUT_ELEMENT_DESC *dst, VertexAttributeA *src, u
 			elem.SemanticName = "";
 			elem.SemanticIndex = customSlots++;
 		}
-		// printf("%s[%d] at offset %d with format %d (%d)\n", elem.SemanticName, elem.SemanticIndex, elem.AlignedByteOffset, elem.Format, src[i].format);
+	}
+}
+
+void semanticFromEnum(D3D11_INPUT_ELEMENT_DESC *elem, int e) {
+	switch (e) {
+		case 1:
+			elem->SemanticName = "POSITION";
+			elem->SemanticIndex = 0;
+			break;
+		case 2:
+			elem->SemanticName = "BLENDWEIGHT";
+			elem->SemanticIndex = 0;
+			break;
+		case 3:
+			elem->SemanticName = "BLENDINDICES";
+			elem->SemanticIndex = 0;
+			break;
+		case 4:
+			elem->SemanticName = "NORMAL";
+			elem->SemanticIndex = 0;
+			break;
+		case 7:
+			elem->SemanticName = "NORMAL";
+			elem->SemanticIndex = 1;
+			break;
+		case 5:
+			elem->SemanticName = "BINORMAL";
+			elem->SemanticIndex = 0;
+			break;
+		case 6:
+			elem->SemanticName = "TANGENT";
+			elem->SemanticIndex = 0;
+			break;
+		case 8:
+			elem->SemanticName = "COLOR";
+			elem->SemanticIndex = 0;
+			break;
+		case 9:
+			elem->SemanticName = "COLOR";
+			elem->SemanticIndex = 1;
+			break;
+		case 10:
+			elem->SemanticIndex = 0;
+			elem->SemanticName = "TEXCOORD";
+			break;
+		case 11:
+			elem->SemanticIndex = 1;
+			elem->SemanticName = "TEXCOORD";
+			break;
+		case 12:
+			elem->SemanticIndex = 2;
+			elem->SemanticName = "TEXCOORD";
+			break;
+		case 13:
+			elem->SemanticIndex = 3;
+			elem->SemanticName = "TEXCOORD";
+			break;
+		case 14:
+			elem->SemanticIndex = 4;
+			elem->SemanticName = "TEXCOORD";
+			break;
+		case 15:
+			elem->SemanticIndex = 5;
+			elem->SemanticName = "TEXCOORD";
+			break;
+		case 16:
+			elem->SemanticIndex = 6;
+			elem->SemanticName = "TEXCOORD";
+			break;
+		case 17:
+			elem->SemanticIndex = 7;
+			elem->SemanticName = "TEXCOORD";
+			break;
+		default:
+			break;
 	}
 }
 

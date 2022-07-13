@@ -34,6 +34,24 @@ LightManagerSubB *PCDX11LightManager::allocateSubB() {
 }
 
 void PCDX11LightManager::fillLightBuffer(LightReceiverData *receiverData) {
+
+	auto stateManager = deviceManager->getStateManager();
+	stateManager->setPsConstantBuffer(4, &staticConstantBuffer438);
+	// staticConstantBuffer438.assignRow();
+
+	auto &lightBuffer = staticConstantBuffer438;
+
+	uint32_t zero[] = {0, 0, 0, 0};
+	lightBuffer.assignRow(62, zero, 1); // ShadowLightEnabled[0]
+	lightBuffer.assignRow(63, zero, 1); // ShadowLightEnabled[1]
+	lightBuffer.assignRow(64, zero, 1); // ShadowLightEnabled[2]
+	lightBuffer.assignRow(65, zero, 1); // NonShadowLightEnabled[0]
+	lightBuffer.assignRow(66, zero, 1); // NonShadowLightEnabled[1]
+	lightBuffer.assignRow(67, zero, 1); // NonShadowLightEnabled[2]
+	lightBuffer.assignRow(68, zero, 1); // SunLightEnabled
+
+	return;
+
 	// TODO
 	renderDevice->setTexture(11, receiverData->GlobalModulationMapTextures[0], 256, 0.0f);
 	renderDevice->setTexture(12, receiverData->GlobalModulationMapTextures[1], 256, 0.0f);

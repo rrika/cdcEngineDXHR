@@ -72,20 +72,43 @@ void PCDX11NormalPassCallbacks::post(
 
 
 bool PCDX11DeferredShadingPassCallbacks::pre(
-	CommonRenderDevice *renderDevice,
+	CommonRenderDevice *commonRenderDevice,
 	uint32_t passId,
 	uint32_t drawableCount,
 	uint32_t priorPassesBitfield)
 {
-	// TODO
+	CommonScene *scene = commonRenderDevice->scene78;
+	auto *renderDevice = static_cast<PCDX11RenderDevice*>(commonRenderDevice);
+	auto *stateManager = deviceManager->getStateManager();
+
+	auto *rt = scene->getRenderTarget();
+	auto *db = scene->getDepthBuffer();
+
+	rt = renderDevice->createRenderTarget(
+		rt->getWidth(),
+		rt->getHeight(),
+		0x18 /*TODO*/, 0, 1, 0 /*TODO*/);
+	static_cast<PCDX11RenderTarget*>(rt)->getRenderTexture11()->createRenderTargetView(); // HACK
+
+	stateManager->pushRenderTargets(
+		static_cast<PCDX11RenderTarget*>(rt),
+		static_cast<PCDX11DepthBuffer*>(db));
+
 	return true;
 }
 
 void PCDX11DeferredShadingPassCallbacks::post(
-	CommonRenderDevice *renderDevice,
+	CommonRenderDevice *commonRenderDevice,
 	uint32_t passId)
 {
 	// TODO
+	CommonScene *scene = commonRenderDevice->scene78;
+	auto *stateManager = deviceManager->getStateManager();
+
+	auto *rt = stateManager->m_renderTarget;
+	stateManager->popRenderTargets();
+
+	scene->setSharedTextureToRenderTarget(rt, 7, 0);
 }
 
 
