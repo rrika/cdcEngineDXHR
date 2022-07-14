@@ -4,7 +4,6 @@
 #include "ResolveSection.h" // for g_resolveSections
 #include "../filesystem/ArchiveFileSystem.h"
 #include "../filesystem/FileHelpers.h"
-#include "../../gameshell/win32/main2.h"
 
 // borrowed from ArchiveFileSystem.cpp
 uint32_t pathCrc32(const char *path);

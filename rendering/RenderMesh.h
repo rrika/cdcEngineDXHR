@@ -52,10 +52,10 @@ struct MeshFlags {
 	uint32_t depthLayer : 1;
 };
 
-struct Mesh { // guessed name
+struct Mesh { // = cdc::ModelData
 	uint32_t magic;
 	MeshFlags flags;
-	uint32_t dword8;
+	uint32_t dword8; // totalDataSize
 	uint32_t numIndices;
 	uint32_t dword10;
 	uint32_t dword14;
@@ -83,7 +83,7 @@ struct Mesh { // guessed name
 	uint32_t dword7C;
 };
 
-struct MeshTab0 {
+struct MeshTab0 { // = cdc::PrimGroup
 	uint32_t vec0[4];
 	uint32_t startIndex;
 	uint32_t triangleCount;
@@ -106,20 +106,20 @@ struct MeshTab0Ext16 {
 	uint32_t dwordC;
 };
 
-struct MeshTab0Ext128Sub10 {
+struct MeshTab0Ext128Sub10 { // = cdc::MaterialInstanceData
 	// see also PCDX11Material::setupPixelResources
-	uint32_t dword0;
+	uint32_t dword0; // = pInstanceTextures (TextureMap*[5])
 	uint32_t dword4;
 	uint32_t dword8;
 	uint32_t dwordC;
-	float float10;
-	uint32_t dword14; // flags
+	float float10; // = opacity
+	uint32_t dword14; // = polyFlags
 	// 0x20000000: see PCDX11Material::setupDepthBias
 	uint32_t dword18;
-	float minDepth;
-	float maxDepth;
-	CommonStreamDecl *streamDecls24[16];
-	StencilSettings *stencilSettings64;
+	float minDepth; // = m_depthBoundsMin
+	float maxDepth; // = m_depthBoundsMax
+	CommonStreamDecl *streamDecls24[16]; // = m_apPassStreamDecls
+	StencilSettings *stencilSettings64; // = m_pStencilParams
 };
 
 struct MeshTab0Ext128 {

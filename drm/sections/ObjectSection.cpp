@@ -16,7 +16,7 @@ extern char buildType[16];
 
 namespace cdc {
 
-struct PendingObject {
+struct PendingObject { // = cdc::ObjectTracker
 	ResolveObject *resolveObject; // 0
 	char *name; // 4
 	ObjectBlob *objBlob; // 8
