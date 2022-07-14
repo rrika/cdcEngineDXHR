@@ -1,4 +1,4 @@
-#include "matrix.h"
+#include "Math.h"
 #include <cstring>
 
 // column-major multiplication

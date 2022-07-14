@@ -25,7 +25,6 @@ add_compile_options(-g -target ${triple}
 add_link_options(-g -target ${triple} -fuse-ld=lld-link)
 add_executable(dxhr
 	mainloop.cpp
-	matrix.cpp
 	spinnycube.cpp)
 configure_file(config.h.in config/config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/config)
@@ -52,6 +51,7 @@ add_subdirectory(drm)
 add_subdirectory(filesystem)
 add_subdirectory(gameshell)
 add_subdirectory(input)
+add_subdirectory(math)
 add_subdirectory(miniz)
 add_subdirectory(rendering)
 add_subdirectory(scene)

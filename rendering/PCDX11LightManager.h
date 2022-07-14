@@ -1,5 +1,5 @@
 #pragma once
-#include "../matrix.h"
+#include "../math/Math.h" // for float4x4
 #include "CommonLightManager.h"
 #include "PCDX11InternalResource.h"
 #include "RenderPasses.h" // for DrawableList
