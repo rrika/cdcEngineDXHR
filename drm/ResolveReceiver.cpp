@@ -163,7 +163,7 @@ static std::vector<char> decompressCDRM(std::vector<char>& data) {
 
 // from ObjectSection.cpp
 void objectLoadCallback(void*, void*, void*, ResolveObject* resolveObject);
-void objectUnloadCallback(PendingObject*, ResolveObject*);
+void objectUnloadCallback(ObjectTracker*, ResolveObject*);
 
 std::vector<DRMSectionHeader> hackResolveReceiver(
 	std::vector<char> data,
@@ -217,7 +217,7 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 				callbackArg2,
 				rootSectionPtr,
 				unloadCallback,
-				pendingObject,
+				objectTracker,
 				object,
 				unknown,
 				index);
@@ -341,7 +341,7 @@ void ResolveReceiver::requestComplete(FileRequest *req) {
 			callbackArg2,
 			rootSectionPtr,
 			unloadCallback,
-			pendingObject,
+			objectTracker,
 			resolveObject,
 			0, // unknown,
 			index);

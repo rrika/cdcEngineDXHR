@@ -6,7 +6,7 @@ namespace cdc {
 class ResolveObject;
 struct ObjectBlob;
 
-struct PendingObject { // = cdc::ObjectTracker
+struct ObjectTracker {
 	ResolveObject *resolveObject; // 0
 	char *name; // 4
 	ObjectBlob *objBlob; // 8
@@ -23,10 +23,10 @@ struct PendingObject { // = cdc::ObjectTracker
 	}
 };
 
-extern PendingObject objects[604];
+extern ObjectTracker objects[604];
 
-PendingObject *getByObjectListIndex(uint32_t objectListIndex);
-PendingObject *allocObjectSlot(int32_t id, uint16_t state);
+ObjectTracker *getByObjectListIndex(uint32_t objectListIndex);
+ObjectTracker *allocObjectSlot(int32_t id, uint16_t state);
 void ensureObjectList();
 void readAndParseObjectList();
 uint32_t objectIdByName(const char *name);

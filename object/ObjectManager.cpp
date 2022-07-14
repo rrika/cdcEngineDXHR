@@ -9,7 +9,7 @@ extern char buildType[16];
 
 namespace cdc {
 
-PendingObject objects[604];
+ObjectTracker objects[604];
 
 struct ObjectListEntries {
 	uint32_t count; // of entries[]
@@ -139,7 +139,7 @@ void readAndParseObjectList() {
 	delete[] filelist;
 }
 
-PendingObject *getByObjectListIndex(uint32_t objectListIndex) {
+ObjectTracker *getByObjectListIndex(uint32_t objectListIndex) {
 	for (uint32_t i = 0; i < 604; i++)
 		if (objects[i].state != 0 && objects[i].objectListIndex == objectListIndex)
 			return objects + i;
@@ -147,7 +147,7 @@ PendingObject *getByObjectListIndex(uint32_t objectListIndex) {
 	return nullptr;
 }
 
-PendingObject *allocObjectSlot(int32_t id, uint16_t state) {
+ObjectTracker *allocObjectSlot(int32_t id, uint16_t state) {
 	if (id < 0 || id >= g_objectList->objectListEntries->count)
 		return nullptr;
 
@@ -156,7 +156,7 @@ PendingObject *allocObjectSlot(int32_t id, uint16_t state) {
 	if (i == 604)
 		return nullptr;
 
-	PendingObject *obj = &objects[i];
+	ObjectTracker *obj = &objects[i];
 	obj->state = state;
 	obj->objectListIndex = id;
 	obj->name = nullptr;
@@ -173,7 +173,7 @@ void objectLoadCallback(void*, void*, void*, ResolveObject* resolveObject) {
 	// TODO
 }
 
-void objectUnloadCallback(PendingObject*, ResolveObject*) {
+void objectUnloadCallback(ObjectTracker*, ResolveObject*) {
 	// TODO
 }
 
@@ -187,13 +187,13 @@ uint32_t objectIdByName(const char *name) {
 }
 
 static void requestObject(uint32_t id, uint8_t fsMethod18Arg) {
-	PendingObject *pendingObject = getByObjectListIndex(id);
+	ObjectTracker *objectTracker = getByObjectListIndex(id);
 
-	if (!pendingObject) {
-		pendingObject = allocObjectSlot(id, 1);
+	if (!objectTracker) {
+		objectTracker = allocObjectSlot(id, 1);
 
-	} else if (pendingObject->resolveObject) {
-		pendingObject->increaseCountOnResolveObject();
+	} else if (objectTracker->resolveObject) {
+		objectTracker->increaseCountOnResolveObject();
 		return;
 	}
 
@@ -203,18 +203,18 @@ static void requestObject(uint32_t id, uint8_t fsMethod18Arg) {
 	char path[256];
 	char *objname = g_objectList->objectListEntries->entries[id-1].name;
 	buildDRMPath(path, objname);
-	printf("requesting object %s pobj=%p ", objname, pendingObject);
-	pendingObject->resolveObject = ResolveObject::create(
+	printf("requesting object %s pobj=%p ", objname, objectTracker);
+	objectTracker->resolveObject = ResolveObject::create(
 		path,
 		&objectLoadCallback,
 		nullptr,
 		nullptr,
 		nullptr,
 		&objectUnloadCallback,
-		pendingObject,
+		objectTracker,
 		0,
 		fsMethod18Arg);
-	printf("robj=%p\n", pendingObject->resolveObject);
+	printf("robj=%p\n", objectTracker->resolveObject);
 }
 
 void requestObject1(uint32_t id) {

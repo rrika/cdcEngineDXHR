@@ -7,7 +7,7 @@ namespace cdc {
 
 class FileSystem;
 class ResolveObject;
-struct PendingObject;
+struct ObjectTracker;
 
 class ResolveSection;
 std::vector<DRMSectionHeader> hackResolveReceiver(std::vector<char> data, ResolveSection **sections, ResolveObject *resolveObject, bool requestDependencies=true);
@@ -23,8 +23,8 @@ class ResolveReceiver : public FileReceiver {
 	void *callbackArg1; // 70
 	void *callbackArg2; // 74
 	void **rootSectionPtr; // 78
-	void (*unloadCallback)(PendingObject*, ResolveObject*); // 7C
-	PendingObject *pendingObject; // 80
+	void (*unloadCallback)(ObjectTracker*, ResolveObject*); // 7C
+	ObjectTracker *objectTracker; // 80
 
 	friend class ResolveObject; // need to mess with unloadCallback etc.
 
@@ -32,14 +32,14 @@ public:
 	ResolveReceiver(
 		decltype(callback) callback, void *arg1, void *arg2,
 		void **rootSectionPtr,
-		void (*unloadCallback)(PendingObject*, ResolveObject*),
-		PendingObject *pendingObject,
+		void (*unloadCallback)(ObjectTracker*, ResolveObject*),
+		ObjectTracker *objectTracker,
 		ResolveObject *resolveObject,
 		uint8_t unknown,
 		DRMIndex *index = nullptr)
 	:
 		callback(callback), callbackArg1(arg1), callbackArg2(arg2), rootSectionPtr(rootSectionPtr),
-		unloadCallback(unloadCallback), pendingObject(pendingObject),
+		unloadCallback(unloadCallback), objectTracker(objectTracker),
 		resolveObject(resolveObject), index(index)
 	{
 		resolveObject->resolveReceiver = this;

@@ -7,7 +7,7 @@ namespace cdc {
 class FileRequest;
 class ResolveReceiver;
 struct DRMReadDets;
-struct PendingObject;
+struct ObjectTracker;
 
 class ResolveObject {
 public:
@@ -26,8 +26,8 @@ public:
 		void *callbackArg1,
 		void *callbackArg2,
 		void **outPtrWrapped,
-		void (*unloadCallback)(PendingObject*, ResolveObject*),
-		PendingObject *pendingObject,
+		void (*unloadCallback)(ObjectTracker*, ResolveObject*),
+		ObjectTracker *objectTracker,
 		uint8_t y,
 		uint32_t fsMethod18Arg
 	);
@@ -39,8 +39,8 @@ public:
 		void *callbackArg1,
 		void *callbackArg2,
 		void **outPtrWrapped,
-		void (*unloadCallback)(PendingObject*, ResolveObject*),
-		PendingObject *pendingObject,
+		void (*unloadCallback)(ObjectTracker*, ResolveObject*),
+		ObjectTracker *objectTracker,
 		uint8_t y,
 		uint32_t fsMethod18Arg
 	);
