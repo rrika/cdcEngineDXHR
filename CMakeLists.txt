@@ -26,7 +26,6 @@ add_link_options(-g -target ${triple} -fuse-ld=lld-link)
 add_executable(dxhr
 	mainloop.cpp
 	matrix.cpp
-	RingBuffer.cpp
 	spinnycube.cpp)
 configure_file(config.h.in config/config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/config)
@@ -56,6 +55,7 @@ add_subdirectory(input)
 add_subdirectory(miniz)
 add_subdirectory(rendering)
 add_subdirectory(scene)
+add_subdirectory(sound)
 add_subdirectory(sys)
 
 target_sources(dxhr PRIVATE
