@@ -158,7 +158,7 @@ void mainloop() {
 	else
 		prefix = ""; // TODO
 	setupPrefixes(prefix); // WinMain2 already does this
-	ensureObjectList();
+	ensureObjectManager();
 
 	// TODO
 	setupResolveSections();

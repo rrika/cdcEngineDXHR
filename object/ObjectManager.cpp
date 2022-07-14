@@ -11,39 +11,39 @@ namespace cdc {
 
 ObjectTracker objects[604];
 
-struct ObjectListEntries {
+struct ObjectList {
 	uint32_t count; // of entries[]
-	uint32_t byteSize; // of the whole ObjectListEntries allocation
+	uint32_t byteSize; // of the whole ObjectList allocation
 	struct Entry {
 		char *name;
 		uint32_t slot;
 	} entries[];
 };
 
-struct ObjectList {
+struct ObjectManager {
 	// uint32_t dword00;
 	// uint32_t dword04;
 	// uint32_t dword08;
 	// uint32_t dword0C;
 	// uint32_t dword10;
-	// ObjectListSub14 *firstSub14;
-	ObjectListEntries *objectListEntries = nullptr;
+	// ObjectManagerSub14 *firstSub14;
+	ObjectList *objectList = nullptr;
 	// uint32_t numNames;
-	// ObjectListNamedEntry names[32];
+	// ObjectManagerNamedEntry names[32];
 	// uint32_t fun4A0;
 	// void *fun4A4_createAppropriateDrawable;
 	// void (__cdecl *fun4A8)(GameObject *, GameControl *);
 
-	ObjectList() {
+	ObjectManager() {
 		memset(objects, 0, sizeof(objects));
 	}
 };
 
-static ObjectList *g_objectList = nullptr;
+static ObjectManager *g_objectManager = nullptr;
 
-void ensureObjectList() {
-	if (!g_objectList)
-		g_objectList = new ObjectList();
+void ensureObjectManager() {
+	if (!g_objectManager)
+		g_objectManager = new ObjectManager();
 }
 
 static char *copyLine(char *dst, char *src) {
@@ -85,7 +85,7 @@ void readAndParseObjectList() {
 	}
 
 	// have to reallocate
-	if (g_objectList->objectListEntries) {
+	if (g_objectManager->objectList) {
 		// TODO
 	}
 
@@ -95,26 +95,26 @@ void readAndParseObjectList() {
 	// 2,bar
 	//
 	// memory layout
-	//  0 objectListEntries.count           = 2
-	//  4 objectListEntries.byteSize        = 0x20 or more
-	//  8 objectListEntries.entries[0].name = &'foo\0'
-	//  C objectListEntries.entries[0].slot = 0xffffffff
-	// 10 objectListEntries.entries[1].name = &'bar\0'
-	// 14 objectListEntries.entries[1].slot = 0xffffffff
+	//  0 objectList.count           = 2
+	//  4 objectList.byteSize        = 0x20 or more
+	//  8 objectList.entries[0].name = &'foo\0'
+	//  C objectList.entries[0].slot = 0xffffffff
+	// 10 objectList.entries[1].name = &'bar\0'
+	// 14 objectList.entries[1].slot = 0xffffffff
 	// 18 'foo\0'
 	// 1C 'bar\0'
 
 	uint32_t size = 8 + 8 * maxObject + (cursor - filelist);
 	auto *allocation = new char[size];
-	g_objectList->objectListEntries = (ObjectListEntries*) allocation;
+	g_objectManager->objectList = (ObjectList*) allocation;
 	char *strings = allocation + (8 + 8 * maxObject);
 
-	g_objectList->objectListEntries->count = maxObject;
-	g_objectList->objectListEntries->byteSize = size;
+	g_objectManager->objectList->count = maxObject;
+	g_objectManager->objectList->byteSize = size;
 
 	for (int32_t i=0; i<maxObject; i++) {
-		g_objectList->objectListEntries->entries[i].name = 0;
-		g_objectList->objectListEntries->entries[i].slot = ~0u;
+		g_objectManager->objectList->entries[i].name = 0;
+		g_objectManager->objectList->entries[i].slot = ~0u;
 	}
 
 	// rewind
@@ -124,14 +124,14 @@ void readAndParseObjectList() {
 		int number;
 		cursor = copyLine(buffer, cursor);
 		sscanf(buffer, "%d,%s", &number, strings);
-		g_objectList->objectListEntries->entries[number-1].name = strings;
+		g_objectManager->objectList->entries[number-1].name = strings;
 		if (char *comma = strchr(strings, ','))
 			*comma = '\0';
 
 		strings += strlen(strings) + 1;
 	}
 
-	// auto *e = g_objectList->objectListEntries->entries;
+	// auto *e = g_objectManager->objectList->entries;
 	// for (int32_t i=0; i<maxObject; i++) {
 	// 	printf("%4d %08x %s\n", i, e[i].slot, e[i].name);
 	// }
@@ -148,7 +148,7 @@ ObjectTracker *getByObjectListIndex(uint32_t objectListIndex) {
 }
 
 ObjectTracker *allocObjectSlot(int32_t id, uint16_t state) {
-	if (id < 0 || id >= g_objectList->objectListEntries->count)
+	if (id < 0 || id >= g_objectManager->objectList->count)
 		return nullptr;
 
 	uint32_t i = 0;
@@ -163,7 +163,7 @@ ObjectTracker *allocObjectSlot(int32_t id, uint16_t state) {
 	obj->refCount = 1;
 	obj->resolveObject = nullptr;
 
-	g_objectList->objectListEntries->entries[id-1].slot = i;
+	g_objectManager->objectList->entries[id-1].slot = i;
 
 	return obj;
 }
@@ -178,10 +178,10 @@ void objectUnloadCallback(ObjectTracker*, ResolveObject*) {
 }
 
 uint32_t objectIdByName(const char *name) {
-	if (int32_t(g_objectList->objectListEntries->count) <= 0)
+	if (int32_t(g_objectManager->objectList->count) <= 0)
 		return 0;
-	for (int32_t i=0; i < g_objectList->objectListEntries->count; i++)
-		if (stricmp(name, g_objectList->objectListEntries->entries[i].name) == 0)
+	for (int32_t i=0; i < g_objectManager->objectList->count; i++)
+		if (stricmp(name, g_objectManager->objectList->entries[i].name) == 0)
 			return i+1;
 	return 0;
 }
@@ -197,11 +197,11 @@ static void requestObject(uint32_t id, uint8_t fsMethod18Arg) {
 		return;
 	}
 
-	if (id > g_objectList->objectListEntries->count)
+	if (id > g_objectManager->objectList->count)
 		readAndParseObjectList();
 
 	char path[256];
-	char *objname = g_objectList->objectListEntries->entries[id-1].name;
+	char *objname = g_objectManager->objectList->entries[id-1].name;
 	buildDRMPath(path, objname);
 	printf("requesting object %s pobj=%p ", objname, objectTracker);
 	objectTracker->resolveObject = ResolveObject::create(
@@ -229,8 +229,8 @@ void buildObjectsUI() {
 #if ENABLE_IMGUI
 	static bool onlyLoaded = true;
 	ImGui::Checkbox("Only show loaded objects", &onlyLoaded);
-	if (!g_objectList || !g_objectList->objectListEntries) return;
-	auto e = g_objectList->objectListEntries;
+	if (!g_objectManager || !g_objectManager->objectList) return;
+	auto e = g_objectManager->objectList;
 	for (int32_t i = 0; i < e->count; i++) {
 		bool isLoaded = e->entries[i].slot != ~0u;
 		if (e->entries[i].name && (isLoaded || !onlyLoaded)) {

@@ -27,7 +27,7 @@ extern ObjectTracker objects[604];
 
 ObjectTracker *getByObjectListIndex(uint32_t objectListIndex);
 ObjectTracker *allocObjectSlot(int32_t id, uint16_t state);
-void ensureObjectList();
+void ensureObjectManager();
 void readAndParseObjectList();
 uint32_t objectIdByName(const char *name);
 void requestObject1(uint32_t id);
