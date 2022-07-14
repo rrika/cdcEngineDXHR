@@ -3,6 +3,7 @@
 #include "ResolveReceiver.h"
 #include "ResolveSection.h" // for g_resolveSections
 #include "../filesystem/ArchiveFileSystem.h"
+#include "../filesystem/FileHelpers.h"
 #include "../main2.h"
 
 // borrowed from ArchiveFileSystem.cpp

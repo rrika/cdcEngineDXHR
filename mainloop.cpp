@@ -8,6 +8,7 @@
 #include "drm/sections/ShaderLibSection.h"
 #include "drm/sections/WaveSection.h"
 #include "filesystem/ArchiveFileSystem.h"
+#include "filesystem/FileHelpers.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "main2.h"
 #include "mainloop.h"

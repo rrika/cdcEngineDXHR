@@ -2,6 +2,7 @@
 #include <cstring>
 #include "ObjectSection.h"
 #include "../ResolveObject.h"
+#include "../../filesystem/FileHelpers.h"
 #include "../../filesystem/FileSystem.h"
 #include "../../object/Object.h"
 #include "config.h"
@@ -10,8 +11,6 @@
 #include "../../imgui/imgui.h"
 #endif
 
-char *readFileBlocking(const char *path);
-cdc::FileSystem *getDefaultFileSystem();
 void buildDRMPath(char *buffer, const char *name);
 extern char buildType[16];
 

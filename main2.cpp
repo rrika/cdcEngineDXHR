@@ -1,8 +1,7 @@
 #include <cstdio>
 #include <windows.h>
 #include "filesystem/ArchiveFileSystem.h"
-#include "filesystem/FileUserBufferReceiver.h"
-#include "filesystem/HackFileSystem.h"
+#include "filesystem/FileHelpers.h"
 #include "imgui/imgui.h"
 #include "main.h"
 #include "main2.h"
@@ -11,7 +10,6 @@
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11RenderDevice.h"
-#include "sys/Assert.h"
 
 using namespace cdc;
 
@@ -32,55 +30,6 @@ void initDisplayConfig() {
 
 void initDisplayConfigFromDisplay() {
 	// TODO
-}
-
-FileSystem *lowerFileSystem;
-FileSystem *threadedLowerFileSystem;
-
-void createLowerFileSystems() {
-	// TODO
-	lowerFileSystem = new HackFileSystem();
-	threadedLowerFileSystem = lowerFileSystem;
-}
-
-ArchiveFileSystem *archiveFileSystem_default;
-
-void createHigherFileSystems() {
-	const char *bigfilePath = getenv("BIGFILE");
-	if (!bigfilePath) {
-		printf("\nspecify path to BIGFILE.000 through BIGFILE environment variable\n\n");
-		return;
-	}
-
-	archiveFileSystem_default = new ArchiveFileSystem(lowerFileSystem);
-	bool indexOk = archiveFileSystem_default->readIndex(bigfilePath, 0);
-	
-	if (!indexOk)
-		FatalError("Unable to open bigfile BIGFILE.DAT!");
-}
-
-void destroyFileSystems() {
-	// TODO
-}
-
-FileSystem *getDefaultFileSystem() {
-	// TODO
-	return archiveFileSystem_default;
-}
-
-char *readFileBlocking(const char *path) {
-	auto fs = archiveFileSystem_default; // HACK
-	uint32_t size = fs->getSize(path);
-
-	char *buffer = new char[size+1];
-	FileReceiver *rec = FileUserBufferReceiver::create(buffer);
-	FileRequest *req = fs->createRequest(rec, path, 0);
-	req->submit(1);
-	fs->processUntil(req);
-	req->decrRefCount();
-	// req is owned by fs which takes care of it in processAll()
-
-	return buffer;
 }
 
 char buildType[16];
