@@ -9,7 +9,7 @@
 #include "drm/sections/WaveSection.h"
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileHelpers.h"
-#include "gameshell/win32/main2.h"
+#include "gameshell/win32/MainVM.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "mainloop.h"
 #include "spinnycube.h"

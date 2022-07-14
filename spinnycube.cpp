@@ -21,7 +21,7 @@
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileHelpers.h" // for archiveFileSystem_default
 #include "filesystem/FileUserBufferReceiver.h"
-#include "gameshell/win32/main2.h" // for yellowCursor
+#include "gameshell/win32/MainVM.h" // for yellowCursor
 #include "input/PCMouseKeyboard.h"
 #include "object/Object.h"
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
