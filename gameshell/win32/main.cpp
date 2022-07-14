@@ -1,6 +1,6 @@
 #include <windows.h>
-#include <stdio.h>
-#include "types.h"
+#include <cstdio>
+#include <cstdint>
 #include "config.h"
 #include "main.h"
 #include "main2.h"
@@ -31,7 +31,7 @@ void LaunchWindowsMediaCenter() {
 #if ENABLE_GCS
 
 int intelFeedbackNumbers[5];
-uint WM_DEUS_EX_GCS_FEEDBACK = RegisterWindowMessageA((char const*)L"WM_DEUS_EX_GCS_FEEDBACK");
+uint32_t WM_DEUS_EX_GCS_FEEDBACK = RegisterWindowMessageA((char const*)L"WM_DEUS_EX_GCS_FEEDBACK");
 
 void SetIntelFeedbackNumbers(int a, int b, int c, int d, int e) {
 	intelFeedbackNumbers[0] = a;

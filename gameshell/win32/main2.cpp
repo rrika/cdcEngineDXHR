@@ -1,15 +1,15 @@
 #include <cstdio>
 #include <windows.h>
-#include "filesystem/ArchiveFileSystem.h"
-#include "filesystem/FileHelpers.h"
-#include "imgui/imgui.h"
 #include "main.h"
 #include "main2.h"
-#include "mainloop.h"
-#include "rendering/BuiltinResources.h"
-#include "rendering/IPCDeviceManager.h"
-#include "rendering/PCDX11DeviceManager.h"
-#include "rendering/PCDX11RenderDevice.h"
+#include "../../filesystem/ArchiveFileSystem.h"
+#include "../../filesystem/FileHelpers.h"
+#include "../../imgui/imgui.h"
+#include "../../mainloop.h"
+#include "../../rendering/BuiltinResources.h"
+#include "../../rendering/IPCDeviceManager.h"
+#include "../../rendering/PCDX11DeviceManager.h"
+#include "../../rendering/PCDX11RenderDevice.h"
 
 using namespace cdc;
 

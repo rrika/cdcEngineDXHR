@@ -24,8 +24,6 @@ add_compile_options(-g -target ${triple}
 	-Wno-deprecated-declarations)
 add_link_options(-g -target ${triple} -fuse-ld=lld-link)
 add_executable(dxhr
-	main.cpp
-	main2.cpp
 	mainloop.cpp
 	matrix.cpp
 	RingBuffer.cpp
@@ -53,6 +51,7 @@ add_subdirectory(allocator)
 add_subdirectory(camera)
 add_subdirectory(drm)
 add_subdirectory(filesystem)
+add_subdirectory(gameshell)
 add_subdirectory(input)
 add_subdirectory(miniz)
 add_subdirectory(rendering)

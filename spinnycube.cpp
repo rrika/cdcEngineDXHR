@@ -12,7 +12,6 @@
 #include "spinnycube.h"
 #include "types.h"
 #include "matrix.h"
-#include "main2.h" // for yellowCursor
 #include "mainloop.h" // for buildUnitsUI
 #include "drm/DRMIndex.h"
 #include "drm/ResolveObject.h"
@@ -22,6 +21,7 @@
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileHelpers.h" // for archiveFileSystem_default
 #include "filesystem/FileUserBufferReceiver.h"
+#include "gameshell/win32/main2.h" // for yellowCursor
 #include "input/PCMouseKeyboard.h"
 #include "object/Object.h"
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
