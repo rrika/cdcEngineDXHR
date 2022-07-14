@@ -8,13 +8,18 @@ class LinearAllocator;
 struct DrawableList;
 struct DrawableListsAndMasks;
 
-using RenderFunc = bool(*)(uint32_t, IRenderDrawable*, IRenderDrawable*);
+using DrawableCompareFn = bool(*)(uint32_t, IRenderDrawable*, IRenderDrawable*);
+using DrawableRenderFn = void(*)(uint32_t, IRenderDrawable*, IRenderDrawable*);
 
-struct RenderFunctionSet { // guessed name
-	RenderFunc func[16];
+struct CompareFunctionSet {
+	DrawableCompareFn func[16];
 };
 
-struct RenderPass { // guessed name
+struct RenderFunctionSet {
+	DrawableRenderFn func[16];
+};
+
+struct RenderPass { // = cdc::RenderPassData::RenderPass
 	bool active;
 	uint32_t order;
 	uint32_t sortMode; // 0, 1, 2
@@ -23,7 +28,7 @@ struct RenderPass { // guessed name
 	IRenderPassCallback *callbacks;
 };
 
-struct RenderPasses { // guessed name
+struct RenderPasses { // = cdc::RenderPassData
 	RenderPass passes[32];
 	uint32_t requestedPassesA[32];
 	//uint32_t dword380;
@@ -32,7 +37,7 @@ struct RenderPasses { // guessed name
 	uint32_t dword408[3];
 	uint32_t dword414;
 	uint32_t activeFuncBitfield; // 418
-	RenderFunctionSet comparators[20]; // 41C
+	CompareFunctionSet comparators[20]; // 41C
 	RenderFunctionSet drawers[20]; // 91C
 
 	RenderPasses();
@@ -44,12 +49,12 @@ struct RenderPasses { // guessed name
 	DrawableListsAndMasks *createDrawableLists(/*uint32_t,*/ uint32_t mask, LinearAllocator *linear);
 };
 
-struct DrawableItem { // guessed name
+struct DrawableItem { // = cdc::RenderDrawableList::Node
 	DrawableItem *next;
 	IRenderDrawable *drawable;
 };
 
-struct DrawableList { // guessed name
+struct DrawableList { // = cdc::RenderDrawableList
 	LinearAllocator *linear;
 	DrawableItem *first;
 	DrawableItem *last;
@@ -57,12 +62,12 @@ struct DrawableList { // guessed name
 
 	void add(IRenderDrawable *drawable);
 	void sortSimple();
-	void sortWithFunc(RenderFunctionSet *funcSet, uint32_t funcSetIndex);
+	void sortWithFunc(CompareFunctionSet *funcSet, uint32_t funcSetIndex);
 	void draw(RenderFunctionSet *funcSet, uint32_t funcSetIndex);
 	void absorbToBack(DrawableList& other);
 };
 
-struct DrawableListsAndMasks { // guessed name
+struct DrawableListsAndMasks { // = cdc::RenderPassesInstance
 	DrawableList *drawableLists;
 	RenderPasses *renderPasses;
 	uint32_t passMask8;

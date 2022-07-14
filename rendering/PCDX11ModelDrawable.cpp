@@ -38,7 +38,7 @@ PCDX11ModelDrawable::PCDX11ModelDrawable(
 }
 
 // for funcset 1: renderpasses 0 and 14 (depth)
-bool PCDX11ModelDrawable::draw1(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+void PCDX11ModelDrawable::draw1(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
 	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
 	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
@@ -59,11 +59,10 @@ bool PCDX11ModelDrawable::draw1(uint32_t funcSetIndex, IRenderDrawable *drawable
 		thisModel->float30);
 
 	thisModel->draw(renderDevice, stateManager, streamDecl, false);
-	return false;
 }
 
 // for funcset 2: renderpass 9
-bool PCDX11ModelDrawable::draw2(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+void PCDX11ModelDrawable::draw2(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
 	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
 	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
@@ -86,11 +85,10 @@ bool PCDX11ModelDrawable::draw2(uint32_t funcSetIndex, IRenderDrawable *drawable
 
 	PCDX11StreamDecl *streamDecl = nullptr; // TODO
 	thisModel->draw(renderDevice, stateManager, streamDecl, false);
-	return false;
 }
 
 // for funcset 7: renderpass 6 (AlphaBloomFsx)
-bool PCDX11ModelDrawable::draw7(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+void PCDX11ModelDrawable::draw7(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
 	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
 	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
@@ -110,11 +108,10 @@ bool PCDX11ModelDrawable::draw7(uint32_t funcSetIndex, IRenderDrawable *drawable
 	bool renderTwice = (mt0x128->material->materialBlob->dword18 >> 11) & 1;
 
 	thisModel->draw(renderDevice, stateManager, streamDecl, renderTwice);
-	return false;
 }
 
 // for funcset 4: renderpass 1 (Composite)
-bool PCDX11ModelDrawable::draw4(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+void PCDX11ModelDrawable::draw4(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
 	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
 	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
@@ -139,12 +136,11 @@ bool PCDX11ModelDrawable::draw4(uint32_t funcSetIndex, IRenderDrawable *drawable
 		thisModel->buildAndAssignLightBuffer(renderDevice, stateManager);
 
 	thisModel->draw(renderDevice, stateManager, streamDecl, false);
-	return false;
 }
 
 // for funcset 5: renderpasses 4, 5 and 13 (Fullscreen, PostFx and DeferredShading)
 // for funcset 6: renderpass 7 (Predator)
-bool PCDX11ModelDrawable::draw56(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+void PCDX11ModelDrawable::draw56(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
 	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
 	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
@@ -170,11 +166,10 @@ bool PCDX11ModelDrawable::draw56(uint32_t funcSetIndex, IRenderDrawable *drawabl
 		thisModel->buildAndAssignLightBuffer(renderDevice, stateManager);
 
 	thisModel->draw(renderDevice, stateManager, streamDecl, renderTwice);
-	return false;
 }
 
 // for funcset 10: renderpass 12 (Normal)
-bool PCDX11ModelDrawable::drawA(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+void PCDX11ModelDrawable::drawA(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
 	auto *thisModel = static_cast<PCDX11ModelDrawable*>(drawable);
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
 	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
@@ -194,7 +189,6 @@ bool PCDX11ModelDrawable::drawA(uint32_t funcSetIndex, IRenderDrawable *drawable
 		thisModel->float30);
 
 	thisModel->draw(renderDevice, stateManager, streamDecl, false);
-	return false;
 }
 
 // for funcset 1: renderpasses 0 and 14 (depth)

@@ -4,9 +4,8 @@
 
 namespace cdc {
 
-static bool defaultDrawer(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+static void defaultDrawer(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
 	drawable->draw(funcSetIndex, prevDrawable);
-	return true; // TODO
 }
 
 static bool defaultComparator(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
@@ -153,7 +152,7 @@ void DrawableList::sortSimple() {
 	// TODO
 }
 
-void DrawableList::sortWithFunc(RenderFunctionSet *funcSet, uint32_t funcSetIndex) {
+void DrawableList::sortWithFunc(CompareFunctionSet *funcSet, uint32_t funcSetIndex) {
 	// TODO
 }
 

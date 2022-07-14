@@ -164,16 +164,16 @@ void PCDX11RenderDevice::registerComparatorsAndDrawersModel() {
 }
 
 void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain1() {
-	RenderFunc todoCmp12 = nullptr;
-	RenderFunc todoCmp467 = nullptr;
-	RenderFunc todoCmpA = nullptr;
+	DrawableCompareFn todoCmp12 = nullptr;
+	DrawableCompareFn todoCmp467 = nullptr;
+	DrawableCompareFn todoCmpA = nullptr;
 
-	RenderFunc todoDraw1 = nullptr;
-	RenderFunc todoDraw2 = nullptr;
-	RenderFunc todoDraw7 = nullptr;
-	RenderFunc todoDraw4 = nullptr;
-	RenderFunc todoDraw56 = nullptr;
-	RenderFunc todoDrawA = nullptr;
+	DrawableRenderFn todoDraw1 = nullptr;
+	DrawableRenderFn todoDraw2 = nullptr;
+	DrawableRenderFn todoDraw7 = nullptr;
+	DrawableRenderFn todoDraw4 = nullptr;
+	DrawableRenderFn todoDraw56 = nullptr;
+	DrawableRenderFn todoDrawA = nullptr;
 
 	uint8_t funcIndex = allocFuncIndex("RenderTerrainDrawable");
 	registerComparator(funcIndex, 1, todoCmp12);
@@ -194,14 +194,14 @@ void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain1() {
 }
 
 void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain2() {
-	RenderFunc todoCmp = nullptr;
+	DrawableCompareFn todoCmp = nullptr;
 
-	RenderFunc todoDraw1 = nullptr;
-	RenderFunc todoDraw2 = nullptr;
-	RenderFunc todoDraw7 = nullptr;
-	RenderFunc todoDraw4 = nullptr;
-	RenderFunc todoDraw56 = nullptr;
-	RenderFunc todoDrawA = nullptr;
+	DrawableRenderFn todoDraw1 = nullptr;
+	DrawableRenderFn todoDraw2 = nullptr;
+	DrawableRenderFn todoDraw7 = nullptr;
+	DrawableRenderFn todoDraw4 = nullptr;
+	DrawableRenderFn todoDraw56 = nullptr;
+	DrawableRenderFn todoDrawA = nullptr;
 
 	uint8_t funcIndex = allocFuncIndex("RenderTerrainDrawable");
 	registerComparator(funcIndex, 1, todoCmp);

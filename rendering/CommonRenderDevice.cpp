@@ -104,19 +104,19 @@ void CommonRenderDevice::freeFuncIndex(uint8_t funcSet) {
 	// TODO
 }
 
-void CommonRenderDevice::registerDrawer(uint32_t funcIndex, uint32_t funcSetIndex, RenderFunc drawer) {
+void CommonRenderDevice::registerDrawer(uint32_t funcIndex, uint32_t funcSetIndex, DrawableRenderFn drawer) {
 	renderPasses.drawers[funcSetIndex].func[funcIndex] = drawer;
 }
 
-RenderFunc CommonRenderDevice::getDrawer(uint32_t funcIndex, uint32_t funcSetIndex) {
+DrawableRenderFn CommonRenderDevice::getDrawer(uint32_t funcIndex, uint32_t funcSetIndex) {
 	return renderPasses.drawers[funcSetIndex].func[funcIndex];
 }
 
-void CommonRenderDevice::registerComparator(uint32_t funcIndex, uint32_t funcSetIndex, RenderFunc comparator) {
+void CommonRenderDevice::registerComparator(uint32_t funcIndex, uint32_t funcSetIndex, DrawableCompareFn comparator) {
 	renderPasses.comparators[funcSetIndex].func[funcIndex] = comparator;
 }
 
-RenderFunc CommonRenderDevice::getComparator(uint32_t funcIndex, uint32_t funcSetIndex) {
+DrawableCompareFn CommonRenderDevice::getComparator(uint32_t funcIndex, uint32_t funcSetIndex) {
 	return renderPasses.comparators[funcSetIndex].func[funcIndex];
 }
 

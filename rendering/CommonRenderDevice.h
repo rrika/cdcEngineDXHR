@@ -86,10 +86,10 @@ public:
 
 	virtual uint8_t allocFuncIndex(const char *name);
 	virtual void freeFuncIndex(uint8_t);
-	virtual void registerDrawer(uint32_t funcIndex, uint32_t funcSetIndex, RenderFunc drawer);
-	virtual RenderFunc getDrawer(uint32_t funcIndex, uint32_t funcSetIndex);
-	virtual void registerComparator(uint32_t funcIndex, uint32_t funcSetIndex, RenderFunc comparator);
-	virtual RenderFunc getComparator(uint32_t funcIndex, uint32_t funcSetIndex);
+	virtual void registerDrawer(uint32_t funcIndex, uint32_t funcSetIndex, DrawableRenderFn drawer);
+	virtual DrawableRenderFn getDrawer(uint32_t funcIndex, uint32_t funcSetIndex);
+	virtual void registerComparator(uint32_t funcIndex, uint32_t funcSetIndex, DrawableCompareFn comparator);
+	virtual DrawableCompareFn getComparator(uint32_t funcIndex, uint32_t funcSetIndex);
 
 	virtual void method_A8() = 0;
 	virtual void method_AC();
