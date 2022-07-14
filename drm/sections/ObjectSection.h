@@ -13,12 +13,4 @@ public:
 	uint32_t getDomainId(uint32_t) override;  // 0x44
 };
 
-void ensureObjectList();
-void readAndParseObjectList();
-uint32_t objectIdByName(const char *name);
-void requestObject1(uint32_t id);
-void requestObject3(uint32_t id);
-
-void buildObjectsUI();
-
 }

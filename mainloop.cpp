@@ -10,6 +10,7 @@
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileHelpers.h"
 #include "gameshell/win32/MainVM.h"
+#include "object/ObjectManager.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "mainloop.h"
 #include "spinnycube.h"

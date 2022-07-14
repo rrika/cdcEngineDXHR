@@ -16,7 +16,6 @@
 #include "drm/ResolveObject.h"
 #include "drm/ResolveReceiver.h"
 #include "drm/ResolveSection.h"
-#include "drm/sections/ObjectSection.h" // for buildObjectsUI
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileHelpers.h" // for archiveFileSystem_default
 #include "filesystem/FileUserBufferReceiver.h"
@@ -24,6 +23,7 @@
 #include "input/PCMouseKeyboard.h"
 #include "math/Math.h" // for float4x4
 #include "object/Object.h"
+#include "object/ObjectManager.h" // for buildObjectsUI
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
 #include "rendering/buffers/PCDX11IndexBuffer.h"
 #include "rendering/buffers/PCDX11SimpleStaticIndexBuffer.h"
