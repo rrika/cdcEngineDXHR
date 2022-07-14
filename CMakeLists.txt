@@ -57,6 +57,7 @@ add_subdirectory(input)
 add_subdirectory(miniz)
 add_subdirectory(rendering)
 add_subdirectory(scene)
+add_subdirectory(sys)
 
 target_sources(dxhr PRIVATE
 	res/resources.rc)

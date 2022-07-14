@@ -5,7 +5,7 @@ namespace cdc {
 
 uint32_t DTPDataSection::allocate(uint32_t sectionId, uint32_t sectionSubType, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
 	if (sectionId >= 0x18000) {
-		// cdcError("Out of range DTPData ID [%d >= %d]!", sectionId, 0x18000);
+		// FatalError("Out of range DTPData ID [%d >= %d]!", sectionId, 0x18000);
 		return ~0u;
 	}
 

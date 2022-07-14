@@ -127,7 +127,7 @@ FileRequest *ArchiveFileSystem::createRequest(
 		return wrapped->createRequest(receiver, path, offsetWithinFile);
 
 	auto entry = lookupEntry(path);
-	// if (!entry) cdcError("Can't open file %s\n", path);
+	// if (!entry) FatalError("Can't open file %s\n", path);
 
 	auto offset = uint64_t(entry->offset) << 11;
 	auto index = offset / chunkSize;

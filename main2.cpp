@@ -11,18 +11,11 @@
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11RenderDevice.h"
+#include "sys/Assert.h"
 
 using namespace cdc;
 
 DisplayConfig g_displayConfig;
-
-void cdcError(const char *format, ...) {
-	va_list args;
-	va_start(args, format);
-	vfprintf(stderr, format, args);
-	va_end(args);
-	fputs("", stderr); // newline
-}
 
 void initDisplayConfig() {
 	// TODO
@@ -63,7 +56,7 @@ void createHigherFileSystems() {
 	bool indexOk = archiveFileSystem_default->readIndex(bigfilePath, 0);
 	
 	if (!indexOk)
-		cdcError("Unable to open bigfile BIGFILE.DAT!");
+		FatalError("Unable to open bigfile BIGFILE.DAT!");
 }
 
 void destroyFileSystems() {
