@@ -1,7 +1,7 @@
 #pragma once
 #include "../math/Math.h" // for float4x4
-#include "CommonMaterial.h" // for StencilSettings
 #include "PCDX11InternalResource.h"
+#include "Stencil.h"
 #include <array>
 #include <cstring>
 #include <d3d11.h>

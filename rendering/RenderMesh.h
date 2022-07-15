@@ -3,11 +3,11 @@
 
 namespace cdc {
 
-class CommonStreamDecl;
 class IMaterial;
-class PCDX11Material;
 class PCDX11SimpleStaticVertexBuffer;
-struct StencilSettings;
+// struct StencilSettings;
+struct MeshTab0Ext16;
+struct MeshTab0Ext128;
 
 struct MeshTab0;
 
@@ -97,39 +97,6 @@ struct MeshTab0 { // = cdc::PrimGroup
 	uint32_t dword34; // index into fourBase, patched to pointer
 	uint32_t dword38; // index into fourBase, patched to pointer
 	uint32_t dword3C;
-};
-
-struct MeshTab0Ext16 {
-	uint32_t dword0;
-	float float4;
-	uint32_t mask8;
-	uint32_t dwordC;
-};
-
-struct MeshTab0Ext128Sub10 { // = cdc::MaterialInstanceData
-	// see also PCDX11Material::setupPixelResources
-	uint32_t dword0; // = pInstanceTextures (TextureMap*[5])
-	uint32_t dword4;
-	uint32_t dword8;
-	uint32_t dwordC;
-	float float10; // = opacity
-	uint32_t dword14; // = polyFlags
-	// 0x20000000: see PCDX11Material::setupDepthBias
-	uint32_t dword18;
-	float minDepth; // = m_depthBoundsMin
-	float maxDepth; // = m_depthBoundsMax
-	CommonStreamDecl *streamDecls24[16]; // = m_apPassStreamDecls
-	StencilSettings *stencilSettings64; // = m_pStencilParams
-};
-
-struct MeshTab0Ext128 {
-	PCDX11Material *material;
-	uint32_t dword4;
-	uint32_t dword8;
-	uint32_t dwordC;
-	MeshTab0Ext128Sub10 sub10;
-	uint32_t dword78; // probably also part of MeshTab0Ext128Sub10
-	uint32_t dword7C; // a subfunction of RenderModel::load does a memcpy of 0x70
 };
 
 struct MeshHeader {

@@ -3,6 +3,7 @@
 #include "PCDX11RenderDevice.h"
 #include "PCDX11StateManager.h"
 #include "PCDX11StreamDecl.h" // for CommonStreamDecl to PCDX11StreamDecl cast
+#include "MaterialData.h"
 #include "RenderMesh.h"
 #include "surfaces/PCDX11Texture.h"
 #include "buffers/PCDX11UberConstantBuffer.h"
@@ -16,7 +17,7 @@ PCDX11StreamDecl *PCDX11Material::mg_streamDecl;
 VertexAttributeLayoutA *PCDX11Material::mg_layoutA;
 PCDX11Material *PCDX11Material::mg_material;
 void *PCDX11Material::mg_cbdata;
-MeshTab0Ext128Sub10 *PCDX11Material::mg_ext128sub10;
+MaterialInstanceData *PCDX11Material::mg_matInstance;
 
 void PCDX11Material::load(MaterialBlob *newBlob) {
 	auto deviceContext = renderDevice->getD3DDeviceContext(); // HACK
@@ -57,7 +58,7 @@ void PCDX11Material::method_18() {
 void PCDX11Material::setupVertexResources(
 	uint32_t subMaterialIndex,
 	MaterialBlobSub* subMat,
-	MeshTab0Ext128Sub10* subExt,
+	MaterialInstanceData *matInstance,
 	char *cbData,
 	bool doEverything)
 {
@@ -91,9 +92,9 @@ void PCDX11Material::setupVertexResources(
 		}
 	}
 
-	// assign refIndexBeginB..refIndexEndB from submaterial or MeshTab0Ext128Sub10
+	// assign refIndexBeginB..refIndexEndB from submaterial or MaterialInstanceData
 	for (uint32_t i = subMat->vsRefIndexBeginB; i < subMat->vsRefIndexEndB; i++) {
-		auto extTextures = (PCDX11Texture**)subExt;
+		auto extTextures = (PCDX11Texture**)matInstance;
 		auto fi = texref[i].fallbackIndex & 0x1F;
 		PCDX11Texture* tex = extTextures[fi - 1];
 		if (!tex) tex = static_cast<PCDX11Texture*>(texref[i].tex);
@@ -114,8 +115,8 @@ void PCDX11Material::setupVertexResources(
 
 void PCDX11Material::setupPixelResources(
 	uint32_t subMaterialIndex,
-	MaterialBlobSub* subMat,
-	MeshTab0Ext128Sub10* subExt,
+	MaterialBlobSub *subMat,
+	MaterialInstanceData *subExt,
 	char *cbData,
 	bool doEverything)
 {
@@ -152,7 +153,7 @@ void PCDX11Material::setupPixelResources(
 		}
 	}
 
-	// assign refIndexBeginB..refIndexEndB from submaterial or MeshTab0Ext128Sub10
+	// assign refIndexBeginB..refIndexEndB from submaterial or MaterialInstanceData
 	for (uint32_t i = subMat->psRefIndexBeginB; i < subMat->psRefIndexEndB; i++) {
 		auto extTextures = (PCDX11Texture**)subExt;
 		auto fi = texref[i].fallbackIndex & 0x1F;
@@ -174,14 +175,14 @@ void PCDX11Material::setupPixelResources(
 	}
 }
 
-void PCDX11Material::setupDepthBias(MeshTab0Ext128Sub10 *ext128sub10) {
+void PCDX11Material::setupDepthBias(MaterialInstanceData *matInstance) {
 	float depthBias = 0.0f;
 	float slopeScaledDepthBias = 0.0f;
 
 	if (materialBlob->negDepthBias) {
 		depthBias = -materialBlob->negDepthBias;
 		slopeScaledDepthBias = -materialBlob->negSlopeScaledDepthBias;
-	} else if (ext128sub10->dword14 & 0x20000000) {
+	} else if (matInstance->dword14 & 0x20000000) {
 		depthBias = -1.0f;
 		slopeScaledDepthBias = -10.0f;
 	}
@@ -193,19 +194,19 @@ void PCDX11Material::setupDepthBias(MeshTab0Ext128Sub10 *ext128sub10) {
 }
 
 void PCDX11Material::setupStencil(
-	MeshTab0Ext128Sub10 *ext128sub10,
+	MaterialInstanceData *matInstance,
 	bool honorRenderTwice,
 	uint32_t flags)
 {
 	auto *stateManager = deviceManager->getStateManager();
-	StencilSettings *stencilSettings = ext128sub10->stencilSettings64
-		? ext128sub10->stencilSettings64
+	StencilSettings *stencilSettings = matInstance->stencilSettings64
+		? matInstance->stencilSettings64
 		: &materialBlob->stencilSettings34;
 
 	uint32_t matDword18 = materialBlob->dword18;
 	bool frontCounterClockwise = bool(flags & 2);
 	bool stencilDoubleSided = bool(stencilSettings->back & 1);
-	bool ext128DoubleSided = bool(ext128sub10->dword14 & 0x40);
+	bool ext128DoubleSided = bool(matInstance->dword14 & 0x40);
 	bool materialDoubleSided = bool(matDword18 & 0x80);
 	bool materialRenderTwice = bool(matDword18 & 0x800);
 	bool materialCullFront = bool(matDword18 & 0x2000);
@@ -225,18 +226,18 @@ void PCDX11Material::setupStencil(
 
 void PCDX11Material::setupMg4(
 	PCDX11RenderDevice *renderDevice,
-	MeshTab0Ext128Sub10 *ext128sub10,
+	MaterialInstanceData *matInstance,
 	uint32_t flags)
 {
 	auto *stateManager = deviceManager->getStateManager();
-	setupStencil(ext128sub10, true, flags);
-	stateManager->setDepthRange(ext128sub10->minDepth, ext128sub10->maxDepth);
+	setupStencil(matInstance, true, flags);
+	stateManager->setDepthRange(matInstance->minDepth, matInstance->maxDepth);
 	if (mg_state != 4) {
 		mg_state = 21;
 		mg_vsSelectAndFlags = ~0u;
 		mg_material = 0;
 		mg_cbdata = 0;
-		mg_ext128sub10 = 0;
+		mg_matInstance = 0;
 		mg_streamDecl = 0;
 		mg_layoutA = 0;
 		stateManager->setBlendStateAndBlendFactors(0x7010010, 128, 0);
@@ -249,7 +250,7 @@ void PCDX11Material::setupMg4(
 	// redo some of what setupStencil did earlier
 	uint32_t matDword18 = materialBlob->dword18;
 	bool frontCounterClockwise = bool(flags & 2);
-	bool ext128DoubleSided = bool(ext128sub10->dword14 & 0x40);
+	bool ext128DoubleSided = bool(matInstance->dword14 & 0x40);
 	bool materialDoubleSided = bool(matDword18 & 0x80);
 	bool materialRenderTwice = bool(matDword18 & 0x800);
 	bool materialCullFront = bool(matDword18 & 0x2000);
@@ -264,7 +265,7 @@ void PCDX11Material::setupMg4(
 
 void PCDX11Material::setupMg5(
 	PCDX11RenderDevice *renderDevice,
-	MeshTab0Ext128Sub10 *ext128sub10,
+	MaterialInstanceData *matInstance,
 	uint32_t arg3,
 	float arg4)
 {
@@ -276,13 +277,13 @@ void PCDX11Material::setupMg21() {
 	mg_vsSelectAndFlags = 0xffffffff;
 	mg_material = nullptr;
 	mg_cbdata = nullptr;
-	mg_ext128sub10 = nullptr;
+	mg_matInstance = nullptr;
 	mg_streamDecl = nullptr;
 	mg_layoutA = nullptr;
 }
 
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
-	MeshTab0Ext128Sub10* ext128sub10,
+	MaterialInstanceData* matInstance,
 	void *drawableExtDword50,
 	uint32_t vsSelect,
 	bool arg4,
@@ -295,13 +296,13 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
 		mg_vsSelectAndFlags = -1;
 		mg_material = nullptr;
 		mg_cbdata = nullptr;
-		mg_ext128sub10 = nullptr;
+		mg_matInstance = nullptr;
 		mg_streamDecl = nullptr;
 		mg_layoutA = nullptr;
 		mg_state = 1;
 	}
 
-	float opacity = ext128sub10->float10 * floatX;
+	float opacity = matInstance->float10 * floatX;
 	uint32_t blendState = materialBlob->blendStateC;
 	bool noPixelShader = true;
 	if ((blendState & 1) || (blendState & 0x7000000) != 0x7000000 || opacity < 1.0)
@@ -355,7 +356,7 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
 		mg_vsSelectAndFlags = vsSelectAndFlags;
 		mg_material = this;
 
-		auto *streamDecl = static_cast<PCDX11StreamDecl*>(ext128sub10->streamDecls24[subMaterialIndex]);
+		auto *streamDecl = static_cast<PCDX11StreamDecl*>(matInstance->streamDecls24[subMaterialIndex]);
 		if (!streamDecl) {
 			VertexAttributeLayoutB *layoutB = nullptr; // TODO
 
@@ -369,25 +370,25 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
 		mg_streamDecl = streamDecl;
 
 	} else {
-		if (mg_cbdata == drawableExtDword50 || mg_ext128sub10 == ext128sub10)
+		if (mg_cbdata == drawableExtDword50 || mg_matInstance == matInstance)
 			return mg_streamDecl;
 	}
 
 	if (!noPixelShader)
-		setupPixelResources(subMaterialIndex, subMaterial, ext128sub10, (char*)drawableExtDword50, materialChange);
-	setupVertexResources(subMaterialIndex, subMaterial, ext128sub10, (char*)drawableExtDword50, materialChange);
+		setupPixelResources(subMaterialIndex, subMaterial, matInstance, (char*)drawableExtDword50, materialChange);
+	setupVertexResources(subMaterialIndex, subMaterial, matInstance, (char*)drawableExtDword50, materialChange);
 
-	setupDepthBias(ext128sub10);
-	deviceManager->getStateManager()->setDepthRange(ext128sub10->minDepth, ext128sub10->maxDepth);
+	setupDepthBias(matInstance);
+	deviceManager->getStateManager()->setDepthRange(matInstance->minDepth, matInstance->maxDepth);
 	deviceManager->getStateManager()->setOpacity(opacity);
-	mg_ext128sub10 = ext128sub10;
+	mg_matInstance = matInstance;
 	mg_cbdata = drawableExtDword50;
 
 	return mg_streamDecl;
 }
 
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl01(
-	MeshTab0Ext128Sub10*,
+	MaterialInstanceData*,
 	void *drawableExtDword50,
 	uint8_t lightManager434_114,
 	uint32_t vsSelect,
@@ -401,7 +402,7 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl01(
 }
 
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl4(
-	MeshTab0Ext128Sub10 *ext128sub10,
+	MaterialInstanceData *matInstance,
 	void *drawableExtDword50,
 	uint32_t vsSelect,
 	VertexAttributeLayoutA *layoutA,
@@ -412,9 +413,9 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl4(
 	const uint32_t subMaterialIndex = 4;
 	MaterialBlobSub *subMaterial = materialBlob->subMat4C[subMaterialIndex];
 
-	setupDepthBias(ext128sub10);
-	setupStencil(ext128sub10, true, flags);
-	stateManager->setDepthRange(ext128sub10->minDepth, ext128sub10->maxDepth);
+	setupDepthBias(matInstance);
+	setupStencil(matInstance, true, flags);
+	stateManager->setDepthRange(matInstance->minDepth, matInstance->maxDepth);
 	stateManager->setBlendStateAndBlendFactors(materialBlob->blendState24, 0, 0);
 
 	uint32_t vertexIndex = vsSelect;
@@ -430,10 +431,10 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl4(
 	auto vertexShader = (*vertexTable)[vertexIndex];
 	stateManager->setVertexShader(vertexShader);
 
-	setupPixelResources(subMaterialIndex, subMaterial, ext128sub10, (char*)drawableExtDword50, true);
-	setupVertexResources(subMaterialIndex, subMaterial, ext128sub10, (char*)drawableExtDword50, true);
+	setupPixelResources(subMaterialIndex, subMaterial, matInstance, (char*)drawableExtDword50, true);
+	setupVertexResources(subMaterialIndex, subMaterial, matInstance, (char*)drawableExtDword50, true);
 
-	auto *streamDecl = static_cast<PCDX11StreamDecl*>(ext128sub10->streamDecls24[subMaterialIndex]);
+	auto *streamDecl = static_cast<PCDX11StreamDecl*>(matInstance->streamDecls24[subMaterialIndex]);
 	if (!streamDecl) {
 		VertexAttributeLayoutB *layoutB = nullptr; // TODO
 
@@ -448,7 +449,7 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl4(
 }
 
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl038(
-	MeshTab0Ext128Sub10*,
+	MaterialInstanceData*,
 	void *drawableExtDword50,
 	void *lightConstantBufferData,
 	uint32_t vsSelect,
@@ -463,7 +464,7 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl038(
 }
 
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl7(
-	MeshTab0Ext128Sub10 *ext128sub10,
+	MaterialInstanceData *matInstance,
 	void *drawableExtDword50,
 	uint32_t vsSelect,
 	VertexAttributeLayoutA *layout,
@@ -474,7 +475,7 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl7(
 	// TODO
 	// return nullptr;
 	return buildStreamDecl015(
-		ext128sub10,
+		matInstance,
 		drawableExtDword50,
 		vsSelect,
 		0,

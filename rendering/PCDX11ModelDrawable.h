@@ -1,5 +1,6 @@
 #pragma once
 #include "IRenderDrawable.h"
+#include "CommonRenderModelInstance.h" // for MeshTab0Ext128
 #include "RenderMesh.h" // for MeshSub and MeshTab0
 
 namespace cdc {

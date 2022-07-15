@@ -1,6 +1,7 @@
 #include "PCDX11RenderModel.h"
 #include <cstring>
 #include <cstdio>
+#include "CommonRenderModelInstance.h"
 #include "PCDX11Material.h"
 #include "buffers/PCDX11SimpleStaticIndexBuffer.h"
 #include "buffers/PCDX11SimpleStaticVertexBuffer.h"

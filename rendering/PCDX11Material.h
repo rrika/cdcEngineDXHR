@@ -8,7 +8,8 @@
 namespace cdc {
 
 class PCDX11StreamDecl;
-struct MeshTab0Ext128Sub10;
+struct MaterialBlobSub;
+struct MaterialInstanceData;
 struct VertexAttributeLayoutA;
 
 class PCDX11Material :
@@ -32,7 +33,7 @@ class PCDX11Material :
 	static VertexAttributeLayoutA *mg_layoutA;  // 00EAAD1C
 	static PCDX11Material *mg_material;         // 00EAAD20
 	static void *mg_cbdata;                     // 00EAAD24
-	static MeshTab0Ext128Sub10 *mg_ext128sub10; // 00EAAD28
+	static MaterialInstanceData *mg_matInstance; // 00EAAD28
 
 public:
 	PCDX11Material(PCDX11RenderDevice *renderDevice) :
@@ -44,18 +45,18 @@ public:
 	~PCDX11Material() = default;
 	void method_18() override;
 
-	void setupVertexResources(uint32_t, MaterialBlobSub*, MeshTab0Ext128Sub10*, char*, bool);
-	void setupPixelResources(uint32_t, MaterialBlobSub*, MeshTab0Ext128Sub10*, char*, bool);
+	void setupVertexResources(uint32_t, MaterialBlobSub*, MaterialInstanceData*, char*, bool);
+	void setupPixelResources(uint32_t, MaterialBlobSub*, MaterialInstanceData*, char*, bool);
 
-	void setupDepthBias(MeshTab0Ext128Sub10*);
-	void setupStencil(MeshTab0Ext128Sub10*, bool, uint32_t);
+	void setupDepthBias(MaterialInstanceData*);
+	void setupStencil(MaterialInstanceData*, bool, uint32_t);
 
-	void setupMg4(PCDX11RenderDevice*, MeshTab0Ext128Sub10*, uint32_t);
-	void setupMg5(PCDX11RenderDevice*, MeshTab0Ext128Sub10*, uint32_t, float);
+	void setupMg4(PCDX11RenderDevice*, MaterialInstanceData*, uint32_t);
+	void setupMg5(PCDX11RenderDevice*, MaterialInstanceData*, uint32_t, float);
 	static void setupMg21();
 
 	PCDX11StreamDecl *buildStreamDecl015(
-		MeshTab0Ext128Sub10*,
+		MaterialInstanceData*,
 		void *drawableExtDword50,
 		uint32_t vsSelect,
 		bool arg4,
@@ -65,7 +66,7 @@ public:
 		float floatY);
 
 	PCDX11StreamDecl *buildStreamDecl01(
-		MeshTab0Ext128Sub10*,
+		MaterialInstanceData*,
 		void *drawableExtDword50,
 		uint8_t lightManager434_114,
 		uint32_t vsSelect,
@@ -75,7 +76,7 @@ public:
 		float floatY);
 
 	PCDX11StreamDecl *buildStreamDecl4(
-		MeshTab0Ext128Sub10*,
+		MaterialInstanceData*,
 		void *drawableExtDword50,
 		uint32_t vsSelect,
 		VertexAttributeLayoutA *layout,
@@ -83,7 +84,7 @@ public:
 		float floatX);
 
 	PCDX11StreamDecl *buildStreamDecl038(
-		MeshTab0Ext128Sub10*,
+		MaterialInstanceData*,
 		void *drawableExtDword50,
 		void *drawableDword24,
 		uint32_t vsSelect,
@@ -94,7 +95,7 @@ public:
 		float floatY);
 
 	PCDX11StreamDecl *buildStreamDecl7(
-		MeshTab0Ext128Sub10*,
+		MaterialInstanceData*,
 		void *drawableExtDword50,
 		uint32_t vsSelect,
 		VertexAttributeLayoutA *layout,
