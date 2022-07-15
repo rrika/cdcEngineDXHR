@@ -135,7 +135,7 @@ public:
 	virtual void createProceduralTexture() = 0;
 	virtual IShaderLib *createShaderLib(uint32_t) = 0;
 	virtual RenderResource *createRenderModel(uint32_t) = 0;
-	virtual RenderResource *method_140(uint32_t);
+	virtual RenderResource *createRenderModelData(uint32_t);
 	virtual RenderModelInstance *createRenderModelInstance(RenderMesh*) = 0;
 	virtual RenderResource *createRenderTerrain(uint32_t) = 0;
 	virtual void createRenderTerrainInstance() = 0;

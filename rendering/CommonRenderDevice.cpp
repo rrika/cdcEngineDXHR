@@ -208,8 +208,7 @@ void *CommonRenderDevice::linearAlloc30(uint32_t size, uint32_t requester) {
 	return (void*)linear30->alloc(size, requester, /*reportFailure=*/true);
 }
 
-RenderResource *CommonRenderDevice::method_140(uint32_t) {
-	// TODO
+RenderResource *CommonRenderDevice::createRenderModelData(uint32_t) {
 	return nullptr;
 }
 
@@ -252,7 +251,7 @@ RenderResource *CommonRenderDevice::createResource(uint32_t type, uint32_t arg) 
 		case 5: return g_renderDevice->createTexture(arg);
 		case 24: return g_renderDevice->createRenderTerrain(arg);
 		case 26: return g_renderDevice->createRenderModel(arg);
-		case 27: return g_renderDevice->method_140(arg);
+		case 27: return g_renderDevice->createRenderModelData(arg);
 		default: return nullptr;
 	}
 }
