@@ -68,8 +68,8 @@ void CommonRenderDevice::method_68() {
 	// TODO
 }
 
-void CommonRenderDevice::addPass(uint32_t arg0, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex) {
-	renderPasses.addRenderPass(arg0, order, sortMode, funcSetIndex, /*firstPassId=*/0);
+void CommonRenderDevice::addPass(RenderPassType passType, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex) {
+	renderPasses.addRenderPass(passType, order, sortMode, funcSetIndex, /*firstPassId=*/0);
 }
 
 void CommonRenderDevice::method_78() {

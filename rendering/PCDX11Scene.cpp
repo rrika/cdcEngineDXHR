@@ -21,6 +21,7 @@ void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 	// TODO
 	if (drawableListsAndMasks) {
 		drawableListsAndMasks->renderPasses->sortAndDraw(
+			drawableListsAndMasks->passType,
 			drawableListsAndMasks,
 			renderDevice,
 			drawableListsAndMasks->passMask8);

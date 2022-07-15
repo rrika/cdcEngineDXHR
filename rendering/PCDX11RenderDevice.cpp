@@ -74,20 +74,20 @@ PCDX11RenderDevice::PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t heigh
 	createDefaultResources();
 	createDefaultVertexAttribLayouts();
 
-	renderPasses.addRenderPass(0, 0x1000, 1,  1, 0);  // Depth0
-	renderPasses.addRenderPass(0, 0x2000, 1,  4, 1);  // Composite
-	renderPasses.addRenderPass(0, 0x3000, 1,  3, 2);  // Opaque
-	renderPasses.addRenderPass(0, 0x4000, 0,  5, 3);  // Translucent
-	renderPasses.addRenderPass(0, 0x8000, 0,  5, 4);  // Fullscreen
-	renderPasses.addRenderPass(0, 0x9000, 0,  5, 5);  // PostFx
-	renderPasses.addRenderPass(0, 0x5000, 0,  7, 6);  // AlphaBloomFsx
-	renderPasses.addRenderPass(0, 0x7000, 0,  6, 7);  // Predator
-	renderPasses.addRenderPass(0, 0x6000, 1,  8, 8);
-	renderPasses.addRenderPass(2, 0x8000, 1,  2, 9);
-	renderPasses.addRenderPass(0, 0x1850, 2,  0, 10); // DepthDependent
-	renderPasses.addRenderPass(0, 0x1800, 1, 10, 12); // Normal
-	renderPasses.addRenderPass(0, 0x1900, 2,  5, 13); // DeferredShading
-	renderPasses.addRenderPass(0, 0x1400, 1,  1, 14); // Depth14
+	renderPasses.addRenderPass(kRegularPass, 0x1000, 1,  1, 0);  // Depth0
+	renderPasses.addRenderPass(kRegularPass, 0x2000, 1,  4, 1);  // Composite
+	renderPasses.addRenderPass(kRegularPass, 0x3000, 1,  3, 2);  // Opaque
+	renderPasses.addRenderPass(kRegularPass, 0x4000, 0,  5, 3);  // Translucent
+	renderPasses.addRenderPass(kRegularPass, 0x8000, 0,  5, 4);  // Fullscreen
+	renderPasses.addRenderPass(kRegularPass, 0x9000, 0,  5, 5);  // PostFx
+	renderPasses.addRenderPass(kRegularPass, 0x5000, 0,  7, 6);  // AlphaBloomFsx
+	renderPasses.addRenderPass(kRegularPass, 0x7000, 0,  6, 7);  // Predator
+	renderPasses.addRenderPass(kRegularPass, 0x6000, 1,  8, 8);
+	renderPasses.addRenderPass(kShadowPass,  0x8000, 1,  2, 9);
+	renderPasses.addRenderPass(kRegularPass, 0x1850, 2,  0, 10); // DepthDependent
+	renderPasses.addRenderPass(kRegularPass, 0x1800, 1, 10, 12); // Normal
+	renderPasses.addRenderPass(kRegularPass, 0x1900, 2,  5, 13); // DeferredShading
+	renderPasses.addRenderPass(kRegularPass, 0x1400, 1,  1, 14); // Depth14
 	setupPassCallbacks();
 	registerComparatorsAndDrawersModel();
 	registerComparatorsAndDrawersTerrain1();

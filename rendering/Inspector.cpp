@@ -40,12 +40,12 @@ void buildUI(DrawableListsAndMasks *drawableList) {
 
 void buildUI(RenderPasses *renderPasses, DrawableListsAndMasks *lists) {
 	uint32_t *reqPass;
-	reqPass = renderPasses->requestedPassesA;
+	reqPass = renderPasses->requestedPassesScene; // TODO: shadow
 
 	for (uint32_t passId; (passId = *reqPass) != -1; reqPass++) {
 		RenderPass *pass = &renderPasses->passes[passId];
 		DrawableListsAndMasks *activeLists =
-			pass->useOverrideLists ? lists->overrideLists14 : lists;
+			pass->passType == kLightPass ? lists->lightPasses : lists;
 		if (activeLists && (activeLists->passMask8 & 1 << passId)) {
 			IRenderPassCallback *callbacks = pass->callbacks;
 			DrawableList *list = &activeLists->drawableLists[activeLists->compactIndices[passId]];

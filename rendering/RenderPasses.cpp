@@ -15,12 +15,13 @@ static bool defaultComparator(uint32_t funcSetIndex, IRenderDrawable *drawable, 
 RenderPasses::RenderPasses() {
 	for (uint32_t i=0; i<32; i++) {
 		passes[i].active = false;
-		requestedPassesA[i] = ~0u;
+		requestedPassesScene[i] = ~0u;
+		requestedPassesShadow[i] = ~0u;
 	}
 	activeFuncBitfield = 0;
 }
 
-uint32_t RenderPasses::addRenderPass(uint32_t arg0, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex, uint32_t firstPassId) {
+uint32_t RenderPasses::addRenderPass(RenderPassType passType, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex, uint32_t firstPassId) {
 	uint32_t passId = firstPassId;
 	while (passId < 32 && passes[passId].active)
 		passId++;
@@ -31,12 +32,14 @@ uint32_t RenderPasses::addRenderPass(uint32_t arg0, uint32_t order, uint32_t sor
 	passes[passId].active = true;
 	passes[passId].order = order;
 	passes[passId].sortMode = sortMode;
-	passes[passId].useOverrideLists = arg0;
+	passes[passId].passType = passType;
 	passes[passId].funcSetIndex = funcSetIndex;
 	passes[passId].callbacks = nullptr;
 
 	// find insertion point by order
-	uint32_t *r = requestedPassesA; 
+	uint32_t *r = passType == kShadowPass
+		? requestedPassesShadow
+		: requestedPassesScene;
 	for (; *r != ~0u; r++)
 		if (passes[*r].order > order)
 			break;
@@ -50,9 +53,9 @@ uint32_t RenderPasses::addRenderPass(uint32_t arg0, uint32_t order, uint32_t sor
 		insertedItem = displacedItem;
 	} while (insertedItem != ~0u);
 
-	dword408[arg0] |= 1 << passId;
+	dword408[(int)passType] |= 1 << passId;
 	if (sortMode == 0)
-		dword414 |= 1 << passId;
+		depthSortedPasses |= 1 << passId;
 
 	return passId;
 }
@@ -93,22 +96,22 @@ void RenderPasses::draw(DrawableList *list, int passId) {
 }
 
 void RenderPasses::sortAndDraw(
-	// uint32_t passList,
+	RenderPassType passType,
 	DrawableListsAndMasks *lists,
 	CommonRenderDevice *renderDevice,
 	uint32_t mask)
 {
 	uint32_t *reqPass;
-	// if (passList == 2)
-	// 	reqPass = requestedPassesB;
-	// else
-	reqPass = requestedPassesA;
+	if (passType == kShadowPass)
+	 	reqPass = requestedPassesShadow;
+	else
+		reqPass = requestedPassesScene;
 
 	for (uint32_t passId; (passId = *reqPass) != -1; reqPass++) {
 		if (mask & (1 << passId)) {
 			RenderPass *pass = &passes[passId];
 			DrawableListsAndMasks *activeLists =
-				pass->useOverrideLists ? lists->overrideLists14 : lists;
+				pass->passType == kLightPass ? lists->lightPasses : lists;
 			if (activeLists) {
 				IRenderPassCallback *callbacks = pass->callbacks;
 				DrawableList *list = &lists->drawableLists[lists->compactIndices[passId]];
@@ -130,9 +133,9 @@ void RenderPasses::sortAndDraw(
 	// renderDevice->sub_51EB20(32);
 }
 
-DrawableListsAndMasks *RenderPasses::createDrawableLists(/*uint32_t,*/ uint32_t mask, LinearAllocator *linear) {
+DrawableListsAndMasks *RenderPasses::createDrawableLists(RenderPassType passType, uint32_t mask, LinearAllocator *linear) {
 	if (mask /* & ... */)
-		return new (linear, 0, true) DrawableListsAndMasks(this, mask, linear);
+		return new (linear, 0, true) DrawableListsAndMasks(this, passType, mask, linear);
 	return nullptr;
 }
 
@@ -187,17 +190,17 @@ void DrawableList::absorbToBack(DrawableList& other) {
 
 DrawableListsAndMasks::DrawableListsAndMasks(
 	RenderPasses *renderPasses,
-	// uint32_t passList,
+	RenderPassType passType,
 	uint32_t passMask,
 	LinearAllocator *linear)
 :
-	renderPasses(renderPasses)
-	// passList(passList)
+	renderPasses(renderPasses),
+	passType(passType)
 {
-	// passMask &= renderPasses->dword408[passList];
+	// TODO: passMask &= renderPasses->dword408[(int)passType];
 	passMask8 = passMask;
 	passMaskC = passMask;
-	overrideLists14 = nullptr;
+	lightPasses = nullptr;
 
 	uint32_t listCount = 0;
 	if (passMask) {
