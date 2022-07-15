@@ -65,7 +65,7 @@ static char *copyLine(char *dst, char *src) {
 void readAndParseObjectList() {
 	char path[80];
 	sprintf(path, "%s\\objectlist.txt", buildType);
-	char *filelist = readFileBlocking(path);
+	char *filelist = FSHelper_ReadFile(path);
 
 	int numLines; 
 

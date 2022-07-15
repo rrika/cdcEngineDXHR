@@ -102,7 +102,7 @@ void readObjectAndUnitList() {
 	char objListPath[300];
 	sprintf(objListPath, "%s\\objlist.dat", buildType);
 	if (getDefaultFileSystem()->getSize(objListPath)) {
-		objList = (ObjList*) readFileBlocking(objListPath);
+		objList = (ObjList*) FSHelper_ReadFile(objListPath);
 		uint32_t count = objList->count;
 		ObjListEntry *entry = objList->entries;
 		uint16_t *data = (uint16_t*)&objList->entries[objList->count];

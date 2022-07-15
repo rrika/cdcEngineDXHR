@@ -40,7 +40,7 @@ FileSystem *getDefaultFileSystem() {
 	return archiveFileSystem_default;
 }
 
-char *readFileBlocking(const char *path) {
+char *FSHelper_ReadFile(const char *path) {
 	auto fs = archiveFileSystem_default; // HACK
 	uint32_t size = fs->getSize(path);
 

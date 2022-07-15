@@ -11,6 +11,6 @@ void createLowerFileSystems();
 void createHigherFileSystems();
 void destroyFileSystems();
 cdc::FileSystem *getDefaultFileSystem();
-char *readFileBlocking(const char *path);
+char *FSHelper_ReadFile(const char *path);
 
 }
