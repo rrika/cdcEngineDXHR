@@ -8,11 +8,11 @@ class IShaderLib;
 class TextureMap;
 struct VertexAttributeLayoutB;
 
-struct MaterialTexRef {
+struct MaterialTexRef { // = cdc::MaterialData::TextureEntry
 	TextureMap *tex;
-	float unknown4;
-	uint32_t dword8;
-	uint8_t fallbackIndex;
+	float unknown4; // = m_mipLodBias
+	uint32_t dword8; // = m_category
+	uint8_t fallbackIndex; // = m_type | m_class << 5
 	uint8_t slotIndex;
 	uint16_t filter;
 };

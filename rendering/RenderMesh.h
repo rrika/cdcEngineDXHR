@@ -89,7 +89,7 @@ struct MeshTab0 { // = cdc::PrimGroup
 	uint32_t dword3C;
 };
 
-struct MeshHeader {
+struct MeshHeader { // = cdc::ModelDataHeader
 	Mesh *mesh;
 	uint32_t *ptr4;
 	void **materials;
