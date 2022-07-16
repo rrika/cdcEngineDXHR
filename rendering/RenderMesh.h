@@ -11,13 +11,6 @@ struct MeshTab0Ext128;
 
 struct MeshTab0;
 
-struct RenderFourTuple {
-	uint32_t dword0;
-	uint32_t dword4;
-	uint32_t dword8;
-	uint32_t dwordC;
-};
-
 struct MeshSub {
 	float minDistMaybe0;
 	float maxDistMaybe4;
@@ -57,13 +50,10 @@ struct Mesh { // = cdc::ModelData
 	MeshFlags flags;
 	uint32_t dword8; // totalDataSize
 	uint32_t numIndices;
-	uint32_t dword10;
-	uint32_t dword14;
-	uint32_t dword18;
-	uint32_t dword1C;
-	RenderFourTuple rft20;
-	RenderFourTuple rft30;
-	float dword40;
+	float boundingSphereCenter[4];
+	float boundingBoxMin[4];
+	float boundingBoxMax[4];
+	float boundingSphereRadius;
 	float dword44;
 	float dword48;
 	uint32_t vsSelect4C;
@@ -116,10 +106,10 @@ public:
 	// dtor
 
 	virtual void mesh18() = 0;
-	virtual void mesh1C() = 0;
-	virtual void mesh20(RenderFourTuple *a2, RenderFourTuple *a3) {};
-	virtual void mesh24(float*, float*) = 0;
-	virtual uint32_t getBoneCount() = 0;
+	virtual void getBoundingSphere(float*, float*) = 0; // 1C
+	virtual void getBoundingBox(float*, float*) {}; // 20
+	virtual void getLodDistances(float*, float*) = 0; // 24
+	virtual uint32_t getBoneCount() = 0; // 28
 	virtual void mesh2C() = 0;
 	virtual MeshTab0Ext16 *getTab0Ext16() = 0;
 	virtual MeshTab0Ext128 *getTab0Ext128() = 0;

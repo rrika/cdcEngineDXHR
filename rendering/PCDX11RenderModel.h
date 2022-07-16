@@ -43,9 +43,9 @@ public:
 	// dtor
 
 	void mesh18() override { /*TODO*/ }
-	void mesh1C() override { /*TODO*/ }
-	// void mesh20(RenderFourTuple *a2, RenderFourTuple *a3) { /*TODO*/ }
-	void mesh24(float*, float*) override { /*TODO*/ }
+	void getBoundingSphere(float*, float*) override { /*TODO*/ }
+	// void getBoundingBox(float *, float *) { /*TODO*/ }
+	void getLodDistances(float*, float*) override { /*TODO*/ }
 	uint32_t getBoneCount() override { /*TODO*/ return 0; }
 	void mesh2C() override { /*TODO*/ }
 	MeshTab0Ext16 *getTab0Ext16() override { /*TODO*/ return tab0Ext16Byte; }
