@@ -4,7 +4,7 @@
 namespace cdc {
 
 class GeomPoint : public Geom {
-	// TODO
+	// empty
 };
 
 }

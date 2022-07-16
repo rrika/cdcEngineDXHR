@@ -4,7 +4,8 @@
 namespace cdc {
 
 class GeomDisc : public Geom {
-	// TODO
+public:
+	float radius;
 };
 
 }

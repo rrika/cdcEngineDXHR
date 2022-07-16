@@ -4,7 +4,8 @@
 namespace cdc {
 
 class GeomSphere : public Geom {
-	// TODO
+public:
+	float radius;
 };
 
 }

@@ -4,7 +4,9 @@
 namespace cdc {
 
 class GeomCone : public Geom {
-	// TODO
+public:
+	GeomDisc disc;
+	GeomPoint point;
 };
 
 }

@@ -4,7 +4,8 @@
 namespace cdc {
 
 class GeomBox : public Geom {
-	// TODO
+public:
+	Vector3 extents;
 };
 
 }

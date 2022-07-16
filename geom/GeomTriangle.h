@@ -4,7 +4,10 @@
 namespace cdc {
 
 class GeomTriangle : public Geom {
-	// TODO
+public:
+	Vector3 p1;
+	Vector3 p2;
+	Vector3 p3;
 };
 
 }

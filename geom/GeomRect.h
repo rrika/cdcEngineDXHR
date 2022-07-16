@@ -4,7 +4,7 @@
 namespace cdc {
 
 class GeomRect : public Geom {
-	// TODO
+	Vector2 extents;
 };
 
 }
