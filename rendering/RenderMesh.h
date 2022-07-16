@@ -6,8 +6,8 @@ namespace cdc {
 class IMaterial;
 class PCDX11SimpleStaticVertexBuffer;
 // struct StencilSettings;
-struct MeshTab0Ext16;
-struct MeshTab0Ext128;
+struct NonPersistentPGData;
+struct PersistentPGData;
 
 struct MeshTab0;
 
@@ -111,8 +111,8 @@ public:
 	virtual void getLodDistances(float*, float*) = 0; // 24
 	virtual uint32_t getBoneCount() = 0; // 28
 	virtual void mesh2C() = 0;
-	virtual MeshTab0Ext16 *getTab0Ext16() = 0;
-	virtual MeshTab0Ext128 *getTab0Ext128() = 0;
+	virtual NonPersistentPGData *getTab0Ext16() = 0;
+	virtual PersistentPGData *getTab0Ext128() = 0;
 	virtual Mesh *getMesh() = 0;
 	virtual uint32_t getBoneCountIfEnabled() = 0;
 	virtual void getSkeleton() = 0;

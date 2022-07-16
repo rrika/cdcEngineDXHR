@@ -28,8 +28,8 @@ public:
 	uint32_t indices;
 	// PCDX11StaticIndexBuffer *indexBuffer; // 38
 	PCDX11SimpleStaticIndexBuffer *indexBuffer; // 38, hack
-	MeshTab0Ext16 *tab0Ext16Byte; // uses count0
-	MeshTab0Ext128 *tab0Ext128Byte; // uses count0
+	NonPersistentPGData *tab0Ext16Byte; // uses count0
+	PersistentPGData *tab0Ext128Byte; // uses count0
 	uint32_t vsSelect; // 4C
 
 public:
@@ -48,8 +48,8 @@ public:
 	void getLodDistances(float*, float*) override { /*TODO*/ }
 	uint32_t getBoneCount() override { /*TODO*/ return 0; }
 	void mesh2C() override { /*TODO*/ }
-	MeshTab0Ext16 *getTab0Ext16() override { /*TODO*/ return tab0Ext16Byte; }
-	MeshTab0Ext128 *getTab0Ext128() override { /*TODO*/ return tab0Ext128Byte; }
+	NonPersistentPGData *getTab0Ext16() override { /*TODO*/ return tab0Ext16Byte; }
+	PersistentPGData *getTab0Ext128() override { /*TODO*/ return tab0Ext128Byte; }
 	Mesh *getMesh() override { /*TODO*/ return mesh; }
 	uint32_t getBoneCountIfEnabled() override { /*TODO*/ return 0; }
 	void getSkeleton() override { /*TODO*/ }

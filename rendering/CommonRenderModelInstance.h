@@ -8,14 +8,14 @@ namespace cdc {
 
 class PCDX11Material;
 
-struct MeshTab0Ext16 { // = cdc::NonPersistentPGData
+struct NonPersistentPGData {
 	uint32_t dword0;   // = m_instanceFlags
 	float float4;      // = m_sortOffset
 	uint32_t mask8;    // = m_renderPassMask
 	uint32_t dwordC;   // = m_shadowRegionMask
 };
 
-struct MeshTab0Ext128 { // = cdc::PersistentPGData
+struct PersistentPGData {
 	PCDX11Material *material;
 	uint32_t dword4;
 	uint32_t dword8;
@@ -30,8 +30,8 @@ public:
 	uint32_t baseMask; // 8
 protected:
 	RenderMesh *renderMesh;
-	MeshTab0Ext16 *tab0Ext16; // 24
-	MeshTab0Ext128 *tab0Ext128; // 2C
+	NonPersistentPGData *tab0Ext16; // 24
+	PersistentPGData *tab0Ext128; // 2C
 public:
 	CommonRenderModelInstance(RenderMesh *renderMesh) :
 		renderMesh(renderMesh)

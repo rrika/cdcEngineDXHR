@@ -1,6 +1,6 @@
 #pragma once
 #include "IRenderDrawable.h"
-#include "CommonRenderModelInstance.h" // for MeshTab0Ext128
+#include "CommonRenderModelInstance.h" // for PersistentPGData
 #include "RenderMesh.h" // for MeshSub and MeshTab0
 
 namespace cdc {
@@ -23,7 +23,7 @@ class PCDX11ModelDrawable : public IRenderDrawable {
 	ModelDrawableExt *ext; // 10
 	MeshSub *meshSub; // 14
 	MeshTab0 *tab0; // 18
-	MeshTab0Ext128 *tab0Ext128; // 1C
+	PersistentPGData *tab0Ext128; // 1C
 	PoseData *poseData; // 20
 	LightReceiverData *lightReceiverData; // 24
 	float *lightConstantBufferData; // 28
@@ -36,7 +36,7 @@ public:
 		PCDX11RenderModel *renderModel,
 		MeshSub *meshSub,
 		MeshTab0 *tab0,
-		MeshTab0Ext128 *tab0Ext128,
+		PersistentPGData *tab0Ext128,
 		PoseData *poseData);
 
 	inline bool isUnlit() const { return (flags34 >> 0) & 1; }

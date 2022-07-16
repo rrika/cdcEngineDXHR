@@ -117,7 +117,7 @@ void PCDX11RenderModel::resConstruct() {
 
 	// create additional tables
 	if (count0) {
-		tab0Ext128Byte = new MeshTab0Ext128[count0];
+		tab0Ext128Byte = new PersistentPGData[count0];
 		for (uint32_t i=0; i<count0; i++) {
 			// TODO
 
@@ -126,7 +126,7 @@ void PCDX11RenderModel::resConstruct() {
 			for (uint32_t j=0; j<16; j++)
 				tab0Ext128Byte[i].sub10.streamDecls24[j] = nullptr;
 		}
-		tab0Ext16Byte = new MeshTab0Ext16[count0];
+		tab0Ext16Byte = new NonPersistentPGData[count0];
 		for (uint32_t i=0; i<count0; i++) {
 			// TODO
 			tab0Ext128Byte[i].material = static_cast<PCDX11Material*>(table0[i].material);

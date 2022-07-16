@@ -21,7 +21,7 @@ PCDX11ModelDrawable::PCDX11ModelDrawable(
 	PCDX11RenderModel *renderModel,
 	MeshSub *meshSub,
 	MeshTab0 *tab0,
-	MeshTab0Ext128 *tab0Ext128,
+	PersistentPGData *tab0Ext128,
 	PoseData *poseData)
 :
 	renderModel(renderModel),
@@ -47,7 +47,7 @@ void PCDX11ModelDrawable::draw1(uint32_t funcSetIndex, IRenderDrawable *drawable
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
-	MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl015(
 		&mt0x128->sub10,
 		&thisModel->ext->dword50,
@@ -72,7 +72,7 @@ void PCDX11ModelDrawable::draw2(uint32_t funcSetIndex, IRenderDrawable *drawable
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
 	/*auto *lightManager = static_cast<PCDX11LightManager*>(renderDevice->lightManager84);
-	MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl01(
 		&mt0x128->sub10,
 		&thisModel->ext->dword50,
@@ -97,7 +97,7 @@ void PCDX11ModelDrawable::draw7(uint32_t funcSetIndex, IRenderDrawable *drawable
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
-	MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl4(
 		&mt0x128->sub10,
 		&thisModel->ext->dword50,
@@ -120,7 +120,7 @@ void PCDX11ModelDrawable::draw4(uint32_t funcSetIndex, IRenderDrawable *drawable
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
-	MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl038(
 		&mt0x128->sub10,
 		&thisModel->ext->dword50,
@@ -149,7 +149,7 @@ void PCDX11ModelDrawable::draw56(uint32_t funcSetIndex, IRenderDrawable *drawabl
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
-	MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl038(
 		&mt0x128->sub10,
 		&thisModel->ext->dword50,
@@ -178,7 +178,7 @@ void PCDX11ModelDrawable::drawA(uint32_t funcSetIndex, IRenderDrawable *drawable
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
-	MeshTab0Ext128 *mt0x128 = thisModel->tab0Ext128;
+	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl7(
 		&mt0x128->sub10,
 		&thisModel->ext->dword50,

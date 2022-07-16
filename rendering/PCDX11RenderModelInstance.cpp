@@ -20,8 +20,8 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 		for (uint32_t j=0; j<mesh->table0Count; j++, tab0index++) {
 			// printf("PCDX11RenderModelInstance::recordDrawables %d %d %d\n", i, j, tab0index);
 			MeshTab0 *tab0 = &mesh->table0[tab0index];
-			// MeshTab0Ext16 *tab0ext16 = &this->tab0Ext16[tab0index];
-			MeshTab0Ext128 *tab0ext128 = &this->tab0Ext128[tab0index];
+			// NonPersistentPGData *tab0ext16 = &this->tab0Ext16[tab0index];
+			PersistentPGData *tab0ext128 = &this->tab0Ext128[tab0index];
 
 			uint32_t mask = baseMask; // & tab0ext16->mask8;
 			auto drawable = new (renderDevice->getLinear(), 6, true) PCDX11ModelDrawable(
