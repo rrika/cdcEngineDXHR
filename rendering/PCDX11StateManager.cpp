@@ -57,6 +57,8 @@ PCDX11StateManager::PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D1
 	m_uberConstantBuffer[5] = new PCDX11UberConstantBuffer(7);
 	m_uberConstantBuffer[6] = new PCDX11UberConstantBuffer(1);
 
+	memset(m_samplers, 0, 20 * 4);
+	memset(m_textures, 0, 20 * 4);
 	memset(m_textureViews, 0, 20 * 4);
 	memset(m_textureResources, 0, 20 * 4);
 
@@ -69,6 +71,15 @@ PCDX11StateManager::PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D1
 
 
 void PCDX11StateManager::reset() {
+	for (uint32_t i=0; i<20; i++) {
+		m_samplers[i] = nullptr;
+		m_textureViews[i] = nullptr;
+		m_textures[i] = nullptr;
+		m_textureResources[i] = nullptr;
+		m_samplerFilter[i] = 0;
+		m_samplerRepeat[i] = 0;
+	}
+
 	// TODO
 
 	m_dirtyShaderResourcesFirst = 0;
