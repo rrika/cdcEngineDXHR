@@ -12,6 +12,7 @@
 #include "gameshell/win32/MainVM.h"
 #include "object/ObjectManager.h"
 #include "rendering/PCDX11DeviceManager.h"
+#include "world/SceneLayer.h"
 #include "mainloop.h"
 #include "spinnycube.h"
 #include "config.h"
@@ -130,6 +131,10 @@ void setups() {
 	// TODO
 
 	readObjectAndUnitList();
+
+	// TODO
+
+	SceneLayer::init();
 
 	// TODO
 

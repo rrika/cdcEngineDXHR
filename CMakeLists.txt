@@ -58,6 +58,7 @@ add_subdirectory(rendering)
 add_subdirectory(scene)
 add_subdirectory(sound)
 add_subdirectory(sys)
+add_subdirectory(world)
 
 target_sources(dxhr PRIVATE
 	res/resources.rc)
