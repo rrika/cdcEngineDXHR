@@ -127,7 +127,7 @@ bool PCDX11DepthPassCallbacks::pre(
 
 	if (scene->depthBuffer) {
 		// TODO: scene->depthBuffer->byte14 = 0;
-		uint32_t dwordC0 = scene->sub10.dwordC0;
+		uint32_t dwordC0 = scene->viewport.dwordC0;
 		if (dwordC0 == 24 || dwordC0 == 26) {
 			float color[] = {0.0f, 0.0f, 0.0f, 0.0f};
 			renderDevice->clearRenderTargetNow(2, color, 1.0, 0);
@@ -161,7 +161,7 @@ void PCDX11DepthPassCallbacks::post(
 	CommonScene *scene = renderDevice->scene78;
 	if (scene->depthBuffer) {
 		// TODO: scene->depthBuffer->byte14 = 1;
-		scene->sub114.tex14[10] = scene->depthBuffer->getRenderTexture();
+		scene->globalState.tex14[10] = scene->depthBuffer->getRenderTexture();
 	}
 }
 
@@ -303,7 +303,7 @@ void PCDX11PostFSXPassCallbacks::post(
 	// 		(*(void (**)(void))(*(_DWORD *)scene->postFsxRelated7A4 + 12))();
 	// 		scene->postFsxRelated7A4 = 0;
 	// 	}
-	// 	scene->base.sub114.dword38 = 0;
+	// 	scene->base.globalState.dword38 = 0;
 	// }
 }
 

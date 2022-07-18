@@ -13,14 +13,14 @@ class CommonScene;
 class DrawableListsAndMasks;
 class RenderPasses;
 
-struct CommonSceneSub10 {
+struct RenderViewport {
 	float cameraDirection[4]; // 50
 	float cameraPosition[4]; // 60
 	uint32_t dwordC0; // C0, for PCDX11DepthPassCallbacks::pre
 	uint32_t mask; // E0
 };
 
-struct CommonSceneSub114 {
+struct RenderGlobalState {
 	TextureMap *tex14[13] = {0}; // 14
 	// 14 [0]
 	// 18 [1]
@@ -42,10 +42,10 @@ class CommonScene :
 	public IRenderDrawable
 {
 public:
-	CommonSceneSub10 sub10;
+	RenderViewport viewport;
 	float fogColor[4];
 	// float float110;
-	CommonSceneSub114 sub114;
+	RenderGlobalState globalState;
 	uint8_t byte25C; // reset by PCDX11CompositePassCallbacks::post
 	// uint8_t f25D[2];
 	// Matrix4x4 mat260;
@@ -110,11 +110,11 @@ public:
 		CommonRenderDevice *renderDevice,
 		/* ... */
 		CommonScene *parentScene,
-		CommonSceneSub10 *sub10,
+		RenderViewport *viewport,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer,
 		/* ... */
-		CommonSceneSub114 *sub114,
+		RenderGlobalState *globalState,
 		/* ... */
 		RenderPasses *renderPasses)
 	:
@@ -125,8 +125,8 @@ public:
 		depthBuffer(depthBuffer),
 		numSubScenes(0)
 	{
-		this->sub10 = *sub10;
-		this->sub114 = *sub114;
+		this->viewport = *viewport;
+		this->globalState = *globalState;
 
 		fogScaleOffset[0] = 0.0f;
 		fogScaleOffset[1] = 0.0f;
@@ -137,18 +137,18 @@ public:
 	float4x4& getProjectMatrix() override { return projectMatrix; }
 	void sceneC() override {}
 	void getCameraPosition(float *pos) override {
-		pos[0] = sub10.cameraPosition[0];
-		pos[1] = sub10.cameraPosition[1];
-		pos[2] = sub10.cameraPosition[2];
-		pos[3] = sub10.cameraPosition[3];		
+		pos[0] = viewport.cameraPosition[0];
+		pos[1] = viewport.cameraPosition[1];
+		pos[2] = viewport.cameraPosition[2];
+		pos[3] = viewport.cameraPosition[3];		
 	}
 	void getCameraDirection(float *dir) override {
-		dir[0] = sub10.cameraDirection[0];
-		dir[1] = sub10.cameraDirection[1];
-		dir[2] = sub10.cameraDirection[2];
-		dir[3] = sub10.cameraDirection[3];
+		dir[0] = viewport.cameraDirection[0];
+		dir[1] = viewport.cameraDirection[1];
+		dir[2] = viewport.cameraDirection[2];
+		dir[3] = viewport.cameraDirection[3];
 	}
-	CommonSceneSub10& getSceneSub10() override { return sub10; }
+	RenderViewport& getViewport() override { return viewport; }
 	IRenderTarget *getRenderTarget() override { return renderTarget; }
 	IDepthBuffer *getDepthBuffer() override { return depthBuffer; }
 	void scene24() override {}
@@ -159,13 +159,13 @@ public:
 
 	void setSharedTextureToRenderTarget(CommonRenderTarget *rt, uint32_t slot, uint32_t) {
 		if (rt) {
-			sub114.tex14[slot + 5] = rt->getRenderTexture();
+			globalState.tex14[slot + 5] = rt->getRenderTexture();
 			// TODO
 		}
 	}
 	void setSharedTextureToDepthBuffer(CommonDepthBuffer *db, uint32_t slot) {
 		if (db) {
-			sub114.tex14[slot + 5] = db->getRenderTexture();
+			globalState.tex14[slot + 5] = db->getRenderTexture();
 			// TODO
 		}
 	}

@@ -315,7 +315,7 @@ void PCDX11RenderDevice::method_30() {
 }
 
 CommonScene *PCDX11RenderDevice::createSubScene(
-	CommonSceneSub10 *sub10,
+	RenderViewport *viewport,
 	CommonRenderTarget *renderTarget,
 	CommonDepthBuffer *depthBuffer
 ) {
@@ -323,10 +323,10 @@ CommonScene *PCDX11RenderDevice::createSubScene(
 	auto scene = new (linear30, 1, true) PCDX11Scene(
 		this,
 		scene7C, // parent scene perhaps?
-		sub10,
+		viewport,
 		renderTarget,
 		depthBuffer,
-		getSceneSub114(),
+		getGlobalState(),
 		&renderPasses);
 	scene7C = scene;
 	return scene;

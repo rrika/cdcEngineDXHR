@@ -30,7 +30,7 @@ protected:
 public:
 	CommonLightManager *lightManager; // 84
 protected:
-	CommonSceneSub114 sceneSub114_8C; // 8C
+	RenderGlobalState globalState_8C; // 8C
 public:
 
 	IRenderSurface *temporarySurfaces[64]; // 1E4
@@ -59,11 +59,11 @@ public:
 	virtual void method_40();
 	virtual void method_44();
 	virtual CommonScene *createSubScene(
-		CommonSceneSub10 *sub10,
+		RenderViewport *renderViewport,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer) = 0;
 	virtual void createSiblingScene(
-		CommonSceneSub10 *sub10,
+		RenderViewport *renderViewport,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer);
 	virtual void finishScene() = 0;
@@ -113,7 +113,7 @@ public:
 	virtual void method_DC() = 0;
 	virtual void method_E0();
 	virtual void method_E4();
-	virtual CommonSceneSub114 *getSceneSub114();
+	virtual RenderGlobalState *getGlobalState();
 	virtual void method_EC() = 0;
 	virtual void method_F0();
 	virtual void method_F4();

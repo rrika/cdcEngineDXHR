@@ -528,8 +528,8 @@ int spinnyCube(HWND window,
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
-	cdc::CommonSceneSub10 commonSceneSub10;
-	commonSceneSub10.mask = 0x3103; // pass 0, 12. 13, 1, and 8
+	cdc::RenderViewport renderViewport;
+	renderViewport.mask = 0x3103; // pass 0, 12. 13, 1, and 8
 	// pass 12 normals (function set 10, draw bottle normals)
 	// pass 13 deferred shading (just contains a cleardrawable)
 	// pass 1 composite (draw bottle textures)
@@ -632,7 +632,7 @@ int spinnyCube(HWND window,
 		renderDevice->resetRenderLists();
 		renderDevice->beginRenderList(nullptr);
 		auto *scene = renderDevice->createSubScene(
-			&commonSceneSub10,
+			&renderViewport,
 			renderContext->renderTarget2C,
 			renderContext->depthBuffer);
 		scene->viewMatrix = translate;

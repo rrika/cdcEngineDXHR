@@ -105,7 +105,7 @@ public:
 	void method_2C() override;
 	void method_30() override;
 	CommonScene *createSubScene(
-		CommonSceneSub10 *sub10,
+		RenderViewport *renderViewport,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer) override;
 	void finishScene() override;

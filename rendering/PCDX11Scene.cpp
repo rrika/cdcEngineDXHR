@@ -43,14 +43,14 @@ void PCDX11Scene::updateUniforms() {
 	stateManager->setProjectMatrix(projectMatrix);
 	// TODO
 	float row[4];
-	row[0] = sub10.cameraPosition[0];
-	row[1] = sub10.cameraPosition[1];
-	row[2] = sub10.cameraPosition[2];
+	row[0] = viewport.cameraPosition[0];
+	row[1] = viewport.cameraPosition[1];
+	row[2] = viewport.cameraPosition[2];
 	row[3] = 0.0f;
 	sceneBuffer.assignRow(10, row, 1); // SceneBuffer::CameraPosition
-	row[0] = sub10.cameraDirection[0];
-	row[1] = sub10.cameraDirection[1];
-	row[2] = sub10.cameraDirection[2];
+	row[0] = viewport.cameraDirection[0];
+	row[1] = viewport.cameraDirection[1];
+	row[2] = viewport.cameraDirection[2];
 	row[3] = 0.0f;
 	sceneBuffer.assignRow(11, row, 1); // SceneBuffer::CameraDirection
 	row[0] = heightFogParams[0];

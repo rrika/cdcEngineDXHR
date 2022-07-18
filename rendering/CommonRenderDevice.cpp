@@ -43,12 +43,12 @@ void CommonRenderDevice::method_44() {
 }
 
 void CommonRenderDevice::createSiblingScene(
-	CommonSceneSub10 *sub10,
+	RenderViewport *viewport,
 	CommonRenderTarget *renderTarget,
 	CommonDepthBuffer *depthBuffer)
 {
 	// TODO
-	createSubScene(sub10, renderTarget, depthBuffer);
+	createSubScene(viewport, renderTarget, depthBuffer);
 	// TODO
 }
 
@@ -140,11 +140,11 @@ void CommonRenderDevice::method_E4() {
 	// TODO
 }
 
-CommonSceneSub114 *CommonRenderDevice::getSceneSub114() {
+RenderGlobalState *CommonRenderDevice::getGlobalState() {
 	if (scene7C)
-		return &scene7C->sub114;
+		return &scene7C->globalState;
 	else
-		return &sceneSub114_8C;
+		return &globalState_8C;
 	return nullptr;
 }
 

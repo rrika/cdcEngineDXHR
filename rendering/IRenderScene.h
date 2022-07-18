@@ -4,7 +4,7 @@ struct float4x4;
 
 namespace cdc {
 
-class CommonSceneSub10;
+class RenderViewport;
 class IRenderTarget;
 class IDepthBuffer;
 
@@ -16,7 +16,7 @@ public:
 	virtual void sceneC() = 0;
 	virtual void getCameraPosition(float *pos) = 0;
 	virtual void getCameraDirection(float *dir) = 0;
-	virtual CommonSceneSub10& getSceneSub10() = 0;
+	virtual RenderViewport& getViewport() = 0;
 	virtual IRenderTarget *getRenderTarget() = 0;
 	virtual IDepthBuffer *getDepthBuffer() = 0;
 	virtual void scene24() = 0;
