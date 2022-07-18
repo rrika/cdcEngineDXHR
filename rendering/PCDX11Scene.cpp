@@ -32,7 +32,7 @@ void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 		prevScene->drawableListsAndMasks->absorbToBack(*drawableListsAndMasks);
 	renderDevice->scene78 = backupScene;
 
-	PCDX11Material::setupMg21();
+	PCDX11Material::invalidate();
 }
 
 void PCDX11Scene::updateUniforms() {

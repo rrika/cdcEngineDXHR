@@ -243,7 +243,7 @@ void PCDX11AlphaBloomFSXPassCallbacks::post(
 {
 	CommonScene *commonScene = renderDevice->scene78;
 	commonScene->byte25C = 0;
-	PCDX11Material::setupMg21();
+	PCDX11Material::invalidate();
 }
 
 

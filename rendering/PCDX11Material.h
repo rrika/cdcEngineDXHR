@@ -51,9 +51,9 @@ public:
 	void setupDepthBias(MaterialInstanceData*);
 	void setupStencil(MaterialInstanceData*, bool, uint32_t);
 
-	void setupMg4(PCDX11RenderDevice*, MaterialInstanceData*, uint32_t);
-	void setupMg5(PCDX11RenderDevice*, MaterialInstanceData*, uint32_t, float);
-	static void setupMg21();
+	void setupSinglePassOpaque(PCDX11RenderDevice*, MaterialInstanceData*, uint32_t);
+	void setupSinglePassTranslucent(PCDX11RenderDevice*, MaterialInstanceData*, uint32_t, float);
+	static void invalidate();
 
 	PCDX11StreamDecl *buildStreamDecl015(
 		MaterialInstanceData*,

@@ -223,7 +223,7 @@ void PCDX11Material::setupStencil(
 	stateManager->setStencil(stencilSettings);
 }
 
-void PCDX11Material::setupMg4(
+void PCDX11Material::setupSinglePassOpaque(
 	PCDX11RenderDevice *renderDevice,
 	MaterialInstanceData *matInstance,
 	uint32_t flags)
@@ -262,7 +262,7 @@ void PCDX11Material::setupMg4(
 		stateManager->setCullMode(CullMode::back, frontCounterClockwise);
 }
 
-void PCDX11Material::setupMg5(
+void PCDX11Material::setupSinglePassTranslucent(
 	PCDX11RenderDevice *renderDevice,
 	MaterialInstanceData *matInstance,
 	uint32_t arg3,
@@ -271,7 +271,7 @@ void PCDX11Material::setupMg5(
 
 }
 
-void PCDX11Material::setupMg21() {
+void PCDX11Material::invalidate() {
 	mg_state = 21;
 	mg_vsSelectAndFlags = 0xffffffff;
 	mg_material = nullptr;
