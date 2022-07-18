@@ -21,6 +21,7 @@
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileHelpers.h" // for archiveFileSystem_default
 #include "filesystem/FileUserBufferReceiver.h"
+#include "game/dtp/objecttypes/globaldatabase.h"
 #ifdef _WIN32
 #include "gameshell/win32/MainVM.h" // for yellowCursor
 #endif
@@ -526,6 +527,13 @@ int spinnyCube(HWND window,
 	ResolveSection *objectSection = g_resolveSections[11];
 	ObjectBlob *bottleObject = (ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(0x04a8));
 	printf("have bottle object: %p\n", bottleObject);
+
+	// unrelated: get the name of the first map in the game
+	uint32_t globalDatabaseId = objectIdByName("GlobalDatabase");
+	ObjectBlob *globalDatabaseObject = (ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(globalDatabaseId));
+	auto *globalDatabase = (GlobalDatabase*)globalDatabaseObject->dword58;
+
+	printf("first map is: %s\n", globalDatabase->newGameMap);
 
 	auto bottleTexture = (cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);
