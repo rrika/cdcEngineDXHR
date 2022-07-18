@@ -34,6 +34,7 @@ class PCDX11Material :
 	static PCDX11Material *mg_material;         // 00EAAD20
 	static void *mg_cbdata;                     // 00EAAD24
 	static MaterialInstanceData *mg_matInstance; // 00EAAD28
+	static bool mg_tesselate;                   // 00EAAD2C
 
 public:
 	PCDX11Material(PCDX11RenderDevice *renderDevice) :

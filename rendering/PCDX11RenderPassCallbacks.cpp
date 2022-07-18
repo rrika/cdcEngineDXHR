@@ -173,9 +173,12 @@ bool PCDX11CompositePassCallbacks::pre(
 	uint32_t priorPassesBitfield)
 {
 	// TODO
-	auto *stateManager = deviceManager->getStateManager();
-	PCDX11BaseTexture *shadowBuffer = nullptr;
-	stateManager->setTextureAndSampler(10, shadowBuffer, 0, 0.0f);
+	if (drawableCount) {
+		PCDX11Material::invalidate();
+		auto *stateManager = deviceManager->getStateManager();
+		PCDX11BaseTexture *shadowBuffer = nullptr;
+		stateManager->setTextureAndSampler(10, shadowBuffer, 0, 0.0f);
+	}
 	// TODO
 	return true;
 }

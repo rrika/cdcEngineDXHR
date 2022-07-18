@@ -18,6 +18,7 @@ VertexAttributeLayoutA *PCDX11Material::mg_layoutA;
 PCDX11Material *PCDX11Material::mg_material;
 void *PCDX11Material::mg_cbdata;
 MaterialInstanceData *PCDX11Material::mg_matInstance;
+bool PCDX11Material::mg_tesselate;
 
 void PCDX11Material::load(MaterialBlob *newBlob) {
 	auto deviceContext = renderDevice->getD3DDeviceContext(); // HACK
@@ -458,11 +459,46 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl038(
 	float floatX,
 	float floatY)
 {
+	float opacity = matInstance->float10 * floatX;
+	uint32_t blendState = materialBlob->blendStateC;
+	bool x = true;
+	if ((materialBlob->dword18 & 1) == 0 ||
+		renderDevice->scene78->byte25C ||
+		(blendState & 1) ||
+		opacity < 1.0
+	)
+		x = false;
+
+	uint32_t subMaterialIndex;
+	if (flag) {
+		subMaterialIndex = 8;
+		setupSinglePassTranslucent(renderDevice, /*0,*/ matInstance, flags, floatX);
+	} else {
+		subMaterialIndex = 3;
+		setupSinglePassOpaque(renderDevice, /*0,*/ matInstance, flags);
+	}
+
+	bool noPixelShader = flags & 1;
+	if (noPixelShader)
+		subMaterialIndex = 0;
+
 	auto *stateManager = deviceManager->getStateManager();
-	const uint32_t subMaterialIndex = 3;
 	MaterialBlobSub *subMaterial = materialBlob->subMat4C[subMaterialIndex];
 
-	setupDepthBias(matInstance);
+	if (mg_material != this) {
+		setupPixelResources(subMaterialIndex, subMaterial, matInstance, (char*)drawableExtDword50, true);
+		setupVertexResources(subMaterialIndex, subMaterial, matInstance, (char*)drawableExtDword50, true);
+		setupDepthBias(matInstance);
+
+	} else if (mg_matInstance != matInstance || mg_cbdata != drawableExtDword50) {
+		setupPixelResources(subMaterialIndex, subMaterial, matInstance, (char*)drawableExtDword50, false);
+		setupVertexResources(subMaterialIndex, subMaterial, matInstance, (char*)drawableExtDword50, false);
+		setupDepthBias(matInstance);
+	}
+
+	bool tesselate = false;
+	uint32_t vsSelectAndFlags = (vsSelect << 8) | flags;
+
 	//setupStencil(matInstance, true, flags);
 	stateManager->setDepthRange(matInstance->minDepth, matInstance->maxDepth);
 	stateManager->setBlendStateAndBlendFactors(materialBlob->blendState24, 0, 0);
@@ -480,9 +516,6 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl038(
 	auto vertexShader = (*vertexTable)[vertexIndex];
 	stateManager->setVertexShader(vertexShader);
 
-	setupPixelResources(subMaterialIndex, subMaterial, matInstance, (char*)drawableExtDword50, true);
-	setupVertexResources(subMaterialIndex, subMaterial, matInstance, (char*)drawableExtDword50, true);
-
 	auto *streamDecl = static_cast<PCDX11StreamDecl*>(matInstance->streamDecls24[subMaterialIndex]);
 	if (!streamDecl) {
 		VertexAttributeLayoutB *layoutB = subMaterial->vsLayout[vsSelect];
@@ -494,7 +527,15 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl038(
 			&vertexShader->m_sub);
 	}
 
-	return streamDecl;
+	mg_streamDecl = streamDecl;
+
+	mg_matInstance = matInstance;
+	mg_material = this;
+	mg_cbdata = drawableExtDword50;
+	mg_vsSelectAndFlags = vsSelectAndFlags;
+	mg_tesselate = tesselate;
+
+	return mg_streamDecl;
 }
 
 PCDX11StreamDecl *PCDX11Material::buildStreamDecl7(
