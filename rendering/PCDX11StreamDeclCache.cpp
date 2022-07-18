@@ -67,7 +67,7 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 			indexB = i;
 			if ((attribB->field_A & forbiddenBit) == 0) {
 
-				printf("matching layoutB[%d] (next=%d) with\n", i, attribB->nextAttribIndex);
+				// printf("matching layoutB[%d] (next=%d) with\n", i, attribB->nextAttribIndex);
 
 				// find match in layoutA, including fallbacks
 				uint16_t indexA = 0xffff;
@@ -75,7 +75,7 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 					uint32_t hash = layoutB->attr[indexB].attribKindA;
 					indexA = getLayoutAIndexFromHash(layoutA, hash);
 
-					printf("  layoutB[%d] %08x -> layoutA[%d]\n", indexB, hash, indexA);
+					// printf("  layoutB[%d] %08x -> layoutA[%d]\n", indexB, hash, indexA);
 
 					if (indexA != 0xffff)
 						break;
@@ -92,9 +92,9 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 					inputElementDesc[numElements].Format = decodeFormat(layoutA->attrib[indexA].format);
 
 					semanticFromEnum(inputElementDesc+numElements, attribB->attribKindB);
-					printf("    %s %d offset=%d\n",
-						inputElementDesc[numElements].SemanticName,
-						inputElementDesc[numElements].SemanticIndex);
+					// printf("    %s %d offset=%d\n",
+					//	inputElementDesc[numElements].SemanticName,
+					//	inputElementDesc[numElements].SemanticIndex);
 					numElements++;
 				} else {
 					// input from secondary buffer
@@ -107,14 +107,14 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 					// semanticFromEnum(elem, attribB->attribKindB);
 				}
 			} else {
-				printf("skipping layoutB[%d] (next=%d)\n", i, attribB->nextAttribIndex);
+				// printf("skipping layoutB[%d] (next=%d)\n", i, attribB->nextAttribIndex);
 			}
 			attribB++;
 		}
 
 		for (uint32_t i=0; i<numElements; i++) {
 			D3D11_INPUT_ELEMENT_DESC& elem = inputElementDesc[i];
-			printf("%s[%d] at offset %d with format %d\n", elem.SemanticName, elem.SemanticIndex, elem.AlignedByteOffset, elem.Format);
+			// printf("%s[%d] at offset %d with format %d\n", elem.SemanticName, elem.SemanticIndex, elem.AlignedByteOffset, elem.Format);
 		}
 
 
