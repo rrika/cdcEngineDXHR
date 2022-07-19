@@ -468,6 +468,9 @@ int spinnyCube(HWND window,
 	auto bottleIndex = objectIdByName("alc_beer_bottle_a");
 	requestObject3(bottleIndex);
 
+	auto lightIndex = objectIdByName("deferred_fast_omni_diffuse");
+	requestObject3(lightIndex);
+
 	auto obj3 = ResolveObject::create(
 		"pc-w\\scenario_database.drm",
 		nullptr,
@@ -509,6 +512,20 @@ int spinnyCube(HWND window,
 
 	cdc::RenderModelInstance *bottleRenderModelInstance =
 		renderDevice->createRenderModelInstance(bottleRenderModel);
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	ObjectBlob *lightObject = (ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(lightIndex));
+	printf("have light object: %p\n", lightObject);
+
+	auto lightRenderModel = (cdc::PCDX11RenderModel*)lightObject->models[0]->renderMesh;
+	printf("have light cdc render model: %p (via object)\n", lightRenderModel);
+
+	((cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x0061))->asyncCreate();
+	((cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x014c))->asyncCreate();
+
+	cdc::RenderModelInstance *lightRenderModelInstance =
+		renderDevice->createRenderModelInstance(lightRenderModel);
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -607,8 +624,9 @@ int spinnyCube(HWND window,
 		float4x4 rotateX   = { 1, 0, 0, 0, 0, static_cast<float>(cos(modelRotation.x)), -static_cast<float>(sin(modelRotation.x)), 0, 0, static_cast<float>(sin(modelRotation.x)), static_cast<float>(cos(modelRotation.x)), 0, 0, 0, 0, 1 };
 		float4x4 rotateY   = { static_cast<float>(cos(modelRotation.y)), 0, static_cast<float>(sin(modelRotation.y)), 0, 0, 1, 0, 0, -static_cast<float>(sin(modelRotation.y)), 0, static_cast<float>(cos(modelRotation.y)), 0, 0, 0, 0, 1 };
 		float4x4 rotateZ   = { static_cast<float>(cos(modelRotation.z)), -static_cast<float>(sin(modelRotation.z)), 0, 0, static_cast<float>(sin(modelRotation.z)), static_cast<float>(cos(modelRotation.z)), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
-		float4x4 scale     = { modelScale.x, 0, 0, 0, 0, modelScale.y, 0, 0, 0, 0, modelScale.z, 0, 0, 0, 0, 1 };
-		float4x4 translate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, modelTranslation.x, modelTranslation.y, modelTranslation.z, 1 };
+		float4x4 bottleScale = { modelScale.x, 0, 0, 0, 0, modelScale.y, 0, 0, 0, 0, modelScale.z, 0, 0, 0, 0, 1 };
+		float4x4 cameraTranslate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, modelTranslation.x, modelTranslation.y, modelTranslation.z, 1 };
+		float4x4 lightScaleTranslate = { 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 3, 0, 1, 1, 1, 1 };
 
 		modelRotation.x += 0.005f;
 		modelRotation.y += 0.009f;
@@ -635,23 +653,32 @@ int spinnyCube(HWND window,
 			&renderViewport,
 			renderContext->renderTarget2C,
 			renderContext->depthBuffer);
-		scene->viewMatrix = translate;
+		scene->viewMatrix = cameraTranslate;
 		scene->projectMatrix = project;
 
-		PCDX11MatrixState matrixState(renderDevice);
-		matrixState.resize(1);
-		auto *bottleWorldMatrix = reinterpret_cast<float4x4*>(matrixState.poseData->getMatrix(0));
-		*bottleWorldMatrix = scale * world;
+		PCDX11MatrixState bottleMatrixState(renderDevice);
+		bottleMatrixState.resize(1);
+		auto *bottleWorldMatrix = reinterpret_cast<float4x4*>(bottleMatrixState.poseData->getMatrix(0));
+		*bottleWorldMatrix = world * bottleScale;
+
+		PCDX11MatrixState lightMatrixState(renderDevice);
+		lightMatrixState.resize(1);
+		auto *lightWorldMatrix = reinterpret_cast<float4x4*>(lightMatrixState.poseData->getMatrix(0));
+		*lightWorldMatrix = world * lightScaleTranslate;
 
 		// add drawables to the scene
 		float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
 		// float lightAccumulation[4] = {0.9f, 0.9f, 0.9f, 1.0f};
-		float lightAccumulation[4] = {0.5f, 0.5f, 0.5f, 0.0f};
+		float lightAccumulation[4] = {0.5f, 0.5f, 0.5f, 1.0f};
+
 		renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
-		renderDevice->clearRenderTarget(2, /*mask=*/ 0x2000, 0.0f, lightAccumulation, 1.0f, 0); // deferred shading buffer
 		renderDevice->recordDrawable(&cubeDrawable, /*mask=*/ 1, /*addToParent=*/ 0);
+
+		renderDevice->clearRenderTarget(2, /*mask=*/ 0x2000, 0.0f, lightAccumulation, 1.0f, 0); // deferred shading buffer
+		static_cast<cdc::PCDX11RenderModelInstance*>(lightRenderModelInstance)->baseMask = 0x2000; // deferred lighting
+		lightRenderModelInstance->recordDrawables(&lightMatrixState);
 		static_cast<cdc::PCDX11RenderModelInstance*>(bottleRenderModelInstance)->baseMask = 0x1002; // normals & composite
-		bottleRenderModelInstance->recordDrawables(&matrixState);
+		bottleRenderModelInstance->recordDrawables(&bottleMatrixState);
 		renderDevice->recordDrawable(&imGuiDrawable, /*mask=*/ 0x100, /*addToParent=*/ 0);
 
 		renderDevice->finishScene();

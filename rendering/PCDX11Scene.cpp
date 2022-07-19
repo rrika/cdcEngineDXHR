@@ -65,11 +65,11 @@ void PCDX11Scene::updateUniforms() {
 	row[1] = 0.0f;
 	row[2] = 0.0f;
 	sceneBuffer.assignRow(27, row, 1); // SceneBuffer::GlobalParams[0] (ambient or rim light)
-	row[0] = 0.0f;
-	row[1] = 0.0f;
-	row[2] = 0.0f;
+	row[0] = 0.5f;
+	row[1] = 0.5f;
+	row[2] = 0.5f;
 	sceneBuffer.assignRow(28, row, 1); // SceneBuffer::GlobalParams[1] (how much pearl appearance)
-	row[0] = 0.0f;
+	row[0] = 1.0f;
 	sceneBuffer.assignRow(29, row, 1); // SceneBuffer::GlobalParams[2] (unsure what this does)
 	row[0] = 0.0f;
 	sceneBuffer.assignRow(33, row, 1); // SceneBuffer::GlobalParams[6] (unsure what this does)
@@ -86,6 +86,21 @@ void PCDX11Scene::updateUniforms() {
 	row[1] = 0.0f;
 	row[2] = 1.0f;
 	sceneBuffer.assignRow(40, row, 1); // SceneBuffer::GlobalParams[13]
+
+	auto rt = stateManager->m_renderTarget;
+	auto width = rt->getWidth();
+	auto height = rt->getHeight();
+
+	row[0] = 0.0f; // offset
+	row[1] = 0.0f; // offset
+	row[2] = 1/width; // scale
+	row[3] = 1/height; // scale
+	sceneBuffer.assignRow(44, row, 1); // SceneBuffer::ScreenExtents
+	row[0] = width;
+	row[1] = height;
+	row[2] = 0.0f;
+	row[3] = 0.0f;
+	sceneBuffer.assignRow(45, row, 1); // SceneBuffer::ScreenResolution
 }
 
 void PCDX11Scene::addToDrawableList(DrawableList *drawableList) {

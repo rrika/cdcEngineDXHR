@@ -60,8 +60,12 @@ class PCDX11StateManager : public PCDX11InternalResource {
 		ID3D11DepthStencilState*,
 		DepthStencilHash
 	> m_depthStencilStates; // 90
+	std::unordered_map<
+		uint64_t,
+		ID3D11BlendState*
+	> m_blendStates; // A4
 	int m_topology; // B8
-
+	float m_blendFactors[4]; // BC
 	uint16_t m_renderTargetWriteMask; // CC
 	bool m_dirtyShaderResources; // CE
 	bool m_dirtySamplers; // CF
@@ -102,6 +106,7 @@ private:
 	PCDX11RenderTarget *m_renderTargetStack[20]; // 390
 	PCDX11DepthBuffer *m_depthBufferStack[20]; // 3E0
 
+	uint32_t m_blendState; // 434
 	float m_alphaThreshold; // 438
 
 	float4x4 m_projectMatrix; // 440

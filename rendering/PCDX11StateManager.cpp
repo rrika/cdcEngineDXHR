@@ -292,9 +292,22 @@ void PCDX11StateManager::setSlopeScaledDepthBias(float) {
 void PCDX11StateManager::setBlendStateAndBlendFactors(
 	uint32_t blendState,
 	uint8_t alphaThreshold,
-	uint32_t)
+	uint32_t blendFactors)
 {
-	// TODO
+	if (blendState & 0x7000000)
+		alphaThreshold = 0;
+
+	setAlphaThreshold(alphaThreshold);
+
+	if (blendState != m_blendState) {
+		m_blendState = blendState;
+		m_dirtyBlendState = true;
+		uint32_t shift = 0;
+		for (uint32_t i=0; i<4; i++) {
+			m_blendFactors[i] = (double)(uint8_t)(blendFactors >> shift);
+			shift += 2; // BUG, fixed in Tomb Raider (2013) where shift advances by 8 bit
+		}
+	}
 }
 
 void PCDX11StateManager::setRenderTargetWriteMask(uint32_t mask) {
@@ -555,7 +568,6 @@ void PCDX11StateManager::updateRasterizerState() {
 }
 
 void PCDX11StateManager::updateDepthStencilState() {
-	// untested
 
 	if (m_dirtyDepthStencilState) {
 		ID3D11DepthStencilState *depthStencilState;
@@ -577,7 +589,102 @@ void PCDX11StateManager::updateDepthStencilState() {
 }
 
 void PCDX11StateManager::updateBlendState() {
-	// TODO
+
+	D3D11_BLEND_OP blendOps[] = {
+		D3D11_BLEND_OP_ADD,
+		D3D11_BLEND_OP_SUBTRACT,
+		D3D11_BLEND_OP_REV_SUBTRACT,
+		D3D11_BLEND_OP_MIN,
+		D3D11_BLEND_OP_MAX
+	};
+
+	D3D11_BLEND colorBlends[] = {
+		D3D11_BLEND_ZERO,
+		D3D11_BLEND_ONE,
+		D3D11_BLEND_SRC_COLOR,
+		D3D11_BLEND_INV_SRC_COLOR,
+		D3D11_BLEND_SRC_ALPHA,
+		D3D11_BLEND_INV_SRC_ALPHA,
+		D3D11_BLEND_DEST_COLOR,
+		D3D11_BLEND_INV_DEST_COLOR,
+		D3D11_BLEND_DEST_ALPHA,
+		D3D11_BLEND_INV_DEST_ALPHA,
+		D3D11_BLEND_BLEND_FACTOR,
+		D3D11_BLEND_INV_BLEND_FACTOR
+	};
+
+	D3D11_BLEND alphaBlends[] = {
+		D3D11_BLEND_ZERO,
+		D3D11_BLEND_ONE,
+		D3D11_BLEND_SRC_ALPHA,
+		D3D11_BLEND_INV_SRC_ALPHA,
+		D3D11_BLEND_SRC_ALPHA,
+		D3D11_BLEND_INV_SRC_ALPHA,
+		D3D11_BLEND_DEST_ALPHA,
+		D3D11_BLEND_INV_DEST_ALPHA,
+		D3D11_BLEND_DEST_ALPHA,
+		D3D11_BLEND_INV_DEST_ALPHA,
+		D3D11_BLEND_BLEND_FACTOR,
+		D3D11_BLEND_INV_BLEND_FACTOR
+	};
+
+	if (m_dirtyBlendState) {
+		ID3D11BlendState *blendState;
+		uint64_t key = ((uint64_t)m_renderTargetWriteMask) << 32 | m_blendState;
+		if (auto it = m_blendStates.find(key); it != m_blendStates.end())
+			blendState = it->second;
+		else {
+			D3D11_BLEND_DESC blendDesc;
+			memset(&blendDesc, 0, sizeof(blendDesc));
+
+			// set to d3d default
+			blendDesc.AlphaToCoverageEnable = false;
+			blendDesc.IndependentBlendEnable = false;
+			blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+			blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+			blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+			blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+			blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+			blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+
+			//
+			blendDesc.RenderTarget[0].RenderTargetWriteMask = m_renderTargetWriteMask;
+
+			if ((m_blendState & 1) || m_renderTargetWriteMask != 15) {
+				blendDesc.RenderTarget[0].BlendEnable = true;
+				blendDesc.RenderTarget[0].BlendOp = blendOps[(m_blendState >> 1) & 7];
+				blendDesc.RenderTarget[0].SrcBlend = colorBlends[(m_blendState >> 4) & 15];
+				blendDesc.RenderTarget[0].DestBlend = colorBlends[(m_blendState >> 8) & 15];
+
+				if (m_blendState & 0x1000) {
+					blendDesc.RenderTarget[0].BlendOpAlpha = blendOps[(m_blendState >> 13) & 7];
+					blendDesc.RenderTarget[0].SrcBlendAlpha = colorBlends[(m_blendState >> 16) & 15];
+					blendDesc.RenderTarget[0].DestBlendAlpha = colorBlends[(m_blendState >> 20) & 15];
+
+				} else {
+					// copy from color settings
+					blendDesc.RenderTarget[0].BlendOpAlpha = blendDesc.RenderTarget[0].BlendOp;
+					blendDesc.RenderTarget[0].SrcBlendAlpha = blendDesc.RenderTarget[0].SrcBlend;
+					blendDesc.RenderTarget[0].DestBlendAlpha = blendDesc.RenderTarget[0].DestBlend;
+				}
+
+			} else {
+				blendDesc.RenderTarget[0].BlendEnable = false;
+			}
+
+			m_device->CreateBlendState(
+				&blendDesc,
+				&blendState);
+			m_blendStates[key] = blendState;
+		}
+
+		m_deviceContext->OMSetBlendState(
+			blendState,
+			m_blendFactors,
+			/*sampleMask=*/ 0xffffffff);
+
+		m_dirtyBlendState = false;
+	}
 }
 
 void PCDX11StateManager::updateShaderResources() {
@@ -699,6 +806,7 @@ bool PCDX11StateManager::internalCreate() {
 	m_depthStencilDesc.StencilEnable = false;
 	m_depthStencilDesc.StencilReadMask = 255;
 	m_depthStencilDesc.StencilWriteMask = 255;
+	m_renderTargetWriteMask = 0;
 	// TODO
 	return true;
 }

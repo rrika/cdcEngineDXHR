@@ -55,7 +55,7 @@ struct MaterialBlob {
 	int dword4;
 	int renderTargetWriteMask;
 	int blendStateC; // for submat 0, 1, 5
-	int dword10;
+	int blendFactors;
 	uint16_t word14;
 	uint16_t word16;
 	int dword18; // flags, bit 11 controls renderTwice in ModelDrawable

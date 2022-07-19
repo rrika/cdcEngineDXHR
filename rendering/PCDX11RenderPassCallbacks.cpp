@@ -68,6 +68,9 @@ void PCDX11NormalPassCallbacks::post(
 
 	scene->setSharedTextureToRenderTarget(rt, 6, 0);
 	scene->setSharedTextureToDepthBuffer(db, 5);
+
+	// TODO
+	stateManager->setDepthState(D3D11_COMPARISON_LESS_EQUAL, 0);
 }
 
 

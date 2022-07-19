@@ -233,13 +233,7 @@ void PCDX11Material::setupSinglePassOpaque(
 	setupStencil(matInstance, true, flags);
 	stateManager->setDepthRange(matInstance->minDepth, matInstance->maxDepth);
 	if (mg_state != 4) {
-		mg_state = 21;
-		mg_vsSelectAndFlags = ~0u;
-		mg_material = 0;
-		mg_cbdata = 0;
-		mg_matInstance = 0;
-		mg_streamDecl = 0;
-		mg_layoutA = 0;
+		invalidate();
 		stateManager->setBlendStateAndBlendFactors(0x7010010, 128, 0);
 		stateManager->setOpacity(1.0);
 		stateManager->setDepthState(D3D11_COMPARISON_EQUAL, 0);
@@ -267,9 +261,43 @@ void PCDX11Material::setupSinglePassTranslucent(
 	PCDX11RenderDevice *renderDevice,
 	MaterialInstanceData *matInstance,
 	uint32_t arg3,
-	float arg4)
+	float floatX)
 {
+	// lights use this function (eg. deferred_fast_omni_diffuse.drm)
+	auto *stateManager = deviceManager->getStateManager();
+	if (mg_state != 5) {
+		invalidate();
+		mg_state = 5;
+	}
 
+	float opacity = matInstance->float10 * floatX;
+	uint32_t blendState = materialBlob->blendStateC;
+	if ((blendState & 1) || opacity >= 1.0) {
+		stateManager->setBlendStateAndBlendFactors( // TODO: impl in StateManager
+			materialBlob->blendStateC,
+			materialBlob->alphaThreshold,
+			materialBlob->blendFactors);
+	} else {
+		// TODO
+	}
+
+	stateManager->setDepthState(D3D11_COMPARISON_ALWAYS, 0);
+
+
+	// redo some of what setupStencil did earlier
+	/*uint32_t matDword18 = materialBlob->dword18;
+	bool frontCounterClockwise = bool(flags & 2);
+	bool matInstanceDoubleSided = bool(matInstance->dword14 & 0x40);
+	bool materialDoubleSided = bool(matDword18 & 0x80);
+	bool materialRenderTwice = bool(matDword18 & 0x800);
+	bool materialCullFront = bool(matDword18 & 0x2000);
+
+	if ((materialDoubleSided || matInstanceDoubleSided) && !materialRenderTwice)
+		stateManager->setCullMode(CullMode::none, frontCounterClockwise);
+	else if (materialCullFront)
+		stateManager->setCullMode(CullMode::front, frontCounterClockwise);
+	else
+		stateManager->setCullMode(CullMode::back, frontCounterClockwise);*/
 }
 
 void PCDX11Material::invalidate() {
@@ -503,6 +531,15 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl038(
 	stateManager->setDepthRange(matInstance->minDepth, matInstance->maxDepth);
 	stateManager->setBlendStateAndBlendFactors(materialBlob->blendState24, 0, 0);
 
+	uint16_t renderTargetWriteMask = materialBlob->renderTargetWriteMask;
+	/* if (renderDevice->scene78->byte25C) {
+		if (x)
+			renderTargetWriteMask = renderTargetWriteMask | 8;
+		else
+			renderTargetWriteMask = renderTargetWriteMask & 7;
+	} */
+	stateManager->setRenderTargetWriteMask(renderTargetWriteMask);
+
 	uint32_t vertexIndex = vsSelect;
 	if (flags & 8)
 		vertexIndex |= 8;
@@ -549,6 +586,11 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl7(
 {
 	// TODO
 	// return nullptr;
+
+	auto *stateManager = deviceManager->getStateManager();
+	uint16_t renderTargetWriteMask = materialBlob->renderTargetWriteMask;
+	stateManager->setRenderTargetWriteMask(renderTargetWriteMask & 7);
+
 	return buildStreamDecl015(
 		matInstance,
 		drawableExtDword50,
