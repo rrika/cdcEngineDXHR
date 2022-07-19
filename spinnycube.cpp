@@ -648,7 +648,7 @@ int spinnyCube(HWND window,
 		// float lightAccumulation[4] = {0.9f, 0.9f, 0.9f, 1.0f};
 		float lightAccumulation[4] = {0.5f, 0.5f, 0.5f, 0.0f};
 		renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
-		renderDevice->clearRenderTarget(10, /*mask=*/ 0x2000, 0.0f, lightAccumulation, 1.0f, 0); // deferred shading buffer
+		renderDevice->clearRenderTarget(2, /*mask=*/ 0x2000, 0.0f, lightAccumulation, 1.0f, 0); // deferred shading buffer
 		renderDevice->recordDrawable(&cubeDrawable, /*mask=*/ 1, /*addToParent=*/ 0);
 		static_cast<cdc::PCDX11RenderModelInstance*>(bottleRenderModelInstance)->baseMask = 0x1002; // normals & composite
 		bottleRenderModelInstance->recordDrawables(&matrixState);
@@ -824,8 +824,7 @@ void SpinnyCubeDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 		stateManager->setPixelShader(cdcPixelShader);
 	}
 
-	stateManager->updateShaderResources();
-	stateManager->updateSamplers();
+	stateManager->updateRenderState();
 
 	renderDevice->getD3DDeviceContext()->DrawIndexed(std::size(IndexData), 0, 0);
 }
