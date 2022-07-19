@@ -13,6 +13,7 @@
 #include "PCDX11Scene.h"
 #include "PCDX11StateManager.h"
 #include "RenderPasses.h"
+#include "Types.h"
 #include "shaders/PCDX11ShaderLib.h"
 #include "surfaces/PCDX11DefaultRenderTarget.h"
 #include "surfaces/PCDX11DepthBuffer.h"
@@ -74,20 +75,20 @@ PCDX11RenderDevice::PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t heigh
 	createDefaultResources();
 	createDefaultVertexAttribLayouts();
 
-	renderPasses.addRenderPass(kRegularPass, 0x1000, 1,  1, 0);  // Depth0
-	renderPasses.addRenderPass(kRegularPass, 0x2000, 1,  4, 1);  // Composite
-	renderPasses.addRenderPass(kRegularPass, 0x3000, 1,  3, 2);  // Opaque
-	renderPasses.addRenderPass(kRegularPass, 0x4000, 0,  5, 3);  // Translucent
-	renderPasses.addRenderPass(kRegularPass, 0x8000, 0,  5, 4);  // Fullscreen
-	renderPasses.addRenderPass(kRegularPass, 0x9000, 0,  5, 5);  // PostFx
-	renderPasses.addRenderPass(kRegularPass, 0x5000, 0,  7, 6);  // AlphaBloomFsx
-	renderPasses.addRenderPass(kRegularPass, 0x7000, 0,  6, 7);  // Predator
-	renderPasses.addRenderPass(kRegularPass, 0x6000, 1,  8, 8);
-	renderPasses.addRenderPass(kShadowPass,  0x8000, 1,  2, 9);
-	renderPasses.addRenderPass(kRegularPass, 0x1850, 2,  0, 10); // DepthDependent
-	renderPasses.addRenderPass(kRegularPass, 0x1800, 1, 10, 12); // Normal
-	renderPasses.addRenderPass(kRegularPass, 0x1900, 2,  5, 13); // DeferredShading
-	renderPasses.addRenderPass(kRegularPass, 0x1400, 1,  1, 14); // Depth14
+	renderPasses.addRenderPass(kRegularPass, 0x1000, 1, /* 1*/ kRenderFunctionDepth,         /* 0*/ kPassIndexDepth);
+	renderPasses.addRenderPass(kRegularPass, 0x2000, 1, /* 4*/ kRenderFunctionComposite,     /* 1*/ kPassIndexComposite);
+	renderPasses.addRenderPass(kRegularPass, 0x3000, 1, /* 3*/ kRenderFunctionOpaque,        /* 2*/ kPassIndexOpaque);
+	renderPasses.addRenderPass(kRegularPass, 0x4000, 0, /* 5*/ kRenderFunctionTranslucent,   /* 3*/ kPassIndexTranslucent);
+	renderPasses.addRenderPass(kRegularPass, 0x8000, 0, /* 5*/ kRenderFunctionTranslucent,   /* 4*/ kPassIndexFullScreenFX);
+	renderPasses.addRenderPass(kRegularPass, 0x9000, 0, /* 5*/ kRenderFunctionTranslucent,   /* 5*/ kPassIndexPostFSX);
+	renderPasses.addRenderPass(kRegularPass, 0x5000, 0, /* 7*/ kRenderFunctionAlphaBloomFSX, /* 6*/ kPassIndexAlphaBloomFSX);
+	renderPasses.addRenderPass(kRegularPass, 0x7000, 0, /* 6*/ kRenderFunctionPredator,      /* 7*/ kPassIndexPredator);
+	renderPasses.addRenderPass(kRegularPass, 0x6000, 1, /* 8*/ kRenderFunction8,             /* 8*/ kPassIndex8);
+	renderPasses.addRenderPass(kShadowPass,  0x8000, 1, /* 2*/ kRenderFunctionShadow,        /* 9*/ kPassIndexShadow);
+	renderPasses.addRenderPass(kRegularPass, 0x1850, 2, /* 0*/ kRenderFunctionDefault,       /*10*/ kPassIndexDepthDependent);
+	renderPasses.addRenderPass(kRegularPass, 0x1800, 1, /*10*/ kRenderFunctionNormal,        /*12*/ kPassIndexNormal);
+	renderPasses.addRenderPass(kRegularPass, 0x1900, 2, /* 5*/ kRenderFunctionTranslucent,   /*13*/ kPassIndexDeferredShading);
+	renderPasses.addRenderPass(kRegularPass, 0x1400, 1, /* 1*/ kRenderFunctionDepth,         /*14*/ kPassIndexNonNormalDepth);
 	setupPassCallbacks();
 	registerComparatorsAndDrawersModel();
 	registerComparatorsAndDrawersTerrain1();
@@ -128,39 +129,39 @@ void PCDX11RenderDevice::createDefaultVertexAttribLayouts() {
 }
 
 void PCDX11RenderDevice::setupPassCallbacks() {
-	setPassCallback( 0, &depthPassCallbacks);
-	setPassCallback(14, &depthPassCallbacks);
-	setPassCallback(10, &depthDependentPassCallbacks);
-	setPassCallback( 1, &compositePassCallbacks);
-	setPassCallback( 2, &opaquePassCallbacks);
-	setPassCallback( 3, &translucentPassCallbacks);
-	setPassCallback( 6, &alphaBloomFSXPassCallbacks);
-	setPassCallback( 7, &predatorPassCallbacks);
-	setPassCallback( 4, &fullScreenFXPassCallbacks);
-	setPassCallback( 5, &postFSXPassCallbacks);
-	setPassCallback(12, &normalPassCallbacks);
-	setPassCallback(13, &deferredShadingPassCallbacks);
+	setPassCallback(/* 0*/ kPassIndexDepth,           &depthPassCallbacks);
+	setPassCallback(/*14*/ kPassIndexNonNormalDepth,  &depthPassCallbacks);
+	setPassCallback(/*10*/ kPassIndexDepthDependent,  &depthDependentPassCallbacks);
+	setPassCallback(/* 1*/ kPassIndexComposite,       &compositePassCallbacks);
+	setPassCallback(/* 2*/ kPassIndexOpaque,          &opaquePassCallbacks);
+	setPassCallback(/* 3*/ kPassIndexTranslucent,     &translucentPassCallbacks);
+	setPassCallback(/* 6*/ kPassIndexAlphaBloomFSX,   &alphaBloomFSXPassCallbacks);
+	setPassCallback(/* 7*/ kPassIndexPredator,        &predatorPassCallbacks);
+	setPassCallback(/* 4*/ kPassIndexFullScreenFX,    &fullScreenFXPassCallbacks);
+	setPassCallback(/* 5*/ kPassIndexPostFSX,         &postFSXPassCallbacks);
+	setPassCallback(/*12*/ kPassIndexNormal,          &normalPassCallbacks);
+	setPassCallback(/*13*/ kPassIndexDeferredShading, &deferredShadingPassCallbacks);
 }
 
 void PCDX11RenderDevice::registerComparatorsAndDrawersModel() {
 	allocFuncIndex("RenderModelDrawable");
 	uint8_t funcIndex = 1;
-	registerComparator(funcIndex, 1, PCDX11ModelDrawable::compare128);
-	registerComparator(funcIndex, 2, PCDX11ModelDrawable::compare128);
-	registerComparator(funcIndex, 8, PCDX11ModelDrawable::compare128);
-	registerComparator(funcIndex, 7, PCDX11ModelDrawable::compare7);
-	registerComparator(funcIndex, 4, PCDX11ModelDrawable::compare46);
-	registerComparator(funcIndex, 6, PCDX11ModelDrawable::compare46);
+	registerComparator(funcIndex, /*1*/ kRenderFunctionDepth,         PCDX11ModelDrawable::compare128);
+	registerComparator(funcIndex, /*2*/ kRenderFunctionShadow,        PCDX11ModelDrawable::compare128);
+	registerComparator(funcIndex, /*8*/ kRenderFunction8,             PCDX11ModelDrawable::compare128);
+	registerComparator(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, PCDX11ModelDrawable::compare7);
+	registerComparator(funcIndex, /*4*/ kRenderFunctionComposite,     PCDX11ModelDrawable::compare46);
+	registerComparator(funcIndex, /*6*/ kRenderFunctionPredator,      PCDX11ModelDrawable::compare46);
 
-	registerDrawer(funcIndex, 1, PCDX11ModelDrawable::draw1);
-	registerDrawer(funcIndex, 2, PCDX11ModelDrawable::draw2);
-	registerDrawer(funcIndex, 7, PCDX11ModelDrawable::draw7);
-	registerDrawer(funcIndex, 4, PCDX11ModelDrawable::draw4);
-	registerDrawer(funcIndex, 5, PCDX11ModelDrawable::draw56);
-	registerDrawer(funcIndex, 6, PCDX11ModelDrawable::draw56);
+	registerDrawer(funcIndex, /*1*/ kRenderFunctionDepth,         PCDX11ModelDrawable::draw1);
+	registerDrawer(funcIndex, /*2*/ kRenderFunctionShadow,        PCDX11ModelDrawable::draw2);
+	registerDrawer(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, PCDX11ModelDrawable::draw7);
+	registerDrawer(funcIndex, /*4*/ kRenderFunctionComposite,     PCDX11ModelDrawable::draw4);
+	registerDrawer(funcIndex, /*5*/ kRenderFunctionTranslucent,   PCDX11ModelDrawable::draw56);
+	registerDrawer(funcIndex, /*6*/ kRenderFunctionPredator,      PCDX11ModelDrawable::draw56);
 
-	registerComparator(funcIndex, 10, PCDX11ModelDrawable::compareA);
-	registerDrawer(funcIndex, 10, PCDX11ModelDrawable::drawA);
+	registerComparator(funcIndex, /*10*/ kRenderFunctionNormal, PCDX11ModelDrawable::compareA);
+	registerDrawer(funcIndex, /*10*/ kRenderFunctionNormal, PCDX11ModelDrawable::drawA);
 }
 
 void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain1() {
@@ -176,21 +177,21 @@ void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain1() {
 	DrawableRenderFn todoDrawA = nullptr;
 
 	uint8_t funcIndex = allocFuncIndex("RenderTerrainDrawable");
-	registerComparator(funcIndex, 1, todoCmp12);
-	registerComparator(funcIndex, 2, todoCmp12);
-	registerComparator(funcIndex, 7, todoCmp467);
-	registerComparator(funcIndex, 4, todoCmp467);
-	registerComparator(funcIndex, 6, todoCmp467);
+	registerComparator(funcIndex, /*1*/ kRenderFunctionDepth, todoCmp12);
+	registerComparator(funcIndex, /*2*/ kRenderFunctionShadow, todoCmp12);
+	registerComparator(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, todoCmp467);
+	registerComparator(funcIndex, /*4*/ kRenderFunctionComposite, todoCmp467);
+	registerComparator(funcIndex, /*6*/ kRenderFunctionPredator, todoCmp467);
 
-	registerDrawer(funcIndex, 1, todoDraw1);
-	registerDrawer(funcIndex, 2, todoDraw2);
-	registerDrawer(funcIndex, 7, todoDraw7);
-	registerDrawer(funcIndex, 4, todoDraw4);
-	registerDrawer(funcIndex, 5, todoDraw56);
-	registerDrawer(funcIndex, 6, todoDraw56);
+	registerDrawer(funcIndex, /*1*/ kRenderFunctionDepth, todoDraw1);
+	registerDrawer(funcIndex, /*2*/ kRenderFunctionShadow, todoDraw2);
+	registerDrawer(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, todoDraw7);
+	registerDrawer(funcIndex, /*4*/ kRenderFunctionComposite, todoDraw4);
+	registerDrawer(funcIndex, /*5*/ kRenderFunctionTranslucent, todoDraw56);
+	registerDrawer(funcIndex, /*6*/ kRenderFunctionPredator, todoDraw56);
 
-	registerComparator(funcIndex, 10, todoCmpA);
-	registerDrawer(funcIndex, 10, todoDrawA);
+	registerComparator(funcIndex, /*10*/ kRenderFunctionNormal, todoCmpA);
+	registerDrawer(funcIndex, /*10*/ kRenderFunctionNormal, todoDrawA);
 }
 
 void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain2() {
@@ -204,22 +205,22 @@ void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain2() {
 	DrawableRenderFn todoDrawA = nullptr;
 
 	uint8_t funcIndex = allocFuncIndex("RenderTerrainDrawable");
-	registerComparator(funcIndex, 1, todoCmp);
-	registerComparator(funcIndex, 2, todoCmp);
-	registerComparator(funcIndex, 8, todoCmp);
-	registerComparator(funcIndex, 7, todoCmp);
-	registerComparator(funcIndex, 4, todoCmp);
-	registerComparator(funcIndex, 6, todoCmp);
+	registerComparator(funcIndex, /*1*/ kRenderFunctionDepth, todoCmp);
+	registerComparator(funcIndex, /*2*/ kRenderFunctionShadow, todoCmp);
+	registerComparator(funcIndex, /*8*/ kRenderFunction8, todoCmp);
+	registerComparator(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, todoCmp);
+	registerComparator(funcIndex, /*4*/ kRenderFunctionComposite, todoCmp);
+	registerComparator(funcIndex, /*6*/ kRenderFunctionPredator, todoCmp);
 
-	registerDrawer(funcIndex, 1, todoDraw1);
-	registerDrawer(funcIndex, 2, todoDraw2);
-	registerDrawer(funcIndex, 7, todoDraw7);
-	registerDrawer(funcIndex, 4, todoDraw4);
-	registerDrawer(funcIndex, 5, todoDraw56);
-	registerDrawer(funcIndex, 6, todoDraw56);
+	registerDrawer(funcIndex, /*1*/ kRenderFunctionDepth, todoDraw1);
+	registerDrawer(funcIndex, /*2*/ kRenderFunctionShadow, todoDraw2);
+	registerDrawer(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, todoDraw7);
+	registerDrawer(funcIndex, /*4*/ kRenderFunctionComposite, todoDraw4);
+	registerDrawer(funcIndex, /*5*/ kRenderFunctionTranslucent, todoDraw56);
+	registerDrawer(funcIndex, /*6*/ kRenderFunctionPredator, todoDraw56);
 
-	registerComparator(funcIndex, 10, todoCmp);
-	registerDrawer(funcIndex, 10, todoDrawA);
+	registerComparator(funcIndex, /*10*/ kRenderFunctionNormal, todoCmp);
+	registerDrawer(funcIndex, /*10*/ kRenderFunctionNormal, todoDrawA);
 }
 
 void PCDX11RenderDevice::setupShadowBuffer() {
