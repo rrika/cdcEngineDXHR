@@ -531,7 +531,7 @@ int spinnyCube(HWND window,
 	printf("have bottle cdc render model: %p (via object)\n", bottleRenderModel);
 	printf("have bottle cdc mesh blob: %p\n", bottleRenderModel->getMesh());
 
-	for (uint32_t i = 0; i < bottleRenderModel->count0; i++)
+	for (uint32_t i = 0; i < bottleRenderModel->numPrimGroups; i++)
 		printf("  bottle->tab0Ext128Byte[i].material = %p\n", bottleRenderModel->tab0Ext128Byte[i].material);
 
 	cdc::RenderModelInstance *bottleRenderModelInstance =
@@ -560,7 +560,7 @@ int spinnyCube(HWND window,
 	printf("have light material (from scenario drm): %p\n", lightMaterial);
 
 	// patch light material
-	for (uint32_t i = 0; i < bottleRenderModel->count0; i++)
+	for (uint32_t i = 0; i < bottleRenderModel->numPrimGroups; i++)
 		lightRenderModel->tab0Ext128Byte[i].material = lightMaterial;
 
 	cdc::RenderModelInstance *lightRenderModelInstance =

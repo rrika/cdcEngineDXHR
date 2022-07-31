@@ -17,19 +17,19 @@ public:
 	MeshHeader *meshHeader;
 	Mesh       *mesh;
 
-	uint16_t count0; // 1C
+	uint16_t numPrimGroups; // 1C
 	PrimGroup *primGroups; // 20
 
-	uint16_t count1; // 24
-	ModelBatch *table1; // 28
+	uint16_t numModelBatches; // 24
+	ModelBatch *modelBatches; // 28
 
 	// uint32_t bonesMaybe;
 	// uint32_t dword30;
 	uint32_t indices;
 	// PCDX11StaticIndexBuffer *indexBuffer; // 38
 	PCDX11SimpleStaticIndexBuffer *indexBuffer; // 38, hack
-	NonPersistentPGData *tab0Ext16Byte; // uses count0
-	PersistentPGData *tab0Ext128Byte; // uses count0
+	NonPersistentPGData *tab0Ext16Byte; // one per primgroup
+	PersistentPGData *tab0Ext128Byte; // one per primgroup
 	uint32_t vsSelect; // 4C
 
 public:

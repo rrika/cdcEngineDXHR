@@ -51,9 +51,9 @@ void PCDX11RenderModel::resConstruct() {
 	// process table 0
 	mesh->primGroups = (PrimGroup*)((uintptr_t)mesh + (uintptr_t)mesh->primGroups);
 	primGroups = mesh->primGroups;
-	count0 = mesh->primGroupCount;
+	numPrimGroups = mesh->primGroupCount;
 
-	for (uint32_t i = 0; i<count0; i++) {
+	for (uint32_t i = 0; i<numPrimGroups; i++) {
 		printf("  [%d] material %d -> ", i, (uintptr_t)primGroups[i].material);
 		auto *material = materials[(uintptr_t)primGroups[i].material];
 		primGroups[i].material = (IMaterial*)material;
@@ -78,14 +78,14 @@ void PCDX11RenderModel::resConstruct() {
 	// process table 1
 	if (mesh->meshTable) {
 		mesh->meshTable = (ModelBatch*)((uintptr_t)mesh + (uintptr_t)mesh->meshTable);
-		table1 = mesh->meshTable;
-		count1 = mesh->meshCount;
+		modelBatches = mesh->meshTable;
+		numModelBatches = mesh->meshCount;
 	} else {
-		count1 = 0;
+		numModelBatches = 0;
 	}
 
-	for (uint32_t i = 0; i<count1; i++) {
-		auto *sub1 = &table1[i];
+	for (uint32_t i = 0; i<numModelBatches; i++) {
+		auto *sub1 = &modelBatches[i];
 		sub1->vertices += (uintptr_t)mesh;
 		sub1->format += (uintptr_t)mesh;
 		auto *layout = (VertexAttributeLayoutA*)sub1->format;
@@ -116,13 +116,13 @@ void PCDX11RenderModel::resConstruct() {
 	}
 
 	// create additional tables
-	if (count0) {
-		tab0Ext128Byte = new PersistentPGData[count0];
-		for (uint32_t i=0; i<count0; i++) {
+	if (numPrimGroups) {
+		tab0Ext128Byte = new PersistentPGData[numPrimGroups];
+		for (uint32_t i=0; i<numPrimGroups; i++) {
 			// TODO
 		}
-		tab0Ext16Byte = new NonPersistentPGData[count0];
-		for (uint32_t i=0; i<count0; i++) {
+		tab0Ext16Byte = new NonPersistentPGData[numPrimGroups];
+		for (uint32_t i=0; i<numPrimGroups; i++) {
 			// TODO
 			tab0Ext128Byte[i].material = static_cast<PCDX11Material*>(primGroups[i].material);
 			tab0Ext128Byte[i].sub10.stencilSettings64 = nullptr;
