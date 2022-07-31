@@ -471,7 +471,31 @@ int spinnyCube(HWND window,
 	auto lightIndex = objectIdByName("deferred_fast_omni_diffuse");
 	requestObject3(lightIndex);
 
+	// see below for why
 	auto obj3 = ResolveObject::create(
+		"pc-w\\shaderlibs\\deferred_fast_omni_diffusemt_79464a5e59514c7f_dx11.drm",
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		0,
+		3
+	);
+	auto obj4 = ResolveObject::create(
+		"pc-w\\s_scn_det_sarifhq_rail_tutorial_barrettintro_det_sarifhq_rail_tutorial.drm",
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		0,
+		3
+	);
+/*
+	auto obj5 = ResolveObject::create(
 		"pc-w\\scenario_database.drm",
 		nullptr,
 		nullptr,
@@ -482,7 +506,7 @@ int spinnyCube(HWND window,
 		0,
 		3
 	);
-
+*/
 	archiveFileSystem_default->processAll();
 
 	ResolveSection *objectSection = g_resolveSections[11];
@@ -515,6 +539,14 @@ int spinnyCube(HWND window,
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
+	// for some reason deferred_fast_omni_diffuse.drm depends on shaderlibs/decal_853189b19db6f909_dx11.drm
+	// when it should be using a shader from shaderlibs/decal_853189b19db6f909_dx11.drm
+	// namely section 5: ShaderLib 0 cd2 unk6:2ce3 DX11 (4f38 bytes)
+	//
+	// one of the few materials referencing this shaderlib is
+	// s_scn_det_sarifhq_rail_tutorial_barrettintro_det_sarifhq_rail_tutorial.drm/7: Material 12 a4 unk6:7a84 DX11 (7e0 bytes)
+
+
 	ObjectBlob *lightObject = (ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(lightIndex));
 	printf("have light object: %p\n", lightObject);
 
@@ -524,8 +556,24 @@ int spinnyCube(HWND window,
 	((cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x0061))->asyncCreate();
 	((cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x014c))->asyncCreate();
 
+	auto lightMaterial = (cdc::PCDX11Material*)g_resolveSections[10]->getWrapped(0x00a4);
+	printf("have light material (from scenario drm): %p\n", lightMaterial);
+
+	// patch light material
+	for (uint32_t i = 0; i < bottleRenderModel->count0; i++)
+		lightRenderModel->tab0Ext128Byte[i].material = lightMaterial;
+
 	cdc::RenderModelInstance *lightRenderModelInstance =
 		renderDevice->createRenderModelInstance(lightRenderModel);
+
+	Vector4 *lightInstanceParams = static_cast<CommonRenderModelInstance*>(lightRenderModelInstance)->ext->instanceParams;
+	// taken from a random light draw in renderdoc
+	float lightRadius = 2.0f;
+	float invLightRadius = 1.0f / lightRadius;
+	lightInstanceParams[0] = Vector4{1.0, 1.0, 2.0, 1.0}; // .xyz = viewspace light position perhaps
+	lightInstanceParams[1] = Vector4{0.88235, 0.7098, 0.3451, 0.00}; // .xyz = light color
+	lightInstanceParams[2] = Vector4{invLightRadius, invLightRadius, invLightRadius, 1.00}; // .x = 1/radius
+	lightInstanceParams[3] = Vector4{0.80, 0.00, 0.00, 0.00}; // .x= light scale
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -626,7 +674,7 @@ int spinnyCube(HWND window,
 		float4x4 rotateZ   = { static_cast<float>(cos(modelRotation.z)), -static_cast<float>(sin(modelRotation.z)), 0, 0, static_cast<float>(sin(modelRotation.z)), static_cast<float>(cos(modelRotation.z)), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 		float4x4 bottleScale = { modelScale.x, 0, 0, 0, 0, modelScale.y, 0, 0, 0, 0, modelScale.z, 0, 0, 0, 0, 1 };
 		float4x4 cameraTranslate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, modelTranslation.x, modelTranslation.y, modelTranslation.z, 1 };
-		float4x4 lightScaleTranslate = { 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 3, 0, 1, 1, 1, 1 };
+		float4x4 lightScaleTranslate = { lightRadius * 2.0f, 0, 0, 0, 0, lightRadius * 2.0f, 0, 0, 0, 0, lightRadius * 2.0f, 0, 1, 1, 1, 1 };
 
 		modelRotation.x += 0.005f;
 		modelRotation.y += 0.009f;
@@ -664,12 +712,12 @@ int spinnyCube(HWND window,
 		PCDX11MatrixState lightMatrixState(renderDevice);
 		lightMatrixState.resize(1);
 		auto *lightWorldMatrix = reinterpret_cast<float4x4*>(lightMatrixState.poseData->getMatrix(0));
-		*lightWorldMatrix = world * lightScaleTranslate;
+		*lightWorldMatrix = /*world * */ lightScaleTranslate;
 
 		// add drawables to the scene
 		float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
 		// float lightAccumulation[4] = {0.9f, 0.9f, 0.9f, 1.0f};
-		float lightAccumulation[4] = {0.5f, 0.5f, 0.5f, 1.0f};
+		float lightAccumulation[4] = {0.0f, 0.0f, 0.0f, 1.0f};
 
 		renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
 		renderDevice->recordDrawable(&cubeDrawable, /*mask=*/ 1, /*addToParent=*/ 0);
