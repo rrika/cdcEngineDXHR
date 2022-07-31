@@ -9,7 +9,7 @@ class PCDX11SimpleStaticVertexBuffer;
 struct NonPersistentPGData;
 struct PersistentPGData;
 
-struct MeshTab0;
+struct PrimGroup;
 
 struct MeshSub {
 	float minDistMaybe0;
@@ -58,11 +58,11 @@ struct Mesh { // = cdc::ModelData
 	float dword48;
 	uint32_t vsSelect4C;
 	uint32_t matTableMaybe; // 50
-	MeshTab0 *table0; // 54
+	PrimGroup *primGroups; // 54
 	MeshSub *meshTable; // 58
 	uint32_t bonesTableMaybe; // 5C
 	uint32_t indices; // 60
-	uint16_t table0Count; // 64
+	uint16_t primGroupCount; // 64
 	uint16_t meshCount; // 66
 	uint16_t boneCountMaybe; // 68
 	uint16_t word6A;
@@ -73,7 +73,7 @@ struct Mesh { // = cdc::ModelData
 	uint32_t dword7C;
 };
 
-struct MeshTab0 { // = cdc::PrimGroup
+struct PrimGroup {
 	uint32_t vec0[4];
 	uint32_t startIndex;
 	uint32_t triangleCount;

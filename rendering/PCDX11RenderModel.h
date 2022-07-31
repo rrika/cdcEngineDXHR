@@ -18,7 +18,7 @@ public:
 	Mesh       *mesh;
 
 	uint16_t count0; // 1C
-	MeshTab0 *table0; // 20
+	PrimGroup *primGroups; // 20
 
 	uint16_t count1; // 24
 	MeshSub *table1; // 28

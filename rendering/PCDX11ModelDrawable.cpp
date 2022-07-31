@@ -21,19 +21,19 @@ PCDX11ModelDrawable::PCDX11ModelDrawable(
 	PCDX11RenderModel *renderModel,
 	ModelDrawableExt *ext,
 	MeshSub *meshSub,
-	MeshTab0 *tab0,
+	PrimGroup *primGroup,
 	PersistentPGData *tab0Ext128,
 	PoseData *poseData)
 :
 	renderModel(renderModel),
 	ext(ext),
 	meshSub(meshSub),
-	tab0(tab0),
+	primGroup(primGroup),
 	tab0Ext128(tab0Ext128),
 	poseData(poseData)
 { // hack
 	word4 = 1; // use RenderModel drawers
-	flags34 = (tab0[0].triangleCount << 8);
+	flags34 = (primGroup[0].triangleCount << 8);
 
 	auto lightManager = static_cast<PCDX11LightManager*>(renderModel->renderDevice->lightManager);
 	lightReceiverData = lightManager->makeReceiver(/*TODO*/);
@@ -278,7 +278,7 @@ void PCDX11ModelDrawable::draw(
 
 	ID3D11DeviceContext *d3d11DeviceContext = renderDevice->getD3DDeviceContext();
 	uint32_t baseVertex = meshSub->staticVertexBuffer->getBaseVertex();
-	uint32_t startIndex = tab0->startIndex + renderModel->indexBuffer->getStartIndex();
+	uint32_t startIndex = primGroup->startIndex + renderModel->indexBuffer->getStartIndex();
 	uint32_t indexCount = getTriangleCount() * 3;
 
 	stateManager->setPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

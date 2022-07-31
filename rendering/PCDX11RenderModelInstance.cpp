@@ -17,9 +17,9 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 	PoseData *poseData = static_cast<PCDX11MatrixState*>(matrixState)->poseData;
 	for (uint32_t i=0; i<mesh->meshCount; i++) {
 		MeshSub *sub = &mesh->meshTable[i];
-		for (uint32_t j=0; j<mesh->table0Count; j++, tab0index++) {
+		for (uint32_t j=0; j<mesh->primGroupCount; j++, tab0index++) {
 			// printf("PCDX11RenderModelInstance::recordDrawables %d %d %d\n", i, j, tab0index);
-			MeshTab0 *tab0 = &mesh->table0[tab0index];
+			PrimGroup *primGroup = &mesh->primGroups[tab0index];
 			// NonPersistentPGData *tab0ext16 = &this->tab0Ext16[tab0index];
 			PersistentPGData *tab0ext128 = &this->tab0Ext128[tab0index];
 
@@ -28,7 +28,7 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 				getRenderModel(),
 				ext,
 				sub,
-				tab0,
+				primGroup,
 				tab0ext128,
 				poseData);
 			renderDevice->recordDrawable(drawable, mask, addToNextScene);

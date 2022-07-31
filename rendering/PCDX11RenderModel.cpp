@@ -49,30 +49,30 @@ void PCDX11RenderModel::resConstruct() {
 		mesh->dword70 += (uintptr_t)mesh;
 
 	// process table 0
-	mesh->table0 = (MeshTab0*)((uintptr_t)mesh + (uintptr_t)mesh->table0);
-	table0 = mesh->table0;
-	count0 = mesh->table0Count;
+	mesh->primGroups = (PrimGroup*)((uintptr_t)mesh + (uintptr_t)mesh->primGroups);
+	primGroups = mesh->primGroups;
+	count0 = mesh->primGroupCount;
 
 	for (uint32_t i = 0; i<count0; i++) {
-		printf("  [%d] material %d -> ", i, (uintptr_t)table0[i].material);
-		auto *material = materials[(uintptr_t)table0[i].material];
-		table0[i].material = (IMaterial*)material;
+		printf("  [%d] material %d -> ", i, (uintptr_t)primGroups[i].material);
+		auto *material = materials[(uintptr_t)primGroups[i].material];
+		primGroups[i].material = (IMaterial*)material;
 		printf("%p\n", material);
 
 		if (!material)
 			allMaterialsPresent = false;
 
-		if (table0[i].dword2C != -1)
-			table0[i].dword2C = fourBase[table0[i].dword2C];
+		if (primGroups[i].dword2C != -1)
+			primGroups[i].dword2C = fourBase[primGroups[i].dword2C];
 
-		if (table0[i].dword30 != -1)
-			table0[i].dword30 = fourBase[table0[i].dword30];
+		if (primGroups[i].dword30 != -1)
+			primGroups[i].dword30 = fourBase[primGroups[i].dword30];
 
-		if (table0[i].dword34 != -1)
-			table0[i].dword34 = fourBase[table0[i].dword34];
+		if (primGroups[i].dword34 != -1)
+			primGroups[i].dword34 = fourBase[primGroups[i].dword34];
 
-		if (table0[i].dword38 != -1)
-			table0[i].dword38 = fourBase[table0[i].dword38];
+		if (primGroups[i].dword38 != -1)
+			primGroups[i].dword38 = fourBase[primGroups[i].dword38];
 	}
 
 	// process table 1
@@ -124,7 +124,7 @@ void PCDX11RenderModel::resConstruct() {
 		tab0Ext16Byte = new NonPersistentPGData[count0];
 		for (uint32_t i=0; i<count0; i++) {
 			// TODO
-			tab0Ext128Byte[i].material = static_cast<PCDX11Material*>(table0[i].material);
+			tab0Ext128Byte[i].material = static_cast<PCDX11Material*>(primGroups[i].material);
 			tab0Ext128Byte[i].sub10.stencilSettings64 = nullptr;
 			for (uint32_t j=0; j<16; j++)
 				tab0Ext128Byte[i].sub10.streamDecls24[j] = nullptr;
