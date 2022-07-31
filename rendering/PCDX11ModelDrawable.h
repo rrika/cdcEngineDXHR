@@ -1,6 +1,6 @@
 #pragma once
 #include "IRenderDrawable.h"
-#include "CommonRenderModelInstance.h" // for PersistentPGData and ModelDrawableExt
+#include "CommonRenderModelInstance.h" // for PersistentPGData and RenderModelInstanceData
 #include "RenderMesh.h" // for ModelBatch and PrimGroup
 
 namespace cdc {
@@ -15,7 +15,7 @@ struct LightReceiverData;
 class PCDX11ModelDrawable : public IRenderDrawable {
 
 	PCDX11RenderModel *renderModel; // C
-	ModelDrawableExt *ext; // 10
+	RenderModelInstanceData *ext; // 10
 	ModelBatch *meshSub; // 14
 	PrimGroup *primGroup; // 18
 	PersistentPGData *tab0Ext128; // 1C
@@ -29,7 +29,7 @@ class PCDX11ModelDrawable : public IRenderDrawable {
 public:
 	PCDX11ModelDrawable(
 		PCDX11RenderModel *renderModel,
-		ModelDrawableExt *ext,
+		RenderModelInstanceData *ext,
 		ModelBatch *meshSub,
 		PrimGroup *primGroup,
 		PersistentPGData *tab0Ext128,

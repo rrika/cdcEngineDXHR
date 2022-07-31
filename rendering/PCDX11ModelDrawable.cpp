@@ -19,7 +19,7 @@ static float matrixStagingBuffer[40 * 16];
 
 PCDX11ModelDrawable::PCDX11ModelDrawable(
 	PCDX11RenderModel *renderModel,
-	ModelDrawableExt *ext,
+	RenderModelInstanceData *ext,
 	ModelBatch *meshSub,
 	PrimGroup *primGroup,
 	PersistentPGData *tab0Ext128,
@@ -333,8 +333,8 @@ bool PCDX11ModelDrawable::setMatrices(
 		}
 	}
 
-	// ModelDrawableExt *currentExt = ext && ext->projectMatrixValid ? ext : nullptr;
-	// ModelDrawableExt *prevExt = prevDrawable && prevDrawable->ext && prevDrawable->ext->projectMatrixValid
+	// RenderModelInstanceData *currentExt = ext && ext->projectMatrixValid ? ext : nullptr;
+	// RenderModelInstanceData *prevExt = prevDrawable && prevDrawable->ext && prevDrawable->ext->projectMatrixValid
 	// 	? prevDrawable->ext : nullptr;
 
 	if (poseData != prevPoseData) { // || currentExt != prevExt) {
