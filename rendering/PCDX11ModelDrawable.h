@@ -1,6 +1,6 @@
 #pragma once
 #include "IRenderDrawable.h"
-#include "CommonRenderModelInstance.h" // for PersistentPGData
+#include "CommonRenderModelInstance.h" // for PersistentPGData and ModelDrawableExt
 #include "RenderMesh.h" // for MeshSub and MeshTab0
 
 namespace cdc {
@@ -11,11 +11,6 @@ class PCDX11StateManager;
 class PCDX11StreamDecl;
 class PoseData;
 struct LightReceiverData;
-
-struct ModelDrawableExt {
-	// TODO
-	uint32_t dword50;
-};
 
 class PCDX11ModelDrawable : public IRenderDrawable {
 
@@ -34,6 +29,7 @@ class PCDX11ModelDrawable : public IRenderDrawable {
 public:
 	PCDX11ModelDrawable(
 		PCDX11RenderModel *renderModel,
+		ModelDrawableExt *ext,
 		MeshSub *meshSub,
 		MeshTab0 *tab0,
 		PersistentPGData *tab0Ext128,

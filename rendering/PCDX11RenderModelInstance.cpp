@@ -26,6 +26,7 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 			uint32_t mask = baseMask; // & tab0ext16->mask8;
 			auto drawable = new (renderDevice->getLinear(), 6, true) PCDX11ModelDrawable(
 				getRenderModel(),
+				ext,
 				sub,
 				tab0,
 				tab0ext128,

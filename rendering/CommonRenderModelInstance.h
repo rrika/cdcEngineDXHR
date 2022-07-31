@@ -3,6 +3,7 @@
 #include "MaterialData.h"
 #include "RenderMesh.h"
 #include "RenderModelInstance.h"
+#include "../math/Math.h"
 
 namespace cdc {
 
@@ -25,6 +26,11 @@ struct PersistentPGData {
 	uint32_t dword7C; // a subfunction of RenderModel::load does a memcpy of 0x70
 };
 
+struct ModelDrawableExt { // = cdc::RenderModelInstanceData
+	// TODO
+	Vector4 instanceParams[8];
+};
+
 class CommonRenderModelInstance : public RenderModelInstance {
 public:
 	uint32_t baseMask; // 8
@@ -33,11 +39,16 @@ protected:
 	NonPersistentPGData *tab0Ext16; // 24
 	PersistentPGData *tab0Ext128; // 2C
 public:
+	ModelDrawableExt *ext; // 34
 	CommonRenderModelInstance(RenderMesh *renderMesh) :
 		renderMesh(renderMesh)
 	{
 		tab0Ext16 = renderMesh->getTab0Ext16();
 		tab0Ext128 = renderMesh->getTab0Ext128();
+		ext = new ModelDrawableExt; // HACK
+	}
+	~CommonRenderModelInstance() {
+		delete ext;
 	}
 };
 

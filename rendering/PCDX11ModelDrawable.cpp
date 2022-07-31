@@ -19,12 +19,14 @@ static float matrixStagingBuffer[40 * 16];
 
 PCDX11ModelDrawable::PCDX11ModelDrawable(
 	PCDX11RenderModel *renderModel,
+	ModelDrawableExt *ext,
 	MeshSub *meshSub,
 	MeshTab0 *tab0,
 	PersistentPGData *tab0Ext128,
 	PoseData *poseData)
 :
 	renderModel(renderModel),
+	ext(ext),
 	meshSub(meshSub),
 	tab0(tab0),
 	tab0Ext128(tab0Ext128),
@@ -50,7 +52,7 @@ void PCDX11ModelDrawable::draw1(uint32_t funcSetIndex, IRenderDrawable *drawable
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl015(
 		&mt0x128->sub10,
-		&thisModel->ext->dword50,
+		(void*)thisModel->ext->instanceParams,
 		mesh->vsSelect4C,
 		false,
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
@@ -75,7 +77,7 @@ void PCDX11ModelDrawable::draw2(uint32_t funcSetIndex, IRenderDrawable *drawable
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl01(
 		&mt0x128->sub10,
-		&thisModel->ext->dword50,
+		(void*)thisModel->ext->instanceParams,
 		(*(char**)lightManager->ptr434)[276],
 		mesh->vsSelect4C,
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
@@ -100,7 +102,7 @@ void PCDX11ModelDrawable::draw7(uint32_t funcSetIndex, IRenderDrawable *drawable
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl4(
 		&mt0x128->sub10,
-		&thisModel->ext->dword50,
+		(void*)thisModel->ext->instanceParams,
 		mesh->vsSelect4C,
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
@@ -123,7 +125,7 @@ void PCDX11ModelDrawable::draw4(uint32_t funcSetIndex, IRenderDrawable *drawable
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl038(
 		&mt0x128->sub10,
-		&thisModel->ext->dword50,
+		(void*)thisModel->ext->instanceParams,
 		thisModel->lightConstantBufferData,
 		mesh->vsSelect4C,
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
@@ -152,7 +154,7 @@ void PCDX11ModelDrawable::draw56(uint32_t funcSetIndex, IRenderDrawable *drawabl
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl038(
 		&mt0x128->sub10,
-		&thisModel->ext->dword50,
+		(void*)thisModel->ext->instanceParams,
 		thisModel->lightConstantBufferData,
 		mesh->vsSelect4C,
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
@@ -181,7 +183,7 @@ void PCDX11ModelDrawable::drawA(uint32_t funcSetIndex, IRenderDrawable *drawable
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl7(
 		&mt0x128->sub10,
-		&thisModel->ext->dword50,
+		(void*)thisModel->ext->instanceParams,
 		mesh->vsSelect4C,
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
