@@ -77,7 +77,7 @@ void PCDX11RenderModel::resConstruct() {
 
 	// process table 1
 	if (mesh->meshTable) {
-		mesh->meshTable = (MeshSub*)((uintptr_t)mesh + (uintptr_t)mesh->meshTable);
+		mesh->meshTable = (ModelBatch*)((uintptr_t)mesh + (uintptr_t)mesh->meshTable);
 		table1 = mesh->meshTable;
 		count1 = mesh->meshCount;
 	} else {

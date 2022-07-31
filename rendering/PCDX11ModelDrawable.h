@@ -1,7 +1,7 @@
 #pragma once
 #include "IRenderDrawable.h"
 #include "CommonRenderModelInstance.h" // for PersistentPGData and ModelDrawableExt
-#include "RenderMesh.h" // for MeshSub and PrimGroup
+#include "RenderMesh.h" // for ModelBatch and PrimGroup
 
 namespace cdc {
 
@@ -16,7 +16,7 @@ class PCDX11ModelDrawable : public IRenderDrawable {
 
 	PCDX11RenderModel *renderModel; // C
 	ModelDrawableExt *ext; // 10
-	MeshSub *meshSub; // 14
+	ModelBatch *meshSub; // 14
 	PrimGroup *primGroup; // 18
 	PersistentPGData *tab0Ext128; // 1C
 	PoseData *poseData; // 20
@@ -30,7 +30,7 @@ public:
 	PCDX11ModelDrawable(
 		PCDX11RenderModel *renderModel,
 		ModelDrawableExt *ext,
-		MeshSub *meshSub,
+		ModelBatch *meshSub,
 		PrimGroup *primGroup,
 		PersistentPGData *tab0Ext128,
 		PoseData *poseData);

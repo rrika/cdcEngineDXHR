@@ -21,7 +21,7 @@ public:
 	PrimGroup *primGroups; // 20
 
 	uint16_t count1; // 24
-	MeshSub *table1; // 28
+	ModelBatch *table1; // 28
 
 	// uint32_t bonesMaybe;
 	// uint32_t dword30;

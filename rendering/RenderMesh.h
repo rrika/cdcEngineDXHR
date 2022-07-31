@@ -11,7 +11,7 @@ struct PersistentPGData;
 
 struct PrimGroup;
 
-struct MeshSub {
+struct ModelBatch {
 	float minDistMaybe0;
 	float maxDistMaybe4;
 	float lowFadeDistMaybe8;
@@ -59,7 +59,7 @@ struct Mesh { // = cdc::ModelData
 	uint32_t vsSelect4C;
 	uint32_t matTableMaybe; // 50
 	PrimGroup *primGroups; // 54
-	MeshSub *meshTable; // 58
+	ModelBatch *meshTable; // 58
 	uint32_t bonesTableMaybe; // 5C
 	uint32_t indices; // 60
 	uint16_t primGroupCount; // 64

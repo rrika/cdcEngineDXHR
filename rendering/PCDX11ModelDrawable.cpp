@@ -20,7 +20,7 @@ static float matrixStagingBuffer[40 * 16];
 PCDX11ModelDrawable::PCDX11ModelDrawable(
 	PCDX11RenderModel *renderModel,
 	ModelDrawableExt *ext,
-	MeshSub *meshSub,
+	ModelBatch *meshSub,
 	PrimGroup *primGroup,
 	PersistentPGData *tab0Ext128,
 	PoseData *poseData)
@@ -297,10 +297,10 @@ bool PCDX11ModelDrawable::setMatrices(
 	PCDX11ModelDrawable *prevDrawable,
 	bool hasBones)
 {
-	MeshSub *prevMeshSub = prevDrawable ? prevDrawable->meshSub : nullptr;
+	ModelBatch *prevModelBatch = prevDrawable ? prevDrawable->meshSub : nullptr;
 	PoseData *prevPoseData = prevDrawable ? prevDrawable->poseData : nullptr;
 	if (hasBones) {
-		if (meshSub != prevMeshSub || poseData != prevPoseData) {
+		if (meshSub != prevModelBatch || poseData != prevPoseData) {
 			for (uint32_t i = 0; i < meshSub->commonCb3_numMatrices; i++) {
 				uint32_t j = meshSub->matrixGatherOffsets[i];
 				float *matrix = poseData->getMatrix(j);

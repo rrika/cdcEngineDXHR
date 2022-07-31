@@ -16,7 +16,7 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 	uint32_t tab0index = 0;
 	PoseData *poseData = static_cast<PCDX11MatrixState*>(matrixState)->poseData;
 	for (uint32_t i=0; i<mesh->meshCount; i++) {
-		MeshSub *sub = &mesh->meshTable[i];
+		ModelBatch *sub = &mesh->meshTable[i];
 		for (uint32_t j=0; j<mesh->primGroupCount; j++, tab0index++) {
 			// printf("PCDX11RenderModelInstance::recordDrawables %d %d %d\n", i, j, tab0index);
 			PrimGroup *primGroup = &mesh->primGroups[tab0index];
