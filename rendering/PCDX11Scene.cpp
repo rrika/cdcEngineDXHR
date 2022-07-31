@@ -61,14 +61,14 @@ void PCDX11Scene::updateUniforms() {
 	sceneBuffer.assignRow(9, fogScaleOffset, 1); // SceneBuffer::FogScaleOffset
 
 	// for light shaders to translate the coordinates back
-	float near_ = 1.0f, far_ = 9.0f; // hardcoded in spinny cube
-	float depthRange = far_ - near_;
-	float p10 = projectMatrix.m[2][2];
-	float p14 = projectMatrix.m[3][2];
-	row[0] = 1.0f / (p14 * depthRange);
-	row[1] = -(near_ + p10 * depthRange) * row[0];
-	row[2] = 1.0f / depthRange; // not used by light shaders I looked at
-	row[3] = -near_ / depthRange; // not used by light shaders I looked at
+	float compressNear = 0.0f, compressFar = 1.0f; // 0.98f;
+	float compressRange = compressFar - compressNear;
+	float p10 = projectMatrix.m[2][2]; // = f / (f - n)
+	float p14 = projectMatrix.m[3][2]; // = n * f / (n - f)
+	row[0] = 1.0f / (p14 * compressRange);
+	row[1] = -(compressNear + p10 * compressRange) * row[0];
+	row[2] = 1.0f / compressRange; // not used by light shaders I looked at
+	row[3] = -compressNear / compressRange; // not used by light shaders I looked at
 	//printf("DepthToW  %f %f %f %f\n", row[0], row[1], row[2], row[3]);
 	sceneBuffer.assignRow(20, row, 1); // SceneBuffer::DepthToW
 
