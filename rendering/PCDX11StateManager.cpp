@@ -454,7 +454,7 @@ void PCDX11StateManager::setCommonConstantBuffers() {
 	setPsConstantBuffer(1, m_uberConstantBuffer[2]); // DrawableBuffer
 	setPsConstantBuffer(2, m_uberConstantBuffer[1]); // SceneBuffer
 	// 3 MaterialBuffer
-	setPsConstantBuffer(5, m_uberConstantBuffer[4]);
+	setPsConstantBuffer(5, m_uberConstantBuffer[4]); // LightBuffer / InstanceBuffer
 	setPsConstantBuffer(6, m_uberConstantBuffer[5]);
 
 	// setHsConstantBuffer(0, m_uberConstantBuffer[0]);
