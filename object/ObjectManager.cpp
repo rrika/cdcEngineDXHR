@@ -15,33 +15,9 @@ namespace cdc {
 
 ObjectTracker objects[604];
 
-struct ObjectList {
-	uint32_t count; // of entries[]
-	uint32_t byteSize; // of the whole ObjectList allocation
-	struct Entry {
-		char *name;
-		uint32_t slot;
-	} entries[];
-};
-
-struct ObjectManager {
-	// uint32_t dword00;
-	// uint32_t dword04;
-	// uint32_t dword08;
-	// uint32_t dword0C;
-	// uint32_t dword10;
-	// ObjectManagerSub14 *firstSub14;
-	ObjectList *objectList = nullptr;
-	// uint32_t numNames;
-	// ObjectManagerNamedEntry names[32];
-	// uint32_t fun4A0;
-	// void *fun4A4_createAppropriateDrawable;
-	// void (__cdecl *fun4A8)(GameObject *, GameControl *);
-
-	ObjectManager() {
-		memset(objects, 0, sizeof(objects));
-	}
-};
+ObjectManager::ObjectManager() {
+	memset(objects, 0, sizeof(objects));
+}
 
 static ObjectManager *g_objectManager = nullptr;
 
