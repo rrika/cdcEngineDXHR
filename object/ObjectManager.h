@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include "ObjectIncludes.h"
 
 namespace cdc {
 
@@ -44,12 +45,14 @@ struct ObjectManager {
 	ObjectList *objectList = nullptr;
 	// uint32_t numNames;
 	// ObjectManagerNamedEntry names[32];
-	// uint32_t fun4A0;
-	// void *fun4A4_createAppropriateDrawable;
-	// void (__cdecl *fun4A8)(GameObject *, GameControl *);
+	InitFunc *preInit; // 4A0
+	InitFunc *postInit; // 4A4, create drawable
+	InitFunc *uninit; // 4A8
 
 	ObjectManager();
 };
+
+extern ObjectManager *g_objectManager;
 
 ObjectTracker *getByObjectListIndex(uint32_t objectListIndex);
 ObjectTracker *allocObjectSlot(int32_t id, uint16_t state);

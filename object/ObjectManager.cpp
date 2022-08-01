@@ -19,7 +19,7 @@ ObjectManager::ObjectManager() {
 	memset(objects, 0, sizeof(objects));
 }
 
-static ObjectManager *g_objectManager = nullptr;
+ObjectManager *g_objectManager = nullptr;
 
 void ensureObjectManager() {
 	if (!g_objectManager)

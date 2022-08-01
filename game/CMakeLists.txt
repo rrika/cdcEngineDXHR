@@ -1,2 +1,3 @@
 target_sources(dxhr PRIVATE
-	Main.cpp)
+	Main.cpp
+	objects/objects.cpp)

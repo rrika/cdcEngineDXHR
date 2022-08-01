@@ -11,6 +11,7 @@
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileHelpers.h"
 #include "game/Main.h"
+#include "game/objects/objects.h"
 #include "object/ObjectManager.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "world/SceneLayer.h"
@@ -170,6 +171,8 @@ void mainloop() {
 
 	// TODO
 	setupResolveSections();
+	// TODO
+	RegisterGameObjects(); // TODO: call through other function
 	// TODO
 	setups();
 	// TODO
