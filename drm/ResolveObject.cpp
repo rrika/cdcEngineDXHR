@@ -1,3 +1,4 @@
+#include <cstring> // for strdup
 #include <unordered_map>
 #include "ResolveObject.h"
 #include "ResolveReceiver.h"

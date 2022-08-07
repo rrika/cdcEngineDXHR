@@ -1,3 +1,4 @@
+#include <cstdio> // for sprintf
 #include "drm/ResolveObject.h"
 #include "drm/ResolveSection.h"
 #include "drm/sections/DTPDataSection.h"

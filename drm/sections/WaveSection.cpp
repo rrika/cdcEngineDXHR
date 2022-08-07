@@ -17,7 +17,7 @@ uint32_t WaveSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t si
 	return sectionId;
 }
 
-void WaveSection::fill(uint32_t sectionId, void *src, size_t size, size_t offset) {
+void WaveSection::fill(uint32_t sectionId, void *src, uint32_t size, uint32_t offset) {
 	// TODO
 }
 

@@ -1,3 +1,4 @@
+#include <cstdlib> // for getenv
 #include "FileHelpers.h"
 #include "ArchiveFileSystem.h"
 #include "FileUserBufferReceiver.h"
