@@ -10,6 +10,7 @@
 #include "drm/sections/WaveSection.h"
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileHelpers.h"
+#include "game/Gameloop.h"
 #include "game/Main.h"
 #include "game/objects/objects.h"
 #include "object/ObjectManager.h"
@@ -176,6 +177,9 @@ void mainloop() {
 	// TODO
 	setups();
 	// TODO
+
+	Gameloop::InitiateLevelLoad("det_sarifhq_rail_tutorial", nullptr);
+	getDefaultFileSystem()->processAll();
 
 	// HACK
 	spinnyCube(

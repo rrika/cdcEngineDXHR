@@ -1,4 +1,5 @@
 target_sources(dxhr PRIVATE
+	Gameloop.cpp
 	Main.cpp
 	objects/objects.cpp)
 

@@ -34,6 +34,11 @@ static void applyRelocs(
 
 	char *data = (char*)resolveSection->getBlob(sectionDomainIds[sectionIndex]);
 
+	if (!data) { // HACK
+		printf("TODO: can't apply relocs to section that wasn't loaded\n");
+		return;
+	}
+
 	struct RelocHeader {
 		uint32_t count0;
 		uint32_t count1;
@@ -188,7 +193,7 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 		uint32_t missingDeps = 0;
 		for (; dep < end; dep += strlen(dep) + 1) {
 			char path[512];
-			sprintf(path, "%s%s", pathPrefix, dep); // HACK
+			ResolveReceiver::FormatDRMFileName(path, dep);
 
 			auto depResolveObject = ResolveObject::create(
 				path,
@@ -255,6 +260,7 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 				sectionHeader.unknown06,
 				sectionHeader.payloadSize,
 				alreadyLoaded);
+			sectionHeader.unknown05 = !alreadyLoaded; // HACK
 			printf("  section %3d %2d %04x (%04x)\n", i, sectionHeader.type, sectionHeader.id, id);
 			if (!alreadyLoaded) {
 				resolveSection->fill(id, payload, sectionHeader.payloadSize, 0);
@@ -269,14 +275,16 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 	for (uint32_t i = 0; i < header.sectionCount; i++) {
 		DRMSectionHeader& sectionHeader = sectionHeaders[i];
 		if (relocPtrs[i] && (sectionHeader.languageBits >> 30) != 1)
-			applyRelocs(resolveSections, sectionHeaders.data(), sectionDomainIds.data(), i, relocPtrs[i]);
+			if (sectionHeader.unknown05)
+				applyRelocs(resolveSections, sectionHeaders.data(), sectionDomainIds.data(), i, relocPtrs[i]);
 	}
 
 	for (uint32_t i = 0; i < header.sectionCount; i++) {
 		DRMSectionHeader& sectionHeader = sectionHeaders[i];
 		auto *resolveSection = sectionHeader.type < 16 ? resolveSections[sectionHeader.type] : nullptr;
 		if (resolveSection && (sectionHeader.languageBits >> 30) != 1)
-			resolveSection->construct(sectionDomainIds[i], nullptr);
+			if (sectionHeader.unknown05)
+				resolveSection->construct(sectionDomainIds[i], nullptr);
 	}
 
 	// what the hell is a "read det", what was I thinking?
@@ -378,6 +386,13 @@ void ResolveReceiver::requestComplete(FileRequest *req) {
 		index->sectionHeaders[std::string(resolveObject->path)] = std::move(sectionHeaders);
 
 	delete this;
+}
+
+void ResolveReceiver::FormatDRMFileName(char *buffer, const char *name) {
+	if (strchr(name, '.'))
+		sprintf(buffer, "%s%s", pathPrefix, name);
+	else
+		sprintf(buffer, "%s%s.drm", pathPrefix, name);
 }
 
 }

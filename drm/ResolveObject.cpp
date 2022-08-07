@@ -20,7 +20,7 @@ ResolveObject *ResolveObject::create(
 	void (*unloadCallback)(ObjectTracker*, ResolveObject*),
 	ObjectTracker *objectTracker,
 	uint8_t y,
-	uint32_t fsMethod18Arg
+	uint32_t fsMethod18Arg // priority
 ) {
 	// uint32_t pathCrc = crc32_lowercase(path);
 	uint32_t pathCrc = pathCrc32(path);

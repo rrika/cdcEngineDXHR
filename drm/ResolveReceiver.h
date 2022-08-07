@@ -47,6 +47,8 @@ public:
 	void process(FileRequest*, void *input, uint32_t size, uint32_t offset) override;
 	void requestFailed(FileRequest*) override;
 	void requestComplete(FileRequest*) override;
+
+	static void FormatDRMFileName(char *buffer, const char *name);
 };
 
 }

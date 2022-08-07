@@ -7,7 +7,7 @@ struct StreamUnitPortal {
 	const char name[128];
 	uint16_t word80;
 	uint16_t signal_index;
-	uint16_t word84;
+	uint16_t word84; // see STREAM_LoadLevel
 	uint16_t patchIntoSignalDwordC;
 	uint32_t dword88;
 	uint32_t dword8C;
@@ -25,3 +25,9 @@ struct StreamUnitPortal {
 	uint32_t dwordBC;
 	uint32_t paddingC0[16];
 };
+
+struct StreamUnit;
+extern StreamUnit StreamTracker[80];
+
+StreamUnit *STREAM_GetStreamUnitWithID(int32_t id);
+StreamUnit *STREAM_LevelLoadAndInit(const char *baseAreaName);

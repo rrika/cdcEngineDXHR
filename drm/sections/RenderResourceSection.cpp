@@ -31,7 +31,10 @@ void RenderResourceSection::fill(uint32_t sectionId, void* src, uint32_t size, u
 	if (sectionId == 0x1F6E)
 		return; // huh, interesting
 
-	res->resFill(src, size, offset);
+	if (res == nullptr) // HACK
+		printf("TODO: res is nullptr in RenderResourceSection::fill for sectionId %x\n", sectionId);
+	else
+		res->resFill(src, size, offset);
 }
 
 void RenderResourceSection::construct(uint32_t id, void *) {
@@ -41,7 +44,9 @@ void RenderResourceSection::construct(uint32_t id, void *) {
 		return;
 
 	// printf("  resConstruct %p\n", entry.resource);
-	entry.resource->resConstruct();
+
+	if (entry.resource) // HACK
+		entry.resource->resConstruct();
 	entry.todoLoading = false;
 }
 
@@ -54,6 +59,10 @@ void* RenderResourceSection::getWrapped(uint32_t sectionId) {
 
 void* RenderResourceSection::getBlob(uint32_t sectionId) {
 	RenderResource *res = resources[sectionId].resource;
+
+	if (!res) // HACK
+		return nullptr;
+
 	return (void*)res->resGetBuffer();
 }
 
