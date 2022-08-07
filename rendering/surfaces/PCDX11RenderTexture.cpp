@@ -115,7 +115,7 @@ void PCDX11RenderTexture::resFree() {
 		if (shaderResourceView)
 			shaderResourceView->Release();
 		resource->Release();
-}
+	}
 
 	if (borrowedResource) {
 		if (view) {

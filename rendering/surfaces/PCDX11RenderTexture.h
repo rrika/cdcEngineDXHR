@@ -24,7 +24,7 @@ public:
 	ID3D11UnorderedAccessView *unorderedAccessView = nullptr; // 48
 	bool registeredForDeletionAfterFrame = false; // 4C
 	bool borrowedResource = false; // 4D
-	uint8_t sampleCount = 0;
+	uint8_t sampleCount = 1;
 	uint8_t sampleQuality = 0;
 	uint16_t shortWidth;
 	uint16_t shortHeight;
