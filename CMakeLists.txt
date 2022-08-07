@@ -15,6 +15,7 @@ option(ENABLE_STEAM "Build with Steam integration" OFF)
 option(ENABLE_MCE "Build with Windows Media Center integration" OFF)
 option(ENABLE_GCS "Build with whatever GCS is" OFF)
 option(ENABLE_IMGUI "Build with ImGui" ON)
+option(ENABLE_D3DCOMPILER "Build with d3dcompiler dependency" ON)
 
 add_compile_options(-g -target ${triple}
 	-Wno-ignored-pragma-intrinsic
@@ -40,7 +41,11 @@ target_link_directories(dxhr PRIVATE
 	../winsdk/sdk/lib/um/x86
 	../winsdk/sdk/lib/ucrt/x86)
 target_link_libraries(dxhr PRIVATE
-	-luser32 -ld3d11 -ld3dcompiler)
+	-luser32 -ld3d11)
+if (ENABLE_D3DCOMPILER)
+	target_link_libraries(dxhr PRIVATE
+		-ld3dcompiler)
+endif()
 set_target_properties(dxhr PROPERTIES
 	OUTPUT_NAME dxhr.exe
 	CXX_STANDARD 17)

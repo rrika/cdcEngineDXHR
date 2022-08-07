@@ -2,3 +2,4 @@
 #cmakedefine01 ENABLE_MCE
 #cmakedefine01 ENABLE_GCS
 #cmakedefine01 ENABLE_IMGUI
+#cmakedefine01 ENABLE_D3DCOMPILER

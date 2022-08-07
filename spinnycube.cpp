@@ -3,12 +3,14 @@
 #include <functional>
 #include <iterator>
 #include <memory>
+#include "config.h" // for ENABLE_IMGUI and ENABLE_D3DCOMPILER
 
 #include <windows.h>
 #include <d3d11_1.h>
+#if ENABLE_D3DCOMPILER
 #include <d3dcompiler.h>
+#endif
 
-#include "config.h" // for ENABLE_IMGUI
 #include "spinnycube.h"
 #include "types.h"
 #include "mainloop.h" // for buildUnitsUI
@@ -380,6 +382,8 @@ int spinnyCube(HWND window,
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
+#if ENABLE_D3DCOMPILER
+
 	ID3DBlob* vsBlob;
 
 	D3DCompile(shaders, sizeof(shaders), "shaders.hlsl", nullptr, nullptr, "vs_main", "vs_5_0", 0, 0, &vsBlob, nullptr);
@@ -426,6 +430,8 @@ int spinnyCube(HWND window,
 		(char*)psBlob->GetBufferPointer(),
 		/*takeCopy=*/false,
 		/*isWrapped=*/false);
+
+#endif // ENABLE_D3DCOMPILER
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -606,6 +612,7 @@ int spinnyCube(HWND window,
 	cubePass.keepAlphaBlend = keepAlphaBlend;
 	renderDevice->setPassCallback(0, &cubePass);
 
+#if ENABLE_D3DCOMPILER
 	SpinnyCubeDrawable cubeDrawable;
 	cubeDrawable.renderDevice = renderDevice;
 	cubeDrawable.stateManager = &stateManager;
@@ -616,6 +623,7 @@ int spinnyCube(HWND window,
 	cubeDrawable.streamDecl = &streamDecl;
 	cubeDrawable.cdcVertexBuffer = &cdcVertexBuffer;
 	cubeDrawable.texture = bottleTexture;
+#endif
 
 	ImGuiDrawable imGuiDrawable;
 
@@ -720,7 +728,9 @@ int spinnyCube(HWND window,
 		float lightAccumulation[4] = {0.0f, 0.0f, 0.0f, 1.0f};
 
 		renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
+#if ENABLE_D3DCOMPILER
 		renderDevice->recordDrawable(&cubeDrawable, /*mask=*/ 1, /*addToParent=*/ 0);
+#endif
 
 		renderDevice->clearRenderTarget(2, /*mask=*/ 0x2000, 0.0f, lightAccumulation, 1.0f, 0); // deferred shading buffer
 		static_cast<cdc::PCDX11RenderModelInstance*>(lightRenderModelInstance)->baseMask = 0x2000; // deferred lighting
