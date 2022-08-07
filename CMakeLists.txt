@@ -126,6 +126,8 @@ endif()
 configure_file(config.h.in config/config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/config)
 
+include_directories(eventually_generated)
+
 add_subdirectory(allocator)
 add_subdirectory(camera)
 add_subdirectory(drm)
