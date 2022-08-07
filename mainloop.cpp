@@ -10,7 +10,7 @@
 #include "drm/sections/WaveSection.h"
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileHelpers.h"
-#include "gameshell/win32/MainVM.h"
+#include "game/Main.h"
 #include "object/ObjectManager.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "world/SceneLayer.h"
@@ -20,6 +20,8 @@
 #if ENABLE_IMGUI
 #include "imgui/imgui.h"
 #endif
+
+extern HWND hwnd1;
 
 void setupResolveSections() {
 	auto *renderResourceSection = new cdc::RenderResourceSection;
@@ -163,7 +165,7 @@ void mainloop() {
 		prefix = archiveFileSystem_default->getPrefix();
 	else
 		prefix = ""; // TODO
-	setupPrefixes(prefix); // WinMain2 already does this
+	SetupBuildDir(prefix); // WinMain2 already does this
 	ensureObjectManager();
 
 	// TODO

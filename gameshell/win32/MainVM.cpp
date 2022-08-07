@@ -3,6 +3,7 @@
 #include "config.h"
 #include "../../filesystem/ArchiveFileSystem.h"
 #include "../../filesystem/FileHelpers.h"
+#include "../../game/Main.h"
 #include "../../imgui/imgui.h"
 #include "../../mainloop.h"
 #include "../../rendering/BuiltinResources.h"
@@ -29,21 +30,6 @@ void initDisplayConfig() {
 
 void initDisplayConfigFromDisplay() {
 	// TODO
-}
-
-char buildType[16];
-char pathPrefix[36];
-const char *audioPrefix;
-const char *cinematicPrefix;
-
-void setupPrefixes(const char *prefix) {
-	strcpy(buildType, prefix);
-	sprintf(pathPrefix, "%s\\", prefix);
-	// TODO
-}
-
-void buildDRMPath(char *buffer, const char *name) {
-	sprintf(buffer, "%s%s.drm", pathPrefix, name);
 }
 
 bool hasSSE;
@@ -243,7 +229,7 @@ int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
 	// TODO
 	createHigherFileSystems();
 	if (archiveFileSystem_default) {
-		setupPrefixes(archiveFileSystem_default->getPrefix());
+		SetupBuildDir(archiveFileSystem_default->getPrefix());
 	}
 
 	// TODO
