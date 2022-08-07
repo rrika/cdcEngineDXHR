@@ -76,7 +76,13 @@ char *LinearAllocator::alloc(uint32_t size, uint32_t requester, bool reportFailu
 	uint32_t size16 = (size + 15) & ~15;
 
 	if (threadSafe) {
+		#ifdef _WIN32
 		uint32_t initialCursor = InterlockedExchangeAdd(&cursor, size16);
+		#else
+		// TODO
+		uint32_t initialCursor = cursor;
+		cursor += size16;
+		#endif
 		if (initialCursor + size16 > capacity)
 			return nullptr;
 

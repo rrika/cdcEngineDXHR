@@ -1,0 +1,14 @@
+[project options]
+dxvk_native_force = true
+
+[binaries]
+c = ['clang', '-target', 'i386-pc-linux-gnu']
+cpp = ['clang++', '-target', 'i386-pc-linux-gnu']
+c_ld = 'lld'
+cpp_ld = 'lld'
+
+[target_machine]
+system = 'linux'
+cpu_family = 'x86'
+cpu = 'i686'
+endian = 'little'

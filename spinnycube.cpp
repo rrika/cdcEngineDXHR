@@ -21,7 +21,9 @@
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileHelpers.h" // for archiveFileSystem_default
 #include "filesystem/FileUserBufferReceiver.h"
+#ifdef _WIN32
 #include "gameshell/win32/MainVM.h" // for yellowCursor
+#endif
 #include "input/PCMouseKeyboard.h"
 #include "math/Math.h" // for float4x4
 #include "object/Object.h"
@@ -56,6 +58,10 @@
 #include "imgui/backends/imgui_impl_win32.h"
 #include "imgui/backends/imgui_impl_dx11.h"
 #include "rendering/Inspector.h"
+#endif
+
+#ifdef __linux__
+#include <SDL2/SDL.h>
 #endif
 
 float VertexData[] = // float4 position, float3 normal, float2 texcoord, float3 color
@@ -446,7 +452,7 @@ int spinnyCube(HWND window,
 	ID3D11BlendState1* keepAlphaBlend = NULL;
 
 	D3D11_BLEND_DESC1 BlendState;
-	ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC1));
+	memset(&BlendState, 0, sizeof(D3D11_BLEND_DESC1));
 	BlendState.AlphaToCoverageEnable = false;
 	BlendState.IndependentBlendEnable = false;
 	BlendState.RenderTarget[0].BlendEnable = true;
@@ -641,6 +647,7 @@ int spinnyCube(HWND window,
 
 	while (true)
 	{
+#ifdef WIN32
 		MSG msg;
 
 		while (PeekMessageA(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -659,12 +666,25 @@ int spinnyCube(HWND window,
 			//if (msg.message == WM_KEYDOWN) return 0;
 			DispatchMessageA(&msg);
 		}
+#else
+		SDL_Event event;
+		while (SDL_PollEvent(&event)) {
+			switch (event.type) {
+				case SDL_QUIT:
+					goto end;
+				default:
+					break;
+			}
+		}
+#endif
 
 #if ENABLE_IMGUI
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame(); // this will reset our pretty cursor
 		ImGui::NewFrame();
+#ifdef _WIN32
 		SetCursor((HCURSOR)yellowCursor); // ahh, much better
+#endif
 #endif
 
 		// cubePass.viewport ->

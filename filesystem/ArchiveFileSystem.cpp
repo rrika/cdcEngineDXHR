@@ -5,6 +5,20 @@
 #include "FileUserBufferReceiver.h"
 #include "../sys/Assert.h" // for FatalError
 
+#ifndef _WIN32
+char *strlwr(char *s) {
+	if (s)
+		for (char *t = s; *t; t++)
+			if (*t >= 'A' && *t <= 'Z')
+				*t = *t + ('a' - 'A');
+
+	return s;
+}
+
+#define strnicmp strncasecmp
+
+#endif
+
 struct ArchiveHeader {
 	uint32_t chunkSize;
 	char prefix[64];

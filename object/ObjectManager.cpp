@@ -4,6 +4,10 @@
 #include "../drm/ResolveObject.h"
 #include "../../filesystem/FileHelpers.h"
 
+#ifndef _WIN32
+#define stricmp strcasecmp
+#endif
+
 void buildDRMPath(char *buffer, const char *name);
 extern char buildType[16];
 

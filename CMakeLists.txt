@@ -1,54 +1,101 @@
 cmake_minimum_required(VERSION 3.22)
+include(ExternalProject)
 
-set(triple i386-pc-windows-msvc)
+option(NATIVE_BUILD "Target linux using dxvk" OFF)
+
+if (NATIVE_BUILD)
+	set(triple i386-pc-linux-gnu)
+	set(NOT_NATIVE_BUILD OFF)
+else()
+	set(triple i386-pc-windows-msvc)
+	set(NOT_NATIVE_BUILD ON)
+
+	set(CMAKE_LINKER lld-link) # ignored for C / CXX
+	set(CMAKE_RC_COMPILER llvm-rc)
+	ENABLE_LANGUAGE(RC)
+endif()
+
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_C_COMPILER_TARGET ${triple})
 set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_COMPILER_TARGET ${triple})
-set(CMAKE_LINKER lld-link) # ignored for C / CXX
-set(CMAKE_RC_COMPILER llvm-rc)
-ENABLE_LANGUAGE(RC)
 
 project(dxhr)
 
 option(ENABLE_STEAM "Build with Steam integration" OFF)
 option(ENABLE_MCE "Build with Windows Media Center integration" OFF)
 option(ENABLE_GCS "Build with whatever GCS is" OFF)
-option(ENABLE_IMGUI "Build with ImGui" ON)
-option(ENABLE_D3DCOMPILER "Build with d3dcompiler dependency" ON)
+option(ENABLE_IMGUI "Build with ImGui" ${NOT_NATIVE_BUILD})
+option(ENABLE_D3DCOMPILER "Build with d3dcompiler dependency" ${NOT_NATIVE_BUILD})
 
-add_compile_options(-g -target ${triple}
-	-Wno-ignored-pragma-intrinsic
-	-Wno-nonportable-include-path
-	-Wno-ignored-attributes
-	-Wno-pragma-pack
-	-Wno-deprecated-declarations)
-add_link_options(-g -target ${triple} -fuse-ld=lld-link)
-add_executable(dxhr
-	mainloop.cpp
-	spinnycube.cpp)
+add_compile_options(-g)
+if (NATIVE_BUILD)
+	add_executable(dxhr
+		linux_main.cpp
+		mainloop.cpp
+		spinnycube.cpp)
+
+	ExternalProject_Add(dxvk-native
+		GIT_REPOSITORY https://github.com/Joshua-Ashton/dxvk-native.git
+		GIT_TAG native-1.9.2a
+		PATCH_COMMAND patch -f -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/dxvk-meson.patch || true
+		CONFIGURE_COMMAND meson setup <SOURCE_DIR> --cross-file ${CMAKE_CURRENT_SOURCE_DIR}/dxvk-build-linux32.txt
+		BUILD_COMMAND ninja src/d3d11/libdxvk_d3d11.so
+		INSTALL_COMMAND "")
+
+	ExternalProject_Get_property(dxvk-native SOURCE_DIR BINARY_DIR)
+	set(DXVK_SOURCE_DIR ${SOURCE_DIR}) # build/dxvk-native-prefix/src/dxvk-native/
+	set(DXVK_BINARY_DIR ${BINARY_DIR}) # build/dxvk-native-prefix/src/dxvk-native-build/
+	unset(SOURCE_DIR)
+	unset(BINARY_DIR)
+	add_dependencies(dxhr dxvk-native)
+
+	include_directories(SYSTEM
+		${DXVK_SOURCE_DIR}/include/native/directx
+		${DXVK_SOURCE_DIR}/include/native/windows)
+	target_link_directories(dxhr PRIVATE
+		${DXVK_BINARY_DIR}/src/d3d11)
+	target_link_libraries(dxhr PRIVATE
+		dxvk_d3d11 SDL2)
+	set_target_properties(dxhr PROPERTIES
+		CXX_STANDARD 17)
+else()
+	add_compile_options(-target ${triple}
+		-Wno-ignored-pragma-intrinsic
+		-Wno-nonportable-include-path
+		-Wno-ignored-attributes
+		-Wno-pragma-pack
+		-Wno-deprecated-declarations)
+	add_link_options(-g -target ${triple} -fuse-ld=lld-link)
+	add_executable(dxhr
+		mainloop.cpp
+		spinnycube.cpp)
+	include_directories(SYSTEM
+		../winsdk/crt/include
+		../winsdk/sdk/include/ucrt
+		../winsdk/sdk/include/um
+		../winsdk/sdk/include/shared)
+	# cmake will try pass -rpath to the linker, ignoring that it's in msvc link mode
+	set(CMAKE_SKIP_RPATH TRUE)
+	target_link_directories(dxhr PRIVATE
+		../winsdk/crt/lib/x86
+		../winsdk/sdk/lib/um/x86
+		../winsdk/sdk/lib/ucrt/x86)
+	target_link_libraries(dxhr PRIVATE
+		-luser32 -ld3d11)
+	if (ENABLE_D3DCOMPILER)
+		target_link_libraries(dxhr PRIVATE
+			-ld3dcompiler)
+	endif()
+	set_target_properties(dxhr PROPERTIES
+		OUTPUT_NAME dxhr.exe
+		CXX_STANDARD 17)
+	target_sources(dxhr PRIVATE
+		res/resources.rc)
+endif()
+
 configure_file(config.h.in config/config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/config)
-include_directories(SYSTEM
-	../winsdk/crt/include
-	../winsdk/sdk/include/ucrt
-	../winsdk/sdk/include/um
-	../winsdk/sdk/include/shared)
-# cmake will try pass -rpath to the linker, ignoring that it's in msvc link mode
-set(CMAKE_SKIP_RPATH TRUE)
-target_link_directories(dxhr PRIVATE
-	../winsdk/crt/lib/x86
-	../winsdk/sdk/lib/um/x86
-	../winsdk/sdk/lib/ucrt/x86)
-target_link_libraries(dxhr PRIVATE
-	-luser32 -ld3d11)
-if (ENABLE_D3DCOMPILER)
-	target_link_libraries(dxhr PRIVATE
-		-ld3dcompiler)
-endif()
-set_target_properties(dxhr PROPERTIES
-	OUTPUT_NAME dxhr.exe
-	CXX_STANDARD 17)
 
 add_subdirectory(allocator)
 add_subdirectory(camera)
@@ -65,9 +112,6 @@ add_subdirectory(scene)
 add_subdirectory(sound)
 add_subdirectory(sys)
 add_subdirectory(world)
-
-target_sources(dxhr PRIVATE
-	res/resources.rc)
 
 if (ENABLE_IMGUI)
 	include_directories(imgui)

@@ -11,7 +11,9 @@ struct Keybind {
 class PCMouseKeyboard : public InputProducer {
 public:
 	PCMouseKeyboard();
+#ifdef _WIN32
 	void processWndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
+#endif
 
 	static PCMouseKeyboard *create(HWND hwnd);
 	static void assignDefaultKeybinds(Keybind *keybinds);

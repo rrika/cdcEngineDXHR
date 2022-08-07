@@ -1,6 +1,9 @@
 #include "PCMouseKeyboard.h"
 #include <cstdio>
+
+#ifdef _WIN32
 #include <hidusage.h>
+#endif
 
 namespace cdc {
 
@@ -8,6 +11,7 @@ PCMouseKeyboard::PCMouseKeyboard() {
 	assignDefaultKeybinds(keybinds);
 }
 
+#ifdef _WIN32
 void PCMouseKeyboard::processWndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
 		case WM_SIZE: break; // TODO
@@ -29,9 +33,11 @@ void PCMouseKeyboard::processWndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 	// printf("WM_INPUT with type %lu\n", input.header.dwType);
 }
+#endif
 
 // signature is bool create() in original binary
 PCMouseKeyboard *PCMouseKeyboard::create(HWND hwnd) {
+#ifdef _WIN32
 	RAWINPUTDEVICE rawInputDevices[2];
 
 	rawInputDevices[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
@@ -45,11 +51,12 @@ PCMouseKeyboard *PCMouseKeyboard::create(HWND hwnd) {
 	rawInputDevices[1].hwndTarget = hwnd;
 
 	RegisterRawInputDevices(rawInputDevices, 2, sizeof(RAWINPUTDEVICE));
-
+#endif
 	return new PCMouseKeyboard();
 }
 
 void PCMouseKeyboard::assignDefaultKeybinds(Keybind *keybinds) {
+#ifdef _WIN32
 	// Q   W   E   R   T   Y   U   I   O   P
 	//  10  11  12  13  14  15  16  17  18  19
 	// A   S   D   F   G   H   J   K   L
@@ -90,6 +97,7 @@ void PCMouseKeyboard::assignDefaultKeybinds(Keybind *keybinds) {
 	keybinds[29] = { MapVirtualKeyW(0x0C, V), 0 };       // 
 	keybinds[30] = { MapVirtualKeyW(0x14, V), 0 };       // T
 	keybinds[31] = { MapVirtualKeyW(0x21, V), 0 };       // F
+#endif
 }
 
 void PCMouseKeyboard::method_4() { /*TODO*/ }

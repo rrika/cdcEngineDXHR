@@ -1,0 +1,11 @@
+--- a/meson.build
++++ b/meson.build
+@@ -179,7 +179,7 @@ else
+ endif
+ 
+ dxvk_version = vcs_tag(
+-  command: ['git', 'describe', '--dirty=+'],
++  command: ['git', 'describe', '--dirty=+', '--tags'],
+   input:  'version.h.in',
+   output: 'version.h')
+ 

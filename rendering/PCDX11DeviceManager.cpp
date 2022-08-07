@@ -23,8 +23,16 @@ PCDX11DeviceManager::PCDX11DeviceManager(
 	device(device),
 	deviceContext(deviceContext)
 {
+#if _WIN32
 	auto createDXGIFactory = (decltype(&CreateDXGIFactory))(GetProcAddress(d3d11, "CreateDXGIFactory"));
 	createDXGIFactory(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
+#else
+	IDXGIDevice *dxgiDevice;
+	IDXGIAdapter *adapter;
+	device->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice);
+	dxgiDevice->GetAdapter(&adapter);
+	adapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
+#endif
 }
 
 void PCDX11DeviceManager::method_00() {
@@ -71,6 +79,7 @@ void PCDX11DeviceManager::method_24() {
 PCDX11DeviceManager *deviceManager = nullptr;
 
 PCDX11DeviceManager *createPCDX11DeviceManager() {
+	#if _WIN32
 	HMODULE d3d11 = LoadLibraryA("d3d11.dll");
 	if (!d3d11)
 		return 0;
@@ -82,6 +91,10 @@ PCDX11DeviceManager *createPCDX11DeviceManager() {
 	}
 
 	auto createDevice = (decltype(&D3D11CreateDevice))(GetProcAddress(d3d11, "D3D11CreateDevice"));
+	#else
+	void *d3d11 = nullptr;
+	void *dxgi = nullptr;
+	#endif
 
 	D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
 	D3D_FEATURE_LEVEL chosenFeatureLevel;
@@ -102,8 +115,10 @@ PCDX11DeviceManager *createPCDX11DeviceManager() {
 		&baseDeviceContext);
 
 	if (r < 0) {
+		#if _WIN32
 		FreeLibrary(dxgi);
 		FreeLibrary(d3d11);
+		#endif
 	}
 
 	// ID3D11Device_Release(baseDevice);
