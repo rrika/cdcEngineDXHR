@@ -27,4 +27,6 @@ class Vector2 : public Vector {};
 class Vector3 : public Vector {};
 class Vector4 : public Vector {};
 
+using Matrix = float4x4;
+
 }

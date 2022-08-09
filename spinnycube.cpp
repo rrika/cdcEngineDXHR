@@ -52,6 +52,7 @@
 #include "rendering/surfaces/PCDX11DepthBuffer.h"
 #include "rendering/surfaces/PCDX11Texture.h"
 #include "rendering/VertexAttribute.h"
+#include "world/RMIDrawableBase.h"
 
 #if ENABLE_IMGUI
 #include "imgui/imgui.h"
@@ -546,8 +547,10 @@ int spinnyCube(HWND window,
 	for (uint32_t i = 0; i < bottleRenderModel->numPrimGroups; i++)
 		printf("  bottle->tab0Ext128Byte[i].material = %p\n", bottleRenderModel->tab0Ext128Byte[i].material);
 
-	cdc::RenderModelInstance *bottleRenderModelInstance =
-		renderDevice->createRenderModelInstance(bottleRenderModel);
+	RMIDrawableBase rmiDrawable(bottleRenderModel);
+
+	// cdc::RenderModelInstance *bottleRenderModelInstance =
+	// 	renderDevice->createRenderModelInstance(bottleRenderModel);
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -572,7 +575,7 @@ int spinnyCube(HWND window,
 	printf("have light material (from scenario drm): %p\n", lightMaterial);
 
 	// patch light material
-	for (uint32_t i = 0; i < bottleRenderModel->numPrimGroups; i++)
+	for (uint32_t i = 0; i < lightRenderModel->numPrimGroups; i++)
 		lightRenderModel->tab0Ext128Byte[i].material = lightMaterial;
 
 	cdc::RenderModelInstance *lightRenderModelInstance =
@@ -732,10 +735,11 @@ int spinnyCube(HWND window,
 		scene->viewMatrix = cameraTranslate;
 		scene->projectMatrix = project;
 
-		PCDX11MatrixState bottleMatrixState(renderDevice);
-		bottleMatrixState.resize(1);
-		auto *bottleWorldMatrix = reinterpret_cast<float4x4*>(bottleMatrixState.poseData->getMatrix(0));
-		*bottleWorldMatrix = world * bottleScale;
+		Matrix bottleWorldMatrix = world * bottleScale;
+		// PCDX11MatrixState bottleMatrixState(renderDevice);
+		// bottleMatrixState.resize(0);
+		// auto *pBottleWorldMatrix = reinterpret_cast<float4x4*>(bottleMatrixState.poseData->getMatrix(0));
+		// *pBottleWorldMatrix = bottleWorldMatrix;
 
 		PCDX11MatrixState lightMatrixState(renderDevice);
 		lightMatrixState.resize(1);
@@ -755,8 +759,10 @@ int spinnyCube(HWND window,
 		renderDevice->clearRenderTarget(2, /*mask=*/ 0x2000, 0.0f, lightAccumulation, 1.0f, 0); // deferred shading buffer
 		static_cast<cdc::PCDX11RenderModelInstance*>(lightRenderModelInstance)->baseMask = 0x2000; // deferred lighting
 		lightRenderModelInstance->recordDrawables(&lightMatrixState);
-		static_cast<cdc::PCDX11RenderModelInstance*>(bottleRenderModelInstance)->baseMask = 0x1002; // normals & composite
-		bottleRenderModelInstance->recordDrawables(&bottleMatrixState);
+		// static_cast<cdc::PCDX11RenderModelInstance*>(bottleRenderModelInstance)->baseMask = 0x1002; // normals & composite
+		// bottleRenderModelInstance->recordDrawables(&bottleMatrixState);
+		static_cast<cdc::PCDX11RenderModelInstance*>(rmiDrawable.rmi)->baseMask = 0x1002; // normals & composite
+		rmiDrawable.draw(&bottleWorldMatrix, 0.0f);
 		renderDevice->recordDrawable(&imGuiDrawable, /*mask=*/ 0x100, /*addToParent=*/ 0);
 
 		renderDevice->finishScene();
