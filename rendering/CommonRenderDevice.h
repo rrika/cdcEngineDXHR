@@ -10,6 +10,7 @@ namespace cdc {
 class CommonLightManager;
 class CommonScene;
 class IMaterial;
+class IMatrixState;
 class IRenderPassCallback;
 class IShaderLib;
 class RenderMesh;
@@ -143,7 +144,7 @@ public:
 	virtual void createWaterSurface() = 0;
 	virtual void createLightResource() = 0;
 	virtual void createRenderLight() = 0;
-	virtual void createMatrixState() = 0;
+	virtual IMatrixState *createMatrixState() = 0;
 	virtual void createVertexBuffer() = 0;
 	virtual void createIndexBuffer() = 0;
 	virtual IRenderTarget *createRenderTarget(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t) = 0;

@@ -143,7 +143,7 @@ public:
 	void createWaterSurface() override;
 	void createLightResource() override;
 	void createRenderLight() override;
-	void createMatrixState() override;
+	IMatrixState *createMatrixState() override;
 	void createVertexBuffer() override;
 	void createIndexBuffer() override;
 	IRenderTarget *createRenderTarget(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t) override;

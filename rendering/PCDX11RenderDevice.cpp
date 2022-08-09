@@ -4,6 +4,7 @@
 #include "PCDX11DeviceManager.h"
 #include "PCDX11LightManager.h"
 #include "PCDX11Material.h"
+#include "PCDX11MatrixState.h"
 #include "PCDX11ModelDrawable.h"
 #include "PCDX11RenderContext.h"
 #include "PCDX11RenderDevice.h"
@@ -486,8 +487,8 @@ void PCDX11RenderDevice::createRenderLight() {
 	// TODO
 }
 
-void PCDX11RenderDevice::createMatrixState() {
-	// TODO
+IMatrixState *PCDX11RenderDevice::createMatrixState() {
+	return new PCDX11MatrixState(this);
 }
 
 void PCDX11RenderDevice::createVertexBuffer() {
