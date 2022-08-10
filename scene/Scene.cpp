@@ -11,6 +11,10 @@ Scene::Scene(CommonRenderDevice *renderDevice) :
 	renderDevice(renderDevice), sceneCell(nullptr)
 {
 	// TODO
+	sceneCellGroups.push_back(new SceneCellGroup(this, SceneCellGroup::kGlobal));
+	sceneCellGroups.back()->allocateCells();
+	sceneCellGroups.push_back(new SceneCellGroup(this, SceneCellGroup::kExterior));
+	sceneCellGroups.back()->allocateCells();
 }
 
 SceneEntity *Scene::CreateEntity() {

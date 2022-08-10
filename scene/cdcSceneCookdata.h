@@ -10,21 +10,26 @@ class ResolveObject;
 struct CellBlobPortals;
 struct CellData;
 struct CellStreamData;
+struct CellStreamGroupData;
 struct SceneCellBSPNode;
 
 struct CellGroupDataHeader { // 50
 	uint32_t numTotalCells; // 0
 	uint32_t numToplevelCells; // 4
-	// TODO
+	uint32_t numBSPNodes; // 8
+	uint32_t numStreamGroups; // C
+	uint32_t numSymbols; // 10
+	uint32_t numPortalSymbols; // 14
+	uint32_t symbolTableSize; // 18
 };
 
 struct CellGroupData { // 61
 	CellGroupDataHeader *header; // 0
 	uint32_t admd_maybe; // 4
 	SceneCellBSPNode *bspNodes; // 8
-	uint32_t streamgroups_maybe; // C
-	uint32_t symbols_maybe; // 10
-	CellData **cells;
+	CellStreamGroupData *streamgroups; // C
+	const char **symbols; // 10
+	CellData **cells; // 14
 	CellStreamData *void_terrain_maybe; // 18
 	CellStreamData *exterior_terrain_maybe; // 1C
 };

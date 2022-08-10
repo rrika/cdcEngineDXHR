@@ -12,6 +12,7 @@ class SceneEntity;
 
 class Scene : public IScene {
 	CommonRenderDevice *renderDevice; // 4
+	std::vector<SceneCellGroup*> sceneCellGroups; // 98
 	SceneCell *sceneCell; // B8
 	std::vector<SceneEntity*> activeEntities; // 2F0
 public:
