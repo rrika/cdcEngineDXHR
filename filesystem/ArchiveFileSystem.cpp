@@ -116,13 +116,16 @@ bool ArchiveFileSystem::readIndex(const char *basePath, int i) {
 BigfileEntry *ArchiveFileSystem::lookupEntry(const char *path) {
 	uint32_t hash = pathCrc32(path);
 	uint32_t *c = std::lower_bound(hashes, hashes + fileCount, hash);
-	if (c == hashes + fileCount)
+	uint32_t *e = hashes + fileCount;
+	if (c == e)
 		return nullptr; // beyond end
+
+	for (;*c == hash && c < e; c++)
+		if ((entries[c-hashes].language & languageMask) == languageMask)
+			break;
+
 	if (*c != hash)
 		return nullptr; // no matching entry
-
-
-	// TODO: scan until fit with language mask
 
 	auto *entry = &entries[c-hashes];
 	// printf("found entry: offset=%08x size=%x\n", entry->offset, entry->uncompressedSize);

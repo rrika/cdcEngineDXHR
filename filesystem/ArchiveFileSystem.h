@@ -28,6 +28,8 @@ public:
 
 class ArchiveFileSystem : public cdc::FileSystemLayer {
 protected:
+	uint32_t languageMask = 0xBFFF0001; // DX11 English
+
 	File **bigfiles = nullptr;
 	uint32_t bigfileCount;
 	uint32_t chunkSize;

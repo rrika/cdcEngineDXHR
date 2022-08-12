@@ -25,6 +25,7 @@
 #include "gameshell/win32/MainVM.h" // for yellowCursor
 #endif
 #include "input/PCMouseKeyboard.h"
+#include "locale/localstr.h"
 #include "math/Math.h" // for float4x4
 #include "object/Object.h"
 #include "object/ObjectManager.h" // for buildObjectsUI
@@ -644,6 +645,7 @@ int spinnyCube(HWND window,
 	bool showObjectsWindow = false;
 	bool showDRMWindow = false;
 	bool showUnitsWindow = false;
+	bool showStringsWindow = false;
 	std::vector<std::pair<void*, CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
 #endif
@@ -782,6 +784,7 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Show objects")) { showObjectsWindow = true; }
 				if (ImGui::MenuItem("Show DRMs")) { showDRMWindow = true; }
 				if (ImGui::MenuItem("Show units")) { showUnitsWindow = true; }
+				if (ImGui::MenuItem("Show strings")) { showStringsWindow = true; }
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
@@ -870,6 +873,13 @@ int spinnyCube(HWND window,
 		if (showUnitsWindow) {
 			ImGui::Begin("Units", &showUnitsWindow);
 			buildUnitsUI();
+			ImGui::End();
+		}
+		if (showStringsWindow) {
+			if (ImGui::Begin("Strings", &showUnitsWindow)) {			
+				for (uint32_t i = 0; i < 1000; i++)
+					ImGui::Text("%5d %s", i, localstr_get(i));
+			}
 			ImGui::End();
 		}
 #endif
