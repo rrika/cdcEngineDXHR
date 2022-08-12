@@ -5,6 +5,7 @@
 #include "../../filesystem/FileHelpers.h"
 #include "../../game/Main.h"
 #include "../../imgui/imgui.h"
+#include "../../locale/localstr.h"
 #include "../../mainloop.h"
 #include "../../rendering/BuiltinResources.h"
 #include "../../rendering/IPCDeviceManager.h"
@@ -231,6 +232,8 @@ int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
 	if (archiveFileSystem_default) {
 		SetupBuildDir(archiveFileSystem_default->getPrefix());
 	}
+
+	localstr_reload(); // HACK
 
 	// TODO
 	if (!createDeviceManager()) {
