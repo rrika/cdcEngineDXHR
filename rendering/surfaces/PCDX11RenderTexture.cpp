@@ -48,6 +48,24 @@ void PCDX11RenderTexture::ensureResource() {
 	}
 }
 
+static DXGI_FORMAT getDepthViewFormat(DXGI_FORMAT fmt) {
+	switch (fmt) {
+		case DXGI_FORMAT_R24G8_TYPELESS: return DXGI_FORMAT_D24_UNORM_S8_UINT;
+		case DXGI_FORMAT_R16_TYPELESS: return DXGI_FORMAT_D16_UNORM;
+		default: return DXGI_FORMAT_UNKNOWN;
+	}
+}
+
+static DXGI_FORMAT getDepthShaderViewFormat(DXGI_FORMAT fmt) {
+	// TODO: investigate why on wine d3d11 the depth buffer can't be used as texture in imgui
+	// unless this function is made to behave like the one above.
+	switch (fmt) {
+		case DXGI_FORMAT_R24G8_TYPELESS: return DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+		case DXGI_FORMAT_R16_TYPELESS: return DXGI_FORMAT_R16_UNORM;
+		default: return DXGI_FORMAT_UNKNOWN;
+	}
+}
+
 void PCDX11RenderTexture::ensureRenderTargetView() {
 	// TODO
 	auto *device = deviceManager->getD3DDevice();
@@ -57,10 +75,15 @@ void PCDX11RenderTexture::ensureRenderTargetView() {
 			device->CreateRenderTargetView(resource, /*TODO*/ nullptr, &frameBufferView);
 			view = frameBufferView;
 		} else {
-			ID3D11DepthStencilView* depthStencilView;
-			device->CreateDepthStencilView(resource, /*TODO*/ nullptr, &depthStencilView);
-			this->view = depthStencilView;
-			this->depthStencilView = depthStencilView;
+			D3D11_DEPTH_STENCIL_VIEW_DESC desc = {};
+			desc.Format = getDepthViewFormat((DXGI_FORMAT)textureFormat);
+			desc.ViewDimension = sampleCount > 1
+				? D3D11_DSV_DIMENSION_TEXTURE2DMS
+				: D3D11_DSV_DIMENSION_TEXTURE2D;
+			desc.Flags = 0; // read-write
+			device->CreateDepthStencilView(resource, &desc, (ID3D11DepthStencilView**)&this->view);
+			desc.Flags = D3D11_DSV_READ_ONLY_DEPTH;
+			device->CreateDepthStencilView(resource, &desc, &this->depthStencilView);
 		}
 	}
 
@@ -202,7 +225,9 @@ void PCDX11RenderTexture::createShaderResourceView_internal(
 	desc.ViewDimension = sampleCount > 1
 		? D3D11_SRV_DIMENSION_TEXTURE2DMS
 		: D3D11_SRV_DIMENSION_TEXTURE2D;
-	desc.Format = (DXGI_FORMAT)PCDX11BaseTexture::textureFormat; // TODO
+	desc.Format = (DXGI_FORMAT)PCDX11BaseTexture::textureFormat;
+	if (isDepthBuffer)
+		desc.Format = getDepthShaderViewFormat(desc.Format);
 	desc.Texture2D.MipLevels = -1;
 
 	device->CreateShaderResourceView(resource, &desc, pShaderResourceView);

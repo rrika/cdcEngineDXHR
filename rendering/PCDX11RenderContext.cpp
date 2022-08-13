@@ -39,7 +39,7 @@ bool PCDX11RenderContext::createRenderTargets() {
 	renderTarget2C = new PCDX11DefaultRenderTarget(
 		width, height, /*flags=*/ 4 /*HACK*/ | 1, format, renderDevice, frameBuffer, 0);
 	// TODO
-	uint32_t depthFormat = DXGI_FORMAT_D24_UNORM_S8_UINT; // HACK
+	uint32_t depthFormat = DXGI_FORMAT_R24G8_TYPELESS; // as initialized in PCDX11DeviceManager::EnumAdapters
 	depthBuffer = new PCDX11DepthBuffer(
 		width, height, /*flags=*/ 4 /*HACK*/ |1, depthFormat, renderDevice);
 	return true;

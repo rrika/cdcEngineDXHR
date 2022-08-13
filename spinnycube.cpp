@@ -876,7 +876,7 @@ int spinnyCube(HWND window,
 			ImGui::End();
 		}
 		if (showStringsWindow) {
-			if (ImGui::Begin("Strings", &showUnitsWindow)) {			
+			if (ImGui::Begin("Strings", &showStringsWindow)) {
 				for (uint32_t i = 0; i < 1000; i++)
 					ImGui::Text("%5d %s", i, localstr_get(i));
 			}
