@@ -71,7 +71,7 @@ public:
 		memset(pixelShaders, 0, sizeof(PCDX11VertexShader*[numShaders]));
 		for (uint32_t i = 0; i < numShaders; i++)
 			if (offsets[i] != ~0u)
-				offsets[i] ^= (i&1); // what??
+				*(uint32_t*)(blob + offsets[i]) ^= (i&1); // what??
 
 		for (uint32_t i = 0; i < numShaders; i++)
 			if (offsets[i] != ~0u)
