@@ -51,7 +51,11 @@ public:
 		} else {
 			dxbcWrapper = nullptr; // TODO
 			shaderBinary = blob;
-			shaderBinarySize = *(uint32_t*)(blob + 4);
+			// shaderBinarySize = *(uint32_t*)(blob + 4);
+
+			// HACK: game says to do this above but I don't understand why
+			//       and offset 24 is conveniently where DXBC puts the size
+			shaderBinarySize = *(uint32_t*)(blob + 24);
 		}
 	}
 };
