@@ -1,3 +1,5 @@
+#include "../math/Math.h"
+#include "buffers/PCDX11SimpleStaticVertexBuffer.h"
 #include "buffers/PCDX11UberConstantBuffer.h"
 #include "PCDX11DeviceManager.h"
 #include "PCDX11StreamDecl.h"
@@ -44,6 +46,7 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 	PCDX11ShaderSub *shaderSub)
 {
 	// a4 = include normal, binormal, tangent, etc.
+	Vector4 secondaryData[512 / 16];
 
 	if (!layoutB)
 		return buildStreamDecl(layoutA, shaderSub); // HACK
@@ -61,7 +64,8 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 		uint32_t forbiddenBit = a4 ? 2 : 4;
 		uint32_t indexB;
 		uint32_t numElements = 0;
-		// uint32_t secondaryBufferByteOffset = 0;
+		uint32_t secondaryBufferByteOffset = 0;
+		uint32_t secondaryBufferCount = 0;
 		VertexAttributeB *attribB = &layoutB->attr[0];
 		for (uint32_t i=0; i<layoutB->numAttribs; i++) {
 			indexB = i;
@@ -91,21 +95,30 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 					inputElementDesc[numElements].AlignedByteOffset = layoutA->attrib[indexA].offset;
 					inputElementDesc[numElements].Format = decodeFormat(layoutA->attrib[indexA].format);
 
-					semanticFromEnum(inputElementDesc+numElements, attribB->attribKindB);
-					// printf("    %s %d offset=%d\n",
-					//	inputElementDesc[numElements].SemanticName,
-					//	inputElementDesc[numElements].SemanticIndex);
-					numElements++;
 				} else {
 					// input from secondary buffer
 
-					// TODO
-					// inputElementDesc[numElements].AlignedByteOffset = secondaryBufferByteOffset;
-					// secondaryBufferByteOffset += 16;
-					// elem++;
-					// numElements++;
-					// semanticFromEnum(elem, attribB->attribKindB);
+					inputElementDesc[numElements].AlignedByteOffset = secondaryBufferByteOffset;
+					inputElementDesc[numElements].InputSlot = 1;
+					inputElementDesc[numElements].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+					inputElementDesc[numElements].InstanceDataStepRate = 1;
+					inputElementDesc[numElements].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+					secondaryData[secondaryBufferCount] = Vector4{
+						attribB->vx,
+						attribB->vy,
+						attribB->vz,
+						attribB->vw,
+					};
+					secondaryBufferCount++;
+					secondaryBufferByteOffset += 16;
 				}
+
+				semanticFromEnum(inputElementDesc+numElements, attribB->attribKindB);
+				// printf("    %s %d offset=%d\n",
+				//	inputElementDesc[numElements].SemanticName,
+				//	inputElementDesc[numElements].SemanticIndex);
+				numElements++;
+
 			} else {
 				// printf("skipping layoutB[%d] (next=%d)\n", i, attribB->nextAttribIndex);
 			}
@@ -129,6 +142,14 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 		buffer->assignRow(0, rows, 2);
 		buffer->syncBuffer(deviceManager->getD3DDeviceContext());
 		streamDecl->streamDeclBuffer = buffer;
+
+		if (secondaryBufferCount) {
+			auto newData = new Vector4[secondaryBufferCount];
+			streamDecl->secondaryData = newData;
+			memcpy(newData, secondaryData, secondaryBufferCount * 4);
+			streamDecl->vertexBuffer = new PCDX11SimpleStaticVertexBuffer(
+				16 * secondaryBufferCount, 1, newData);
+		}
 	}
 
 	return streamDecl;
