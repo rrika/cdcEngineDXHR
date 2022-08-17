@@ -2,7 +2,7 @@
 #include <cstring>
 #include "ObjectManager.h"
 #include "../drm/ResolveObject.h"
-#include "../../filesystem/FileHelpers.h"
+#include "../filesystem/FileHelpers.h"
 
 #ifndef _WIN32
 #define stricmp strcasecmp

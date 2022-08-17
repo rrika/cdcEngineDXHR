@@ -195,6 +195,12 @@ uint32_t g_width = 640;
 uint32_t g_height = 480;
 
 void createRenderDevice2(HWND hwnd) {
+	// HACK
+	RECT rect;
+	GetClientRect(hwnd, &rect);
+	g_width = rect.right;
+	g_height = rect.bottom;
+
 	if (useDX11 == 0)
 		; // createPCRenderDevice(hwnd, g_width, g_height, 0);
 	if (useDX11 == 1)
