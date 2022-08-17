@@ -7,7 +7,7 @@ struct StreamDeclCacheKey {
 	uint32_t hashB;
 	uint32_t hashA;
 	bool operator==(StreamDeclCacheKey const& other) const {
-		return hashB == other.hashB && hashA == other.hashB;
+		return hashB == other.hashB && hashA == other.hashA;
 	}
 };
 
