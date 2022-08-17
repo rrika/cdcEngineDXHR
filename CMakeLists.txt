@@ -1,11 +1,12 @@
-cmake_minimum_required(VERSION 3.22)
-include(ExternalProject)
+cmake_minimum_required(VERSION 3.20)
 
 option(NATIVE_BUILD "Target linux using dxvk" OFF)
 
 if (NATIVE_BUILD)
 	set(triple i386-pc-linux-gnu)
 	set(NOT_NATIVE_BUILD OFF)
+elseif(MSVC)
+	set(NOT_NATIVE_BUILD ON)
 else()
 	set(triple i386-pc-windows-msvc)
 	set(NOT_NATIVE_BUILD ON)
@@ -15,12 +16,17 @@ else()
 	ENABLE_LANGUAGE(RC)
 endif()
 
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_C_COMPILER_TARGET ${triple})
-set(CMAKE_CXX_COMPILER clang++)
-set(CMAKE_CXX_COMPILER_TARGET ${triple})
+if (MSVC)
+else()
+	set(CMAKE_C_COMPILER clang)
+	set(CMAKE_C_COMPILER_TARGET ${triple})
+	set(CMAKE_CXX_COMPILER clang++)
+	set(CMAKE_CXX_COMPILER_TARGET ${triple})
+endif()
 
 project(dxhr)
+
+include(ExternalProject)
 
 option(ENABLE_STEAM "Build with Steam integration" OFF)
 option(ENABLE_MCE "Build with Windows Media Center integration" OFF)
@@ -28,8 +34,9 @@ option(ENABLE_GCS "Build with whatever GCS is" OFF)
 option(ENABLE_IMGUI "Build with ImGui" ${NOT_NATIVE_BUILD})
 option(ENABLE_D3DCOMPILER "Build with d3dcompiler dependency" ${NOT_NATIVE_BUILD})
 
-add_compile_options(-g)
 if (NATIVE_BUILD)
+	add_compile_options(-g)
+
 	add_executable(dxhr
 		linux_main.cpp
 		mainloop.cpp
@@ -59,7 +66,29 @@ if (NATIVE_BUILD)
 		dxvk_d3d11 SDL2)
 	set_target_properties(dxhr PROPERTIES
 		CXX_STANDARD 17)
+elseif(MSVC)
+	configure_file(DXHRDC.shad DXHRDC.shad COPYONLY)
+
+	add_executable(dxhr WIN32
+		mainloop.cpp
+		spinnycube.cpp)
+	target_link_libraries(dxhr PRIVATE
+		user32 d3d11)
+
+	if (ENABLE_D3DCOMPILER)
+		target_link_libraries(dxhr PRIVATE
+			d3dcompiler)
+	endif()
+
+	set_target_properties(dxhr PROPERTIES
+		OUTPUT_NAME dxhr
+		CXX_STANDARD 17)
+
+	target_sources(dxhr PRIVATE
+		res/resources.rc)
 else()
+	add_compile_options(-g)
+
 	add_compile_options(-target ${triple}
 		-Wno-ignored-pragma-intrinsic
 		-Wno-nonportable-include-path

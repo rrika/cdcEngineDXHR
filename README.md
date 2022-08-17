@@ -25,6 +25,9 @@ The CMake build of this project expects to be in a directory adjacent to `winsdk
     cmake ..
     make
 
+# How to build (Windows 32-bit binary on Windows)
+In Visual Studio 2019 choose "Open a local folder" on start-up. VS should detect the CMakeLists.txt file and set up the build for you. Be sure to select x86, not x64.
+
 # How to run
 This project requires a copy of Deus Ex: Human Revolution Director's Cut to run. In the installation location you will find a number of files:
 
@@ -40,3 +43,4 @@ Run the binary as follows:
     ./dxhr     # for linux build
     ./dxhr.exe # for windows build
 
+In Visual Studio you can [set the environment](https://stackoverflow.com/questions/100543/) to `BIGFILE=C:/path/to/game/BIGFILE.000` in the project properties.
