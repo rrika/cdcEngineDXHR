@@ -386,7 +386,7 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
 
 		auto *streamDecl = static_cast<PCDX11StreamDecl*>(matInstance->streamDecls24[subMaterialIndex]);
 		if (!streamDecl) {
-			VertexAttributeLayoutB *layoutB = nullptr; // TODO
+			VertexAttributeLayoutB *layoutB = subMaterial->vsLayout[vsSelect];
 
 			streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
 				layoutA,
@@ -464,7 +464,7 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl4(
 
 	auto *streamDecl = static_cast<PCDX11StreamDecl*>(matInstance->streamDecls24[subMaterialIndex]);
 	if (!streamDecl) {
-		VertexAttributeLayoutB *layoutB = nullptr; // TODO
+		VertexAttributeLayoutB *layoutB = subMaterial->vsLayout[vsSelect];
 
 		streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
 			layoutA,
