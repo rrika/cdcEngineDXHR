@@ -37,7 +37,7 @@ public:
 		numShaders = blobWords[0] >> 2;
 		vertexShaders = new PCDX11VertexShader*[numShaders];
 		hasOwnership = takeCopy;
-		memset(vertexShaders, 0, sizeof(PCDX11VertexShader*[numShaders]));
+		memset(vertexShaders, 0, sizeof(PCDX11VertexShader*) * numShaders);
 		for (uint32_t i = 0; i < numShaders; i++)
 			if (offsets[i] != ~0u) {
 				vertexShaders[i] = deviceManager->getShaderManager()->createVertexShader(
@@ -68,7 +68,7 @@ public:
 		numShaders = blobWords[0] >> 2;
 		pixelShaders = new PCDX11PixelShader*[numShaders];
 		hasOwnership = takeCopy;
-		memset(pixelShaders, 0, sizeof(PCDX11VertexShader*[numShaders]));
+		memset(pixelShaders, 0, sizeof(PCDX11VertexShader*) * numShaders);
 		for (uint32_t i = 0; i < numShaders; i++)
 			if (offsets[i] != ~0u)
 				*(uint32_t*)(blob + offsets[i]) ^= (i&1); // what??

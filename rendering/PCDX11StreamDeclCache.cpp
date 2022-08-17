@@ -21,7 +21,7 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 
 	if (it.second) {
 		D3D11_INPUT_ELEMENT_DESC *inputElementDesc = new D3D11_INPUT_ELEMENT_DESC[layout->numAttr];
-		memset(inputElementDesc, 0, sizeof(D3D11_INPUT_ELEMENT_DESC[layout->numAttr]));
+		memset(inputElementDesc, 0, sizeof(D3D11_INPUT_ELEMENT_DESC) * layout->numAttr);
 		decodeVertexAttribA(inputElementDesc, layout->attrib, layout->numAttr, shaderSub->wineWorkaround);
 		streamDecl = new PCDX11StreamDecl(renderDevice, inputElementDesc, layout->numAttr, shaderSub);
 
@@ -61,7 +61,7 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 	if (it.second) {
 		// allocate more than necessary, not all slots will be used
 		D3D11_INPUT_ELEMENT_DESC *inputElementDesc = new D3D11_INPUT_ELEMENT_DESC[layoutB->numAttribs];
-		memset(inputElementDesc, 0, sizeof(D3D11_INPUT_ELEMENT_DESC[layoutB->numAttribs]));
+		memset(inputElementDesc, 0, sizeof(D3D11_INPUT_ELEMENT_DESC) * layoutB->numAttribs);
 
 		uint32_t forbiddenBit = a4 ? 2 : 4;
 		uint32_t indexB;
