@@ -105,7 +105,7 @@ void PCDX11Texture::resFree() {
 	// TODO
 }
 
-void PCDX11Texture::resFill(void* src, size_t size, size_t offset) {
+void PCDX11Texture::resFill(void* src, uint32_t size, uint32_t offset) {
 	if (PCDX11AsyncCreateResource::m_requested)
 		return;
 

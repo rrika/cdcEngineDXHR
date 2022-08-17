@@ -1,5 +1,6 @@
 #pragma once
 #include "PCDX11RenderTarget.h"
+#include "PCDX11RenderTexture.h"
 #include "PCDX11TextureUpdateCallback.h"
 
 namespace cdc {

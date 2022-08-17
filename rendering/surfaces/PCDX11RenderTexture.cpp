@@ -166,7 +166,7 @@ void PCDX11RenderTexture::resFree() {
 	registeredForDeletionAfterFrame = false;
 }
 
-void PCDX11RenderTexture::resFill(void* src, size_t size, size_t offset) {
+void PCDX11RenderTexture::resFill(void* src, uint32_t size, uint32_t offset) {
 	// TODO
 }
 
