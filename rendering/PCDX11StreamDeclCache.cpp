@@ -58,7 +58,7 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 		D3D11_INPUT_ELEMENT_DESC *inputElementDesc = new D3D11_INPUT_ELEMENT_DESC[layoutB->numAttribs];
 		memset(inputElementDesc, 0, sizeof(D3D11_INPUT_ELEMENT_DESC[layoutB->numAttribs]));
 
-		uint32_t forbiddenBit = a4 ? 4 : 2;
+		uint32_t forbiddenBit = a4 ? 2 : 4;
 		uint32_t indexB;
 		uint32_t numElements = 0;
 		// uint32_t secondaryBufferByteOffset = 0;
