@@ -46,6 +46,8 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 	PCDX11ShaderSub *shaderSub)
 {
 	// a4 = include normal, binormal, tangent, etc.
+	Vector4 normalScaleOffset{2.0f, -1.0f, 0.0f, 0.0f};
+	Vector4 texcoordScales{0.0f, 0.0f, 0.0f, 0.0f};
 	Vector4 secondaryData[512 / 16];
 
 	if (!layoutB)
@@ -95,6 +97,15 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 					inputElementDesc[numElements].AlignedByteOffset = layoutA->attrib[indexA].offset;
 					inputElementDesc[numElements].Format = decodeFormat(layoutA->attrib[indexA].format);
 
+					if (attribB->attribKindB >= 10 && attribB->attribKindB < 14) {
+						if (layoutA->attrib[indexA].format < 19 ||
+							layoutA->attrib[indexA].format > 20
+						)
+							texcoordScales.vec128[attribB->attribKindB-10] = 1.0f;
+						else
+							texcoordScales.vec128[attribB->attribKindB-10] = 15.999512f;
+
+					}
 				} else {
 					// input from secondary buffer
 
@@ -111,6 +122,10 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 					};
 					secondaryBufferCount++;
 					secondaryBufferByteOffset += 16;
+
+					if (attribB->attribKindB >= 10 && attribB->attribKindB < 14)
+						texcoordScales.vec128[attribB->attribKindB-10] = 1.0f;
+
 				}
 
 				semanticFromEnum(inputElementDesc+numElements, attribB->attribKindB);
@@ -133,11 +148,31 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 
 		streamDecl = new PCDX11StreamDecl(renderDevice, inputElementDesc, numElements, shaderSub);
 
+		/*
+		printf("NormalScaleOffset %f %f %f %f\n",
+			normalScaleOffset.x,
+			normalScaleOffset.y,
+			normalScaleOffset.z,
+			normalScaleOffset.w);
+
+		printf("TexcoordScales %f %f %f %f\n",
+			texcoordScales.x,
+			texcoordScales.y,
+			texcoordScales.z,
+			texcoordScales.w);
+		*/
+
 		// HACK
 		auto buffer = new PCDX11UberConstantBuffer(2);
 		float rows[] = {
-			2.0f, -1.0f, 0.0f, 0.0f, // NormalScaleOffset
-			16.0f, 16.0f, 0.0f, 0.0f  // TexcoordScales
+			normalScaleOffset.x,
+			normalScaleOffset.y,
+			normalScaleOffset.z,
+			normalScaleOffset.w,
+			texcoordScales.x,
+			texcoordScales.y,
+			texcoordScales.z,
+			texcoordScales.w
 		};
 		buffer->assignRow(0, rows, 2);
 		buffer->syncBuffer(deviceManager->getD3DDeviceContext());
