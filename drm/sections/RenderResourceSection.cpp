@@ -1,3 +1,4 @@
+#include <cstdio>
 #include "RenderResourceSection.h"
 #include "../../rendering/CommonRenderDevice.h"
 #include "../../rendering/RenderResource.h"

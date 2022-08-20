@@ -38,7 +38,6 @@ if (NATIVE_BUILD)
 	add_compile_options(-g)
 
 	add_executable(dxhr
-		linux_main.cpp
 		mainloop.cpp
 		spinnycube.cpp)
 

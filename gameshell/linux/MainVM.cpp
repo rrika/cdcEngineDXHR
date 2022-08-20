@@ -1,12 +1,12 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
-#include "mainloop.h"
-#include "rendering/BuiltinResources.h"
-#include "rendering/IPCDeviceManager.h"
-#include "rendering/PCDX11DeviceManager.h"
-#include "rendering/PCDX11RenderDevice.h"
-#include "filesystem/FileHelpers.h"
+#include "../../mainloop.h"
+#include "../../rendering/BuiltinResources.h"
+#include "../../rendering/IPCDeviceManager.h"
+#include "../../rendering/PCDX11DeviceManager.h"
+#include "../../rendering/PCDX11RenderDevice.h"
+#include "../../filesystem/FileHelpers.h"
 
 using namespace cdc;
 
