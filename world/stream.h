@@ -29,5 +29,7 @@ struct StreamUnitPortal {
 struct StreamUnit;
 extern StreamUnit StreamTracker[80];
 
+void buildUnitsUI();
+void STREAM_Init();
 StreamUnit *STREAM_GetStreamUnitWithID(int32_t id);
 StreamUnit *STREAM_LevelLoadAndInit(const char *baseAreaName);

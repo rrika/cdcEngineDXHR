@@ -13,7 +13,6 @@
 
 #include "spinnycube.h"
 #include "types.h"
-#include "mainloop.h" // for buildUnitsUI
 #include "drm/DRMIndex.h"
 #include "drm/ResolveObject.h"
 #include "drm/ResolveReceiver.h"
@@ -55,6 +54,7 @@
 #include "rendering/surfaces/PCDX11Texture.h"
 #include "rendering/VertexAttribute.h"
 #include "world/RMIDrawableBase.h"
+#include "world/stream.h" // for buildUnitsUI
 
 #if ENABLE_IMGUI
 #include "imgui/imgui.h"
