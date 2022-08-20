@@ -1,13 +1,7 @@
 #include <cstdio> // for sprintf
+#include "drm/Resolve.h"
 #include "drm/ResolveObject.h"
 #include "drm/ResolveSection.h"
-#include "drm/sections/DTPDataSection.h"
-#include "drm/sections/GenericSection.h"
-#include "drm/sections/MaterialSection.h"
-#include "drm/sections/ObjectSection.h"
-#include "drm/sections/RenderResourceSection.h"
-#include "drm/sections/ShaderLibSection.h"
-#include "drm/sections/WaveSection.h"
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileHelpers.h"
 #include "game/Gameloop.h"
@@ -24,19 +18,6 @@
 #endif
 
 extern HWND hwnd1;
-
-void setupResolveSections() {
-	auto *renderResourceSection = new cdc::RenderResourceSection;
-
-	g_resolveSections[0] = new cdc::GenericSection();
-	g_resolveSections[5] = renderResourceSection; // textures
-	g_resolveSections[6] = new cdc::WaveSection();
-	g_resolveSections[7] = new cdc::DTPDataSection();
-	g_resolveSections[9] = new cdc::ShaderLibSection();
-	g_resolveSections[10] = new cdc::MaterialSection();
-	g_resolveSections[11] = new cdc::ObjectSection();
-	g_resolveSections[12] = renderResourceSection; // meshes
-}
 
 void *objectiveDatabase;
 void *logicActionResourceDatabase;
@@ -171,7 +152,7 @@ void mainloop() {
 	ensureObjectManager();
 
 	// TODO
-	setupResolveSections();
+	Resolve::Create();
 	// TODO
 	RegisterGameObjects(); // TODO: call through other function
 	// TODO

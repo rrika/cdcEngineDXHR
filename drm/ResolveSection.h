@@ -7,6 +7,8 @@ class ResolveObject;
 
 class ResolveSection {
 public:
+	static void Create();
+
 	virtual ~ResolveSection() = 0;
 	virtual uint32_t realize(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded); // 0x04
 	virtual uint32_t allocate(uint32_t sectionId, uint32_t sectionSubType, uint32_t unknown6, uint32_t size, bool& alreadyLoaded); // 0x08
