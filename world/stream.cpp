@@ -1,5 +1,6 @@
 #include <cstdio>
 #include "config.h"
+#include "SceneLayer.h" // for StreamingCallback
 #include "stream.h"
 #include "StreamUnit.h"
 #include "../drm/ResolveObject.h"
@@ -145,3 +146,11 @@ StreamUnit *STREAM_LevelLoadAndInit(const char *baseAreaName) { // 2855
 	// TODO
 	return nullptr;
 }
+
+class ObjectStreamingCallback : public StreamingCallback { // 4088
+public:
+	// void UnitLoaded(StreamUnit*) override;
+	// void UnitDumped(StreamUnit*) override;
+	// void StreamGroupLoaded(cdc::CellStreamGroupData*) override;
+	// void StreamGroupDumped(cdc::CellStreamGroupData*) override;
+};

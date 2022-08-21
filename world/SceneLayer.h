@@ -24,10 +24,21 @@
 // 	float dword34;
 // };
 
-namespace cdc { class Scene; }
+namespace cdc { class CellStreamGroupData; class Scene; }
+class StreamUnit;
 
 extern cdc::Scene *g_scene;
 
-struct SceneLayer {
+class StreamingCallback { // 57
+public:
+	virtual void UnitLoaded(StreamUnit*) = 0;
+	virtual void UnitDumped(StreamUnit*) = 0;
+	// virtual void method8();
+	virtual void StreamGroupLoaded(cdc::CellStreamGroupData*) = 0;
+	virtual void StreamGroupDumped(cdc::CellStreamGroupData*) = 0;
+	// virtual void method14();
+};
+
+struct SceneLayer { // 192
 	static void init();
 };
