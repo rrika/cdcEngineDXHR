@@ -38,7 +38,6 @@ if (NATIVE_BUILD)
 	add_compile_options(-g)
 
 	add_executable(dxhr
-		mainloop.cpp
 		spinnycube.cpp)
 
 	ExternalProject_Add(dxvk-native
@@ -69,7 +68,6 @@ elseif(MSVC)
 	configure_file(DXHRDC.shad DXHRDC.shad COPYONLY)
 
 	add_executable(dxhr WIN32
-		mainloop.cpp
 		spinnycube.cpp)
 	target_link_libraries(dxhr PRIVATE
 		user32 d3d11)
@@ -96,7 +94,6 @@ else()
 		-Wno-deprecated-declarations)
 	add_link_options(-g -target ${triple} -fuse-ld=lld-link)
 	add_executable(dxhr
-		mainloop.cpp
 		spinnycube.cpp)
 	include_directories(SYSTEM
 		../winsdk/crt/include

@@ -6,7 +6,6 @@
 #include "../../game/Main.h"
 #include "../../imgui/imgui.h"
 #include "../../locale/localstr.h"
-#include "../../mainloop.h"
 #include "../../rendering/BuiltinResources.h"
 #include "../../rendering/IPCDeviceManager.h"
 #include "../../rendering/PCDX11DeviceManager.h"
@@ -262,7 +261,7 @@ int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
 	*deviceManager->getDisplayConfig() = g_displayConfig; // HACK
 
 	// TODO
-	mainloop();
+	MAIN_Init();
 
 	// TODO
 	return 0;

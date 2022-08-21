@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
-#include "../../mainloop.h"
+#include "../../game/Main.h"
 #include "../../rendering/BuiltinResources.h"
 #include "../../rendering/IPCDeviceManager.h"
 #include "../../rendering/PCDX11DeviceManager.h"
@@ -52,6 +52,6 @@ int main(int argc, char** argv) {
 	displayConfig->lockWindowResolution = false;
 	g_renderDevice = createPCDX11RenderDevice(hwnd1, 640, 480, 0);
 
-	mainloop();
+	MAIN_Init();
 	return 0;
 }
