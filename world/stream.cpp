@@ -39,6 +39,8 @@ void buildUnitsUI() {
 #endif
 }
 
+static StreamingCallback *createObjectStreamingCallback();
+
 void STREAM_Init() { // 582
 	// TODO
 
@@ -63,6 +65,8 @@ void STREAM_Init() { // 582
 	}
 
 	// TODO
+	static StreamingCallback *cb = createObjectStreamingCallback();
+	SceneLayer::AddStreamingCallback(cb);
 }
 
 StreamUnit *STREAM_GetStreamUnitWithID(int32_t id) { // 1170
@@ -78,6 +82,11 @@ StreamUnit *STREAM_GetAndInitStreamUnitWithID(int32_t id) { // couldn't confirm 
 
 void STREAM_FinishLoad(StreamUnit *unit) { // 1658
 	printf("unit->level=%p\n", unit->level);
+	// TODO
+	SceneLayer::PreStreamIn(unit);
+	// TODO
+	SceneLayer::PostStreamIn(unit);
+	// TODO
 }
 
 void STREAM_LoadLevelReturn(void *loadData, void *data, void *data2, ResolveObject *resolveObj) { // 1922
@@ -149,8 +158,29 @@ StreamUnit *STREAM_LevelLoadAndInit(const char *baseAreaName) { // 2855
 
 class ObjectStreamingCallback : public StreamingCallback { // 4088
 public:
-	// void UnitLoaded(StreamUnit*) override;
-	// void UnitDumped(StreamUnit*) override;
-	// void StreamGroupLoaded(cdc::CellStreamGroupData*) override;
-	// void StreamGroupDumped(cdc::CellStreamGroupData*) override;
+	void UnitLoaded(StreamUnit *unit) override {
+		// TODO
+		printf("ObjectStreamingCallback::UnitLoaded(%p)\n", unit);
+		// TODO
+		dtp::ADMD *admd = unit->level->admdData;
+		for (uint32_t i = 0; i < admd->numObjects; i++) {
+			dtp::Intro *intro = &admd->objects[i];
+			printf("  %02x\n", intro->objectListIndex);
+			requestObject3(intro->objectListIndex);
+		}
+	}
+	void UnitDumped(StreamUnit*) override {
+		// TODO
+	}
+	void StreamGroupLoaded(cdc::CellStreamGroupData*) override {
+		// TODO
+	}
+	void StreamGroupDumped(cdc::CellStreamGroupData*) override {
+		// TODO
+	}
 };
+
+// workaround for weird declaration order
+static StreamingCallback *createObjectStreamingCallback() {
+	return new ObjectStreamingCallback();
+}
