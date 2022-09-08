@@ -15,6 +15,8 @@
 #include "../world/stream.h"
 #include "Main.h"
 
+using namespace cdc;
+
 extern HWND hwnd1;
 
 char buildType[16];
@@ -38,17 +40,17 @@ void loadDatabases() {
 	char tutorialPath[256];
 	
 	GameShell::LOAD_ObjectFileName(objectivePath, "objective_database");
-	cdc::ResolveObject::create(
+	ResolveObject::create(
 		objectivePath, nullptr, nullptr, nullptr,
 		&objectiveDatabase, nullptr, nullptr, 0, 3);
 
 	GameShell::LOAD_ObjectFileName(logicActionResourcePath, "logicactionresource_database");
-	cdc::ResolveObject::create(
+	ResolveObject::create(
 		logicActionResourcePath, nullptr, nullptr, nullptr,
 		&logicActionResourceDatabase, nullptr, nullptr, 0, 3);
 
 	GameShell::LOAD_ObjectFileName(tutorialPath, "tutorial_database");
-	cdc::ResolveObject::create(
+	ResolveObject::create(
 		tutorialPath, nullptr, nullptr, nullptr,
 		&tutorialDatabase, nullptr, nullptr, 0, 3);
 

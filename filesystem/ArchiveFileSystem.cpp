@@ -5,6 +5,8 @@
 #include "FileUserBufferReceiver.h"
 #include "../sys/Assert.h" // for FatalError
 
+using namespace cdc;
+
 #ifndef _WIN32
 char *strlwr(char *s) {
 	if (s)

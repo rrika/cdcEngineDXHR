@@ -5,6 +5,8 @@
 #include "PCDX11Scene.h"
 #include "RenderPasses.h"
 
+using namespace cdc;
+
 void buildUI(IRenderDrawable *drawable) {
 	if (auto scene = dynamic_cast<PCDX11Scene*>(drawable)) {
 		if (ImGui::TreeNode("scene", "scene %p", scene)) {

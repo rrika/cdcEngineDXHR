@@ -317,21 +317,21 @@ public:
 
 DRMIndex drmIndex;
 
-ResolveObject *requestDRM(
+cdc::ResolveObject *requestDRM(
 	const char *path,
 	void **rootPtr = nullptr,
-	void (*callback)(void*, void*, void*, ResolveObject*) = nullptr,
+	void (*callback)(void*, void*, void*, cdc::ResolveObject*) = nullptr,
 	void *callbackArg1 = nullptr,
 	void *callbackArg2 = nullptr
 ) {
 	printf("loading %s\n", path);
 
-	ResolveObject *ro = new ResolveObject(path);
-	auto *rr = new ResolveReceiver(callback, callbackArg1, callbackArg2, rootPtr, nullptr, nullptr, ro, 0, &drmIndex);
-	FileRequest *req = archiveFileSystem_default->createRequest(rr, path, 0);
+	cdc::ResolveObject *ro = new cdc::ResolveObject(path);
+	auto *rr = new cdc::ResolveReceiver(callback, callbackArg1, callbackArg2, rootPtr, nullptr, nullptr, ro, 0, &drmIndex);
+	cdc::FileRequest *req = cdc::archiveFileSystem_default->createRequest(rr, path, 0);
 	req->submit(3);
 	req->decrRefCount();
-	archiveFileSystem_default->processAll();
+	cdc::archiveFileSystem_default->processAll();
 	// req is owned by fs which takes care of it in processAll()
 	// rr self-deletes
 
@@ -480,14 +480,14 @@ int spinnyCube(HWND window,
 	cdc::PCDX11SimpleStaticIndexBuffer cdcIndexBuffer(sizeof(IndexData)/2, IndexData);
 	cdc::deviceManager->stateManager = &stateManager; // hack
 
-	auto bottleIndex = objectIdByName("alc_beer_bottle_a");
-	requestObject3(bottleIndex);
+	auto bottleIndex = cdc::objectIdByName("alc_beer_bottle_a");
+	cdc::requestObject3(bottleIndex);
 
-	auto lightIndex = objectIdByName("deferred_fast_omni_diffuse");
-	requestObject3(lightIndex);
+	auto lightIndex = cdc::objectIdByName("deferred_fast_omni_diffuse");
+	cdc::requestObject3(lightIndex);
 
 	// see below for why
-	auto obj3 = ResolveObject::create(
+	auto obj3 = cdc::ResolveObject::create(
 		"pc-w\\shaderlibs\\deferred_fast_omni_diffusemt_79464a5e59514c7f_dx11.drm",
 		nullptr,
 		nullptr,
@@ -498,7 +498,7 @@ int spinnyCube(HWND window,
 		0,
 		3
 	);
-	auto obj4 = ResolveObject::create(
+	auto obj4 = cdc::ResolveObject::create(
 		"pc-w\\s_scn_det_sarifhq_rail_tutorial_barrettintro_det_sarifhq_rail_tutorial.drm",
 		nullptr,
 		nullptr,
@@ -510,7 +510,7 @@ int spinnyCube(HWND window,
 		3
 	);
 /*
-	auto obj5 = ResolveObject::create(
+	auto obj5 = cdc::ResolveObject::create(
 		"pc-w\\scenario_database.drm",
 		nullptr,
 		nullptr,
@@ -522,30 +522,30 @@ int spinnyCube(HWND window,
 		3
 	);
 */
-	archiveFileSystem_default->processAll();
+	cdc::archiveFileSystem_default->processAll();
 
-	ResolveSection *objectSection = g_resolveSections[11];
-	ObjectBlob *bottleObject = (ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(0x04a8));
+	cdc::ResolveSection *objectSection = cdc::g_resolveSections[11];
+	cdc::ObjectBlob *bottleObject = (cdc::ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(0x04a8));
 	printf("have bottle object: %p\n", bottleObject);
 
 	// unrelated: get the name of the first map in the game
-	uint32_t globalDatabaseId = objectIdByName("GlobalDatabase");
-	ObjectBlob *globalDatabaseObject = (ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(globalDatabaseId));
+	uint32_t globalDatabaseId = cdc::objectIdByName("GlobalDatabase");
+	cdc::ObjectBlob *globalDatabaseObject = (cdc::ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(globalDatabaseId));
 	auto *globalDatabase = (GlobalDatabase*)globalDatabaseObject->dword58;
 
 	printf("first map is: %s\n", globalDatabase->newGameMap);
 
-	auto bottleTexture = (cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x0396);
+	auto bottleTexture = (cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);
 	bottleTexture->asyncCreate();
 	printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
 
 	// create the other four textures
-	((cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x0395))->asyncCreate();
-	((cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x005b))->asyncCreate();
-	((cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x0061))->asyncCreate();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x0395))->asyncCreate();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x005b))->asyncCreate();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x0061))->asyncCreate();
 
-	auto bottleRenderModel_direct = (cdc::PCDX11RenderModel*)g_resolveSections[12]->getWrapped(0xA301);
+	auto bottleRenderModel_direct = (cdc::PCDX11RenderModel*)cdc::g_resolveSections[12]->getWrapped(0xA301);
 	auto bottleRenderModel = (cdc::PCDX11RenderModel*)bottleObject->models[0]->renderMesh;
 
 
@@ -571,16 +571,16 @@ int spinnyCube(HWND window,
 	// s_scn_det_sarifhq_rail_tutorial_barrettintro_det_sarifhq_rail_tutorial.drm/7: Material 12 a4 unk6:7a84 DX11 (7e0 bytes)
 
 
-	ObjectBlob *lightObject = (ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(lightIndex));
+	cdc::ObjectBlob *lightObject = (cdc::ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(lightIndex));
 	printf("have light object: %p\n", lightObject);
 
 	auto lightRenderModel = (cdc::PCDX11RenderModel*)lightObject->models[0]->renderMesh;
 	printf("have light cdc render model: %p (via object)\n", lightRenderModel);
 
-	((cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x0061))->asyncCreate();
-	((cdc::PCDX11Texture*)g_resolveSections[5]->getWrapped(0x014c))->asyncCreate();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x0061))->asyncCreate();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x014c))->asyncCreate();
 
-	auto lightMaterial = (cdc::PCDX11Material*)g_resolveSections[10]->getWrapped(0x00a4);
+	auto lightMaterial = (cdc::PCDX11Material*)cdc::g_resolveSections[10]->getWrapped(0x00a4);
 	printf("have light material (from scenario drm): %p\n", lightMaterial);
 
 	// patch light material
@@ -590,14 +590,14 @@ int spinnyCube(HWND window,
 	cdc::RenderModelInstance *lightRenderModelInstance =
 		renderDevice->createRenderModelInstance(lightRenderModel);
 
-	Vector4 *lightInstanceParams = static_cast<CommonRenderModelInstance*>(lightRenderModelInstance)->ext->instanceParams;
+	cdc::Vector4 *lightInstanceParams = static_cast<cdc::CommonRenderModelInstance*>(lightRenderModelInstance)->ext->instanceParams;
 	// taken from a random light draw in renderdoc
 	float lightRadius = 2.0f;
 	float invLightRadius = 1.0f / lightRadius;
-	lightInstanceParams[0] = Vector4{1.0, 1.0, 2.0, 1.0}; // .xyz = viewspace light position perhaps
-	lightInstanceParams[1] = Vector4{0.88235, 0.7098, 0.3451, 0.00}; // .xyz = light color
-	lightInstanceParams[2] = Vector4{invLightRadius, invLightRadius, invLightRadius, 1.00}; // .x = 1/radius
-	lightInstanceParams[3] = Vector4{0.80, 0.00, 0.00, 0.00}; // .x= light scale
+	lightInstanceParams[0] = cdc::Vector4{1.0, 1.0, 2.0, 1.0}; // .xyz = viewspace light position perhaps
+	lightInstanceParams[1] = cdc::Vector4{0.88235, 0.7098, 0.3451, 0.00}; // .xyz = light color
+	lightInstanceParams[2] = cdc::Vector4{invLightRadius, invLightRadius, invLightRadius, 1.00}; // .x = 1/radius
+	lightInstanceParams[3] = cdc::Vector4{0.80, 0.00, 0.00, 0.00}; // .x= light scale
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -654,7 +654,7 @@ int spinnyCube(HWND window,
 	bool showDRMWindow = false;
 	bool showUnitsWindow = false;
 	bool showStringsWindow = false;
-	std::vector<std::pair<void*, CommonScene*>> captures { { nullptr, nullptr } };
+	std::vector<std::pair<void*, cdc::CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
 #endif
 
@@ -745,13 +745,13 @@ int spinnyCube(HWND window,
 		scene->viewMatrix = cameraTranslate;
 		scene->projectMatrix = project;
 
-		Matrix bottleWorldMatrix = world * bottleScale;
-		// PCDX11MatrixState bottleMatrixState(renderDevice);
+		cdc::Matrix bottleWorldMatrix = world * bottleScale;
+		// cdc::PCDX11MatrixState bottleMatrixState(renderDevice);
 		// bottleMatrixState.resize(0);
 		// auto *pBottleWorldMatrix = reinterpret_cast<float4x4*>(bottleMatrixState.poseData->getMatrix(0));
 		// *pBottleWorldMatrix = bottleWorldMatrix;
 
-		PCDX11MatrixState lightMatrixState(renderDevice);
+		cdc::PCDX11MatrixState lightMatrixState(renderDevice);
 		lightMatrixState.resize(1);
 		auto *lightWorldMatrix = reinterpret_cast<float4x4*>(lightMatrixState.poseData->getMatrix(0));
 		*lightWorldMatrix = /*world * */ lightScaleTranslate;
@@ -800,7 +800,7 @@ int spinnyCube(HWND window,
 
 		imGuiDrawable.lastMinuteAdditions = [&]() {
 			if (showDrawablesWindow) {
-				CommonScene *xscene = captures[selectedCapture].second;
+				cdc::CommonScene *xscene = captures[selectedCapture].second;
 				if (!xscene)
 					xscene = scene;
 				ImGui::Begin("Scene drawables", &showDrawablesWindow);
@@ -834,7 +834,7 @@ int spinnyCube(HWND window,
 		}
 		if (showObjectsWindow) {
 			ImGui::Begin("Objects", &showObjectsWindow);
-			buildObjectsUI();
+			cdc::buildObjectsUI();
 			ImGui::End();
 		}
 		if (showDRMWindow) {
@@ -866,7 +866,7 @@ int spinnyCube(HWND window,
 						if (section.type == 5) {
 							ImGui::Text("    ");
 							ImGui::SameLine();
-							auto *resource = (cdc::RenderResource*)g_resolveSections[5]->getWrapped(section.id);
+							auto *resource = (cdc::RenderResource*)cdc::g_resolveSections[5]->getWrapped(section.id);
 							if (auto tex = dynamic_cast<cdc::PCDX11Texture*>(resource)) {
 								ImGui::Image(
 									tex->createShaderResourceView(), ImVec2(256, 256));
