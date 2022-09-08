@@ -6,7 +6,7 @@
 #include "../drm/ResolveObject.h"
 #include "../filesystem/FileHelpers.h"
 #include "../filesystem/FileSystem.h"
-#include "../game/Main.h" // for buildDRMPath
+#include "../gameshell/cdcGameShell.h" // for LOAD_UnitFileName
 #include "../object/ObjectManager.h" // for readAndParseObjectList
 
 #if ENABLE_IMGUI
@@ -85,7 +85,7 @@ void STREAM_FinishLoad(StreamUnit *unit) { // 1658
 	// TODO
 	SceneLayer::PreStreamIn(unit);
 	// TODO
-	SceneLayer::PostStreamIn(unit);
+	SceneLayer::PostStreamIn(unit); // this calls UnitLoaded()
 	// TODO
 }
 
@@ -113,7 +113,7 @@ void STREAM_LoadLevel(const char *baseAreaName, StreamUnitPortal *streamPortal, 
 		StreamUnit *unit = STREAM_GetAndInitStreamUnitWithID(i);
 		if (unit) {
 			char filename[256];
-			buildDRMPath(filename, baseAreaName);
+			GameShell::LOAD_UnitFileName(filename, baseAreaName);
 			ResolveObject *resolveObject;
 			if (streamPortal) {
 				resolveObject = ResolveObject::create(

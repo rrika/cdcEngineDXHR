@@ -7,6 +7,7 @@
 #include "../filesystem/FileHelpers.h"
 #include "../game/Gameloop.h"
 #include "../game/objects/objects.h"
+#include "../gameshell/cdcGameShell.h"
 #include "../object/ObjectManager.h"
 #include "../rendering/PCDX11DeviceManager.h"
 #include "../spinnycube.h"
@@ -31,27 +32,22 @@ void SetupBuildDir(const char *prefix) {
 	// TODO
 }
 
-void buildDRMPath(char *buffer, const char *name) {
-	sprintf(buffer, "%s%s.drm", pathPrefix, name);
-}
-
-
 void loadDatabases() {
 	char objectivePath[256];
 	char logicActionResourcePath[256];
 	char tutorialPath[256];
 	
-	buildDRMPath(objectivePath, "objective_database");
+	GameShell::LOAD_ObjectFileName(objectivePath, "objective_database");
 	cdc::ResolveObject::create(
 		objectivePath, nullptr, nullptr, nullptr,
 		&objectiveDatabase, nullptr, nullptr, 0, 3);
 
-	buildDRMPath(logicActionResourcePath, "logicactionresource_database");
+	GameShell::LOAD_ObjectFileName(logicActionResourcePath, "logicactionresource_database");
 	cdc::ResolveObject::create(
 		logicActionResourcePath, nullptr, nullptr, nullptr,
 		&logicActionResourceDatabase, nullptr, nullptr, 0, 3);
 
-	buildDRMPath(tutorialPath, "tutorial_database");
+	GameShell::LOAD_ObjectFileName(tutorialPath, "tutorial_database");
 	cdc::ResolveObject::create(
 		tutorialPath, nullptr, nullptr, nullptr,
 		&tutorialDatabase, nullptr, nullptr, 0, 3);

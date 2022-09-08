@@ -3,12 +3,12 @@
 #include "ObjectManager.h"
 #include "../drm/ResolveObject.h"
 #include "../filesystem/FileHelpers.h"
+#include "../gameshell/cdcGameShell.h"
 
 #ifndef _WIN32
 #define stricmp strcasecmp
 #endif
 
-void buildDRMPath(char *buffer, const char *name);
 extern char buildType[16];
 
 namespace cdc {
@@ -182,7 +182,7 @@ static void requestObject(uint32_t id, uint8_t fsMethod18Arg) {
 
 	char path[256];
 	char *objname = g_objectManager->objectList->entries[id-1].name;
-	buildDRMPath(path, objname);
+	GameShell::LOAD_ObjectFileName(path, objname);
 	printf("requesting object %s pobj=%p ", objname, objectTracker);
 	objectTracker->resolveObject = ResolveObject::create(
 		path,
