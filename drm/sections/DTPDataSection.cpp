@@ -3,6 +3,8 @@
 
 namespace cdc {
 
+DTPDataSection::DTPData *DTPDataSection::dtpData[0x18000];
+
 uint32_t DTPDataSection::allocate(uint32_t sectionId, uint32_t sectionSubType, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
 	if (sectionId >= 0x18000) {
 		// FatalError("Out of range DTPData ID [%d >= %d]!", sectionId, 0x18000);
@@ -45,6 +47,17 @@ uint32_t DTPDataSection::getDomainId(uint32_t id) {
 	if (dtpData[id] && dtpData[id]->refCount > 0)
 		return id;
 	return ~0u;
+}
+
+void *DTPDataSection::getPointer(uint32_t id) {
+	if (id >= 0x18000)
+		return nullptr;
+
+	DTPData *dtp = dtpData[id];
+	if (!dtp || dtp->awaitingConstruction)
+		return nullptr;
+
+	return (void*)dtp->data;
 }
 
 }

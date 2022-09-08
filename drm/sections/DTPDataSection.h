@@ -15,7 +15,7 @@ class DTPDataSection : public ResolveSection {
 		char data[];
 	};
 
-	DTPData *dtpData[0x18000];
+	static DTPData *dtpData[0x18000];
 public:
 	// inherit realize
 	uint32_t allocate(uint32_t sectionId, uint32_t sectionSubType, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) override; // 0x08
@@ -24,6 +24,8 @@ public:
 	void* getWrapped(uint32_t) override; // 0x30
 	// inherit getBlob
 	uint32_t getDomainId(uint32_t) override; // 0x44
+
+	static void *getPointer(uint32_t);
 };
 
 }
