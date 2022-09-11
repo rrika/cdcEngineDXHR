@@ -13,6 +13,8 @@
 
 #include "spinnycube.h"
 #include "types.h"
+#include "camera/CameraManager.h"
+#include "camera/GenericCamera.h"
 #include "cdc/dtp/objectproperties/imfref.h"
 #include "cdc/dtp/objectproperties/intermediatemesh.h"
 #include "cdc/dtp/soundplex.h"
@@ -414,6 +416,13 @@ int spinnyCube(HWND window,
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
+	GenericCamera camera;
+	CameraManager cameraManager;
+
+	cameraManager.activeCamera = &camera;
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
 	cdc::RenderViewport renderViewport;
 	renderViewport.nearz = n;
 	renderViewport.farz = f;
@@ -620,13 +629,18 @@ int spinnyCube(HWND window,
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 
+		cdc::Matrix viewMatrix = cameraRotate * cameraTranslate;
+		camera.matrix = viewMatrix;
+		cameraManager.update();
+		viewMatrix = *cameraManager.getMatrix(); // wow, it's nothing
+
 		renderDevice->resetRenderLists();
 		renderDevice->beginRenderList(nullptr);
 		auto *scene = renderDevice->createSubScene(
 			&renderViewport,
 			renderContext->renderTarget2C,
 			renderContext->depthBuffer);
-		scene->viewMatrix = cameraRotate * cameraTranslate;
+		scene->viewMatrix = viewMatrix;
 
 		cdc::Matrix bottleWorldMatrix = bottleTranslate * bottleScale;
 

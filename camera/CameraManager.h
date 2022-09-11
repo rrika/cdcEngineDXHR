@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include "cdcMath/Math.h"
 #include "AnchoredCamera.h"
 #include "AutoSplineCamera.h"
 #include "CameraDrawWrapper.h"
@@ -22,14 +23,22 @@ struct CameraManagerSub1464 {
 
 class CameraManager : public cdc::ICameraManager {
 public:
-	CameraDrawWrapper<ObjectDebugCamera> objectDebugCamera; // 60
-	CameraDrawWrapper<TransitionCamera> transitionCamera; // 150
-	CameraDrawWrapper<AnchoredCamera> anchoredCamera; // 220
-	CinematicCamera cinematicCamera; // 340
-	CameraDrawWrapper<AutoSplineCamera> autosplineCamera; // 490
-	CameraDrawWrapper<FreeCamera> freeCamera; // 550
-	CameraDrawWrapper<ModelViewCamera> modelviewCamera; // 630
-	PlayerCamera playerCamera; // 6F0
-	OrbitDebugCamera orbitDebugCamera; // 11A0
-	CameraManagerSub1464 sub1464;
+	cdc::ICamera *activeCamera; // 30
+
+	// CameraDrawWrapper<ObjectDebugCamera> objectDebugCamera; // 60
+	// CameraDrawWrapper<TransitionCamera> transitionCamera; // 150
+	// CameraDrawWrapper<AnchoredCamera> anchoredCamera; // 220
+	// CinematicCamera cinematicCamera; // 340
+	// CameraDrawWrapper<AutoSplineCamera> autosplineCamera; // 490
+	// CameraDrawWrapper<FreeCamera> freeCamera; // 550
+	// CameraDrawWrapper<ModelViewCamera> modelviewCamera; // 630
+	// PlayerCamera playerCamera; // 6F0
+	// OrbitDebugCamera orbitDebugCamera; // 11A0
+	// CameraManagerSub1464 sub1464;
+
+	cdc::Matrix matrix; // 13B0
+
+	void update() override; // 8
+	cdc::Matrix *getActiveCameraMatrix() override; // D4
+	cdc::Matrix *getMatrix() override; // D8
 };
