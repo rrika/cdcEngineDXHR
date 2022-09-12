@@ -14,6 +14,20 @@
 #include "surfaces/PCDX11DepthBuffer.h"
 #include "surfaces/PCDX11RenderTarget.h"
 
+bool operator==(D3D11_RASTERIZER_DESC const& a, D3D11_RASTERIZER_DESC const& b) {
+	return
+		a.FillMode == b.FillMode &&
+		a.CullMode == b.CullMode &&
+		a.FrontCounterClockwise == b.FrontCounterClockwise &&
+		a.DepthBias == b.DepthBias &&
+		a.DepthBiasClamp == b.DepthBiasClamp &&
+		a.SlopeScaledDepthBias == b.SlopeScaledDepthBias &&
+		a.DepthClipEnable == b.DepthClipEnable &&
+		a.ScissorEnable == b.ScissorEnable &&
+		a.MultisampleEnable == b.MultisampleEnable &&
+		a.AntialiasedLineEnable == b.AntialiasedLineEnable;
+}
+
 bool operator==(D3D11_DEPTH_STENCILOP_DESC const& a, D3D11_DEPTH_STENCILOP_DESC const& b) {
 	return
 		a.StencilFailOp == b.StencilFailOp &&
@@ -564,7 +578,22 @@ void PCDX11StateManager::updateMatrices() {
 }
 
 void PCDX11StateManager::updateRasterizerState() {
-	// TODO
+	
+	if (m_dirtyRasterizerState) {
+		ID3D11RasterizerState *rasterizerState;
+		if (auto it = m_rasterizerStates.find(m_rasterizerDesc); it != m_rasterizerStates.end())
+			rasterizerState = it->second;
+		else {
+			m_device->CreateRasterizerState(
+				&m_rasterizerDesc,
+				&rasterizerState);
+			m_rasterizerStates[m_rasterizerDesc] = rasterizerState;
+		}
+
+		m_deviceContext->RSSetState(rasterizerState);
+
+		m_dirtyRasterizerState = false;
+	}
 }
 
 void PCDX11StateManager::updateDepthStencilState() {
@@ -798,7 +827,27 @@ void PCDX11StateManager::updateViewport() {
 }
 
 bool PCDX11StateManager::internalCreate() {
-	// TODO
+
+	m_device = deviceManager->getD3DDevice();
+	m_indexBufferD3D = nullptr;
+	m_vertexBufferD3D = nullptr;
+	m_streamDecl = nullptr;
+	m_pixelShader = nullptr;
+	m_vertexShader = nullptr;
+	// TODO: hull shader
+	// TODO: domain shader
+
+	m_rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	m_rasterizerDesc.CullMode = D3D11_CULL_BACK;
+	m_rasterizerDesc.FrontCounterClockwise = false;
+	m_rasterizerDesc.DepthBias = 0;
+	m_rasterizerDesc.DepthBiasClamp = 1.0;
+	m_rasterizerDesc.SlopeScaledDepthBias = 0.0;
+	m_rasterizerDesc.DepthClipEnable = true;
+	m_rasterizerDesc.ScissorEnable = false;
+	m_rasterizerDesc.MultisampleEnable = false;
+	m_rasterizerDesc.AntialiasedLineEnable = false;
+
 	memset((void*)&m_depthStencilDesc, 0, sizeof(m_depthStencilDesc));
 	m_depthStencilDesc.DepthEnable = true;
 	m_depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -807,7 +856,22 @@ bool PCDX11StateManager::internalCreate() {
 	m_depthStencilDesc.StencilReadMask = 255;
 	m_depthStencilDesc.StencilWriteMask = 255;
 	m_renderTargetWriteMask = 0;
-	// TODO
+
+	// TODO: stencilSettings
+
+	reset();
+	// TODO: clipPlanes
+
+	m_renderTargetStackIndex = 0;
+
+	m_dirtyUberCBs[0] = false;
+	m_dirtyUberCBs[1] = false;
+	m_dirtyUberCBs[2] = false;
+	m_dirtyUberCBs[3] = false;
+	m_dirtyUberCBs[4] = false;
+	m_dirtyUberCBs[5] = false;
+	m_dirtyUberCBs[6] = false;	
+
 	return true;
 }
 

@@ -80,7 +80,6 @@ public:
 class SpinnyCubePass : public cdc::IRenderPassCallback {
 public:
 	D3D11_VIEWPORT *viewport;
-	ID3D11RasterizerState1* rasterizerState;
 	ID3D11BlendState1 *keepAlphaBlend;
 
 	bool pre(
@@ -168,14 +167,6 @@ int spinnyCube(HWND window,
 #endif
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
-
-	D3D11_RASTERIZER_DESC1 rasterizerDesc = {};
-	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-	rasterizerDesc.CullMode = D3D11_CULL_BACK;
-
-	ID3D11RasterizerState1* rasterizerState;
-
-	device->CreateRasterizerState1(&rasterizerDesc, &rasterizerState);
 
 	ID3D11BlendState1* keepAlphaBlend = NULL;
 
@@ -345,7 +336,6 @@ int spinnyCube(HWND window,
 
 	SpinnyCubePass cubePass;
 	cubePass.viewport = &viewport;
-	cubePass.rasterizerState = rasterizerState;
 	cubePass.keepAlphaBlend = keepAlphaBlend;
 	renderDevice->setPassCallback(0, &cubePass);
 
@@ -643,7 +633,9 @@ bool SpinnyCubePass::pre(
 	auto *deviceContext = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice)->getD3DDeviceContext();
 
 	deviceContext->RSSetViewports(1, viewport);
-	deviceContext->RSSetState(rasterizerState);
+
+	// hack hack, one of the lights gets too close to the camera
+	cdc::deviceManager->getStateManager()->m_rasterizerDesc.DepthClipEnable = false;
 
 	cdc::deviceManager->getStateManager()->setDepthState(D3D11_COMPARISON_LESS, true);
 	deviceContext->OMSetBlendState(keepAlphaBlend, nullptr, 0xffffffff);

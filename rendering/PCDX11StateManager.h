@@ -8,6 +8,7 @@
 #include <unordered_map>
 
 // for std::unordered_map<D3D11_DEPTH_STENCIL_DESC, ...>
+bool operator==(D3D11_RASTERIZER_DESC const&, D3D11_RASTERIZER_DESC const&);
 bool operator==(D3D11_DEPTH_STENCILOP_DESC const&, D3D11_DEPTH_STENCILOP_DESC const&);
 bool operator==(D3D11_DEPTH_STENCIL_DESC const&, D3D11_DEPTH_STENCIL_DESC const&);
 
@@ -23,6 +24,23 @@ class PCDX11StreamDecl;
 class PCDX11VertexBuffer;
 class PCDX11VertexShader;
 class PCDX11UberConstantBuffer;
+
+struct RasterizerStateHash {
+	std::size_t operator()(D3D11_RASTERIZER_DESC const& rasterizerDesc) const noexcept {
+		static_assert(sizeof(uint32_t[10]) == sizeof(D3D11_RASTERIZER_DESC));
+		std::array<uint32_t, 10> dwords;
+		memcpy(dwords.data(), &rasterizerDesc, 10 * 4);
+		uint32_t h = 48;
+		for (uint32_t dword : dwords) {
+			uint32_t x = 0x5BD1E995 * dword;
+			h = 0x5BD1E995 * (x ^ (x >> 24)) ^ 0x5BD1E995 * h;
+		}
+		h ^= h >> 13;
+		h *= 0x5BD1E995;
+		h ^= h >> 15;
+		return h;
+	}
+};
 
 struct DepthStencilHash {
 	std::size_t operator()(D3D11_DEPTH_STENCIL_DESC const& depthStencilDesc) const noexcept {
@@ -54,6 +72,14 @@ class PCDX11StateManager : public PCDX11InternalResource {
 	bool m_dirtyDepthStencilState; // 1A
 	bool m_dirtyBlendState; // 1B
 	bool m_dirtyConstantBuffers; // 1C
+public:
+	D3D11_RASTERIZER_DESC m_rasterizerDesc; // 20
+private:
+	std::unordered_map<
+		D3D11_RASTERIZER_DESC,
+		ID3D11RasterizerState*,
+		RasterizerStateHash
+	> m_rasterizerStates; // 48
 	D3D11_DEPTH_STENCIL_DESC m_depthStencilDesc; // 5C
 	std::unordered_map<
 		D3D11_DEPTH_STENCIL_DESC,
