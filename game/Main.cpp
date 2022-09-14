@@ -122,7 +122,7 @@ void MAIN_Init() {
 	MAIN_DoMainInit();
 	// TODO
 
-	Gameloop::InitiateLevelLoad("det_sarifhq_rail_tutorial", nullptr);
+	// Gameloop::InitiateLevelLoad("det_sarifhq_rail_tutorial", nullptr);
 	getDefaultFileSystem()->processAll();
 
 	// HACK
