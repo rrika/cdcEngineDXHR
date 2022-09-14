@@ -1,9 +1,16 @@
+#define NOMINMAX
 #include "PCMouseKeyboard.h"
 #include <cstdio>
+#include <algorithm>
 
 #ifdef _WIN32
 #include <hidusage.h>
 #endif
+
+extern HWND hwnd2;
+
+float g_mouseXSensitivity2 = 0.00135f;
+float g_mouseYSensitivity2 = 0.00135f;
 
 namespace cdc {
 
@@ -32,8 +39,53 @@ void PCMouseKeyboard::processWndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	}
 
 	// printf("WM_INPUT with type %lu\n", input.header.dwType);
+
+	if (input.header.dwType == RIM_TYPEMOUSE) {
+		deltaX += input.data.mouse.lLastX;
+		deltaY += input.data.mouse.lLastY;
+	}
 }
 #endif
+
+void PCMouseKeyboard::setCursorPos(float x, float y) {
+#ifdef _WIN32
+	if (cursorGrab) {
+		RECT rect;
+		GetClientRect(hwnd2, &rect);
+		POINT point;
+		point.x = rect.right * std::clamp(x, 0.0f, 1.0f);
+		point.y = rect.bottom * std::clamp(y, 0.0f, 1.0f);
+		ClientToScreen(hwnd2, &point);
+		SetCursorPos(point.x, point.y);
+	}
+#endif
+}
+
+void PCMouseKeyboard::setupClip() {
+#ifdef _WIN32
+	if (!cursorGrab) {
+		ClipCursor(nullptr);
+		return;
+	}
+
+	if (true /* !fullscreen */) {
+		GetClientRect(hwnd2, &m_rect);
+		ClientToScreen(hwnd2, reinterpret_cast<POINT*>(&m_rect.left));
+		ClientToScreen(hwnd2, reinterpret_cast<POINT*>(&m_rect.right));
+		ClipCursor(&m_rect);
+	}
+#endif
+}
+
+void PCMouseKeyboard::centerCursor(bool unknown) {
+	// TODO
+	if (cursorGrab) {
+		if (unknown) {
+			setCursorPos(0.5f, 0.5f);
+		}
+	}
+	setupClip();
+}
 
 // signature is bool create() in original binary
 PCMouseKeyboard *PCMouseKeyboard::create(HWND hwnd) {
@@ -100,8 +152,25 @@ void PCMouseKeyboard::assignDefaultKeybinds(Keybind *keybinds) {
 #endif
 }
 
-void PCMouseKeyboard::method_4() { /*TODO*/ }
-void PCMouseKeyboard::method_14() { /*TODO*/ }
+void PCMouseKeyboard::setCursorGrab(bool active) {
+	cursorGrab = active;
+	centerCursor(false); // so, don't actually center
+}
+
+void PCMouseKeyboard::update() {
+	state = InputState();
+
+	// TODO
+
+	state.deltaX = deltaX *	g_mouseXSensitivity2;
+	state.deltaY = deltaY * g_mouseYSensitivity2;
+
+	// TODO
+
+	deltaX = 0;
+	deltaY = 0;
+}
+
 void PCMouseKeyboard::method_18() { /*TODO*/ }
 
 }

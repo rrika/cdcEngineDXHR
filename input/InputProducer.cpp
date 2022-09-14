@@ -3,11 +3,11 @@
 namespace cdc {
 
 void InputProducer::method_0() { /*TODO*/ }
-void InputProducer::method_4() { /*TODO*/ }
+void InputProducer::setCursorGrab(bool active) { cursorGrab = active; }
 void InputProducer::method_8() { /*TODO*/ }
 void InputProducer::method_C() { /*TODO*/ }
 void InputProducer::method_10() { /*TODO*/ }
-void InputProducer::method_14() { /*TODO*/ }
+void InputProducer::update() { /*TODO*/ }
 void InputProducer::method_18() { /*TODO*/ }
 void InputProducer::method_1C() { /*TODO*/ }
 void InputProducer::method_20() { /*TODO*/ }

@@ -658,6 +658,8 @@ int spinnyCube(HWND window,
 	uint32_t selectedCapture = 0;
 #endif
 
+	bool mouseLook = false;
+
 	while (true)
 	{
 #ifdef WIN32
@@ -691,12 +693,28 @@ int spinnyCube(HWND window,
 		}
 #endif
 
+		mouseKeyboard->update();
+
 #if ENABLE_IMGUI
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame(); // this will reset our pretty cursor
 		ImGui::NewFrame();
+
+		if (ImGui::IsKeyPressed(ImGuiKey_Tab)) {
+			mouseLook = !mouseLook;
+			mouseKeyboard->setCursorGrab(mouseLook);
+		}
+
 #ifdef _WIN32
-		SetCursor((HCURSOR)yellowCursor); // ahh, much better
+		if (mouseLook) {
+			// ImGui::SetMouseCursor(ImGuiMouseCursor_None);
+			SetCursor((HCURSOR)0);
+			io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
+		} else {
+			// ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
+			SetCursor((HCURSOR)yellowCursor); // ahh, much better
+			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+		}
 #endif
 #endif
 
@@ -720,6 +738,11 @@ int spinnyCube(HWND window,
 		modelRotation.x += 0.005f;
 		modelRotation.y += 0.009f;
 		modelRotation.z += 0.001f;
+
+		if (mouseLook) {
+			modelRotation.x += mouseKeyboard->state.deltaY;
+			modelRotation.y += mouseKeyboard->state.deltaX;
+		}
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -795,6 +818,8 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Show strings")) { showStringsWindow = true; }
 				ImGui::EndMenu();
 			}
+			if (mouseLook)
+				ImGui::Text("Press TAB to release cursor");
 			ImGui::EndMainMenuBar();
 		}
 

@@ -14,12 +14,15 @@ public:
 #ifdef _WIN32
 	void processWndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
+	void setCursorPos(float x, float y);
+	void setupClip();
+	void centerCursor(bool);
 
 	static PCMouseKeyboard *create(HWND hwnd);
 	static void assignDefaultKeybinds(Keybind *keybinds);
 
-	void method_4() override;
-	void method_14() override;
+	void setCursorGrab(bool active) override;
+	void update() override;
 	void method_18() override;
 
 	// uint8_t gap8C[4];
@@ -28,10 +31,10 @@ public:
 	// uint8_t gap92[2];
 	// uint32_t dword94;
 	// float float98;
-	// uint8_t gap9C[16];
+	RECT m_rect; // 9C
 	// uint32_t dwordAC;
-	// uint32_t dwordB0;
-	// uint32_t dwordB4;
+	int32_t deltaX = 0;
+	int32_t deltaY = 0;
 	// uint32_t dwordB8;
 	// uint32_t dwordBC;
 	// char vkeysC0[257];

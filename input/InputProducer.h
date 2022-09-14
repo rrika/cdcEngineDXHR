@@ -3,10 +3,10 @@
 
 namespace cdc {
 
-struct InputProducerSub4 {
-	uint8_t gap0[85];
-	float float58;
-	float float5C;
+struct InputState {
+	uint8_t keys[85];
+	float deltaX; // 58
+	float deltaY; // 5C
 	float float60;
 };
 
@@ -22,22 +22,23 @@ struct InputProducerSub6C {
 };
 
 class InputProducer {
-protected:
-	// InputProducerSub4 sub4;
+// protected:
+public:
+	InputState state;
 	// uint8_t gap68[4];
 	// InputProducerSub6C sub6C;
 	// float float7C[2];
 	// uint8_t byte84;
 	// uint8_t byte85;
-	// uint8_t byte86;
+	bool cursorGrab; // 86
 	// uint32_t dword88;
 public:
 	virtual void method_0();
-	virtual void method_4();
+	virtual void setCursorGrab(bool active);
 	virtual void method_8();
 	virtual void method_C();
 	virtual void method_10();
-	virtual void method_14();
+	virtual void update();
 	virtual void method_18();
 	virtual void method_1C();
 	virtual void method_20();
