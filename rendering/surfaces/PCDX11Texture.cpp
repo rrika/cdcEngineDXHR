@@ -115,6 +115,11 @@ void PCDX11Texture::resFill(void* src, uint32_t size, uint32_t offset) {
 	// hack
 	textureBlob = (TextureBlob*)malloc(size);
 	memcpy(textureBlob, src, size);
+
+	if (offset + size + 4 >= textureBlob->size) {
+		request(0);
+		awaitResource();
+	}
 }
 
 char *PCDX11Texture::resGetBuffer() {
@@ -150,7 +155,7 @@ void PCDX11Texture::asyncCreate(/* TODO: one argument */) {
 	textureDesc.Height             = textureBlob->height;
 	textureDesc.MipLevels          = 1;
 	textureDesc.ArraySize          = 1;
-	textureDesc.Format             = DXGI_FORMAT_BC1_UNORM; //(DXGI_FORMAT)decodeFormat(textureBlob->format);
+	textureDesc.Format             = (DXGI_FORMAT)decodeFormat(textureBlob->format);
 	textureDesc.SampleDesc.Count   = 1;
 	textureDesc.Usage              = D3D11_USAGE_IMMUTABLE;
 	textureDesc.BindFlags          = D3D11_BIND_SHADER_RESOURCE;
