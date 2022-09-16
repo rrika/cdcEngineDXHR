@@ -1,5 +1,4 @@
 #pragma once
-#include "Vector.h"
 
 template <typename T>
 struct Link {

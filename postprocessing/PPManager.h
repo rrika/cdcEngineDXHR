@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "../sys/Vector.h"
+#include "../sys/Array.h"
 
 class PPTexture;
 class PPVariable;
@@ -69,16 +69,16 @@ struct PPUnknown2 {
 
 class PPManager {
 public:
-	Vector<PPUnknown1*> unknowns1; // 4
-	Vector<PPTexture*> textures; // 10
-	Vector<PPVariable*> variables; // 1C
+	Array<PPUnknown1*> unknowns1; // 4
+	Array<PPTexture*> textures; // 10
+	Array<PPVariable*> variables; // 1C
 	uint32_t rootPasses28;
 	uint32_t dwords2C[32];
 	uint32_t dwordsAC[32];
 	uint32_t dwords12C[32];
 	uint32_t width;
 	uint32_t height;
-	Vector<PPUnknown2*> unknowns2; // 1B4
+	Array<PPUnknown2*> unknowns2; // 1B4
 
 	PPManager();
 	virtual ~PPManager() = default;

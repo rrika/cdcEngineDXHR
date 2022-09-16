@@ -3,7 +3,7 @@
 #include "../allocator/Allocator.h"
 
 template <typename T>
-struct Vector {
+struct Array {
 	uint32_t size;
 	uint32_t capacity;
 	union {
@@ -11,7 +11,7 @@ struct Vector {
 		cdc::AllocRequester requester; // when capacity != 0
 	};
 
-	Vector() : size(0u), capacity(0u), requester(cdc::kAllocArray) {}
+	Array() : size(0u), capacity(0u), requester(cdc::kAllocArray) {}
 
 	T *begin() { return data; }
 	T *end() { return data + size; }
