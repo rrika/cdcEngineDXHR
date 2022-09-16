@@ -28,5 +28,10 @@ class Vector3 : public Vector {};
 class Vector4 : public Vector {};
 
 using Matrix = float4x4;
+using VectorArg = Vector const&;
 
 }
+
+cdc::Vector& operator+=(cdc::Vector& a, cdc::VectorArg b);
+cdc::Vector operator+(cdc::VectorArg a, cdc::VectorArg b);
+cdc::Vector operator*(cdc::VectorArg a, float b);

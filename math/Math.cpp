@@ -1,6 +1,8 @@
 #include "Math.h"
 #include <cstring>
 
+using namespace cdc;
+
 // column-major multiplication
 float4x4 operator*(const float4x4& m1, const float4x4& m2)
 {
@@ -31,6 +33,22 @@ float4x4 operator*(const float4x4& m1, const float4x4& m2)
 bool operator==(const float4x4& m1, const float4x4& m2) {
     // original game does proper float comparisons (0.0f == -0.0f)
     return memcmp((void*)&m1, (void*)&m2, sizeof(float4x4)) == 0;
+}
+
+Vector& operator+=(Vector& a, VectorArg b) {
+    a.x += b.x;
+    a.y += b.y;
+    a.z += b.z;
+    a.w += b.w;
+    return a;
+}
+
+Vector operator+(VectorArg a, VectorArg b) {
+    return {a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w};
+}
+
+Vector operator*(VectorArg a, float b) {
+    return {a.x * b, a.y * b, a.z * b, a.w * b};
 }
 
 float4x4 transpose(float4x4 m) {

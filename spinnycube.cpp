@@ -67,8 +67,6 @@
 #include <SDL2/SDL.h>
 #endif
 
-struct float3 { float x, y, z; };
-
 class ImGuiDrawable : public cdc::IRenderDrawable {
 public:
 	std::function<void()> lastMinuteAdditions;
@@ -321,9 +319,12 @@ int spinnyCube(HWND window,
 	float f = 9.0f;                             // far
 
 	float scale = 0.05f;
-	float3 modelRotation    = { 0.0f, 0.0f, 0.0f };
-	float3 modelScale       = { scale, scale, scale };
-	float3 modelTranslation = { 0.0f, 0.0f, 4.0f };
+	cdc::Vector modelRotation    = { 0.0f, 0.0f, 0.0f };
+	cdc::Vector modelScale       = { scale, scale, scale };
+	cdc::Vector modelTranslation = { 0.0f, 0.0f, 4.0f };
+
+	bool mouseLook = false;
+	cdc::Vector cameraPos{0, 0, 0};
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -353,8 +354,6 @@ int spinnyCube(HWND window,
 	std::vector<std::pair<void*, cdc::CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
 #endif
-
-	bool mouseLook = false;
 
 	while (true)
 	{
@@ -396,10 +395,24 @@ int spinnyCube(HWND window,
 		ImGui_ImplWin32_NewFrame(); // this will reset our pretty cursor
 		ImGui::NewFrame();
 
+		float forward = 0;
+		float sideways = 0;
+		float speedModifier = 0.1f;
+
 		if (ImGui::IsKeyPressed(ImGuiKey_Tab)) {
 			mouseLook = !mouseLook;
 			mouseKeyboard->setCursorGrab(mouseLook);
 		}
+		if (ImGui::IsKeyDown(ImGuiKey_W))
+			forward += 1.0f;
+		if (ImGui::IsKeyDown(ImGuiKey_S))
+			forward -= 1.0f;
+		if (ImGui::IsKeyDown(ImGuiKey_A))
+			sideways -= 1.0f;
+		if (ImGui::IsKeyDown(ImGuiKey_D))
+			sideways += 1.0f;
+		if (ImGui::IsKeyDown(ImGuiKey_ModShift))
+			speedModifier = 0.4f;
 
 #ifdef _WIN32
 		if (mouseLook) {
@@ -428,12 +441,9 @@ int spinnyCube(HWND window,
 		float4x4 rotateY   = { static_cast<float>(cos(modelRotation.y)), 0, static_cast<float>(sin(modelRotation.y)), 0, 0, 1, 0, 0, -static_cast<float>(sin(modelRotation.y)), 0, static_cast<float>(cos(modelRotation.y)), 0, 0, 0, 0, 1 };
 		float4x4 rotateZ   = { static_cast<float>(cos(modelRotation.z)), -static_cast<float>(sin(modelRotation.z)), 0, 0, static_cast<float>(sin(modelRotation.z)), static_cast<float>(cos(modelRotation.z)), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 		float4x4 bottleScale = { modelScale.x, 0, 0, 0, 0, modelScale.y, 0, 0, 0, 0, modelScale.z, 0, 0, 0, 0, 1 };
-		float4x4 cameraTranslate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, modelTranslation.x, modelTranslation.y, modelTranslation.z, 1 };
+		float4x4 bottleTranslate = { 1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, modelTranslation.x, modelTranslation.y, modelTranslation.z, 1 };
+		float4x4 cameraTranslate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -cameraPos.x, -cameraPos.y, -cameraPos.z, 1 };
 		float4x4 lightScaleTranslate = { lightRadius * 2.0f, 0, 0, 0, 0, lightRadius * 2.0f, 0, 0, 0, 0, lightRadius * 2.0f, 0, 1, 1, 1, 1 };
-
-		modelRotation.x += 0.005f;
-		modelRotation.y += 0.009f;
-		modelRotation.z += 0.001f;
 
 		if (mouseLook) {
 			modelRotation.x += mouseKeyboard->state.deltaY;
@@ -442,18 +452,18 @@ int spinnyCube(HWND window,
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 
-		float4x4 world = rotateZ * rotateY * rotateX;
+		float4x4 cameraRotate = rotateX * rotateY;
+
+		cameraPos += cdc::Vector{
+			cameraRotate.m[0][2],
+			cameraRotate.m[1][2],
+			cameraRotate.m[2][2]} * (speedModifier * forward);
+		cameraPos += cdc::Vector{
+			cameraRotate.m[0][0],
+			cameraRotate.m[1][0],
+			cameraRotate.m[2][0]} * (speedModifier * sideways);
+
 		float4x4 project = { 2 * n / w, 0, 0, 0, 0, 2 * n / h, 0, 0, 0, 0, f / (f - n), 1, 0, 0, n * f / (n - f), 0 };
-
-		// Constants constants;
-		// constants.WorldViewProject = project * world;
-		// constants.World = world;
-		// constants.ViewProject = project;
-
-		stateManager.setWorldMatrix(world);
-
-		// memcpy(cdcConstantBuffer.data, &constants, sizeof(Constants));
-		// cdcConstantBuffer.syncBuffer(deviceContext);
 
 		renderDevice->resetRenderLists();
 		renderDevice->beginRenderList(nullptr);
@@ -461,19 +471,15 @@ int spinnyCube(HWND window,
 			&renderViewport,
 			renderContext->renderTarget2C,
 			renderContext->depthBuffer);
-		scene->viewMatrix = cameraTranslate;
+		scene->viewMatrix = cameraRotate * cameraTranslate;
 		scene->projectMatrix = project;
 
-		cdc::Matrix bottleWorldMatrix = world * bottleScale;
-		// cdc::PCDX11MatrixState bottleMatrixState(renderDevice);
-		// bottleMatrixState.resize(0);
-		// auto *pBottleWorldMatrix = reinterpret_cast<float4x4*>(bottleMatrixState.poseData->getMatrix(0));
-		// *pBottleWorldMatrix = bottleWorldMatrix;
+		cdc::Matrix bottleWorldMatrix = bottleTranslate * bottleScale;
 
 		cdc::PCDX11MatrixState lightMatrixState(renderDevice);
 		lightMatrixState.resize(1);
 		auto *lightWorldMatrix = reinterpret_cast<float4x4*>(lightMatrixState.poseData->getMatrix(0));
-		*lightWorldMatrix = /*world * */ lightScaleTranslate;
+		*lightWorldMatrix = lightScaleTranslate;
 
 		// add drawables to the scene
 		float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
