@@ -10,6 +10,7 @@
 #include "../object/ObjectManager.h" // for readAndParseObjectList
 
 #if ENABLE_IMGUI
+#include "../game/Gameloop.h"
 #include "../imgui/imgui.h"
 #endif
 
@@ -34,7 +35,13 @@ ObjList *objList;
 void buildUnitsUI() {
 #if ENABLE_IMGUI
 	for (uint32_t i = 0; i < objList->count; i++) {
-		ImGui::Text("%s", objList->entries[i].name);
+		if (objList->entries[i].name[0] == 0)
+			continue;
+		// ImGui::Text("%s", objList->entries[i].name);
+		if (ImGui::SmallButton(objList->entries[i].name)) {
+			Gameloop::InitiateLevelLoad(objList->entries[i].name, nullptr);
+			cdc::getDefaultFileSystem()->processAll();
+		}
 	}
 #endif
 }

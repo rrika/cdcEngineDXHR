@@ -21,6 +21,7 @@
 #include "filesystem/FileHelpers.h" // for archiveFileSystem_default
 #include "filesystem/FileUserBufferReceiver.h"
 #include "game/dtp/objecttypes/globaldatabase.h"
+#include "game/Gameloop.h"
 #include "game/script/game/NsMainMenuMovieController.h"
 #include "game/ui/FakeScaleform/fakescaleform.h"
 #include "game/ui/Scaleform/ScaleformMovieInstance.h"
@@ -56,6 +57,7 @@
 #include "rendering/VertexAttribute.h"
 #include "world/RMIDrawableBase.h"
 #include "world/stream.h" // for buildUnitsUI
+#include "world/StreamUnit.h"
 
 #if ENABLE_IMGUI
 #include "imgui/imgui.h"
@@ -255,6 +257,7 @@ int spinnyCube(HWND window,
 	auto bottleTexture = (cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);
 	bottleTexture->asyncCreate();
+	renderDevice->missingTexture = bottleTexture;
 	printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
 
 	// create the other four textures
@@ -325,12 +328,12 @@ int spinnyCube(HWND window,
 	float w = viewport.Width / viewport.Height; // width (aspect ratio)
 	float h = 1.0f;                             // height
 	float n = 1.0f;                             // near
-	float f = 9.0f;                             // far
+	float f = 1000.0f;                             // far
 
-	float scale = 0.05f;
+	float scale = 1.f;
 	cdc::Vector modelRotation    = { 0.0f, 0.0f, 0.0f };
 	cdc::Vector modelScale       = { scale, scale, scale };
-	cdc::Vector modelTranslation = { 0.0f, 0.0f, 4.0f };
+	cdc::Vector modelTranslation = { 50.0f, 0.0f, 0.0f };
 
 	bool mouseLook = false;
 	cdc::Vector cameraPos{0, 0, 0};
@@ -353,12 +356,15 @@ int spinnyCube(HWND window,
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
+	int introShowRange[2] = {0, 99999};
 #if ENABLE_IMGUI
+	bool loadedSarifHQ = false;
 	bool showDrawablesWindow = false;
 	bool showFilesystemWindow = false;
 	bool showObjectsWindow = false;
 	bool showDRMWindow = false;
 	bool showUnitsWindow = false;
+	bool showLoadedUnitsWindow = false;
 	bool showStringsWindow = false;
 	std::vector<std::pair<void*, cdc::CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
@@ -411,7 +417,7 @@ int spinnyCube(HWND window,
 
 		float forward = 0;
 		float sideways = 0;
-		float speedModifier = 0.1f;
+		float speedModifier = 100.0f;
 
 #if ENABLE_IMGUI
 		ImGui_ImplDX11_NewFrame();
@@ -435,7 +441,7 @@ int spinnyCube(HWND window,
 		if (ImGui::IsKeyDown(ImGuiKey_D))
 			sideways += 1.0f;
 		if (ImGui::IsKeyDown(ImGuiKey_ModShift))
-			speedModifier = 0.4f;
+			speedModifier *= 4.0f;
 
 #ifdef _WIN32
 		if (mouseLook) {
@@ -464,9 +470,10 @@ int spinnyCube(HWND window,
 		float4x4 rotateY   = { static_cast<float>(cos(modelRotation.y)), 0, static_cast<float>(sin(modelRotation.y)), 0, 0, 1, 0, 0, -static_cast<float>(sin(modelRotation.y)), 0, static_cast<float>(cos(modelRotation.y)), 0, 0, 0, 0, 1 };
 		float4x4 rotateZ   = { static_cast<float>(cos(modelRotation.z)), -static_cast<float>(sin(modelRotation.z)), 0, 0, static_cast<float>(sin(modelRotation.z)), static_cast<float>(cos(modelRotation.z)), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 		float4x4 bottleScale = { modelScale.x, 0, 0, 0, 0, modelScale.y, 0, 0, 0, 0, modelScale.z, 0, 0, 0, 0, 1 };
-		float4x4 bottleTranslate = { 1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, modelTranslation.x, modelTranslation.y, modelTranslation.z, 1 };
+		float4x4 bottleTranslate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, modelTranslation.x, modelTranslation.y, modelTranslation.z, 1 };
 		float4x4 cameraTranslate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -cameraPos.x, -cameraPos.y, -cameraPos.z, 1 };
 		float4x4 lightScaleTranslate = { lightRadius * 2.0f, 0, 0, 0, 0, lightRadius * 2.0f, 0, 0, 0, 0, lightRadius * 2.0f, 0, 1, 1, 1, 1 };
+		float4x4 zUpWorld = {0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1};
 
 		if (mouseLook) {
 			modelRotation.x += mouseKeyboard->state.deltaY;
@@ -475,7 +482,7 @@ int spinnyCube(HWND window,
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 
-		float4x4 cameraRotate = rotateX * rotateY;
+		float4x4 cameraRotate = rotateX * rotateY * zUpWorld;
 
 		cameraPos += cdc::Vector{
 			cameraRotate.m[0][2],
@@ -509,16 +516,51 @@ int spinnyCube(HWND window,
 		// float lightAccumulation[4] = {0.9f, 0.9f, 0.9f, 1.0f};
 		float lightAccumulation[4] = {0.0f, 0.0f, 0.0f, 1.0f};
 
+		StreamUnit *unit = STREAM_GetStreamUnitWithID(0);
+		cdc::Level *level = unit->level;
+		uint32_t numIntros = level ? level->admdData->numObjects : 0;
+		dtp::Intro *intros = level ? level->admdData->objects : nullptr;
+
 		renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
 		renderDevice->clearRenderTarget(2, /*mask=*/ 0x2000, 0.0f, lightAccumulation, 1.0f, 0); // deferred shading buffer
 		static_cast<cdc::PCDX11RenderModelInstance*>(lightRenderModelInstance)->baseMask = 0x2000; // deferred lighting
 		lightRenderModelInstance->recordDrawables(&lightMatrixState);
 		// static_cast<cdc::PCDX11RenderModelInstance*>(bottleRenderModelInstance)->baseMask = 0x1002; // normals & composite
 		// bottleRenderModelInstance->recordDrawables(&bottleMatrixState);
-		static_cast<cdc::PCDX11RenderModelInstance*>(rmiDrawable.rmi)->baseMask = 0x1002; // normals & composite
-		rmiDrawable.draw(&bottleWorldMatrix, 0.0f);
-		renderDevice->recordDrawable(&imGuiDrawable, /*mask=*/ 0x100, /*addToParent=*/ 0);
 
+		static_cast<cdc::PCDX11RenderModelInstance*>(rmiDrawable.rmi)->baseMask = 0x1002; // normals & composite
+
+		// all the other objects
+		for (uint32_t i=introShowRange[0]; i<numIntros && i<introShowRange[1]; i++) {
+			auto &intro = intros[i];
+			float s = 1.f;
+			cdc::Matrix instanceMatrix = {
+				s*intro.scale[0], 0, 0, 0,
+				0, s*intro.scale[1], 0, 0,
+				0, 0, s*intro.scale[2], 0,
+				intro.position[0], intro.position[1], intro.position[2], 1
+			};
+			cdc::ObjectBlob *object = (cdc::ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(intro.objectListIndex));
+			if (!object)
+				continue;
+			if (object->numModels == 0)
+				continue;
+			auto *renderModel = (cdc::PCDX11RenderModel*)object->models[0]->renderMesh;
+			if (renderModel) {
+				// printf("%p %s\n", renderModel, typeid(*(cdc::RenderMesh*)renderModel).name());
+				// printf("%p\n", renderModel->getMesh());
+				RMIDrawableBase instanceRMIDrawable(renderModel);
+				static_cast<cdc::PCDX11RenderModelInstance*>(instanceRMIDrawable.rmi)->baseMask = 0x1002; // normals & composite
+				instanceRMIDrawable.draw(&instanceMatrix, 0.0f);
+			} else {
+				rmiDrawable.draw(&instanceMatrix, 0.0f);
+			}
+		}
+
+		// single bottle at origin
+		rmiDrawable.draw(&bottleWorldMatrix, 0.0f);
+
+		renderDevice->recordDrawable(&imGuiDrawable, /*mask=*/ 0x100, /*addToParent=*/ 0);
 		renderDevice->finishScene();
 		renderDevice->endRenderList();
 
@@ -526,6 +568,11 @@ int spinnyCube(HWND window,
 		if (ImGui::BeginMainMenuBar())
 		{
 			if (ImGui::BeginMenu("Windows")) {
+				if (!loadedSarifHQ && ImGui::MenuItem("Load det_sarifhq_rail_tutorial")) {
+					loadedSarifHQ = true;
+					Gameloop::InitiateLevelLoad("det_sarifhq_rail_tutorial", nullptr);
+					cdc::getDefaultFileSystem()->processAll();
+				}
 				if (ImGui::MenuItem("Capture frame")) {
 
 					selectedCapture = captures.size();
@@ -536,6 +583,7 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Show objects")) { showObjectsWindow = true; }
 				if (ImGui::MenuItem("Show DRMs")) { showDRMWindow = true; }
 				if (ImGui::MenuItem("Show units")) { showUnitsWindow = true; }
+				if (ImGui::MenuItem("Show loaded units")) { showLoadedUnitsWindow = true; }
 				if (ImGui::MenuItem("Show strings")) { showStringsWindow = true; }
 				ImGui::EndMenu();
 			}
@@ -627,6 +675,35 @@ int spinnyCube(HWND window,
 		if (showUnitsWindow) {
 			ImGui::Begin("Units", &showUnitsWindow);
 			buildUnitsUI();
+			ImGui::End();
+		}
+		if (showLoadedUnitsWindow) {
+			ImGui::Begin("Loaded units", &showLoadedUnitsWindow);
+			StreamUnit *unit = STREAM_GetStreamUnitWithID(0);
+			cdc::Level *level = unit->level;
+			ImGui::DragInt2("Show intros:", introShowRange);
+			if (!level) {
+				ImGui::Text("not loaded");
+			} else {
+				ImGui::Text("level %p", level);
+				auto *admd = level->admdData;
+				for (uint32_t i=0; i < admd->numObjects; i++) {
+					auto &intro = admd->objects[i];
+					auto oid = intro.objectListIndex;
+					auto name = oid >= cdc::g_objectManager->objectList->count
+						? "???": cdc::g_objectManager->objectList->entries[oid].name;
+					ImGui::Text("  [%3d] intro %s (%d) %f",
+						i, name, oid, intro.scale[0]);
+					ImGui::SameLine();
+  					ImGui::PushID(i);
+					if (ImGui::SmallButton("Teleport to")) {
+						cameraPos.x = intro.position[0];
+						cameraPos.y = intro.position[1];
+						cameraPos.z = intro.position[2];
+					}
+					ImGui::PopID();
+				}
+			}
 			ImGui::End();
 		}
 		if (showStringsWindow) {
