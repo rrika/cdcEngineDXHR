@@ -12,10 +12,10 @@ struct PersistentPGData;
 struct PrimGroup;
 
 struct ModelBatch {
-	float minDistMaybe0;
-	float maxDistMaybe4;
-	float lowFadeDistMaybe8;
-	float highFadeDistMaybeC;
+	float minDist; // 0
+	float maxDist; // 4
+	float minFadeDist; // 8
+	float maxFadeDist; // C
 	uint32_t dword10;
 	uint32_t dword14;
 	uint32_t dword18;

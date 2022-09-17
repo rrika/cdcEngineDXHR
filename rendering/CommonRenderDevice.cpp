@@ -60,8 +60,8 @@ void CommonRenderDevice::method_58() {
 	// TODO
 }
 
-void CommonRenderDevice::getScene() {
-	// TODO
+CommonScene *CommonRenderDevice::getScene() {
+	return scene7C;
 }
 
 void CommonRenderDevice::method_68() {

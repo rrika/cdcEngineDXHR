@@ -23,14 +23,16 @@ PCDX11ModelDrawable::PCDX11ModelDrawable(
 	ModelBatch *meshSub,
 	PrimGroup *primGroup,
 	PersistentPGData *tab0Ext128,
-	PoseData *poseData)
+	PoseData *poseData,
+	float opacity)
 :
 	renderModel(renderModel),
 	ext(ext),
 	meshSub(meshSub),
 	primGroup(primGroup),
 	tab0Ext128(tab0Ext128),
-	poseData(poseData)
+	poseData(poseData),
+	opacity(opacity)
 { // hack
 	word4 = 1; // use RenderModel drawers
 	flags34 = (primGroup[0].triangleCount << 8);
@@ -57,7 +59,7 @@ void PCDX11ModelDrawable::draw1(uint32_t funcSetIndex, IRenderDrawable *drawable
 		false,
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
-		thisModel->float2C,
+		thisModel->opacity,
 		thisModel->float30);
 
 	thisModel->draw(renderDevice, stateManager, streamDecl, false);
@@ -82,7 +84,7 @@ void PCDX11ModelDrawable::draw2(uint32_t funcSetIndex, IRenderDrawable *drawable
 		mesh->vsSelect4C,
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
-		thisModel->float2C,
+		thisModel->opacity,
 		thisModel->float30); */
 
 	PCDX11StreamDecl *streamDecl = nullptr; // TODO
@@ -131,7 +133,7 @@ void PCDX11ModelDrawable::draw4(uint32_t funcSetIndex, IRenderDrawable *drawable
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		0,
-		thisModel->float2C,
+		thisModel->opacity,
 		thisModel->float30);
 
 	if (!thisModel->isUnlit())
@@ -160,7 +162,7 @@ void PCDX11ModelDrawable::draw56(uint32_t funcSetIndex, IRenderDrawable *drawabl
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		1,
-		thisModel->float2C,
+		thisModel->opacity,
 		thisModel->float30);
 	bool renderTwice = (mt0x128->material->materialBlob->dword18 >> 11) & 1;
 
@@ -187,7 +189,7 @@ void PCDX11ModelDrawable::drawA(uint32_t funcSetIndex, IRenderDrawable *drawable
 		mesh->vsSelect4C,
 		(VertexAttributeLayoutA*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
-		thisModel->float2C,
+		thisModel->opacity,
 		thisModel->float30);
 
 	thisModel->draw(renderDevice, stateManager, streamDecl, false);

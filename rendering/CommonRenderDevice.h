@@ -70,7 +70,7 @@ public:
 	virtual void finishScene() = 0;
 	virtual void method_54();
 	virtual void method_58();
-	virtual void getScene();
+	virtual CommonScene *getScene();
 	virtual void getSceneRenderTarget() = 0;
 	virtual void method_64() = 0;
 	virtual void method_68();

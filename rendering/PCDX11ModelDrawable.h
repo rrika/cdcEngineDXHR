@@ -22,7 +22,7 @@ class PCDX11ModelDrawable : public IRenderDrawable {
 	PoseData *poseData; // 20
 	LightReceiverData *lightReceiverData; // 24
 	float *lightConstantBufferData; // 28
-	float float2C; // 2C
+	float opacity; // 2C
 	float float30; // 30
 	uint32_t flags34; // 34
 
@@ -33,7 +33,8 @@ public:
 		ModelBatch *meshSub,
 		PrimGroup *primGroup,
 		PersistentPGData *tab0Ext128,
-		PoseData *poseData);
+		PoseData *poseData,
+		float opacity);
 
 	inline bool isUnlit() const { return (flags34 >> 0) & 1; }
 	inline bool getCullMode() const { return (flags34 >> 1) & 1; }

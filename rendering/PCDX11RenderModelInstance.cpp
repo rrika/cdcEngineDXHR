@@ -2,7 +2,7 @@
 #include "PCDX11MatrixState.h"
 #include "PCDX11ModelDrawable.h"
 #include "PCDX11RenderDevice.h"
-// #include <cstdio>
+#include <cstdio>
 
 namespace cdc {
 
@@ -21,8 +21,28 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 		return; // HACK
 	uint32_t tab0index = 0;
 	PoseData *poseData = static_cast<PCDX11MatrixState*>(matrixState)->poseData;
+
+	cdc::CommonScene *scene = PCDX11RenderExternalResource::renderDevice->getScene();
+	Matrix m = scene->getViewMatrix() * *(Matrix*)poseData->getMatrix(0);
+	// HACK
+	Vector d { m.m[3][0], m.m[3][1], m.m[3][2] };
+	float dist = sqrtf(d.x*d.x + d.y*d.y + d.z*d.z);
+
 	for (uint32_t i=0; i<mesh->meshCount; i++) {
 		ModelBatch *sub = &mesh->meshTable[i];
+		float fade = 1.0f;
+		// printf("%f [%f %f %f %f]\n", dist, sub->minDist, sub->minFadeDist, sub->maxFadeDist, sub->maxDist);
+		if (sub->minDist > dist || sub->maxDist < dist) {
+			tab0index += sub->tab0EntryCount_30;
+			continue;
+		}
+		if (sub->minFadeDist > dist) {
+			fade = (dist - sub->minDist) / (sub->minFadeDist - sub->minDist);
+		}
+		else if (sub->maxFadeDist < dist) {
+			fade = (sub->minDist - dist) / (sub->minDist - sub->minFadeDist);
+		}
+
 		for (uint32_t j=0; j<sub->tab0EntryCount_30; j++, tab0index++) {
 			if (tab0index >= mesh->primGroupCount)
 				return; // HACK: nothing good can come from this
@@ -38,7 +58,8 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 				sub,
 				primGroup,
 				tab0ext128,
-				poseData);
+				poseData,
+				fade);
 			renderDevice->recordDrawable(drawable, mask, addToNextScene);
 		}
 	}
