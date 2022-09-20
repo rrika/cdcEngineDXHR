@@ -36,6 +36,7 @@
 #include "rendering/buffers/PCDX11IndexBuffer.h"
 #include "rendering/buffers/PCDX11UberConstantBuffer.h"
 #include "rendering/drawables/PCDX11FXAADrawable.h"
+#include "rendering/CommonRenderTerrainInstance.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/IRenderPassCallback.h"
 #include "rendering/PCDX11DeviceManager.h"
@@ -44,6 +45,7 @@
 #include "rendering/PCDX11RenderDevice.h"
 #include "rendering/PCDX11RenderModel.h"
 #include "rendering/PCDX11RenderModelInstance.h"
+#include "rendering/PCDX11RenderTerrain.h"
 #include "rendering/PCDX11Scene.h"
 #include "rendering/PCDX11StateManager.h"
 #include "rendering/PCDX11StreamDecl.h"
@@ -378,6 +380,8 @@ int spinnyCube(HWND window,
 	mainMenuInstance.init();
 #endif
 
+	std::unordered_map<cdc::IRenderTerrain*, cdc::CommonRenderTerrainInstance *> renderTerrainInstances;
+
 	while (true)
 	{
 #ifdef _WIN32
@@ -492,8 +496,6 @@ int spinnyCube(HWND window,
 			modelRotation.y += mouseKeyboard->state.deltaX;
 		}
 
-		///////////////////////////////////////////////////////////////////////////////////////////
-
 		cdc::Matrix cameraRotate = rotateX * rotateY * zUpWorld;
 
 		cameraPos += cdc::Vector{
@@ -504,6 +506,28 @@ int spinnyCube(HWND window,
 			cameraRotate.m[0][0],
 			cameraRotate.m[1][0],
 			cameraRotate.m[2][0]} * (speedModifier * sideways);
+
+		///////////////////////////////////////////////////////////////////////////////////////////
+
+		if (cdc::Level *level = STREAM_GetStreamUnitWithID(0)->level) {
+			cdc::CellGroupData *cellGroupData = level->sub50;
+			uint32_t numCells = cellGroupData->header->numTotalCells;
+			for (uint32_t i=0; i < numCells; i++) {
+				auto *cell = cellGroupData->cells[i];
+				if (cell->sub4) {
+					cdc::IRenderTerrain *rt = cell->sub4->pTerrain;
+					if (rt) {
+						if (renderTerrainInstances.find(rt) != renderTerrainInstances.end())
+							continue;
+						auto *rti = (cdc::CommonRenderTerrainInstance*)renderDevice->createRenderTerrainInstance(rt);
+						renderTerrainInstances[rt] = rti;
+						printf("created RenderTerrainInstance %p for RenderTerrain %p\n", rti, rt);
+					}
+				}
+			}
+		}
+
+		///////////////////////////////////////////////////////////////////////////////////////////
 
 		renderDevice->resetRenderLists();
 		renderDevice->beginRenderList(nullptr);
@@ -609,6 +633,31 @@ int spinnyCube(HWND window,
 		// single bottle at origin
 		rmiDrawable.draw(&bottleWorldMatrix, 0.0f);
 
+		// draw cells
+		if (cdc::Level *level = STREAM_GetStreamUnitWithID(0)->level) {
+			cdc::CellGroupData *cellGroupData = level->sub50;
+			uint32_t numCells = cellGroupData->header->numTotalCells;
+			for (uint32_t i=0; i < numCells; i++) {
+				auto *cell = cellGroupData->cells[i];
+
+				// draw renderterrain
+				if (cell->sub4) {
+					cdc::IRenderTerrain *rt = cell->sub4->pTerrain;
+					if (auto rtiIt = renderTerrainInstances.find(rt); rtiIt != renderTerrainInstances.end()) {
+						static_cast<cdc::PCDX11RenderTerrain*>(rtiIt->first)->hackDraw(rtiIt->second, &bottleWorldMatrix);
+					}
+				}
+
+				// draw rendermesh (these are for occlusion culling only, presumably)
+				if (cell->renderMesh && false) {
+					auto *cellRMIDrawable = new RMIDrawableBase(cell->renderMesh);
+					recycleRMI.emplace_back(cellRMIDrawable);
+					static_cast<cdc::PCDX11RenderModelInstance*>(cellRMIDrawable->rmi)->baseMask = 0x0002; // normals & composite
+					cellRMIDrawable->draw(&bottleWorldMatrix, 0.0f);
+				}
+			}
+		}
+
 		// uncomment to apply FXAA to the normal map
 		// can't apply to the proper color buffer because it'd be read/written at the same time
 		// renderDevice->recordDrawable(&fxaaDrawable, /*mask=*/ 0x100, 0);
@@ -710,8 +759,8 @@ int spinnyCube(HWND window,
 							"StreamGroupList",
 							"AnyType",
 						};
-						ImGui::Text("%3d: %04x %s unk6:%x (%d bytes)",
-							i++, section.id, names[section.type], section.unknown06, section.payloadSize);
+						ImGui::Text("%3d: %04x %s allocFlags:%d unk6:%x (%d bytes)",
+							i++, section.id, names[section.type], section.allocFlags, section.unknown06, section.payloadSize);
 						if (section.type == 5) { // RenderResource
 							ImGui::Text("    ");
 							ImGui::SameLine();
@@ -750,6 +799,16 @@ int spinnyCube(HWND window,
 				ImGui::Text("not loaded");
 			} else {
 				ImGui::Text("level %p", level);
+
+				cdc::CellGroupData *cellGroupData = level->sub50;
+				uint32_t numCells = cellGroupData->header->numTotalCells;
+				for (uint32_t i=0; i < numCells; i++) {
+					auto *cell = cellGroupData->cells[i];
+					ImGui::Text("cell %i: %s", i, cell->sub0->name);
+					// RenderTerrain at cell->sub4->pTerrain
+					// RenderMesh at cell->renderMesh (for visibility)
+				}
+
 				auto *admd = level->admdData;
 				for (uint32_t i=0; i < admd->numObjects; i++) {
 					auto &intro = admd->objects[i];

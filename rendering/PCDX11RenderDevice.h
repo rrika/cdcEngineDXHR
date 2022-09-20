@@ -106,8 +106,8 @@ public:
 	void createDefaultVertexAttribLayouts();
 	void setupPassCallbacks();
 	void registerComparatorsAndDrawersModel();
-	void registerComparatorsAndDrawersTerrain1();
-	void registerComparatorsAndDrawersTerrain2();
+	void registerComparatorsAndDrawersTerrain();
+	void registerComparatorsAndDrawersNGAPrim();
 	void setupShadowBuffer();
 
 	// incomplete
@@ -152,10 +152,10 @@ public:
 	TextureMap *createTexture(uint32_t) override;
 	void createProceduralTexture() override;
 	IShaderLib *createShaderLib(uint32_t) override;
-	RenderResource *createRenderModel(uint32_t) override;
+	RenderMesh *createRenderModel(uint32_t) override;
 	RenderModelInstance *createRenderModelInstance(RenderMesh*) override;
-	RenderResource *createRenderTerrain(uint32_t) override;
-	void createRenderTerrainInstance() override;
+	IRenderTerrain *createRenderTerrain(uint32_t) override;
+	IRenderTerrainInstance *createRenderTerrainInstance(IRenderTerrain*) override;
 	void createRenderImage() override;
 	void createWaterSurface() override;
 	void createLightResource() override;

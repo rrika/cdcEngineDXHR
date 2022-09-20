@@ -1,4 +1,6 @@
 #include "CommonRenderDevice.h"
+#include "CommonRenderTerrain.h" // for cast in CommonRenderDevice::createResource
+#include "RenderMesh.h" // for cast in CommonRenderDevice::createResource
 #include "surfaces/TextureMap.h"
 
 namespace cdc {

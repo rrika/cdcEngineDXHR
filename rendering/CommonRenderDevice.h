@@ -12,6 +12,8 @@ class CommonScene;
 class IMaterial;
 class IMatrixState;
 class IRenderPassCallback;
+class IRenderTerrain;
+class IRenderTerrainInstance;
 class IShaderLib;
 class RenderMesh;
 class RenderModelInstance;
@@ -20,7 +22,7 @@ class TextureMap;
 
 class CommonRenderDevice
 {
-protected:
+public:
 	LinearAllocator linear4; // 4
 	LinearAllocator *linear30; // 30
 	LinearAllocator *linear34; // 30
@@ -135,11 +137,11 @@ public:
 	virtual TextureMap *createTexture(uint32_t) = 0;
 	virtual void createProceduralTexture() = 0;
 	virtual IShaderLib *createShaderLib(uint32_t) = 0;
-	virtual RenderResource *createRenderModel(uint32_t) = 0;
+	virtual RenderMesh *createRenderModel(uint32_t) = 0;
 	virtual RenderResource *createRenderModelData(uint32_t);
 	virtual RenderModelInstance *createRenderModelInstance(RenderMesh*) = 0;
-	virtual RenderResource *createRenderTerrain(uint32_t) = 0;
-	virtual void createRenderTerrainInstance() = 0;
+	virtual IRenderTerrain *createRenderTerrain(uint32_t) = 0;
+	virtual IRenderTerrainInstance *createRenderTerrainInstance(IRenderTerrain*) = 0;
 	virtual void createRenderImage() = 0;
 	virtual void createWaterSurface() = 0;
 	virtual void createLightResource() = 0;

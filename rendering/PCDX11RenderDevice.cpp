@@ -11,8 +11,11 @@
 #include "PCDX11RenderModel.h"
 #include "PCDX11RenderModelInstance.h"
 #include "PCDX11RenderPassCallbacks.h"
+#include "PCDX11RenderTerrain.h"
+#include "CommonRenderTerrainInstance.h"
 #include "PCDX11Scene.h"
 #include "PCDX11StateManager.h"
+#include "PCDX11TerrainDrawable.h"
 #include "RenderPasses.h"
 #include "Types.h"
 #include "buffers/PCDX11SimpleDynamicVertexBuffer.h"
@@ -93,8 +96,8 @@ PCDX11RenderDevice::PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t heigh
 	renderPasses.addRenderPass(kRegularPass, 0x1400, 1, /* 1*/ kRenderFunctionDepth,         /*14*/ kPassIndexNonNormalDepth);
 	setupPassCallbacks();
 	registerComparatorsAndDrawersModel();
-	registerComparatorsAndDrawersTerrain1();
-	registerComparatorsAndDrawersTerrain2();
+	registerComparatorsAndDrawersTerrain();
+	registerComparatorsAndDrawersNGAPrim();
 	internalCreateIfDeviceManagerAgrees();
 }
 
@@ -185,37 +188,26 @@ void PCDX11RenderDevice::registerComparatorsAndDrawersModel() {
 	registerDrawer(funcIndex, /*10*/ kRenderFunctionNormal, PCDX11ModelDrawable::drawNormal);
 }
 
-void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain1() {
-	DrawableCompareFn todoCmp12 = nullptr;
-	DrawableCompareFn todoCmp467 = nullptr;
-	DrawableCompareFn todoCmpA = nullptr;
-
-	DrawableRenderFn todoDraw1 = nullptr;
-	DrawableRenderFn todoDraw2 = nullptr;
-	DrawableRenderFn todoDraw7 = nullptr;
-	DrawableRenderFn todoDraw4 = nullptr;
-	DrawableRenderFn todoDraw56 = nullptr;
-	DrawableRenderFn todoDrawA = nullptr;
-
+void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain() {
 	uint8_t funcIndex = allocFuncIndex("RenderTerrainDrawable");
-	registerComparator(funcIndex, /*1*/ kRenderFunctionDepth, todoCmp12);
-	registerComparator(funcIndex, /*2*/ kRenderFunctionShadow, todoCmp12);
-	registerComparator(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, todoCmp467);
-	registerComparator(funcIndex, /*4*/ kRenderFunctionComposite, todoCmp467);
-	registerComparator(funcIndex, /*6*/ kRenderFunctionPredator, todoCmp467);
+	registerComparator(funcIndex, /*1*/ kRenderFunctionDepth, PCDX11TerrainDrawable::compare12);
+	registerComparator(funcIndex, /*2*/ kRenderFunctionShadow, PCDX11TerrainDrawable::compare12);
+	registerComparator(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, PCDX11TerrainDrawable::compare467);
+	registerComparator(funcIndex, /*4*/ kRenderFunctionComposite, PCDX11TerrainDrawable::compare467);
+	registerComparator(funcIndex, /*6*/ kRenderFunctionPredator, PCDX11TerrainDrawable::compare467);
 
-	registerDrawer(funcIndex, /*1*/ kRenderFunctionDepth, todoDraw1);
-	registerDrawer(funcIndex, /*2*/ kRenderFunctionShadow, todoDraw2);
-	registerDrawer(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, todoDraw7);
-	registerDrawer(funcIndex, /*4*/ kRenderFunctionComposite, todoDraw4);
-	registerDrawer(funcIndex, /*5*/ kRenderFunctionTranslucent, todoDraw56);
-	registerDrawer(funcIndex, /*6*/ kRenderFunctionPredator, todoDraw56);
+	registerDrawer(funcIndex, /*1*/ kRenderFunctionDepth, PCDX11TerrainDrawable::draw1);
+	registerDrawer(funcIndex, /*2*/ kRenderFunctionShadow, PCDX11TerrainDrawable::draw2);
+	registerDrawer(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, PCDX11TerrainDrawable::draw7);
+	registerDrawer(funcIndex, /*4*/ kRenderFunctionComposite, PCDX11TerrainDrawable::draw4);
+	registerDrawer(funcIndex, /*5*/ kRenderFunctionTranslucent, PCDX11TerrainDrawable::draw56);
+	registerDrawer(funcIndex, /*6*/ kRenderFunctionPredator, PCDX11TerrainDrawable::draw56);
 
-	registerComparator(funcIndex, /*10*/ kRenderFunctionNormal, todoCmpA);
-	registerDrawer(funcIndex, /*10*/ kRenderFunctionNormal, todoDrawA);
+	registerComparator(funcIndex, /*10*/ kRenderFunctionNormal, PCDX11TerrainDrawable::compareA);
+	registerDrawer(funcIndex, /*10*/ kRenderFunctionNormal, PCDX11TerrainDrawable::drawA);
 }
 
-void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain2() {
+void PCDX11RenderDevice::registerComparatorsAndDrawersNGAPrim() {
 	DrawableCompareFn todoCmp = nullptr;
 
 	DrawableRenderFn todoDraw1 = nullptr;
@@ -474,7 +466,7 @@ IShaderLib *PCDX11RenderDevice::createShaderLib(uint32_t size) {
 	return new PCDX11ShaderLib(size, this);
 }
 
-RenderResource *PCDX11RenderDevice::createRenderModel(uint32_t size) {
+RenderMesh *PCDX11RenderDevice::createRenderModel(uint32_t size) {
 	return new PCDX11RenderModel(this, size);
 }
 
@@ -482,13 +474,12 @@ RenderModelInstance *PCDX11RenderDevice::createRenderModelInstance(RenderMesh *r
 	return new PCDX11RenderModelInstance(static_cast<PCDX11RenderModel*>(renderMesh), this);
 }
 
-RenderResource *PCDX11RenderDevice::createRenderTerrain(uint32_t) {
-	// TODO
-	return nullptr;
+IRenderTerrain *PCDX11RenderDevice::createRenderTerrain(uint32_t size) {
+	return new PCDX11RenderTerrain(this, size);
 }
 
-void PCDX11RenderDevice::createRenderTerrainInstance() {
-	// TODO
+IRenderTerrainInstance *PCDX11RenderDevice::createRenderTerrainInstance(IRenderTerrain *renderTerrain) {
+	return new CommonRenderTerrainInstance(static_cast<PCDX11RenderTerrain*>(renderTerrain));
 }
 
 void PCDX11RenderDevice::createRenderImage() {

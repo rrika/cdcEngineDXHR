@@ -18,6 +18,7 @@ target_sources(dxhr PRIVATE
 	BuiltinResources.cpp
 	CommonMaterial.cpp
 	CommonRenderDevice.cpp
+	CommonRenderTerrainInstance.cpp
 	CommonScene.cpp
 	LinearAllocator.cpp
 	PCDX11DeviceManager.cpp
@@ -32,10 +33,12 @@ target_sources(dxhr PRIVATE
 	PCDX11RenderModel.cpp
 	PCDX11RenderModelInstance.cpp
 	PCDX11RenderPassCallbacks.cpp
+	PCDX11RenderTerrain.cpp
 	PCDX11Scene.cpp
 	PCDX11StateManager.cpp
 	PCDX11StreamDecl.cpp
 	PCDX11StreamDeclCache.cpp
+	PCDX11TerrainDrawable.cpp
 	Projection.cpp
 	RenderPasses.cpp
 	RenderResource.cpp

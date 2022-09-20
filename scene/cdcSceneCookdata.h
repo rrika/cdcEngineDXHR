@@ -1,16 +1,88 @@
 #pragma once
+#include <cstdint>
 
 namespace cdc {
 
+class IRenderTerrain;
 class ISceneCell;
+class RenderMesh;
 class ResolveObject;
+struct CellBlobPortals;
+struct CellData;
+struct CellStreamData;
+struct SceneCellBSPNode;
 
-struct CellStreamGroupData {
+struct CellGroupDataHeader { // 50
+	uint32_t numTotalCells; // 0
+	uint32_t numToplevelCells; // 4
+	// TODO
+};
+
+struct CellGroupData { // 61
+	CellGroupDataHeader *header; // 0
+	uint32_t admd_maybe; // 4
+	SceneCellBSPNode *bspNodes; // 8
+	uint32_t streamgroups_maybe; // C
+	uint32_t symbols_maybe; // 10
+	CellData **cells;
+	CellStreamData *void_terrain_maybe; // 18
+	CellStreamData *exterior_terrain_maybe; // 1C
+};
+
+struct CellStreamGroupData { // 79
 	const char *name;
 	uint32_t numCells;
 	ISceneCell *cells;
 	const char *streamFileName;
 	ResolveObject *resolveObject;
 };
+
+struct CellDataHeader { // 121
+	char *name;
+	uint32_t dword4;
+	uint32_t dword8;
+	uint32_t dwordC;
+	float vec10[4]; // bbox.mins
+	float vec20[4]; // bbox.maxs
+	uint32_t dword30;
+	uint16_t word34;
+	uint16_t word36;
+	uint16_t sub4Count;
+	uint16_t word3A;
+	uint32_t dword3C;
+	uint16_t word40;
+	uint16_t numBSPNodes;
+	uint16_t word44;
+	uint16_t word46;
+	uint16_t intraSceneCellGroupIndex;
+	uint16_t word4A;
+	uint16_t word5C;
+	uint16_t word5E;
+	CellStreamGroupData *streamGroup50;
+	uint32_t dword54;
+	void *dword58;
+	uint32_t pmatrix_or_imfref_5C;
+};
+
+struct CellTerrainData {
+	IRenderTerrain *pTerrain;
+	uint32_t flags;
+	uint32_t lightMask;
+	void *pUserData;
+};
+
+struct CellData { // 157
+	CellDataHeader *sub0;
+	CellTerrainData *sub4;
+	uint32_t dword8;
+	uint32_t dwordC;
+	uint32_t dword10;
+	uint32_t dword14;
+	uint32_t dword18;
+	SceneCellBSPNode *bspNodes;
+	RenderMesh *renderMesh; // 20
+	CellBlobPortals *portals;
+};
+
 
 }
