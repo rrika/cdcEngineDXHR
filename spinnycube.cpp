@@ -390,14 +390,14 @@ int spinnyCube(HWND window,
 
 		mouseKeyboard->update();
 
+		float forward = 0;
+		float sideways = 0;
+		float speedModifier = 0.1f;
+
 #if ENABLE_IMGUI
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame(); // this will reset our pretty cursor
 		ImGui::NewFrame();
-
-		float forward = 0;
-		float sideways = 0;
-		float speedModifier = 0.1f;
 
 		if (ImGui::IsKeyPressed(ImGuiKey_Tab)) {
 			mouseLook = !mouseLook;
