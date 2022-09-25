@@ -1,21 +1,9 @@
 #pragma once
 #include <cstdint>
+#include "../../ui/FakeScaleform/fakescaleform.h"
+#include "NsScaleformMovieController.h"
 
-struct GFxValue {
-	void *objectInterface;
-	enum ValueType {
-		VT_Boolean = 2,
-		VT_Number = 3,
-		VT_String = 4,
-	} type;
-	union {
-		double number;
-		bool boolean;
-		const char *string;
-	};
-};
-
-class NsMainMenuMovieController {
+class NsMainMenuMovieController : public NsScaleformMovieController {
 public:
-	uint32_t ProcessMovieFunction(const char *name, GFxValue *args, uint32_t numArgs);
+	uint32_t ProcessMovieFunction(const char *name, GFxValue *args, uint32_t numArgs) override;
 };

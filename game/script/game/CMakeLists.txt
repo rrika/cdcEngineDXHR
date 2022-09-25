@@ -1,2 +1,3 @@
 target_sources(dxhr PRIVATE
-	NsMainMenuMovieController.cpp)
+	NsMainMenuMovieController.cpp
+	NsScaleformMovieController.cpp)

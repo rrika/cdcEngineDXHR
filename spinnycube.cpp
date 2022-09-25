@@ -21,6 +21,9 @@
 #include "filesystem/FileHelpers.h" // for archiveFileSystem_default
 #include "filesystem/FileUserBufferReceiver.h"
 #include "game/dtp/objecttypes/globaldatabase.h"
+#include "game/script/game/NsMainMenuMovieController.h"
+#include "game/ui/FakeScaleform/fakescaleform.h"
+#include "game/ui/Scaleform/ScaleformMovieInstance.h"
 #ifdef _WIN32
 #include "gameshell/win32/MainVM.h" // for yellowCursor
 #endif
@@ -353,6 +356,15 @@ int spinnyCube(HWND window,
 	bool showStringsWindow = false;
 	std::vector<std::pair<void*, cdc::CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
+
+	ScaleformMovieInstance mainMenuInstance(&mainMenuMovie);
+	NsMainMenuMovieController mainMenuMovieController;
+
+	// unsure how this link is established in the game
+	mainMenuInstance.m_controllerArray.push_back(&mainMenuMovieController);
+	mainMenuMovieController.movieInstance = &mainMenuInstance;
+
+	mainMenuInstance.init();
 #endif
 
 	while (true)
@@ -613,6 +625,8 @@ int spinnyCube(HWND window,
 			}
 			ImGui::End();
 		}
+
+		mainMenuInstance.buildUI();
 #endif
 
 		renderDevice->drawRenderLists();
