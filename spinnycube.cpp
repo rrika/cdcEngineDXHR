@@ -61,8 +61,12 @@
 
 #if ENABLE_IMGUI
 #include "imgui/imgui.h"
-#include "imgui/backends/imgui_impl_win32.h"
 #include "imgui/backends/imgui_impl_dx11.h"
+#ifdef _WIN32
+#include "imgui/backends/imgui_impl_win32.h"
+#else
+#include "imgui/backends/imgui_impl_sdl.h"
+#endif
 #include "rendering/Inspector.h"
 #endif
 
@@ -163,7 +167,11 @@ int spinnyCube(HWND window,
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	ImGui::StyleColorsDark();
+#ifdef _WIN32
 	ImGui_ImplWin32_Init(window);
+#else
+	ImGui_ImplSDL2_InitForSDLRenderer((SDL_Window*)window, nullptr);
+#endif
 	ImGui_ImplDX11_Init(baseDevice, baseDeviceContext);
 #endif
 
@@ -369,7 +377,7 @@ int spinnyCube(HWND window,
 
 	while (true)
 	{
-#ifdef WIN32
+#ifdef _WIN32
 		MSG msg;
 
 		while (PeekMessageA(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -391,6 +399,7 @@ int spinnyCube(HWND window,
 #else
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
+			ImGui_ImplSDL2_ProcessEvent(&event);
 			switch (event.type) {
 				case SDL_QUIT:
 					goto end;
@@ -408,7 +417,11 @@ int spinnyCube(HWND window,
 
 #if ENABLE_IMGUI
 		ImGui_ImplDX11_NewFrame();
+#ifdef _WIN32
 		ImGui_ImplWin32_NewFrame(); // this will reset our pretty cursor
+#else
+		ImGui_ImplSDL2_NewFrame();
+#endif
 		ImGui::NewFrame();
 
 		if (ImGui::IsKeyPressed(ImGuiKey_Tab)) {
@@ -638,7 +651,11 @@ int spinnyCube(HWND window,
 end:
 #if ENABLE_IMGUI 
 	ImGui_ImplDX11_Shutdown();
+#ifdef _WIN32
 	ImGui_ImplWin32_Shutdown();
+#else
+	ImGui_ImplSDL2_Shutdown();
+#endif
 	ImGui::DestroyContext();
 #endif
 	return 0;
