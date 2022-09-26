@@ -11,8 +11,10 @@ namespace cdc {
 class IRenderDrawable;
 class PCDX11BaseTexture;
 class PCDX11LightManager;
+class PCDX11Pool;
 class PCDX11RenderContext;
 class PCDX11RenderTarget;
+class PCDX11StaticPool;
 class PCDX11Texture;
 struct LightManagerSubB;
 
@@ -45,6 +47,11 @@ public:
 	RenderList *renderList_first = nullptr; // 10D00
 	RenderList *renderList_last = nullptr; // 10D04
 	RenderList *renderList_override = nullptr; // own addition
+
+	// PCDX11Pool *staticPool10D08;
+	// PCDX11Pool *staticPool10D0C;
+	PCDX11StaticPool *staticPool10D10 = nullptr;
+	// PCDX11StaticPool *staticPool10D14;
 
 	PCDX11ShaderLib *shlib_22;
 	PCDX11ShaderLib *shlib_21;
