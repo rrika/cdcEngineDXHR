@@ -5,7 +5,7 @@
 namespace cdc {
 
 class PCDX11RenderDevice;
-class PCDX11SimpleStaticIndexBuffer;
+class PCDX11StaticIndexBuffer;
 
 class PCDX11RenderModel :
 	public RenderMesh,
@@ -26,8 +26,7 @@ public:
 	// uint32_t bonesMaybe;
 	// uint32_t dword30;
 	uint32_t indices;
-	// PCDX11StaticIndexBuffer *indexBuffer; // 38
-	PCDX11SimpleStaticIndexBuffer *indexBuffer; // 38, hack
+	PCDX11StaticIndexBuffer *indexBuffer; // 38
 	NonPersistentPGData *tab0Ext16Byte; // one per primgroup
 	PersistentPGData *tab0Ext128Byte; // one per primgroup
 	uint32_t vsSelect; // 4C

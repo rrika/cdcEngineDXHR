@@ -34,8 +34,6 @@
 #include "object/ObjectManager.h" // for buildObjectsUI
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
 #include "rendering/buffers/PCDX11IndexBuffer.h"
-#include "rendering/buffers/PCDX11SimpleStaticIndexBuffer.h"
-#include "rendering/buffers/PCDX11SimpleStaticVertexBuffer.h"
 #include "rendering/buffers/PCDX11UberConstantBuffer.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/IRenderPassCallback.h"

@@ -3,8 +3,9 @@
 #include <cstdio>
 #include "CommonRenderModelInstance.h"
 #include "PCDX11Material.h"
-#include "buffers/PCDX11SimpleStaticIndexBuffer.h"
-#include "buffers/PCDX11SimpleStaticVertexBuffer.h"
+#include "PCDX11RenderDevice.h"
+#include "buffers/PCDX11StaticIndexBuffer.h"
+#include "buffers/PCDX11StaticVertexBuffer.h"
 #include "VertexAttribute.h"
 
 namespace cdc {
@@ -89,8 +90,8 @@ void PCDX11RenderModel::resConstruct() {
 		sub1->vertices += (uintptr_t)mesh;
 		sub1->format += (uintptr_t)mesh;
 		auto *layout = (VertexAttributeLayoutA*)sub1->format;
-		sub1->staticVertexBuffer = new PCDX11SimpleStaticVertexBuffer( // should be PCDX11StaticVertexBuffer
-			// RenderExternalResource::renderDevice->staticPool10D10,
+		sub1->staticVertexBuffer = new PCDX11StaticVertexBuffer(
+			PCDX11RenderExternalResource::renderDevice->staticPool10D10,
 			layout->vertStrideA,
 			sub1->numVertices,
 			(void*)sub1->vertices);
@@ -104,8 +105,8 @@ void PCDX11RenderModel::resConstruct() {
 		printf("%d indices\n", mesh->numIndices);
 		mesh->indices += (uintptr_t)mesh;
 		indices = mesh->indices;
-		indexBuffer = new PCDX11SimpleStaticIndexBuffer( // should be PCDX11StaticIndexBuffer
-			// RenderExternalResource::renderDevice->staticPool10D10,
+		indexBuffer = new PCDX11StaticIndexBuffer(
+			PCDX11RenderExternalResource::renderDevice->staticPool10D10,
 			mesh->numIndices,
 			(void*)indices);
 	}

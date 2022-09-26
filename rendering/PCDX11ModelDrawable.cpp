@@ -1,7 +1,7 @@
 #include <d3d11.h>
 #include "buffers/PCDX11IndexBuffer.h"
-#include "buffers/PCDX11SimpleStaticIndexBuffer.h"
-#include "buffers/PCDX11SimpleStaticVertexBuffer.h"
+#include "buffers/PCDX11StaticIndexBuffer.h"
+#include "buffers/PCDX11StaticVertexBuffer.h"
 #include "PCDX11LightManager.h"
 #include "PCDX11Material.h"
 #include "PCDX11MatrixState.h" // for PoseData
