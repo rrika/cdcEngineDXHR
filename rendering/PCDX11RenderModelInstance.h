@@ -12,7 +12,7 @@ class PCDX11RenderModelInstance :
 	public CommonRenderModelInstance,
 	public PCDX11RenderExternalResource
 {
-	PCDX11RenderModel *renderModel;
+	PCDX11RenderModel *renderModel_unused;
 public:
 	PCDX11RenderModelInstance(PCDX11RenderModel *renderModel, PCDX11RenderDevice *renderDevice) :
 		CommonRenderModelInstance(renderModel),
