@@ -39,7 +39,7 @@ static uint32_t bytesForTextureDimMips(int width, int height, int depthMinusOne,
 // cdc format to dxgi format
 uint32_t decodeFormat(uint32_t format) {
 	switch (format) {
-		case '1TXD':
+		case '1TXD': // 0x31545844
 			return 71;
 		case '2TXD':
 			return 71;
@@ -91,6 +91,23 @@ uint32_t decodeFormat(uint32_t format) {
 	}
 }
 
+uint32_t pitchForFormatAndWidth(uint32_t format, uint32_t width) {
+	switch (format) {
+		case 71:
+			return 8 * ((width + 3) >> 2);
+		case 74:
+		case 77:
+			return 16 * ((width + 3) >> 2);
+		case 28:
+		case 87:
+			return 4 * width;
+		case 65:
+			return width;
+		default:
+			printf("pitchForWidthAndFormat: unknown format %x\n", format);
+			return format; // undefined behavior in the original game probably
+	}
+}
 
 uint32_t PCDX11Texture::getWidth() {
 	return width;
@@ -164,7 +181,7 @@ void PCDX11Texture::asyncCreate(/* TODO: one argument */) {
 	D3D11_SUBRESOURCE_DATA& textureData = hackTextureData;
 	textureData = D3D11_SUBRESOURCE_DATA{};
 	textureData.pSysMem            = (void*)(((char*)textureBlob)+0x1C);
-	textureData.SysMemPitch        = textureBlob->width * 2;
+	textureData.SysMemPitch        = pitchForFormatAndWidth(textureDesc.Format, textureBlob->width);
 
 	auto device = deviceManager->getD3DDevice();
 	HRESULT hr = device->CreateTexture2D(&hackTextureDesc, &hackTextureData, &d3dTexture128);
