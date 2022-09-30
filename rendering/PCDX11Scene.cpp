@@ -84,9 +84,9 @@ void PCDX11Scene::updateUniforms() {
 	sceneBuffer.assignRow(18, row, 1); // SceneBuffer::DepthToView
 
 	// HACK: needed for the composite submaterial to work
-	row[0] = 0.0f;
-	row[1] = 0.0f;
-	row[2] = 0.0f;
+	row[0] = 1.0f;
+	row[1] = 1.0f;
+	row[2] = 1.0f;
 	sceneBuffer.assignRow(27, row, 1); // SceneBuffer::GlobalParams[0] (ambient or rim light)
 	row[0] = 0.0f;
 	row[1] = 0.0f;
