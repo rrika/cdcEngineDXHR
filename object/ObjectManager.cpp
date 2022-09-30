@@ -1,9 +1,15 @@
 #include <cstdio>
 #include <cstring>
+#include "config.h"
 #include "ObjectManager.h"
 #include "../drm/ResolveObject.h"
 #include "../filesystem/FileHelpers.h"
 #include "../gameshell/cdcGameShell.h"
+
+#if ENABLE_IMGUI
+#include "../filesystem/FileSystem.h"
+#include "../imgui/imgui.h"
+#endif
 
 #ifndef _WIN32
 #define stricmp strcasecmp
