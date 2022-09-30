@@ -15,10 +15,10 @@ public:
 	uint32_t size;
 
 	MeshHeader *meshHeader;
-	Mesh       *mesh;
+	Mesh       *mesh = nullptr;
 
-	uint16_t numPrimGroups; // 1C
-	PrimGroup *primGroups; // 20
+	uint16_t numPrimGroups = 0; // 1C
+	PrimGroup *primGroups = nullptr; // 20
 
 	uint16_t numModelBatches; // 24
 	ModelBatch *modelBatches; // 28
@@ -27,8 +27,8 @@ public:
 	// uint32_t dword30;
 	uint32_t indices;
 	PCDX11StaticIndexBuffer *indexBuffer; // 38
-	NonPersistentPGData *tab0Ext16Byte; // one per primgroup
-	PersistentPGData *tab0Ext128Byte; // one per primgroup
+	NonPersistentPGData *tab0Ext16Byte = nullptr; // one per primgroup
+	PersistentPGData *tab0Ext128Byte = nullptr; // one per primgroup
 	uint32_t vsSelect; // 4C
 
 public:

@@ -32,7 +32,7 @@ void PCDX11RenderModel::resConstruct() {
 	void **materials = meshHeader->materials + 1; // first dword is count
 	char *magic = (char*)&mesh->magic;
 
-	printf("reading mesh with magic \"%c%c%c%c\" ", magic[0], magic[1], magic[2], magic[3]);
+	printf("reading mesh with magic \"%c%c%c%c\" (header %p) ", magic[0], magic[1], magic[2], magic[3], meshHeader);
 	if (mesh->magic == 0x6873654D)
 		printf("OK\n");
 	else
@@ -53,6 +53,8 @@ void PCDX11RenderModel::resConstruct() {
 	mesh->primGroups = (PrimGroup*)((uintptr_t)mesh + (uintptr_t)mesh->primGroups);
 	primGroups = mesh->primGroups;
 	numPrimGroups = mesh->primGroupCount;
+
+	printf(" mesh.primGroupCount = %d\n", numPrimGroups);
 
 	for (uint32_t i = 0; i<numPrimGroups; i++) {
 		printf("  [%d] material %d -> ", i, (uintptr_t)primGroups[i].material);

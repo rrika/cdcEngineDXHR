@@ -41,22 +41,23 @@ void ObjectSection::fill(uint32_t domainId, void* src, size_t size, size_t offse
 void ObjectSection::construct(uint32_t domainId, void *) {
 	ObjectTracker *objectTracker = &objects[domainId];
 	ObjectBlob *objBlob = objectTracker->objBlob;
-	printf("domainId      = %x\n", domainId);
-	printf("objectTracker = %p\n", objectTracker);
-	printf("objBlob       = %p\n", objBlob);
-	printf("dtpData       = %p\n", objBlob->dtpData);
+	printf("object\n");
+	printf("  domainId      = %x\n", domainId);
+	printf("  objectTracker = %p\n", objectTracker);
+	printf("  objBlob       = %p\n", objBlob);
+	printf("  dtpData       = %p\n", objBlob->dtpData);
 	if (objBlob->dtpData) {
 		// TODO
-		printf("numModels     = %d\n", objBlob->dtpData->numModels);
+		printf("  numModels     = %d\n", objBlob->dtpData->numModels);
 		objBlob->numModels = objBlob->dtpData->numModels;
 		// TODO
-		printf("models        = %p\n", objBlob->dtpData->models);
+		printf("  models        = %p\n", objBlob->dtpData->models);
 		objBlob->models = objBlob->dtpData->models;
 		if (objBlob->models && objBlob->numModels != 0)
-			printf("models[0]     = %p\n", objBlob->models[0]);
+			printf("  models[0]     = %p\n", objBlob->models[0]);
 
 		// TODO		
-		printf("dwordBC       = %08x\n", objBlob->dtpData->dwordBC);
+		printf("  dwordBC       = %08x\n", objBlob->dtpData->dwordBC);
 		if (auto dwordBC = objBlob->dtpData->dwordBC) {
 			objBlob->dword58 = dwordBC;
 			objBlob->dword54 = (uint32_t)objBlob->dtpData;

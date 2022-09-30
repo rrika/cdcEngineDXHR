@@ -15,7 +15,7 @@
 
 using namespace cdc;
 
-StreamUnit StreamTracker[80];
+StreamUnit StreamTracker[80] = {};
 
 extern char buildType[16];
 
