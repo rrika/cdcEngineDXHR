@@ -15,7 +15,7 @@
 namespace cdc {
 
 // use of this global variable makes this class thread-unsafe
-static float matrixStagingBuffer[40 * 16];
+static float matrixStagingBuffer[42 * 16];
 
 PCDX11ModelDrawable::PCDX11ModelDrawable(
 	PCDX11RenderModel *renderModel,
@@ -302,31 +302,38 @@ bool PCDX11ModelDrawable::setMatrices(
 	if (hasBones) {
 		if (meshSub != prevModelBatch || poseData != prevPoseData) {
 			for (uint32_t i = 0; i < meshSub->commonCb3_numMatrices; i++) {
-				uint32_t j = meshSub->matrixGatherOffsets[i];
+				// uint32_t j = meshSub->matrixGatherOffsets[i];
+				uint32_t j = 0; // HACK
 				float *matrix = poseData->getMatrix(j);
 				float *vector = poseData->getVector(j);
 
+				if (i >= 42) {
+					printf("ERROR: skinningBuffer overflow\n");
+					break;
+				}
+				float *m = &matrixStagingBuffer[16 * i];
+
 				// transpose
-				matrixStagingBuffer[0] = matrix[0];
-				matrixStagingBuffer[1] = matrix[4];
-				matrixStagingBuffer[2] = matrix[8];
-				matrixStagingBuffer[3] = matrix[12];
+				m[0] = matrix[0];
+				m[1] = matrix[4];
+				m[2] = matrix[8];
+				m[3] = matrix[12]; // translation x (unless, I made a mistake)
 
-				matrixStagingBuffer[4] = matrix[1];
-				matrixStagingBuffer[5] = matrix[5];
-				matrixStagingBuffer[6] = matrix[9];
-				matrixStagingBuffer[7] = matrix[13];
+				m[4] = matrix[1];
+				m[5] = matrix[5];
+				m[6] = matrix[9];
+				m[7] = matrix[13]; // translation y
 
-				matrixStagingBuffer[8] = matrix[2];
-				matrixStagingBuffer[9] = matrix[6];
-				matrixStagingBuffer[10] = matrix[10];
-				matrixStagingBuffer[11] = matrix[14];
+				m[8] = matrix[2];
+				m[9] = matrix[6];
+				m[10] = matrix[10];
+				m[11] = matrix[14]; // translation z
 
 				// last row is different
-				matrixStagingBuffer[12] = vector[0];
-				matrixStagingBuffer[13] = vector[1];
-				matrixStagingBuffer[14] = vector[2];
-				matrixStagingBuffer[15] = vector[3];
+				m[12] = vector[0];
+				m[13] = vector[1];
+				m[14] = vector[2];
+				m[15] = vector[3];
 			}
 			auto &skinningBuffer = stateManager->accessCommonCB(3);
 			skinningBuffer.assignRow(0, matrixStagingBuffer, 4 * meshSub->commonCb3_numMatrices);

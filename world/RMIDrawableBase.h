@@ -15,5 +15,6 @@ public:
 	cdc::IMatrixState *matrixState = nullptr;
 public:
 	RMIDrawableBase(cdc::RenderMesh *model);
+	~RMIDrawableBase();
 	void draw(cdc::Matrix *, float) override;
 };
