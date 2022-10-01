@@ -16,7 +16,7 @@ public:
 	uint32_t clearColor; // 1C
 
 	PCDX11ClearDrawable(
-		float sortOrder,
+		float sortZ,
 		PCDX11RenderDevice *renderDevice,
 		uint32_t flags,
 		uint32_t clearColor,
@@ -29,7 +29,7 @@ public:
 		clearDepth(clearDepth),
 		clearColor(clearColor)
 	{
-		this->sortOrder = sortOrder;
+		this->sortZ = sortZ;
 	}
 
 	void draw(uint32_t funcSetIndex, IRenderDrawable *other) override;

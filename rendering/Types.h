@@ -39,4 +39,13 @@ enum RenderFunction {
 	kRenderFunctionInvalid = 21
 };
 
+enum DrawableTypeID { // 184
+	kDrawableTypeIDDefault = 0,
+	kDrawableTypeIDModel = 1,
+	kDrawableTypeIDTerrain = 2,
+	kDrawableTypeIDNGAPrimitves = 3,
+	kDrawableTypeFirstCustom = 4,
+	kMaxDrawableTypes = 16,
+};
+
 }

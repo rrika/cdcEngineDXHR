@@ -166,9 +166,9 @@ void DrawableList::draw(RenderFunctionSet *funcSet, uint32_t funcSetIndex) {
 	for (IRenderDrawable *prev = nullptr; item; prev = drawable) {
 		drawable = item->drawable;
 		bool matchPrev = prev &&
-			prev->word4 == drawable->word4 &&
+			prev->typeID == drawable->typeID &&
 			prev->getVtable() == drawable->getVtable();
-		funcSet->func[drawable->word4](funcSetIndex, drawable, prev);
+		funcSet->func[drawable->typeID](funcSetIndex, drawable, prev);
 		item = item->next;
 	}
 }

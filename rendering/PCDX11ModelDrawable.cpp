@@ -10,6 +10,7 @@
 #include "PCDX11RenderModel.h"
 #include "PCDX11StateManager.h"
 #include "PCDX11StreamDecl.h"
+#include "Types.h"
 #include "VertexAttribute.h"
 
 namespace cdc {
@@ -34,7 +35,7 @@ PCDX11ModelDrawable::PCDX11ModelDrawable(
 	poseData(poseData),
 	opacity(opacity)
 { // hack
-	word4 = 1; // use RenderModel drawers
+	typeID = kDrawableTypeIDModel;
 	flags34 = (primGroup[0].triangleCount << 8);
 
 	auto lightManager = static_cast<PCDX11LightManager*>(renderModel->renderDevice->lightManager);
