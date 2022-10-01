@@ -15,6 +15,15 @@ public:
 
 class FileRequest {
 public:
+	enum Priority {
+		INTERRUPT = 0,
+		HIGH = 1,
+		ABOVE_NORMAL = 2,
+		NORMAL = 3,
+		BELOW_NORMAL = 4,
+		LOW = 5
+	};
+
 	virtual void incrRefCount() = 0; // 00
 	virtual void decrRefCount() = 0; // 04
 	virtual void setCompressedSize(uint32_t) = 0; // 08
