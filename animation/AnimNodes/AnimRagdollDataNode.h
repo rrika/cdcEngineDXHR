@@ -1,5 +1,5 @@
 #pragma once
-#include "AnimPipelineNode.h"
+#include "../AnimPipelineNode.h"
 
 namespace cdc {
 

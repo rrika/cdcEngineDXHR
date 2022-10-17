@@ -1,5 +1,5 @@
 #pragma once
-#include "AnimPipelineNode.h"
+#include "../../../animation/AnimPipelineNode.h"
 
 class AnimLookAtNode : public cdc::AnimPipelineNode {
 	// TODO

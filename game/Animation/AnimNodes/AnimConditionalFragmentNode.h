@@ -1,5 +1,5 @@
 #pragma once
-#include "AnimFragmentNode.h"
+#include "../../../animation/AnimNodes/AnimFragmentNode.h"
 
 class AnimConditionalFragmentNode : public cdc::AnimFragmentNode {
 	// TODO

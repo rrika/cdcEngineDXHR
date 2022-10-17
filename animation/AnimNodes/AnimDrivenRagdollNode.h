@@ -1,5 +1,5 @@
 #pragma once
-#include "AnimRagdollNode.h"
+#include "../AnimRagdollNode.h"
 
 namespace cdc {
 
