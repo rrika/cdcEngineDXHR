@@ -1,2 +1,3 @@
 target_sources(dxhr PRIVATE
-	Math.cpp)
+	Math.cpp
+	MathUtil.cpp)
