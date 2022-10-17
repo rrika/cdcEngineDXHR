@@ -172,7 +172,7 @@ uint32_t objectIdByName(const char *name) {
 	return 0;
 }
 
-static void requestObject(uint32_t id, uint8_t fsMethod18Arg) {
+static void requestObject(uint32_t id, uint8_t priority) {
 	ObjectTracker *objectTracker = getByObjectListIndex(id);
 
 	if (!objectTracker) {
@@ -199,16 +199,16 @@ static void requestObject(uint32_t id, uint8_t fsMethod18Arg) {
 		&objectUnloadCallback,
 		objectTracker,
 		0,
-		fsMethod18Arg);
+		priority);
 	printf("robj=%p\n", objectTracker->resolveObject);
 }
 
-void requestObject1(uint32_t id) {
-	requestObject(id, 1);
+void requestObjectHigh(uint32_t id) {
+	requestObject(id, cdc::FileRequest::HIGH);
 }
 
-void requestObject3(uint32_t id) {
-	requestObject(id, 3);
+void requestObjectNormal(uint32_t id) {
+	requestObject(id, cdc::FileRequest::NORMAL);
 }
 
 void buildObjectsUI() {
@@ -226,7 +226,7 @@ void buildObjectsUI() {
 				ImGui::PushID(i);
 				ImGui::SameLine();
 				if (ImGui::SmallButton("Load")) {
-					requestObject3(i+1);
+					requestObjectNormal(i+1);
 					getDefaultFileSystem()->processAll();
 				}
 				ImGui::PopID();

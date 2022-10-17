@@ -29,7 +29,7 @@ public:
 		void (*unloadCallback)(ObjectTracker*, ResolveObject*),
 		ObjectTracker *objectTracker,
 		uint8_t y,
-		uint32_t fsMethod18Arg
+		uint32_t priority
 	);
 
 	static ResolveObject *create(
@@ -42,7 +42,7 @@ public:
 		void (*unloadCallback)(ObjectTracker*, ResolveObject*),
 		ObjectTracker *objectTracker,
 		uint8_t y,
-		uint32_t fsMethod18Arg
+		uint32_t priority
 	);
 
 	ResolveObject(const char *path) : path(path) {}

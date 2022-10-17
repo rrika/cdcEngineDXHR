@@ -204,7 +204,7 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 				nullptr,
 				nullptr,
 				0,
-				1);
+				cdc::FileRequest::HIGH);
 			resolveObject->addDependency(depResolveObject);
 			if (!isLoaded(depResolveObject)) {
 				printf("  - %s\n", dep);

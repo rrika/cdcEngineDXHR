@@ -132,7 +132,7 @@ void STREAM_LoadLevel(const char *baseAreaName, StreamUnitPortal *streamPortal, 
 					0,
 					0,
 					0,
-					3 // normal priority
+					cdc::FileRequest::NORMAL
 				);
 			} else {
 				resolveObject = ResolveObject::create(
@@ -144,7 +144,7 @@ void STREAM_LoadLevel(const char *baseAreaName, StreamUnitPortal *streamPortal, 
 					0,
 					0,
 					0,
-					3 // normal priority
+					cdc::FileRequest::NORMAL
 				);
 			}
 		}
@@ -173,7 +173,7 @@ public:
 		for (uint32_t i = 0; i < admd->numObjects; i++) {
 			dtp::Intro *intro = &admd->objects[i];
 			printf("  %02x\n", intro->objectListIndex);
-			requestObject3(intro->objectListIndex);
+			requestObjectNormal(intro->objectListIndex);
 		}
 	}
 	void UnitDumped(StreamUnit*) override {

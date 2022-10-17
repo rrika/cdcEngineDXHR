@@ -31,7 +31,7 @@ public:
 	virtual uint32_t getCompletionStatus() = 0; // 14
 		// 3 - complete
 		// 4 - failed
-	virtual void submit(uint8_t arg) = 0; // 18
+	virtual void submit(uint8_t priority) = 0; // 18
 	virtual void cancel() = 0; // 1C
 	virtual ~FileRequest() = default; // 24
 };

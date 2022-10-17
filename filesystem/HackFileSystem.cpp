@@ -37,7 +37,7 @@ uint32_t HackFileRequest::getCompletionStatus() {
 	return completionStatus;	
 }
 
-void HackFileRequest::submit(uint8_t arg) {
+void HackFileRequest::submit(uint8_t priority) {
 	fs->requests.push_back(this);
 }
 

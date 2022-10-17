@@ -42,36 +42,36 @@ void loadDatabases() {
 	GameShell::LOAD_ObjectFileName(objectivePath, "objective_database");
 	ResolveObject::create(
 		objectivePath, nullptr, nullptr, nullptr,
-		&objectiveDatabase, nullptr, nullptr, 0, 3);
+		&objectiveDatabase, nullptr, nullptr, 0, cdc::FileRequest::NORMAL);
 
 	GameShell::LOAD_ObjectFileName(logicActionResourcePath, "logicactionresource_database");
 	ResolveObject::create(
 		logicActionResourcePath, nullptr, nullptr, nullptr,
-		&logicActionResourceDatabase, nullptr, nullptr, 0, 3);
+		&logicActionResourceDatabase, nullptr, nullptr, 0, cdc::FileRequest::NORMAL);
 
 	GameShell::LOAD_ObjectFileName(tutorialPath, "tutorial_database");
 	ResolveObject::create(
 		tutorialPath, nullptr, nullptr, nullptr,
-		&tutorialDatabase, nullptr, nullptr, 0, 3);
+		&tutorialDatabase, nullptr, nullptr, 0, cdc::FileRequest::NORMAL);
 
 	getDefaultFileSystem()->processAll();
 
 	uint32_t globalSmartScriptsId = objectIdByName("GlobalSmartScripts");
-	requestObject3(globalSmartScriptsId);
+	requestObjectNormal(globalSmartScriptsId);
 
 	uint32_t globalDatabaseId = objectIdByName("GlobalDatabase");
-	requestObject3(globalDatabaseId);
+	requestObjectNormal(globalDatabaseId);
 
 	// this seems to crash
 	// uint32_t globalPlayerInfoId = objectIdByName("GlobalPlayerInfo");
-	// requestObject3(globalPlayerInfoId);
+	// requestObjectNormal(globalPlayerInfoId);
 
 	uint32_t globalDLCInfoId = objectIdByName("GlobalDLCInfo");
 	if (globalDLCInfoId)
-		requestObject3(globalDLCInfoId);
+		requestObjectNormal(globalDLCInfoId);
 
 	uint32_t globalScriptingId = objectIdByName("GlobalScripting");
-	requestObject3(globalScriptingId);
+	requestObjectNormal(globalScriptingId);
 
 	// TODO
 }
@@ -91,9 +91,9 @@ void MAIN_DoMainInit() {
 	uint32_t globalSoundInfoId = objectIdByName("globalsoundinfo");
 	uint32_t globalAnimInfoId = objectIdByName("globalaniminfo");
 
-	requestObject3(generalBankId);
-	requestObject3(globalSoundInfoId);
-	requestObject3(globalAnimInfoId);
+	requestObjectNormal(generalBankId);
+	requestObjectNormal(globalSoundInfoId);
+	requestObjectNormal(globalAnimInfoId);
 
 	getDefaultFileSystem()->processAll();
 

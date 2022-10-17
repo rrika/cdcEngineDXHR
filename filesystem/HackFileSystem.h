@@ -48,7 +48,7 @@ public:
 	void setCompressedSize(uint32_t) override;
 	void setReadAmount(uint32_t) override;
 	uint32_t getCompletionStatus() override;
-	void submit(uint8_t) override;
+	void submit(uint8_t priority) override;
 	void cancel() override;
 };
 

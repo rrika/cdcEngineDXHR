@@ -19,6 +19,7 @@
 #include "drm/ResolveSection.h"
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileHelpers.h" // for archiveFileSystem_default
+#include "filesystem/FileSystem.h" // for enum cdc::FileRequest::Priority
 #include "filesystem/FileUserBufferReceiver.h"
 #include "game/dtp/objecttypes/globaldatabase.h"
 #include "game/Gameloop.h"
@@ -200,10 +201,10 @@ int spinnyCube(HWND window,
 	cdc::deviceManager->stateManager = &stateManager; // hack
 
 	auto bottleIndex = cdc::objectIdByName("alc_beer_bottle_a");
-	cdc::requestObject3(bottleIndex);
+	cdc::requestObjectNormal(bottleIndex);
 
 	auto lightIndex = cdc::objectIdByName("deferred_fast_omni_diffuse");
-	cdc::requestObject3(lightIndex);
+	cdc::requestObjectNormal(lightIndex);
 
 	// see below for why
 	auto obj3 = cdc::ResolveObject::create(
@@ -215,7 +216,7 @@ int spinnyCube(HWND window,
 		nullptr,
 		nullptr,
 		0,
-		3
+		cdc::FileRequest::NORMAL
 	);
 	auto obj4 = cdc::ResolveObject::create(
 		"pc-w\\s_scn_det_sarifhq_rail_tutorial_barrettintro_det_sarifhq_rail_tutorial.drm",
@@ -226,7 +227,7 @@ int spinnyCube(HWND window,
 		nullptr,
 		nullptr,
 		0,
-		3
+		cdc::FileRequest::NORMAL
 	);
 /*
 	auto obj5 = cdc::ResolveObject::create(
@@ -238,7 +239,7 @@ int spinnyCube(HWND window,
 		nullptr,
 		nullptr,
 		0,
-		3
+		cdc::FileRequest::NORMAL
 	);
 */
 	cdc::archiveFileSystem_default->processAll();

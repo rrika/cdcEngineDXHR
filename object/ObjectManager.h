@@ -59,8 +59,8 @@ ObjectTracker *allocObjectSlot(int32_t id, uint16_t state);
 void ensureObjectManager();
 void readAndParseObjectList();
 uint32_t objectIdByName(const char *name);
-void requestObject1(uint32_t id);
-void requestObject3(uint32_t id);
+void requestObjectHigh(uint32_t id);
+void requestObjectNormal(uint32_t id);
 
 void buildObjectsUI();
 

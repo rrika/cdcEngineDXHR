@@ -20,7 +20,7 @@ ResolveObject *ResolveObject::create(
 	void (*unloadCallback)(ObjectTracker*, ResolveObject*),
 	ObjectTracker *objectTracker,
 	uint8_t y,
-	uint32_t fsMethod18Arg // priority
+	uint32_t priority
 ) {
 	// uint32_t pathCrc = crc32_lowercase(path);
 	uint32_t pathCrc = pathCrc32(path);
@@ -34,7 +34,7 @@ ResolveObject *ResolveObject::create(
 		unloadCallback,
 		objectTracker,
 		y,
-		fsMethod18Arg
+		priority
 	);
 }
 
@@ -50,7 +50,7 @@ ResolveObject *ResolveObject::create(
 	void (*unloadCallback)(ObjectTracker*, ResolveObject*),
 	ObjectTracker *objectTracker,
 	uint8_t y,
-	uint32_t fsMethod18Arg
+	uint32_t priority
 ) {
 	if (auto it = cachedObjects.find(pathCrc); it != cachedObjects.end()) {
 		auto *resolveObject = it->second;
@@ -80,7 +80,7 @@ ResolveObject *ResolveObject::create(
 	auto *fs = getDefaultFileSystem();
 	auto *req = fs->createRequest(resolveReceiver, path, 0);
 	resolveObject->fileRequest = req;
-	req->submit(fsMethod18Arg);
+	req->submit(priority);
 	// TODO
 
 	return resolveObject;
