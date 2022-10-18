@@ -1,2 +1,4 @@
 target_sources(dxhr PRIVATE
-	RingBuffer.cpp)
+	RingBuffer.cpp
+	Sound.cpp
+	snd.cpp)

@@ -11,6 +11,7 @@
 #include "../object/ObjectManager.h"
 #include "../rendering/PCDX11DeviceManager.h"
 #include "../spinnycube.h"
+#include "../sound/Sound.h"
 #include "../world/SceneLayer.h"
 #include "../world/stream.h"
 #include "Main.h"
@@ -80,6 +81,10 @@ void MAIN_DoMainInit() {
 	// TODO
 
 	STREAM_Init();
+
+	// TODO
+
+	SOUND_Init();
 
 	// TODO
 
