@@ -118,4 +118,10 @@ uint32_t WaveSection::getDomainId(uint32_t sectionId) {
 		return ~0u;
 }
 
+// HACK
+void WaveSection::playSound(uint32_t sectionId) {
+	if (auto *sample = entries[sectionId].sample)
+		sample->Play();
+}
+
 }

@@ -48,6 +48,9 @@ public:
 	void fill(uint32_t id, void* src, uint32_t size, uint32_t offset) override; // 0x18
 	void *getWrapped(uint32_t) override; // 0x30
 	uint32_t getDomainId(uint32_t) override;  // 0x44
+
+	// HACK
+	void playSound(uint32_t);
 };
 
 }

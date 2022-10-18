@@ -17,6 +17,7 @@
 #include "drm/ResolveObject.h"
 #include "drm/ResolveReceiver.h"
 #include "drm/ResolveSection.h"
+#include "drm/sections/WaveSection.h"
 #include "filesystem/ArchiveFileSystem.h"
 #include "filesystem/FileHelpers.h" // for archiveFileSystem_default
 #include "filesystem/FileSystem.h" // for enum cdc::FileRequest::Priority
@@ -666,7 +667,7 @@ int spinnyCube(HWND window,
 						};
 						ImGui::Text("%3d: %04x %s unk6:%x (%d bytes)",
 							i++, section.id, names[section.type], section.unknown06, section.payloadSize);
-						if (section.type == 5) {
+						if (section.type == 5) { // RenderResource
 							ImGui::Text("    ");
 							ImGui::SameLine();
 							auto *resource = (cdc::RenderResource*)cdc::g_resolveSections[5]->getWrapped(section.id);
@@ -674,6 +675,14 @@ int spinnyCube(HWND window,
 								ImGui::Image(
 									tex->createShaderResourceView(), ImVec2(256, 256));
 							}
+						}
+						if (section.type == 6) { // FMOD
+							ImGui::PushID(section.id);
+							ImGui::SameLine();
+							if (ImGui::SmallButton("Play")) {
+								((cdc::WaveSection*)cdc::g_resolveSections[6])->playSound(section.id);
+							}
+							ImGui::PopID();
 						}
 					}
 					ImGui::TreePop();

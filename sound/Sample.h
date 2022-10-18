@@ -33,6 +33,9 @@ public:
 		uint32_t offset,
 		void *src,
 		uint32_t bytes);
+
+	// HACK
+	void Play();
 };
 
 }

@@ -65,4 +65,12 @@ uint32_t Sample::Upload(
 	return m_lengthInBytes;
 }
 
+// HACK
+void Sample::Play() {
+	FMOD::Channel *channel = 0;
+	FMOD_RESULT result = gFMOD->playSound(FMOD_CHANNEL_FREE, m_soundPlay, 0, &channel);
+	if (result != FMOD_OK)
+		printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+}
+
 }
