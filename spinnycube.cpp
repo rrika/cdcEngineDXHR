@@ -431,7 +431,11 @@ int spinnyCube(HWND window,
 #endif
 		ImGui::NewFrame();
 
-		if (ImGui::IsKeyPressed(ImGuiKey_Tab)) {
+		if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {
+			mouseLook = false;
+			mouseKeyboard->setCursorGrab(false);
+		}
+		else if (ImGui::IsKeyPressed(ImGuiKey_Tab)) {
 			mouseLook = !mouseLook;
 			mouseKeyboard->setCursorGrab(mouseLook);
 		}
@@ -591,7 +595,9 @@ int spinnyCube(HWND window,
 				ImGui::EndMenu();
 			}
 			if (mouseLook)
-				ImGui::Text("Press TAB to release cursor");
+				ImGui::Text("Press TAB or ESC to release cursor");
+			else
+				ImGui::Text("Press TAB to grab cursor");
 			ImGui::EndMainMenuBar();
 		}
 

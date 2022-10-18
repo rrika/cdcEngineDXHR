@@ -7,7 +7,7 @@ Note: Looking around using the mouse is not supported right now.
     cd cdcEngineDXHR
     mkdir native_build
     cd native_build
-    cmake .. -DNATIVE_BUILD=ON -DENABLE_IMGUI=ON
+    cmake .. -DNATIVE_BUILD=ON
     make
    
 # How to build (Windows 32-bit binary on Linux)

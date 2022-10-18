@@ -31,7 +31,7 @@ include(ExternalProject)
 option(ENABLE_STEAM "Build with Steam integration" OFF)
 option(ENABLE_MCE "Build with Windows Media Center integration" OFF)
 option(ENABLE_GCS "Build with whatever GCS is" OFF)
-option(ENABLE_IMGUI "Build with ImGui" ${NOT_NATIVE_BUILD})
+option(ENABLE_IMGUI "Build with ImGui" ON)
 option(ENABLE_D3DCOMPILER "Build with d3dcompiler dependency" ${NOT_NATIVE_BUILD})
 
 if (NATIVE_BUILD)
