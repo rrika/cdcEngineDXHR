@@ -3,6 +3,7 @@
 #include "PCDX11ModelDrawable.h"
 #include "PCDX11RenderDevice.h"
 #include <cstdio>
+#include <cmath>
 
 namespace cdc {
 

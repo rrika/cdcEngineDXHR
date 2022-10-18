@@ -4,10 +4,10 @@
 #include "ObjectManager.h"
 #include "../drm/ResolveObject.h"
 #include "../filesystem/FileHelpers.h"
+#include "../filesystem/FileSystem.h"
 #include "../gameshell/cdcGameShell.h"
 
 #if ENABLE_IMGUI
-#include "../filesystem/FileSystem.h"
 #include "../imgui/imgui.h"
 #endif
 

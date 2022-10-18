@@ -404,7 +404,9 @@ int spinnyCube(HWND window,
 #else
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
+#if ENABLE_IMGUI
 			ImGui_ImplSDL2_ProcessEvent(&event);
+#endif
 			switch (event.type) {
 				case SDL_QUIT:
 					goto end;
