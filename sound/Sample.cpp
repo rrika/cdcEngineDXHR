@@ -71,6 +71,8 @@ void Sample::Play() {
 	FMOD_RESULT result = gFMOD->playSound(FMOD_CHANNEL_FREE, m_soundPlay, 0, &channel);
 	if (result != FMOD_OK)
 		printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+
+	gFMOD->update();
 }
 
 }
