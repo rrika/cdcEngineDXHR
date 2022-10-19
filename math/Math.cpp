@@ -4,7 +4,7 @@
 using namespace cdc;
 
 // column-major multiplication
-float4x4 operator*(const float4x4& m1, const float4x4& m2)
+cdc::Matrix operator*(const cdc::Matrix& m1, const cdc::Matrix& m2)
 {
     return
     {
@@ -30,9 +30,9 @@ float4x4 operator*(const float4x4& m1, const float4x4& m2)
     };
 }
 
-bool operator==(const float4x4& m1, const float4x4& m2) {
+bool operator==(const cdc::Matrix& m1, const cdc::Matrix& m2) {
     // original game does proper float comparisons (0.0f == -0.0f)
-    return memcmp((void*)&m1, (void*)&m2, sizeof(float4x4)) == 0;
+    return memcmp((void*)&m1, (void*)&m2, sizeof(cdc::Matrix)) == 0;
 }
 
 Vector& operator+=(Vector& a, VectorArg b) {
@@ -51,7 +51,7 @@ Vector operator*(VectorArg a, float b) {
     return {a.x * b, a.y * b, a.z * b, a.w * b};
 }
 
-float4x4 transpose(float4x4 m) {
+cdc::Matrix transpose(cdc::Matrix m) {
     return {{
         {m.m[0][0], m.m[1][0], m.m[2][0], m.m[3][0]},
         {m.m[0][1], m.m[1][1], m.m[2][1], m.m[3][1]},
@@ -60,7 +60,7 @@ float4x4 transpose(float4x4 m) {
     }};
 }
 
-float4x4 identity4x4 = {{
+cdc::Matrix identity4x4 = {{
     {1.0f, 0.0f, 0.0f, 0.0f},
     {0.0f, 1.0f, 0.0f, 0.0f},
     {0.0f, 0.0f, 1.0f, 0.0f},

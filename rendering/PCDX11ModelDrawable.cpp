@@ -350,7 +350,7 @@ bool PCDX11ModelDrawable::setMatrices(
 	if (poseData != prevPoseData) { // || currentExt != prevExt) {
 		// stateManager->setProjectMatrix(currentExt->projectMatrix);
 		// TODO: don't reinterpret cast
-		stateManager->setWorldMatrix(*reinterpret_cast<float4x4*>(poseData->getMatrix(0)));
+		stateManager->setWorldMatrix(*reinterpret_cast<Matrix*>(poseData->getMatrix(0)));
 		stateManager->updateMatrices();
 		return poseData != prevPoseData;
 	}

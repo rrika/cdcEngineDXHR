@@ -1,5 +1,5 @@
 #pragma once
-#include "../math/Math.h" // for float4x4
+#include "../math/Math.h" // for Matrix
 #include "PCDX11InternalResource.h"
 #include "Stencil.h"
 #include <array>
@@ -135,11 +135,11 @@ private:
 	uint32_t m_blendState; // 434
 	float m_alphaThreshold; // 438
 
-	float4x4 m_projectMatrix; // 440
-	float4x4 m_viewMatrix; // 480
-	float4x4 m_viewProjectMatrix; // 4C0
-	float4x4 m_worldMatrix; // 500
-	float4x4 *m_projectMatrixPtr; // 540
+	Matrix m_projectMatrix; // 440
+	Matrix m_viewMatrix; // 480
+	Matrix m_viewProjectMatrix; // 4C0
+	Matrix m_worldMatrix; // 500
+	Matrix *m_projectMatrixPtr; // 540
 	bool m_dirtyWorldMatrix; // 544
 	bool m_dirtyViewMatrix; // 545
 	bool m_dirtyProjectMatrix; // 546
@@ -179,10 +179,10 @@ public:
 	void setAlphaThreshold(uint8_t threshold);
 	void setFogColor(float *color);
 	void setOpacity(float opacity);
-	void setWorldMatrix(float4x4& worldMatrix);
-	void setViewMatrix(float4x4& viewMatrix);
-	void setProjectMatrix(float4x4& projectMatrix);
-	void setProjectMatrixPtr(float4x4* projectMatrixPtr);
+	void setWorldMatrix(Matrix& worldMatrix);
+	void setViewMatrix(Matrix& viewMatrix);
+	void setProjectMatrix(Matrix& projectMatrix);
+	void setProjectMatrixPtr(Matrix* projectMatrixPtr);
 
 	void updateMatrices();
 

@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "../math/Math.h" // for float4x4
+#include "../math/Math.h" // for Matrix
 #include "IRenderScene.h"
 #include "IRenderDrawable.h"
 #include "surfaces/CommonRenderTarget.h" // for CommonRenderTarget to IRenderTarget cast
@@ -48,17 +48,17 @@ public:
 	RenderGlobalState globalState;
 	uint8_t byte25C; // reset by PCDX11CompositePassCallbacks::post
 	// uint8_t f25D[2];
-	// Matrix4x4 mat260;
+	// Matrix mat260;
 	// char field_29F;
 	// CommonRenderDevice *commonRenderDevice2A0;
 	// uint32_t dword2A4;
 	// uint32_t dword2A8;
 	// uint32_t dword2AC;
-	float4x4 viewMatrix;
-	float4x4 projectMatrix;
-	// Matrix4x4 mat330;
-	// Matrix4x4 mat370;
-	// Matrix4x4 mat3B0_maybe;
+	Matrix viewMatrix;
+	Matrix projectMatrix;
+	// Matrix mat330;
+	// Matrix mat370;
+	// Matrix mat3B0_maybe;
 	CommonRenderTarget *renderTarget; //3F0
 	CommonDepthBuffer *depthBuffer; // 3F4
 	// uint32_t dword3F8;
@@ -132,9 +132,9 @@ public:
 		fogScaleOffset[1] = 0.0f;
 	}
 
-	float4x4& getViewMatrix() override { return viewMatrix; }
+	Matrix& getViewMatrix() override { return viewMatrix; }
 	void scene4() override {}
-	float4x4& getProjectMatrix() override { return projectMatrix; }
+	Matrix& getProjectMatrix() override { return projectMatrix; }
 	void sceneC() override {}
 	void getCameraPosition(float *pos) override {
 		pos[0] = viewport.cameraPosition[0];

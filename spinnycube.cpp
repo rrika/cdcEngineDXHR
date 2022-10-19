@@ -32,7 +32,7 @@
 #endif
 #include "input/PCMouseKeyboard.h"
 #include "locale/localstr.h"
-#include "math/Math.h" // for float4x4
+#include "math/Math.h" // for cdc::Matrix
 #include "object/Object.h"
 #include "object/ObjectManager.h" // for buildObjectsUI
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
@@ -474,14 +474,14 @@ int spinnyCube(HWND window,
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 
-		float4x4 rotateX   = { 1, 0, 0, 0, 0, static_cast<float>(cos(modelRotation.x)), -static_cast<float>(sin(modelRotation.x)), 0, 0, static_cast<float>(sin(modelRotation.x)), static_cast<float>(cos(modelRotation.x)), 0, 0, 0, 0, 1 };
-		float4x4 rotateY   = { static_cast<float>(cos(modelRotation.y)), 0, static_cast<float>(sin(modelRotation.y)), 0, 0, 1, 0, 0, -static_cast<float>(sin(modelRotation.y)), 0, static_cast<float>(cos(modelRotation.y)), 0, 0, 0, 0, 1 };
-		float4x4 rotateZ   = { static_cast<float>(cos(modelRotation.z)), -static_cast<float>(sin(modelRotation.z)), 0, 0, static_cast<float>(sin(modelRotation.z)), static_cast<float>(cos(modelRotation.z)), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
-		float4x4 bottleScale = { modelScale.x, 0, 0, 0, 0, modelScale.y, 0, 0, 0, 0, modelScale.z, 0, 0, 0, 0, 1 };
-		float4x4 bottleTranslate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, modelTranslation.x, modelTranslation.y, modelTranslation.z, 1 };
-		float4x4 cameraTranslate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -cameraPos.x, -cameraPos.y, -cameraPos.z, 1 };
-		float4x4 lightScaleTranslate = { lightRadius * 2.0f, 0, 0, 0, 0, lightRadius * 2.0f, 0, 0, 0, 0, lightRadius * 2.0f, 0, 1, 1, 1, 1 };
-		float4x4 zUpWorld = {0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1};
+		cdc::Matrix rotateX   = { 1, 0, 0, 0, 0, static_cast<float>(cos(modelRotation.x)), -static_cast<float>(sin(modelRotation.x)), 0, 0, static_cast<float>(sin(modelRotation.x)), static_cast<float>(cos(modelRotation.x)), 0, 0, 0, 0, 1 };
+		cdc::Matrix rotateY   = { static_cast<float>(cos(modelRotation.y)), 0, static_cast<float>(sin(modelRotation.y)), 0, 0, 1, 0, 0, -static_cast<float>(sin(modelRotation.y)), 0, static_cast<float>(cos(modelRotation.y)), 0, 0, 0, 0, 1 };
+		cdc::Matrix rotateZ   = { static_cast<float>(cos(modelRotation.z)), -static_cast<float>(sin(modelRotation.z)), 0, 0, static_cast<float>(sin(modelRotation.z)), static_cast<float>(cos(modelRotation.z)), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+		cdc::Matrix bottleScale = { modelScale.x, 0, 0, 0, 0, modelScale.y, 0, 0, 0, 0, modelScale.z, 0, 0, 0, 0, 1 };
+		cdc::Matrix bottleTranslate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, modelTranslation.x, modelTranslation.y, modelTranslation.z, 1 };
+		cdc::Matrix cameraTranslate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -cameraPos.x, -cameraPos.y, -cameraPos.z, 1 };
+		cdc::Matrix lightScaleTranslate = { lightRadius * 2.0f, 0, 0, 0, 0, lightRadius * 2.0f, 0, 0, 0, 0, lightRadius * 2.0f, 0, 1, 1, 1, 1 };
+		cdc::Matrix zUpWorld = {0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1};
 
 		if (mouseLook) {
 			modelRotation.x += mouseKeyboard->state.deltaY;
@@ -490,7 +490,7 @@ int spinnyCube(HWND window,
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 
-		float4x4 cameraRotate = rotateX * rotateY * zUpWorld;
+		cdc::Matrix cameraRotate = rotateX * rotateY * zUpWorld;
 
 		cameraPos += cdc::Vector{
 			cameraRotate.m[0][2],
@@ -501,7 +501,7 @@ int spinnyCube(HWND window,
 			cameraRotate.m[1][0],
 			cameraRotate.m[2][0]} * (speedModifier * sideways);
 
-		float4x4 project = { 2 * n / w, 0, 0, 0, 0, 2 * n / h, 0, 0, 0, 0, f / (f - n), 1, 0, 0, n * f / (n - f), 0 };
+		cdc::Matrix project = { 2 * n / w, 0, 0, 0, 0, 2 * n / h, 0, 0, 0, 0, f / (f - n), 1, 0, 0, n * f / (n - f), 0 };
 
 		renderDevice->resetRenderLists();
 		renderDevice->beginRenderList(nullptr);
@@ -516,7 +516,7 @@ int spinnyCube(HWND window,
 
 		cdc::PCDX11MatrixState lightMatrixState(renderDevice);
 		lightMatrixState.resize(1);
-		auto *lightWorldMatrix = reinterpret_cast<float4x4*>(lightMatrixState.poseData->getMatrix(0));
+		auto *lightWorldMatrix = reinterpret_cast<cdc::Matrix*>(lightMatrixState.poseData->getMatrix(0));
 		*lightWorldMatrix = lightScaleTranslate;
 
 		// add drawables to the scene

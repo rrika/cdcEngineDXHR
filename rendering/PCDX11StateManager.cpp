@@ -517,28 +517,28 @@ void PCDX11StateManager::setOpacity(float opacity) {
 	}
 }
 
-void PCDX11StateManager::setWorldMatrix(float4x4& worldMatrix) {
+void PCDX11StateManager::setWorldMatrix(Matrix& worldMatrix) {
 	if (m_worldMatrix != worldMatrix) {
 		m_worldMatrix = worldMatrix;
 		m_dirtyWorldMatrix = true;
 	}
 }
 
-void PCDX11StateManager::setViewMatrix(float4x4& viewMatrix) {
+void PCDX11StateManager::setViewMatrix(Matrix& viewMatrix) {
 	if (m_viewMatrix != viewMatrix) {
 		m_viewMatrix = viewMatrix;
 		m_dirtyViewMatrix = true;
 	}
 }
 
-void PCDX11StateManager::setProjectMatrix(float4x4& projectMatrix) {
+void PCDX11StateManager::setProjectMatrix(Matrix& projectMatrix) {
 	if (m_projectMatrix != projectMatrix) {
 		m_projectMatrix = projectMatrix;
 		m_dirtyProjectMatrix = true;
 	}
 }
 
-void PCDX11StateManager::setProjectMatrixPtr(float4x4* projectMatrixPtr) {
+void PCDX11StateManager::setProjectMatrixPtr(Matrix* projectMatrixPtr) {
 	if (m_projectMatrixPtr != projectMatrixPtr) {
 		m_projectMatrixPtr = projectMatrixPtr;
 		m_dirtyProjectMatrix = true;
@@ -554,7 +554,7 @@ void PCDX11StateManager::updateMatrices() {
 
 	if (m_dirtyViewMatrix || m_dirtyProjectMatrix) {
 
-		float4x4 *projectMatrix = &m_projectMatrix;
+		Matrix *projectMatrix = &m_projectMatrix;
 		if (m_projectMatrixPtr)
 			projectMatrix = m_projectMatrixPtr;
 		// TODO: build project matrix right here depending on byte5E9
@@ -567,7 +567,7 @@ void PCDX11StateManager::updateMatrices() {
 
 	if (m_dirtyWorldMatrix || m_dirtyViewMatrix || m_dirtyProjectMatrix) {
 
-		float4x4 worldViewProject = m_viewProjectMatrix * m_worldMatrix;
+		Matrix worldViewProject = m_viewProjectMatrix * m_worldMatrix;
 
 		accessCommonCB(0).assignMatrix(0, worldViewProject);
 

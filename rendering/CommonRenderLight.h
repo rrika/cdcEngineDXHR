@@ -1,5 +1,5 @@
 #pragma once
-#include "../math/Math.h" // for float4x4
+#include "../math/Math.h" // for Matrix
 #include "IRenderLight.h"
 #include <cstdint>
 
@@ -9,7 +9,7 @@ class CommonRenderLight : public IRenderLight {
 public:
 	uint32_t dword4;
 	uint8_t f8[8];
-	float4x4 mat10;
+	Matrix mat10;
 	float float50[3];
 	uint8_t f5C[28];
 	float float74;
@@ -23,7 +23,7 @@ public:
 	uint32_t dword94;
 	float float98;
 	uint8_t f9C[4];
-	float4x4 matA0;
+	Matrix matA0;
 };
 
 }

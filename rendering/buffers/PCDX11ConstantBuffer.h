@@ -3,9 +3,10 @@
 #include <cstring>
 
 struct ID3D11Buffer;
-struct float4x4;
 
 namespace cdc {
+
+struct Matrix;
 
 class PCDX11ConstantBuffer {
 public:
@@ -25,7 +26,7 @@ public:
 		memcpy(((char*)data) + (index * 16), rowData, numRows * 16);
 	}
 
-	void assignMatrix(uint32_t index, float4x4& matrix) {
+	void assignMatrix(uint32_t index, Matrix& matrix) {
 		assignRow(index, (void*)&matrix, 4);
 	}
 };

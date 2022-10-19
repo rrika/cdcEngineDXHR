@@ -1,5 +1,5 @@
 #pragma once
-#include "../math/Math.h" // for float4x4
+#include "../math/Math.h" // for Matrix
 #include "buffers/PCDX11UberConstantBuffer.h"
 #include "CommonLightManager.h"
 #include "PCDX11InternalResource.h"
@@ -51,8 +51,8 @@ struct RenderLightData {
 	float float7C;
 	float float80;
 	uint8_t gap84[12];
-	float4x4 matrix4x490;
-	float4x4 matrix4x4D0;
+	Matrix matrix4x490;
+	Matrix matrix4x4D0;
 	uint8_t gap110[32];
 	uint32_t dword130;
 	uint32_t dword134;
