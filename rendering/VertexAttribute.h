@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <cstring>
 
 class D3D11_INPUT_ELEMENT_DESC;
 
@@ -27,6 +28,7 @@ struct VertexAttributeA { // VertexElem
 	uint32_t attribKind;
 	uint16_t offset;
 	uint8_t format;
+	uint8_t bufferIndex;
 };
 
 struct VertexAttributeLayoutA {
@@ -37,6 +39,24 @@ struct VertexAttributeLayoutA {
 	uint8_t vertStrideB;
 	uint32_t dwordC;
 	VertexAttributeA attrib[];
+
+	static VertexAttributeLayoutA *Create(VertexAttributeA *attrs, uint32_t count, uint8_t stride) {
+		auto *p = (VertexAttributeLayoutA*)new char[16 + sizeof(VertexAttributeA) * count];
+		p->hash0 = 0;
+		p->hash4 = 0;
+		p->numAttr = count;
+		p->vertStrideA = stride;
+		p->vertStrideB = 0;
+		memcpy(p->attrib, attrs, sizeof(VertexAttributeA) * count);
+		p->Finalize();
+		return p;
+	}
+
+	void Finalize() {
+		// TODO: compute hashes
+		hash0 = 0x12340000;
+		hash4 = 0x56780000;
+	}
 };
 
 struct VertexAttributeB {

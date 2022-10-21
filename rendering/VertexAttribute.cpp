@@ -60,7 +60,7 @@ void decodeVertexAttribA(D3D11_INPUT_ELEMENT_DESC *dst, VertexAttributeA *src, u
 	for (uint32_t i=0; i<count; i++) {
 		dst[i].SemanticName = "";
 		dst[i].InputSlot = 0;
-		dst[i].AlignedByteOffset = src[i].offset;
+		dst[i].AlignedByteOffset = (uint32_t)(int32_t)(int16_t)src[i].offset; // 0xffff -> 0xffffffff
 		dst[i].Format = decodeFormat(src[i].format);
 		auto& elem = dst[i];
 		auto kind = src[i].attribKind;
@@ -75,6 +75,9 @@ void decodeVertexAttribA(D3D11_INPUT_ELEMENT_DESC *dst, VertexAttributeA *src, u
 			elem.SemanticIndex = 0;
 		} else if (kind == VertexAttributeA::kBinormal) {
 			elem.SemanticName = "BINORMAL";
+			elem.SemanticIndex = 0;
+		} else if (kind == VertexAttributeA::kTexcoord0) { // HACK
+			elem.SemanticName = "TEXCOORD";
 			elem.SemanticIndex = 0;
 		} else if (kind == VertexAttributeA::kTexcoord1) {
 			elem.SemanticName = "TEXCOORD";

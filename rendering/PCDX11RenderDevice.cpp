@@ -127,7 +127,26 @@ void PCDX11RenderDevice::createDefaultResources() {
 }
 
 void PCDX11RenderDevice::createDefaultVertexAttribLayouts() {
-	// TODO
+	std::vector<VertexAttributeA> attrs;
+	// hash, offset, format, bufferIndex
+	attrs.push_back({VertexAttributeA::kPosition,  0xffff, 2, 0});
+	attrs.push_back({VertexAttributeA::kColor1,    0xffff, 4, 0});
+	attrs.push_back({VertexAttributeA::kTexcoord1, 0xffff, 1, 0});
+	attrs.push_back({VertexAttributeA::kTexcoord2, 0xffff, 1, 0});
+	drawVertexDecls[0] = VertexAttributeLayoutA::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
+
+	attrs.clear();
+	attrs.push_back({VertexAttributeA::kPosition,  0xffff, 2, 0});
+	attrs.push_back({VertexAttributeA::kColor1,    0xffff, 4, 0});
+	attrs.push_back({VertexAttributeA::kTexcoord0, 0xffff, 1, 0}); // HACK
+	drawVertexDecls[5] = VertexAttributeLayoutA::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
+
+	attrs.clear();
+	attrs.push_back({VertexAttributeA::kPosition,  0xffff, 2, 0});
+	drawVertexDecls[6] = VertexAttributeLayoutA::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
+
+	auto *vs = static_cast<PCDX11VertexShaderTable*>(shlib_21->table)->vertexShaders[0];
+	vertex2DStreamDecl = streamDeclCache.buildStreamDecl(drawVertexDecls[5], &vs->m_sub);
 }
 
 void PCDX11RenderDevice::setupPassCallbacks() {
@@ -565,6 +584,8 @@ void PCDX11RenderDevice::freeRenderLists(void *capture) {
 bool PCDX11RenderDevice::internalCreate() {
 	deviceContext = deviceManager->getD3DDeviceContext();
 	// TODO
+	// fullScreenQuadVB = new PCDX11SimpleStaticVertexBuffer(/*stride=*/ 12, /*count=*/ 4, data);
+	quadVB = new PCDX11SimpleDynamicVertexBuffer(/*stride=*/ 32, /*count=*/ 4);
 	setupShadowBuffer();
 	return true;
 }

@@ -3,6 +3,7 @@
 #include "CommonRenderDevice.h"
 #include "PCDX11InternalResource.h"
 #include "PCDX11StreamDeclCache.h"
+#include "VertexAttribute.h"
 #include "shaders/PCDX11ShaderLib.h"
 #include "shaders/PCDX11ShaderTable.h" // for PixelShaderTable and VertexShaderTable
 
@@ -16,6 +17,7 @@ class PCDX11RenderContext;
 class PCDX11RenderTarget;
 class PCDX11StaticPool;
 class PCDX11SimpleDynamicVertexBuffer;
+// class PCDX11SimpleStaticVertexBuffer;
 class PCDX11Texture;
 struct LightManagerSubB;
 
@@ -54,6 +56,8 @@ public:
 	PCDX11StaticPool *staticPool10D10 = nullptr;
 	// PCDX11StaticPool *staticPool10D14;
 
+	VertexAttributeLayoutA *drawVertexDecls[7] = {}; // 10BBC
+
 	PCDX11StreamDecl *vertex2DStreamDecl; // 10BDC
 
 	PCDX11ShaderLib *shlib_22; // 10BE4, ps
@@ -91,6 +95,7 @@ public:
 	PCDX11StreamDeclCache streamDeclCache; // 1112D4
 	PCDX11Texture *missingTexture; // 1112F0
 
+	// PCDX11SimpleStaticVertexBuffer *fullScreenQuadVB; // 11156C
 	PCDX11SimpleDynamicVertexBuffer *quadVB; // 111570
 
 	ID3D11DeviceContext *deviceContext; // 111580
