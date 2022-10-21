@@ -53,27 +53,27 @@ public:
 	PCDX11StaticPool *staticPool10D10 = nullptr;
 	// PCDX11StaticPool *staticPool10D14;
 
-	PCDX11ShaderLib *shlib_22;
-	PCDX11ShaderLib *shlib_21;
-	PCDX11ShaderLib *shlib_20;
-	PCDX11ShaderLib *shlib_19;
-	PCDX11ShaderLib *shlib_18;
-	PCDX11ShaderLib *shlib_17;
-	PCDX11ShaderLib *shlib_16;
-	PCDX11ShaderLib *shlib_15;
-	PCDX11ShaderLib *shlib_14;
-	PCDX11ShaderLib *shlib_13;
-	PCDX11ShaderLib *shlib_12;
-	PCDX11ShaderLib *shlib_11;
-	PCDX11ShaderLib *shlib_10;
+	PCDX11ShaderLib *shlib_22; // 10BE4, ps
+	PCDX11ShaderLib *shlib_21; // 10BE8, vs
+	PCDX11ShaderLib *shlib_20; // 10BEC, vs
+	PCDX11ShaderLib *shlib_19; // 10BF0, vs
+	PCDX11ShaderLib *shlib_18; // 10BF4, vs
+	PCDX11ShaderLib *shlib_17; // 10BF8, ps
+	PCDX11ShaderLib *shlib_16; // 10BFC, ps
+	PCDX11ShaderLib *shlib_14; // 10C00, vs
+	PCDX11ShaderLib *shlib_15; // 10C04, vs
+	PCDX11ShaderLib *shlib_13; // 10C08, ps
+	PCDX11ShaderLib *shlib_11; // 10C0C, ps
+	PCDX11ShaderLib *shlib_10; // 10C10, ps
+	PCDX11ShaderLib *shlib_12; // 10C14, ps
 	PCDX11ShaderLib *shlib_9;
 	PCDX11ShaderLib *shlib_8;
 	PCDX11ShaderLib *shlib_7;
 	PCDX11ShaderLib *shlib_6;
 	PCDX11ShaderLib *shlib_5;
-	PCDX11ShaderLib *shlib_4;
-	PCDX11ShaderLib *shlib_3;
-	PCDX11ShaderLib *shlib_2;
+	PCDX11ShaderLib *shlib_4; // 10C2C, cs (fast blur)
+	PCDX11ShaderLib *shlib_3; // 10C30, cs (fast blur)
+	PCDX11ShaderLib *shlib_2; // 10C34, cs (bilateral blur)
 	PCDX11ShaderLib *shlib_1;
 	PCDX11ShaderLib *shlib_0;
 	PCDX11VertexShaderTable shtab_vs_wvp_1_0; // 10D1C
