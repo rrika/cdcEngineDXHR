@@ -55,14 +55,6 @@ DXGI_FORMAT decodeFormat(uint16_t format) {
 // But when using semanticFromEnum they will be mapped to Texcoord0 and
 // Texcoord1, which is what the pixel shader expects.
 
-static const uint32_t Position_crc32 = 0xD2F7D823;
-static const uint32_t Normal_crc32 = 0x36F5E414;
-static const uint32_t Texcoord1_crc32 = 0x8317902A;
-static const uint32_t Texcoord2_crc32 = 0x8E54B6F3;
-static const uint32_t Binormal_crc32 = 0x64A86F01;
-static const uint32_t Tangent_crc32 = 0XF1ED11C3;
-static const uint32_t Color_crc32 = 0XFFFFFFFF; // hack
-
 void decodeVertexAttribA(D3D11_INPUT_ELEMENT_DESC *dst, VertexAttributeA *src, uint32_t count, bool wineWorkaround) {
 	uint32_t customSlots = 0;
 	for (uint32_t i=0; i<count; i++) {
@@ -72,25 +64,25 @@ void decodeVertexAttribA(D3D11_INPUT_ELEMENT_DESC *dst, VertexAttributeA *src, u
 		dst[i].Format = decodeFormat(src[i].format);
 		auto& elem = dst[i];
 		auto kind = src[i].attribKind;
-		if (kind == Position_crc32) {
+		if (kind == VertexAttributeA::kPosition) {
 			elem.SemanticName = wineWorkaround ? "SV_POSITION" : "POSITION";
 			elem.SemanticIndex = 0;
-		} else if (kind == Normal_crc32) {
+		} else if (kind == VertexAttributeA::kNormal) {
 			elem.SemanticName = "NORMAL";
 			elem.SemanticIndex = 0;
-		} else if (kind == Tangent_crc32) {
+		} else if (kind == VertexAttributeA::kTangent) {
 			elem.SemanticName = "TANGENT";
 			elem.SemanticIndex = 0;
-		} else if (kind == Binormal_crc32) {
+		} else if (kind == VertexAttributeA::kBinormal) {
 			elem.SemanticName = "BINORMAL";
 			elem.SemanticIndex = 0;
-		} else if (kind == Texcoord1_crc32) {
+		} else if (kind == VertexAttributeA::kTexcoord1) {
 			elem.SemanticName = "TEXCOORD";
 			elem.SemanticIndex = 1;
-		} else if (kind == Texcoord2_crc32) {
+		} else if (kind == VertexAttributeA::kTexcoord2) {
 			elem.SemanticName = "TEXCOORD";
 			elem.SemanticIndex = 2;
-		} else if (kind == Color_crc32) {
+		} else if (kind == VertexAttributeA::kColor1) {
 			elem.SemanticName = "COLOR";
 			elem.SemanticIndex = 0;
 		} else {

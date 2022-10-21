@@ -5,7 +5,25 @@ class D3D11_INPUT_ELEMENT_DESC;
 
 namespace cdc {
 
-struct VertexAttributeA {
+struct VertexAttributeA { // VertexElem
+
+	static const uint32_t kPosition = 0xD2F7D823;
+	static const uint32_t kNormal = 0x36F5E414;
+	static const uint32_t kTessellationNormal = 0; // TODO
+	static const uint32_t kTangent = 0XF1ED11C3;
+	static const uint32_t kBinormal = 0x64A86F01;
+	static const uint32_t kPackedNTB = 0; // TODO
+	static const uint32_t kSkinWeights = 0; // TODO
+	static const uint32_t kSkinIndices = 0; // TODO
+	static const uint32_t kColor1 = 0X7E7DD623;
+	static const uint32_t kColor2 = 0; // TODO
+	static const uint32_t kTexcoord1 = 0x8317902A;
+	static const uint32_t kTexcoord2 = 0x8E54B6F3;
+	static const uint32_t kTexcoord3 = 0; // TODO
+	static const uint32_t kTexcoord4 = 0; // TODO
+
+	static const uint32_t kTexcoord0 = 0xFFFF0000; // HACK
+
 	uint32_t attribKind;
 	uint16_t offset;
 	uint8_t format;
