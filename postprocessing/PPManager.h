@@ -1,56 +1,17 @@
 #pragma once
 #include <cstdint>
 #include "../sys/Array.h"
+#include "cdc/dtp/postprocessing.h"
+#include "PPTexture.h"
+#include "PPVariable.h"
 
-class PPTexture;
-class PPVariable;
-struct PPUnknown3;
-struct PPVariableUnk2Link;
+namespace cdc {
 
-struct PPVariableUnk2Link {
-	uint32_t variableIndex;
-	uint32_t type4;
-	uint32_t dword8;
-	float floatC;
-	float float10;
-	float float14;
-	float float18;
-	uint32_t blendMode1C;
-};
+class CommonRenderTarget;
+class CommonDepthBuffer;
+struct RenderViewport;
 
-struct PPUnknown1 { // aka PPActiveSet
-	char *name;
-	PPUnknown3 *unknown3;
-	uint32_t numLinks8;
-	PPVariableUnk2Link *linksC;
-
-	uint32_t alwaysActivePassCount;
-	uint32_t *alwaysActivePassIndices;
-
-	uint32_t dword18;
-	void *dword1C;
-
-	uint32_t dword20;
-	void *dword24;
-
-	uint32_t dof1PassCount;
-	uint32_t *dof1PassIndices;
-
-	uint32_t dof2PassCount;
-	uint32_t *dof2PassIndices;
-
-	uint32_t antialiasPassCount;
-	uint32_t *antialiasPassIndices;
-
-	uint32_t antialias2PassCount;
-	uint32_t *antialias2PassIndices;
-
-	uint32_t neverActivePassCount;
-	uint32_t *neverActivePassIndices;
-
-	uint32_t dword50;
-	float float54;
-};
+}
 
 struct PPUnknown2 {
 	uint32_t dword0;
@@ -69,9 +30,9 @@ struct PPUnknown2 {
 
 class PPManager {
 public:
-	Array<PPUnknown1*> unknowns1; // 4
-	Array<PPTexture*> textures; // 10
-	Array<PPVariable*> variables; // 1C
+	Array<dtp::PPActiveSet*> activeSets; // 4
+	Array<PPTexture> textures; // 10
+	Array<PPVariable> variables; // 1C
 	uint32_t rootPasses28;
 	uint32_t dwords2C[32];
 	uint32_t dwordsAC[32];
@@ -83,6 +44,11 @@ public:
 	PPManager();
 	virtual ~PPManager() = default;
 
-	void prepare();
-	void addUnknown1(PPUnknown1 *unk1, float f);
+	bool prepare();
+	bool createScene(
+		cdc::CommonRenderTarget*,
+		cdc::CommonRenderTarget*,
+		cdc::CommonDepthBuffer*,
+		cdc::RenderViewport*);
+	void addActiveSet(dtp::PPActiveSet *unk1, float f);
 };

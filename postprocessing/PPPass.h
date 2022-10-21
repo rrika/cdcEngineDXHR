@@ -1,17 +1,17 @@
 #pragma once
 #include <cstdint>
+#include "cdc/dtp/postprocessing.h"
 
 namespace cdc {
 
 class CommonDepthBuffer;
 class CommonRenderTarget;
-struct CommonSceneSub10;
+struct RenderViewport;
 
 }
 
 class PPTexture;
 class PPVariable;
-struct PPUnknown4;
 
 struct RTs {
 	cdc::CommonRenderTarget *rt0;
@@ -22,7 +22,7 @@ struct RTs {
 
 class PPPass {
 public:
-	uint32_t dword4 = 0;
+	dtp::PPPassBlob *blob = nullptr;
 	PPTexture *textures = nullptr; // 8
 	uint32_t numTextures = 0; // C
 	PPVariable *variables = nullptr; // 10
@@ -31,6 +31,6 @@ public:
 
 	virtual ~PPPass() = default;
 
-	void init(PPUnknown4 *a2, PPTexture *textures, uint32_t numTextures, PPVariable *variables, uint32_t numVariables);
-	void createScene(cdc::CommonRenderTarget*, RTs *rts, cdc::CommonSceneSub10 *a4, uint32_t pppassMask, bool, uint32_t texturesMask);
+	bool init(dtp::PPPassBlob *a2, PPTexture *textures, uint32_t numTextures, PPVariable *variables, uint32_t numVariables);
+	void createScene(cdc::CommonRenderTarget*, RTs *rts, cdc::RenderViewport *a4, uint32_t pppassMask, bool, uint32_t texturesMask);
 };

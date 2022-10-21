@@ -4,29 +4,35 @@
 
 template <typename T>
 struct Array {
-	uint32_t size;
-	uint32_t capacity;
+	uint32_t m_size;
+	uint32_t m_capacity;
 	union {
-		T *data; // when capacity == 0
-		cdc::AllocRequester requester; // when capacity != 0
+		T *m_data; // when m_capacity == 0
+		cdc::AllocRequester m_requester; // when m_capacity != 0
 	};
 
-	Array() : size(0u), capacity(0u), requester(cdc::kAllocArray) {}
+	Array() : m_size(0u), m_capacity(0u), m_requester(cdc::kAllocArray) {}
 
-	T *begin() { return data; }
-	T *end() { return data + size; }
-	T const *begin() const { return data; }
-	T const *end() const { return data + size; }
+	T *begin() { return m_data; }
+	T *end() { return m_data + m_size; }
+	T const *begin() const { return m_data; }
+	T const *end() const { return m_data + m_size; }
+	T *data() { return m_data; }
+	T const *data() const { return m_data; }
+	uint32_t size() const { return m_size; }
+
+	T& operator[](uint32_t index) { return m_data[index]; }
+	T const& operator[](uint32_t index) const { return m_data[index]; }
 
 	void reserve(uint32_t newCapacity) {
-		if (newCapacity > capacity) {
-			cdc::AllocRequester req = capacity ? cdc::kAllocMisc : requester;
+		if (newCapacity > m_capacity) {
+			cdc::AllocRequester req = m_capacity ? cdc::kAllocMisc : m_requester;
 			auto *newData = new /*(req)*/ T[newCapacity];
-			// TOOD: move data over
-			if (capacity)
-				delete[] data;
-			data = newData;
-			capacity = newCapacity;
+			// TOOD: move m_data over
+			if (m_capacity)
+				delete[] m_data;
+			m_data = newData;
+			m_capacity = newCapacity;
 		}
 	}
 };

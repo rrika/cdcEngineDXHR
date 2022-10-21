@@ -1,15 +1,14 @@
 #pragma once
 #include <cstdint>
 #include "PPPass.h"
+#include "cdc/dtp/postprocessing.h"
 
 namespace cdc {
 
 class CommonRenderTarget;
-struct CommonSceneSub10;
+struct RenderViewport;
 
 }
-
-using PPPrePassBlob = PPUnknown4;
 
 class PPPrePass {
 public:
@@ -23,6 +22,6 @@ public:
 
 	virtual ~PPPrePass() = default;
 
-	void init(PPPrePassBlob *blob, PPTexture *textures, uint32_t numTextures, PPVariable *variables, uint32_t numVariables);
-	void createScene(RTs *rts, cdc::CommonSceneSub10 *srcSub18, cdc::CommonRenderTarget *rt);
+	void init(dtp::PPPrePassBlob *blob, PPTexture *textures, uint32_t numTextures, PPVariable *variables, uint32_t numVariables);
+	void createScene(RTs *rts, cdc::RenderViewport *viewport, cdc::CommonRenderTarget *rt);
 };

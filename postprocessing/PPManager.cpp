@@ -1,15 +1,42 @@
 #include "PPManager.h"
+#include "PPPass.h"
 
 PPManager::PPManager() {
-	unknowns1.reserve(16);
+	activeSets.reserve(16);
 	unknowns2.reserve(16);
 	textures.reserve(16);
 	variables.reserve(16);
 }
 
-void PPManager::prepare() {
+bool PPManager::prepare() {
+	// TODO
+	return true;
 }
 
-void PPManager::addUnknown1(PPUnknown1 *unk1, float f) {
+bool PPManager::createScene(
+	cdc::CommonRenderTarget*,
+	cdc::CommonRenderTarget*,
+	cdc::CommonDepthBuffer*,
+	cdc::RenderViewport*)
+{
+	if (!prepare())
+		return false;
+
+	dtp::PPVarPassTexBlobs *vpt = activeSets[0]->varPassTex;
+	dtp::PPPassBlob *passBlobs = vpt->passes;
+	PPPass pass;
+	for (uint32_t i=0; i < vpt->numPasses; i++) {
+		pass.init(&passBlobs[i],
+			textures.data(),
+			textures.size(),
+			variables.data(),
+			variables.size());
+		// TODO
+	}
+	// TODO
+	return true;
+}
+
+void PPManager::addActiveSet(dtp::PPActiveSet *unk1, float f) {
 	// TODO
 }
