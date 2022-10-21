@@ -1,3 +1,7 @@
+# Welcome
+
+![Screenshot](/res/screenshot1.png)
+
 # How to build (Linux 32-bit binary on Linux)
 This build uses DirectX 11 through the [dxvk-native](https://github.com/Joshua-Ashton/dxvk-native) project. CMake will automatically download and build the sources.
 
