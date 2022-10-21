@@ -38,6 +38,7 @@
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
 #include "rendering/buffers/PCDX11IndexBuffer.h"
 #include "rendering/buffers/PCDX11UberConstantBuffer.h"
+#include "rendering/drawables/PCDX11FXAADrawable.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/IRenderPassCallback.h"
 #include "rendering/PCDX11DeviceManager.h"
@@ -356,6 +357,14 @@ int spinnyCube(HWND window,
 
 	ImGuiDrawable imGuiDrawable;
 
+	cdc::PCDX11FXAADrawable fxaaDrawable(
+		renderDevice,
+		/*quality*/ 2,
+		/*texture*/ nullptr, // HACK
+		/*renderTarget*/ nullptr, // HACK
+		/*flags*/ 0,
+		/*sortZ*/ 0.0f);
+
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	int introShowRange[2] = {0, 99999};
@@ -567,6 +576,10 @@ int spinnyCube(HWND window,
 
 		// single bottle at origin
 		rmiDrawable.draw(&bottleWorldMatrix, 0.0f);
+
+		// uncomment to apply FXAA to the normal map
+		// can't apply to the proper color buffer because it'd be read/written at the same time
+		// renderDevice->recordDrawable(&fxaaDrawable, /*mask=*/ 0x100, 0);
 
 		renderDevice->recordDrawable(&imGuiDrawable, /*mask=*/ 0x100, /*addToParent=*/ 0);
 		renderDevice->finishScene();

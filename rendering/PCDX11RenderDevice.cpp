@@ -801,6 +801,48 @@ void PCDX11RenderDevice::drawQuad(
 	drawQuadInternal(x0, y0, x1, y1, u0, v0, u1, v1, color);
 }
 
+void PCDX11RenderDevice::doFXAA(
+	uint32_t quality,
+	PCDX11Texture *texture,
+	PCDX11RenderTarget *renderTarget)
+{
+	if (!scene78) {
+		printf("scene78 = nullptr\n");
+		return;
+	}
+	if (!scene78->globalState.tex14[5+6]) {
+		printf("scene78->globalState.tex14[5+6] = nullptr\n");
+		return;
+	}
+
+	// HACK
+	texture = static_cast<PCDX11Texture*>(scene78->globalState.tex14[5+6]);
+	renderTarget = static_cast<PCDX11RenderTarget*>(scene78->renderTarget);
+	// END HACK
+
+	PCDX11StateManager *stateManager = deviceManager->getStateManager();
+	stateManager->pushRenderTargets(renderTarget, nullptr);
+	if (quality > 2) quality = 2; // allow 0, 1 and 2
+
+	auto *vs = static_cast<PCDX11VertexShaderTable*>(shlib_19->table)->vertexShaders[0];
+	stateManager->setVertexShader(vs);
+	auto *ps = static_cast<PCDX11PixelShaderTable*>(shlib_12->table)->pixelShaders[quality];
+	stateManager->setPixelShader(ps);
+	stateManager->setTextureAndSampler(0, texture, 1, 0.0f);
+	stateManager->updateViewport();
+	stateManager->updateRenderState();
+	drawQuad(
+		-1.0f, -1.0f, 1.0f, 1.0f,
+		 0.0f,  0.0f, 1.0f, 1.0f,
+		/*color=*/      0xffffffff,
+		/*flags=*/      0,
+		/*blendMode=*/  0x7010010,
+		/*writeDepth=*/ false
+	);
+	stateManager->popRenderTargets();
+}
+
+
 CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown) {
 	// createPCDX11DeviceManager(); // already done, else wouldn't have an hwnd
 	g_renderDevice = new PCDX11RenderDevice(hwnd, width, height/*, unknown*/);
