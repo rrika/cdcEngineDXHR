@@ -15,6 +15,7 @@
 #include "PCDX11StateManager.h"
 #include "RenderPasses.h"
 #include "Types.h"
+#include "buffers/PCDX11SimpleDynamicVertexBuffer.h"
 #include "shaders/PCDX11ShaderLib.h"
 #include "surfaces/PCDX11DefaultRenderTarget.h"
 #include "surfaces/PCDX11DepthBuffer.h"
