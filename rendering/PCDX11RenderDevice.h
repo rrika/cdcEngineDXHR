@@ -15,6 +15,7 @@ class PCDX11Pool;
 class PCDX11RenderContext;
 class PCDX11RenderTarget;
 class PCDX11StaticPool;
+class PCDX11SimpleDynamicVertexBuffer;
 class PCDX11Texture;
 struct LightManagerSubB;
 
@@ -53,6 +54,8 @@ public:
 	PCDX11StaticPool *staticPool10D10 = nullptr;
 	// PCDX11StaticPool *staticPool10D14;
 
+	PCDX11StreamDecl *vertex2DStreamDecl; // 10BDC
+
 	PCDX11ShaderLib *shlib_22; // 10BE4, ps
 	PCDX11ShaderLib *shlib_21; // 10BE8, vs
 	PCDX11ShaderLib *shlib_20; // 10BEC, vs
@@ -87,6 +90,8 @@ public:
 
 	PCDX11StreamDeclCache streamDeclCache; // 1112D4
 	PCDX11Texture *missingTexture; // 1112F0
+
+	PCDX11SimpleDynamicVertexBuffer *quadVB; // 111570
 
 	ID3D11DeviceContext *deviceContext; // 111580
 
@@ -200,6 +205,14 @@ public:
 	void clearRenderTargetNow(char mode, float *color, float depth, uint32_t stencil);
 	void setTexture(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown);
 	void drawRenderListsInternal(void *arg);
+	void drawQuadInternal(
+		float x0, float y0, float x1, float y1,
+		float u0, float v0, float u1, float v1,
+		uint32_t color);
+	void drawQuad(
+		float x0, float y0, float x1, float y1,
+		float u0, float v0, float u1, float v1,
+		uint32_t color, uint32_t flags, uint32_t blendMode, bool writeDepth);
 };
 
 CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown);

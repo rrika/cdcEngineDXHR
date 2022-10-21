@@ -738,6 +738,48 @@ void PCDX11RenderDevice::drawRenderListsInternal(void *arg) {
 	freeTemporarySurfaces();
 }
 
+void PCDX11RenderDevice::drawQuadInternal(
+	float x0, float y0, float x1, float y1,
+	float u0, float v0, float u1, float v1,
+	uint32_t color)
+{
+	struct Vertex { float x, y, unk; uint32_t color; float u0, v0, u1, v1; };
+	static_assert(sizeof(Vertex) == 32, "sizeof(Vertex) == 32");
+	float unk = 0.0001;
+	Vertex v[4] = {
+		{x1, y0, unk, color, u1, v1, u1, v1},
+		{x0, y0, unk, color, u0, v1, u0, v1},
+		{x1, y1, unk, color, u1, v0, u1, v0},
+		{x0, y1, unk, color, u0, v0, u0, v0}
+	};
+
+	memcpy(quadVB->map(), v, sizeof(Vertex) * 4);
+	quadVB->unmap();
+
+	PCDX11StateManager *stateManager = deviceManager->getStateManager();
+	stateManager->setVertexBuffer(quadVB);
+	deviceContext->Draw(4, 0);
+}
+
+void PCDX11RenderDevice::drawQuad(
+	float x0, float y0, float x1, float y1,
+	float u0, float v0, float u1, float v1,
+	uint32_t color, uint32_t flags, uint32_t blendMode, bool writeDepth)
+{
+	PCDX11StateManager *stateManager = deviceManager->getStateManager();
+	stateManager->setDepthState(D3D11_COMPARISON_ALWAYS, writeDepth);
+	stateManager->setRenderTargetWriteMask(15);
+	stateManager->setBlendStateAndBlendFactors(blendMode, 1, 0);
+	stateManager->setDepthBias(0);
+	stateManager->setSlopeScaledDepthBias(0.0f);
+	stateManager->setStreamDecl(vertex2DStreamDecl);
+	stateManager->setPrimitiveTopology(5);
+	stateManager->setCullMode(CullMode::none, false);
+	stateManager->updateViewport();
+	stateManager->updateRenderState();
+	drawQuadInternal(x0, y0, x1, y1, u0, v0, u1, v1, color);
+}
+
 CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown) {
 	// createPCDX11DeviceManager(); // already done, else wouldn't have an hwnd
 	g_renderDevice = new PCDX11RenderDevice(hwnd, width, height/*, unknown*/);
