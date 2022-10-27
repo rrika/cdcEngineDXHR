@@ -146,6 +146,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/config)
 include_directories(eventually_generated)
 
 add_subdirectory(allocator)
+add_subdirectory(animation)
 add_subdirectory(camera)
 add_subdirectory(drm)
 add_subdirectory(filesystem)
