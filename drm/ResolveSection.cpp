@@ -12,16 +12,14 @@ namespace cdc {
 cdc::ResolveSection *g_resolveSections[16] = {nullptr};
 
 void ResolveSection::Create() {
-	auto *renderResourceSection = new cdc::RenderResourceSection;
-
 	g_resolveSections[0] = new cdc::GenericSection();
-	g_resolveSections[5] = renderResourceSection; // textures
+	g_resolveSections[5] = new cdc::RenderResourceSection();
 	g_resolveSections[6] = new cdc::WaveSection();
 	g_resolveSections[7] = new cdc::DTPDataSection();
 	g_resolveSections[9] = new cdc::ShaderLibSection();
 	g_resolveSections[10] = new cdc::MaterialSection();
 	g_resolveSections[11] = new cdc::ObjectSection();
-	g_resolveSections[12] = renderResourceSection; // meshes	
+	g_resolveSections[12] = new cdc::RenderResourceSection();
 }
 
 ResolveSection::~ResolveSection() {}
