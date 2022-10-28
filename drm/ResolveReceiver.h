@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "DRMIndex.h"
-#include "../filesystem/FileReceiver.h"
+#include "cdcFile/FileReceiver.h"
 
 namespace cdc {
 

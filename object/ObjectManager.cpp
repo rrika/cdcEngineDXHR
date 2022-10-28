@@ -3,8 +3,8 @@
 #include "config.h"
 #include "ObjectManager.h"
 #include "../drm/ResolveObject.h"
-#include "../filesystem/FileHelpers.h"
-#include "../filesystem/FileSystem.h"
+#include "cdcFile/FileHelpers.h"
+#include "cdcFile/FileSystem.h"
 #include "../gameshell/cdcGameShell.h"
 
 #if ENABLE_IMGUI

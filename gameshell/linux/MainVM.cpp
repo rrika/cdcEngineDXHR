@@ -6,7 +6,7 @@
 #include "../../rendering/IPCDeviceManager.h"
 #include "../../rendering/PCDX11DeviceManager.h"
 #include "../../rendering/PCDX11RenderDevice.h"
-#include "../../filesystem/FileHelpers.h"
+#include "cdcFile/FileHelpers.h"
 
 using namespace cdc;
 

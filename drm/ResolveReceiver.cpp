@@ -8,8 +8,8 @@
 #include "ResolveObject.h"
 #include "ResolveReceiver.h"
 #include "ResolveSection.h"
-#include "../filesystem/FileSystem.h"
-#include "../filesystem/FileUserBufferReceiver.h"
+#include "cdcFile/FileSystem.h"
+#include "cdcFile/FileUserBufferReceiver.h"
 
 extern "C" {
 #include "../miniz/miniz.h"

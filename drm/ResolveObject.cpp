@@ -3,8 +3,8 @@
 #include "ResolveObject.h"
 #include "ResolveReceiver.h"
 #include "ResolveSection.h" // for g_resolveSections
-#include "../filesystem/ArchiveFileSystem.h"
-#include "../filesystem/FileHelpers.h"
+#include "cdcFile/ArchiveFileSystem.h"
+#include "cdcFile/FileHelpers.h"
 
 // borrowed from ArchiveFileSystem.cpp
 uint32_t pathCrc32(const char *path);

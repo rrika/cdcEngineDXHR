@@ -1,6 +1,6 @@
 #include <cstdio>
 #include "localstr.h"
-#include "../filesystem/FileHelpers.h"
+#include "cdcFile/FileHelpers.h"
 
 struct LocalizationTable {
 	uint32_t languageCode;

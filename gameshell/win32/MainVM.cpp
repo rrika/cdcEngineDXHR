@@ -1,8 +1,8 @@
 #include <cstdio>
 #include <windows.h>
 #include "config.h"
-#include "../../filesystem/ArchiveFileSystem.h"
-#include "../../filesystem/FileHelpers.h"
+#include "cdcFile/ArchiveFileSystem.h"
+#include "cdcFile/FileHelpers.h"
 #include "../../game/Main.h"
 #include "../../imgui/imgui.h"
 #include "cdcLocale/localstr.h"

@@ -4,8 +4,8 @@
 #include "stream.h"
 #include "StreamUnit.h"
 #include "../drm/ResolveObject.h"
-#include "../filesystem/FileHelpers.h"
-#include "../filesystem/FileSystem.h"
+#include "cdcFile/FileHelpers.h"
+#include "cdcFile/FileSystem.h"
 #include "../gameshell/cdcGameShell.h" // for LOAD_UnitFileName
 #include "../object/ObjectManager.h" // for readAndParseObjectList
 

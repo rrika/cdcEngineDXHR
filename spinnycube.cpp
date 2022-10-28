@@ -18,10 +18,10 @@
 #include "drm/ResolveReceiver.h"
 #include "drm/ResolveSection.h"
 #include "drm/sections/WaveSection.h"
-#include "filesystem/ArchiveFileSystem.h"
-#include "filesystem/FileHelpers.h" // for archiveFileSystem_default
-#include "filesystem/FileSystem.h" // for enum cdc::FileRequest::Priority
-#include "filesystem/FileUserBufferReceiver.h"
+#include "cdcFile/ArchiveFileSystem.h"
+#include "cdcFile/FileHelpers.h" // for archiveFileSystem_default
+#include "cdcFile/FileSystem.h" // for enum cdc::FileRequest::Priority
+#include "cdcFile/FileUserBufferReceiver.h"
 #include "game/dtp/objecttypes/globaldatabase.h"
 #include "game/Gameloop.h"
 #include "game/script/game/NsMainMenuMovieController.h"
