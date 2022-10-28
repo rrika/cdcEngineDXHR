@@ -12,8 +12,8 @@
 #include "../rendering/PCDX11DeviceManager.h"
 #include "../spinnycube.h"
 #include "../sound/Sound.h"
-#include "../world/SceneLayer.h"
-#include "../world/stream.h"
+#include "cdcWorld/SceneLayer.h"
+#include "cdcWorld/stream.h"
 #include "Main.h"
 
 using namespace cdc;

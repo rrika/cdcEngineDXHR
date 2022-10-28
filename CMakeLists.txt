@@ -163,7 +163,7 @@ add_subdirectory(rendering)
 add_subdirectory(scene)
 add_subdirectory(sound)
 add_subdirectory(sys)
-add_subdirectory(world)
+add_subdirectory(cdcWorld)
 
 if (ENABLE_IMGUI)
 	include_directories(imgui)

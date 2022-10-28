@@ -58,9 +58,9 @@
 #include "rendering/surfaces/PCDX11DepthBuffer.h"
 #include "rendering/surfaces/PCDX11Texture.h"
 #include "rendering/VertexAttribute.h"
-#include "world/RMIDrawableBase.h"
-#include "world/stream.h" // for buildUnitsUI
-#include "world/StreamUnit.h"
+#include "cdcWorld/RMIDrawableBase.h"
+#include "cdcWorld/stream.h" // for buildUnitsUI
+#include "cdcWorld/StreamUnit.h"
 
 #if ENABLE_IMGUI
 #include "imgui/imgui.h"

@@ -1,5 +1,5 @@
 #include "Gameloop.h"
-#include "../world/stream.h"
+#include "cdcWorld/stream.h"
 
 namespace Gameloop {
 
