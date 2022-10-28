@@ -5,7 +5,7 @@
 #include "../../filesystem/FileHelpers.h"
 #include "../../game/Main.h"
 #include "../../imgui/imgui.h"
-#include "../../locale/localstr.h"
+#include "cdcLocale/localstr.h"
 #include "../../rendering/BuiltinResources.h"
 #include "../../rendering/IPCDeviceManager.h"
 #include "../../rendering/PCDX11DeviceManager.h"

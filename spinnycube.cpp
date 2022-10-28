@@ -31,7 +31,7 @@
 #include "gameshell/win32/MainVM.h" // for yellowCursor
 #endif
 #include "input/PCMouseKeyboard.h"
-#include "locale/localstr.h"
+#include "cdcLocale/localstr.h"
 #include "math/Math.h" // for cdc::Matrix
 #include "object/Object.h"
 #include "object/ObjectManager.h" // for buildObjectsUI
