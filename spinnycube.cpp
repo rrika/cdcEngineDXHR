@@ -566,9 +566,9 @@ int spinnyCube(HWND window,
 			if (renderModel) {
 				// printf("%p %s\n", renderModel, typeid(*(cdc::RenderMesh*)renderModel).name());
 				// printf("%p\n", renderModel->getMesh());
-				RMIDrawableBase instanceRMIDrawable(renderModel);
-				static_cast<cdc::PCDX11RenderModelInstance*>(instanceRMIDrawable.rmi)->baseMask = 0x1002; // normals & composite
-				instanceRMIDrawable.draw(&instanceMatrix, 0.0f);
+				auto *instanceRMIDrawable = new (renderDevice) RMIDrawableBase(renderModel);
+				static_cast<cdc::PCDX11RenderModelInstance*>(instanceRMIDrawable->rmi)->baseMask = 0x1002; // normals & composite
+				instanceRMIDrawable->draw(&instanceMatrix, 0.0f);
 			} else {
 				rmiDrawable.draw(&instanceMatrix, 0.0f);
 			}
