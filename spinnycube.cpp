@@ -33,8 +33,8 @@
 #include "input/PCMouseKeyboard.h"
 #include "cdcLocale/localstr.h"
 #include "math/Math.h" // for cdc::Matrix
-#include "object/Object.h"
-#include "object/ObjectManager.h" // for buildObjectsUI
+#include "cdcObjects/Object.h"
+#include "cdcObjects/ObjectManager.h" // for buildObjectsUI
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
 #include "rendering/buffers/PCDX11IndexBuffer.h"
 #include "rendering/buffers/PCDX11UberConstantBuffer.h"

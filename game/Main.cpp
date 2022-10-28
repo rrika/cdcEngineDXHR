@@ -8,7 +8,7 @@
 #include "../game/Gameloop.h"
 #include "../game/objects/objects.h"
 #include "../gameshell/cdcGameShell.h"
-#include "../object/ObjectManager.h"
+#include "cdcObjects/ObjectManager.h"
 #include "../rendering/PCDX11DeviceManager.h"
 #include "../spinnycube.h"
 #include "../sound/Sound.h"

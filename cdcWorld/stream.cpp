@@ -7,7 +7,7 @@
 #include "cdcFile/FileHelpers.h"
 #include "cdcFile/FileSystem.h"
 #include "../gameshell/cdcGameShell.h" // for LOAD_UnitFileName
-#include "../object/ObjectManager.h" // for readAndParseObjectList
+#include "cdcObjects/ObjectManager.h" // for readAndParseObjectList
 
 #if ENABLE_IMGUI
 #include "../game/Gameloop.h"

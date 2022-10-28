@@ -1,5 +1,5 @@
 #include "objects.h"
-#include "../../object/ObjectManager.h"
+#include "cdcObjects/ObjectManager.h"
 
 struct GameTracker;
 
