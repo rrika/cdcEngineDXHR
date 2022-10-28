@@ -174,4 +174,12 @@ public:
 
 extern CommonRenderDevice *g_renderDevice;
 
+} // namespace cdc
+
+inline void *operator new(size_t count, cdc::CommonRenderDevice *renderDevice, uint32_t requester=0) {
+	return renderDevice->linearAlloc30(uint32_t(count), requester);
+}
+
+inline void *operator new[](size_t count, cdc::CommonRenderDevice *renderDevice, uint32_t requester=0) {
+	return renderDevice->linearAlloc30(uint32_t(count), requester);
 }
