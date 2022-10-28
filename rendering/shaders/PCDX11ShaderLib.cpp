@@ -44,7 +44,7 @@ void PCDX11ShaderLib::fill(char *data, uint32_t offset, uint32_t size, bool done
 			*/
 			default: break;
 		}
-		delete buffer;
+		delete[] buffer;
 		buffer = nullptr;
 	}
 }

@@ -14,7 +14,7 @@ public:
 
 	ScriptDynArrayImpl(int32_t stride) : m_stride(stride) {}
 	void Reserve(int32_t size) { m_data = new uint8_t[size * m_stride]; }
-	~ScriptDynArrayImpl() { delete m_data; }
+	~ScriptDynArrayImpl() { delete[] m_data; }
 };
 
 template <typename T>
