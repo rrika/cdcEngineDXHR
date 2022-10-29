@@ -13,6 +13,7 @@
 
 #include "spinnycube.h"
 #include "types.h"
+#include "cdc/dtp/objectproperties/imfref.h"
 #include "drm/DRMIndex.h"
 #include "drm/ResolveObject.h"
 #include "drm/ResolveReceiver.h"
@@ -27,6 +28,7 @@
 #include "game/script/game/NsMainMenuMovieController.h"
 #include "game/ui/FakeScaleform/fakescaleform.h"
 #include "game/ui/Scaleform/ScaleformMovieInstance.h"
+#include "gameshell/cdcGameShell.h" // for LOAD_IMFFileName
 #ifdef _WIN32
 #include "gameshell/win32/MainVM.h" // for yellowCursor
 #endif
@@ -101,27 +103,6 @@ public:
 };
 
 DRMIndex drmIndex;
-
-cdc::ResolveObject *requestDRM(
-	const char *path,
-	void **rootPtr = nullptr,
-	void (*callback)(void*, void*, void*, cdc::ResolveObject*) = nullptr,
-	void *callbackArg1 = nullptr,
-	void *callbackArg2 = nullptr
-) {
-	printf("loading %s\n", path);
-
-	cdc::ResolveObject *ro = new cdc::ResolveObject(path);
-	auto *rr = new cdc::ResolveReceiver(callback, callbackArg1, callbackArg2, rootPtr, nullptr, nullptr, ro, 0, &drmIndex);
-	cdc::FileRequest *req = cdc::archiveFileSystem_default->createRequest(rr, path, 0);
-	req->submit(3);
-	req->decrRefCount();
-	cdc::archiveFileSystem_default->processAll();
-	// req is owned by fs which takes care of it in processAll()
-	// rr self-deletes
-
-	return ro;
-}
 
 int spinnyCube(HWND window,
 	ID3D11Device *baseDevice,
@@ -537,6 +518,8 @@ int spinnyCube(HWND window,
 		cdc::Level *level = unit->level;
 		uint32_t numIntros = level ? level->admdData->numObjects : 0;
 		dtp::Intro *intros = level ? level->admdData->objects : nullptr;
+		uint32_t numIMFRefs = level ? level->admdData->numIMFRefs : 0;
+		dtp::IMFRef *imfrefs = level ? level->admdData->imfrefs : nullptr;
 
 		renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
 		renderDevice->clearRenderTarget(2, /*mask=*/ 0x2000, 0.0f, lightAccumulation, 1.0f, 0); // deferred shading buffer
@@ -548,6 +531,22 @@ int spinnyCube(HWND window,
 		static_cast<cdc::PCDX11RenderModelInstance*>(rmiDrawable.rmi)->baseMask = 0x1002; // normals & composite
 
 		std::vector<std::unique_ptr<RMIDrawableBase>> recycleRMI;
+
+		auto putObject = [&](cdc::PCDX11RenderModel *renderModel, cdc::Matrix& instanceMatrix) {
+			if (renderModel) {
+				// printf("%p %s\n", renderModel, typeid(*(cdc::RenderMesh*)renderModel).name());
+				// printf("%p\n", renderModel->getMesh());
+
+				// printf("%f %f %f\n", instanceMatrix.m[3][0], instanceMatrix.m[3][1], instanceMatrix.m[3][2]);
+
+				auto *instanceRMIDrawable = new RMIDrawableBase(renderModel);
+				recycleRMI.emplace_back(instanceRMIDrawable);
+				static_cast<cdc::PCDX11RenderModelInstance*>(instanceRMIDrawable->rmi)->baseMask = 0x1002; // normals & composite
+				instanceRMIDrawable->draw(&instanceMatrix, 0.0f);
+			} else {
+				rmiDrawable.draw(&instanceMatrix, 0.0f);
+			}
+		};
 
 		// all the other objects
 		for (uint32_t i=introShowRange[0]; i<numIntros && i<introShowRange[1]; i++) {
@@ -565,15 +564,33 @@ int spinnyCube(HWND window,
 			if (object->numModels == 0)
 				continue;
 			auto *renderModel = (cdc::PCDX11RenderModel*)object->models[0]->renderMesh;
-			if (renderModel) {
-				// printf("%p %s\n", renderModel, typeid(*(cdc::RenderMesh*)renderModel).name());
-				// printf("%p\n", renderModel->getMesh());
-				auto *instanceRMIDrawable = new RMIDrawableBase(renderModel);
-				recycleRMI.emplace_back(instanceRMIDrawable);
-				static_cast<cdc::PCDX11RenderModelInstance*>(instanceRMIDrawable->rmi)->baseMask = 0x1002; // normals & composite
-				instanceRMIDrawable->draw(&instanceMatrix, 0.0f);
-			} else {
-				rmiDrawable.draw(&instanceMatrix, 0.0f);
+			putObject(renderModel, instanceMatrix);
+		}
+
+		for (uint32_t i=0; i<numIMFRefs; i++) {
+			dtp::IMFRef &ref = imfrefs[i];
+			if (!ref.m_imfDRMName)
+				continue;
+			if (ref.m_pResolveObject == nullptr) {
+				char path[256];
+				cdc::GameShell::LOAD_IMFFileName(path, ref.m_imfDRMName);
+				ref.m_pResolveObject = cdc::ResolveObject::create(
+					path,
+					nullptr, nullptr, nullptr,
+					nullptr,
+					nullptr,
+					nullptr,
+					0,
+					cdc::FileRequest::NORMAL);
+				cdc::archiveFileSystem_default->processAll();
+			}
+			if (isLoaded(ref.m_pResolveObject)) {
+				//printf("%d %04x %s ", i, ref.dtpID, ref.m_imfDRMName);
+				auto dtp = (cdc::PCDX11RenderModel**)cdc::g_resolveSections[7]->getWrapped(ref.dtpID);
+				//printf("%p ", dtp);
+				auto model = dtp[1];
+				//printf("%p\n", model);
+				putObject(model, ref.m_transform);
 			}
 		}
 

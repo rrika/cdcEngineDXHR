@@ -6,6 +6,8 @@ class UnitBlobSignal;
 
 namespace dtp {
 
+struct IMFRef;
+
 struct ADMD {
 	uint32_t numLightTable4;
 	uint32_t lightTable4;
@@ -48,8 +50,8 @@ struct ADMD {
 	uint32_t dword98;
 	uint32_t dword9C;
 	uint32_t dwordA0;
-	uint32_t numXXX;
-	BlobXXX *imfxxx;
+	uint32_t numIMFRefs;
+	IMFRef *imfrefs;
 	uint32_t dwordAC;
 };
 
