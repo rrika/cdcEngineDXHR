@@ -1,7 +1,7 @@
 #pragma once
 #include "../ResolveSection.h"
-#include "../../sound/RingBuffer.h"
-#include "../../sound/Sample.h"
+#include "cdcSound/RingBuffer.h"
+#include "cdcSound/Sample.h"
 
 namespace cdc {
 

@@ -11,7 +11,7 @@
 #include "cdcObjects/ObjectManager.h"
 #include "../rendering/PCDX11DeviceManager.h"
 #include "../spinnycube.h"
-#include "../sound/Sound.h"
+#include "cdcSound/Sound.h"
 #include "cdcWorld/SceneLayer.h"
 #include "cdcWorld/stream.h"
 #include "Main.h"

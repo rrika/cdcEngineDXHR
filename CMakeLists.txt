@@ -161,7 +161,7 @@ add_subdirectory(cdcObjects)
 add_subdirectory(postprocessing)
 add_subdirectory(rendering)
 add_subdirectory(scene)
-add_subdirectory(sound)
+add_subdirectory(cdcSound)
 add_subdirectory(cdcSys)
 add_subdirectory(cdcWorld)
 
