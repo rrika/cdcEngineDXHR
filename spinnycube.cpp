@@ -349,6 +349,7 @@ int spinnyCube(HWND window,
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	int introShowRange[2] = {0, 99999};
+	int imfShowRange[2] = {0, 0};
 #if ENABLE_IMGUI
 	bool loadedSarifHQ = false;
 	bool showDrawablesWindow = false;
@@ -567,7 +568,7 @@ int spinnyCube(HWND window,
 			putObject(renderModel, instanceMatrix);
 		}
 
-		for (uint32_t i=0; i<numIMFRefs; i++) {
+		for (uint32_t i=imfShowRange[0]; i<numIMFRefs && i<imfShowRange[1]; i++) {
 			dtp::IMFRef &ref = imfrefs[i];
 			if (!ref.m_imfDRMName)
 				continue;
@@ -732,7 +733,8 @@ int spinnyCube(HWND window,
 			ImGui::Begin("Loaded units", &showLoadedUnitsWindow);
 			StreamUnit *unit = STREAM_GetStreamUnitWithID(0);
 			cdc::Level *level = unit->level;
-			ImGui::DragInt2("Show intros:", introShowRange);
+			ImGui::DragInt2("visible intros", introShowRange);
+			ImGui::DragInt2("visible IMFs", imfShowRange);
 			if (!level) {
 				ImGui::Text("not loaded");
 			} else {
