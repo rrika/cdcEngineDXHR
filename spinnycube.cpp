@@ -559,6 +559,8 @@ int spinnyCube(HWND window,
 				0, 0, s*intro.scale[2], 0,
 				intro.position[0], intro.position[1], intro.position[2], 1
 			};
+			if (intro.objectListIndex == 0)
+				continue;
 			cdc::ObjectBlob *object = (cdc::ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(intro.objectListIndex));
 			if (!object)
 				continue;

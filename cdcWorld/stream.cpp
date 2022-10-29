@@ -172,7 +172,12 @@ public:
 		dtp::ADMD *admd = unit->level->admdData;
 		for (uint32_t i = 0; i < admd->numObjects; i++) {
 			dtp::Intro *intro = &admd->objects[i];
-			printf("  %02x\n", intro->objectListIndex);
+			auto id = intro->objectListIndex;
+			printf("  obj %d/%d %d %s %02x %02x\n", i, admd->numObjects, 
+				id, id ? g_objectManager->objectList->entries[id-1].name : "0",
+				intro->field41, intro->flags);
+			if (intro->objectListIndex == 0) // HACK
+				continue;
 			requestObjectNormal(intro->objectListIndex);
 		}
 	}

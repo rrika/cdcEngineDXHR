@@ -134,7 +134,7 @@ ObjectTracker *getByObjectListIndex(uint32_t objectListIndex) {
 }
 
 ObjectTracker *allocObjectSlot(int32_t id, uint16_t state) {
-	if (id < 0 || id >= g_objectManager->objectList->count)
+	if (id <= 0 || id >= g_objectManager->objectList->count)
 		return nullptr;
 
 	uint32_t i = 0;
