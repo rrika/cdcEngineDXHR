@@ -134,6 +134,7 @@ private:
 
 	uint32_t m_blendState; // 434
 	float m_alphaThreshold; // 438
+	uint32_t m_cullMode; // 43C
 
 	Matrix m_projectMatrix; // 440
 	Matrix m_viewMatrix; // 480

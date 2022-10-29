@@ -25,7 +25,8 @@ PCDX11ModelDrawable::PCDX11ModelDrawable(
 	PrimGroup *primGroup,
 	PersistentPGData *tab0Ext128,
 	PoseData *poseData,
-	float opacity)
+	float opacity,
+	uint8_t flags)
 :
 	renderModel(renderModel),
 	ext(ext),
@@ -36,7 +37,7 @@ PCDX11ModelDrawable::PCDX11ModelDrawable(
 	opacity(opacity)
 { // hack
 	typeID = kDrawableTypeIDModel;
-	flags34 = (primGroup[0].triangleCount << 8);
+	flags34 = (primGroup[0].triangleCount << 8) | flags;
 
 	auto lightManager = static_cast<PCDX11LightManager*>(renderModel->renderDevice->lightManager);
 	lightReceiverData = lightManager->makeReceiver(/*TODO*/);
@@ -275,7 +276,7 @@ void PCDX11ModelDrawable::draw(
 	stateManager->setStreamDecl(streamDecl);
 
 	if (renderTwice) {
-		stateManager->setCullMode(CullMode::front, getCullMode());
+		stateManager->setCullMode(CullMode::front, getFrontCounterClockwise());
 		stateManager->setDepthState(D3D11_COMPARISON_LESS, D3D11_DEPTH_WRITE_MASK_ZERO);
 	}
 
@@ -289,7 +290,7 @@ void PCDX11ModelDrawable::draw(
 	d3d11DeviceContext->DrawIndexed(indexCount, startIndex, baseVertex);
 
 	if (renderTwice) {
-		stateManager->setCullMode(CullMode::back, getCullMode());
+		stateManager->setCullMode(CullMode::back, getFrontCounterClockwise());
 		stateManager->updateRenderState();
 		d3d11DeviceContext->DrawIndexed(indexCount, startIndex, baseVertex);
 	}

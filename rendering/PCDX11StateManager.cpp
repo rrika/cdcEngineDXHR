@@ -211,7 +211,16 @@ void PCDX11StateManager::setDepthLayer(bool layer) {
 }
 
 void PCDX11StateManager::setCullMode(CullMode cullMode, bool frontIsCounterClockwise) {
-	// TODO
+	uint32_t compactCullMode = 2 * uint32_t(cullMode) + uint32_t(frontIsCounterClockwise);
+	if (compactCullMode != m_cullMode) {
+		m_cullMode = compactCullMode;
+		m_rasterizerDesc.CullMode =
+			cullMode == CullMode::back  /*1*/ ? D3D11_CULL_BACK /*3*/ :
+			cullMode == CullMode::front /*2*/ ? D3D11_CULL_FRONT /*2*/ :
+			D3D11_CULL_NONE /*0*/;
+		m_rasterizerDesc.FrontCounterClockwise = frontIsCounterClockwise;
+		m_dirtyRasterizerState = true;
+	}
 }
 
 void PCDX11StateManager::setDepthState(D3D11_COMPARISON_FUNC comparisonFunc, bool depthWrites) {

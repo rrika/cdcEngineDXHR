@@ -34,10 +34,11 @@ public:
 		PrimGroup *primGroup,
 		PersistentPGData *tab0Ext128,
 		PoseData *poseData,
-		float opacity);
+		float opacity,
+		uint8_t flags);
 
 	inline bool isUnlit() const { return (flags34 >> 0) & 1; }
-	inline bool getCullMode() const { return (flags34 >> 1) & 1; }
+	inline bool getFrontCounterClockwise() const { return (flags34 >> 1) & 1; }
 	inline uint32_t getTriangleCount() const { return (flags34 >> 8); }
 
 	static void draw1(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);

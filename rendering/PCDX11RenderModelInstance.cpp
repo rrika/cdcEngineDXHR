@@ -29,6 +29,21 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 	Vector d { m.m[3][0], m.m[3][1], m.m[3][2] };
 	float dist = sqrtf(d.x*d.x + d.y*d.y + d.z*d.z);
 
+	uint8_t flags = 0;
+	{
+		float *a = m.m[0];
+		float *b = m.m[1];
+		float *c = m.m[2];
+		float cross[] = {
+			a[1] * b[2] - a[2] * b[1],
+			a[2] * b[0] - a[0] * b[2],
+			a[0] * b[1] - a[1] * b[0]
+		};
+		float sign = cross[0] * c[0] + cross[1] * c[1] + cross[2] * c[2];
+		if (sign < 0.0f)
+			flags |= 2;
+	}
+
 	for (uint32_t i=0; i<mesh->meshCount; i++) {
 		ModelBatch *sub = &mesh->meshTable[i];
 		float fade = 1.0f;
@@ -60,7 +75,8 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 				primGroup,
 				tab0ext128,
 				poseData,
-				fade);
+				fade,
+				flags);
 			renderDevice->recordDrawable(drawable, mask, addToNextScene);
 		}
 	}
