@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "../../../../math/Math.h"
+#include "cdcMath/Math.h"
 
 namespace cdc { class IMaterial; class ResolveObject; class IMFRefRuntimeInstanceBase; }
 

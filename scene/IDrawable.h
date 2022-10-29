@@ -1,5 +1,5 @@
 #pragma once
-#include "../math/Math.h"
+#include "cdcMath/Math.h"
 
 namespace cdc {
 

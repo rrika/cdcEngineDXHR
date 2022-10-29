@@ -1,5 +1,5 @@
 #pragma once
-#include "../math/Math.h" // for Matrix
+#include "cdcMath/Math.h" // for Matrix
 #include "buffers/PCDX11UberConstantBuffer.h"
 #include "CommonLightManager.h"
 #include "PCDX11InternalResource.h"

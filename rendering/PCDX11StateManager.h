@@ -1,5 +1,5 @@
 #pragma once
-#include "../math/Math.h" // for Matrix
+#include "cdcMath/Math.h" // for Matrix
 #include "PCDX11InternalResource.h"
 #include "Stencil.h"
 #include <array>

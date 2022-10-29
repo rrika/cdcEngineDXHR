@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "../math/Math.h" // for Matrix
+#include "cdcMath/Math.h" // for Matrix
 #include "IRenderScene.h"
 #include "IRenderDrawable.h"
 #include "surfaces/CommonRenderTarget.h" // for CommonRenderTarget to IRenderTarget cast

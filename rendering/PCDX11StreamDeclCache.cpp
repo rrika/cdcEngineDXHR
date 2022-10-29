@@ -1,4 +1,4 @@
-#include "../math/Math.h"
+#include "cdcMath/Math.h"
 #include "buffers/PCDX11SimpleStaticVertexBuffer.h"
 #include "buffers/PCDX11UberConstantBuffer.h"
 #include "PCDX11DeviceManager.h"

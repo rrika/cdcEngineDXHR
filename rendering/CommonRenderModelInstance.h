@@ -3,7 +3,7 @@
 #include "MaterialData.h"
 #include "RenderMesh.h"
 #include "RenderModelInstance.h"
-#include "../math/Math.h"
+#include "cdcMath/Math.h"
 
 namespace cdc {
 
