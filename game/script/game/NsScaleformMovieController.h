@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include "../../ui/FakeScaleform/fakescaleform.h"
-#include "../../../script/ScriptDynArray.h"
+#include "cdcScript/ScriptDynArray.h"
 #include "NtScaleformValue.h"
 
 class IScaleformMovieInstance;
