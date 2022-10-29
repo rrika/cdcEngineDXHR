@@ -148,7 +148,6 @@ include_directories(3rdParty)
 include_directories(eventually_generated)
 
 add_subdirectory(3rdParty/miniz)
-add_subdirectory(allocator)
 add_subdirectory(animation)
 add_subdirectory(camera)
 add_subdirectory(drm)

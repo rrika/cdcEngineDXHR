@@ -1,2 +1,5 @@
 target_sources(dxhr PRIVATE
-	Assert.cpp)
+	Allocator.cpp
+	Assert.cpp
+	GameHeapAllocator.cpp
+	ThreadSafeMemHeapAllocator.cpp)

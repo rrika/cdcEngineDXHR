@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "../allocator/Allocator.h"
+#include "Allocator.h"
 
 template <typename T>
 struct Array {
