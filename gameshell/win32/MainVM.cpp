@@ -4,7 +4,7 @@
 #include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h"
 #include "../../game/Main.h"
-#include "../../imgui/imgui.h"
+#include "imgui/imgui.h"
 #include "cdcLocale/localstr.h"
 #include "../../rendering/BuiltinResources.h"
 #include "../../rendering/IPCDeviceManager.h"

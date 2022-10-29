@@ -66,7 +66,7 @@ if (NATIVE_BUILD)
 		CXX_STANDARD 17)
 
 	target_link_directories(dxhr PRIVATE
-		fmod)
+		3rdParty/fmod)
 	target_link_libraries(dxhr PRIVATE
 		fmodex)
 
@@ -91,10 +91,10 @@ elseif (MSVC)
 		res/resources.rc)
 
 	target_link_directories(dxhr PRIVATE
-		fmod)
+		3rdParty/fmod)
 	target_link_libraries(dxhr PRIVATE
 		fmodex_vc)
-	file(COPY fmod/fmodex.dll
+	file(COPY 3rdParty/fmod/fmodex.dll
 		DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 else()
@@ -133,10 +133,10 @@ else()
 		res/resources.rc)
 
 	target_link_directories(dxhr PRIVATE
-		fmod)
+		3rdParty/fmod)
 	target_link_libraries(dxhr PRIVATE
 		-lfmodex_vc)
-	file(COPY fmod/fmodex.dll
+	file(COPY 3rdParty/fmod/fmodex.dll
 		DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
@@ -144,8 +144,10 @@ configure_file(config.h.in config/config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/config)
 
 include_directories(.)
+include_directories(3rdParty)
 include_directories(eventually_generated)
 
+add_subdirectory(3rdParty/miniz)
 add_subdirectory(allocator)
 add_subdirectory(animation)
 add_subdirectory(camera)
@@ -156,7 +158,6 @@ add_subdirectory(gameshell)
 add_subdirectory(input)
 add_subdirectory(cdcLocale)
 add_subdirectory(cdcMath)
-add_subdirectory(miniz)
 add_subdirectory(cdcObjects)
 add_subdirectory(postprocessing)
 add_subdirectory(rendering)
@@ -166,20 +167,20 @@ add_subdirectory(sys)
 add_subdirectory(cdcWorld)
 
 if (ENABLE_IMGUI)
-	include_directories(imgui)
+	include_directories(3rdParty/imgui)
 	target_sources(dxhr PRIVATE
-		imgui/imgui.cpp
-		imgui/imgui_draw.cpp
-		imgui/imgui_tables.cpp
-		imgui/imgui_widgets.cpp
-		imgui/backends/imgui_impl_dx11.cpp)
+		3rdParty/imgui/imgui.cpp
+		3rdParty/imgui/imgui_draw.cpp
+		3rdParty/imgui/imgui_tables.cpp
+		3rdParty/imgui/imgui_widgets.cpp
+		3rdParty/imgui/backends/imgui_impl_dx11.cpp)
 
 	if (NATIVE_BUILD)
 		target_sources(dxhr PRIVATE
-			imgui/backends/imgui_impl_sdl.cpp)
+			3rdParty/imgui/backends/imgui_impl_sdl.cpp)
 	else ()
 		target_sources(dxhr PRIVATE
-			imgui/backends/imgui_impl_win32.cpp)
+			3rdParty/imgui/backends/imgui_impl_win32.cpp)
 	endif()
 
 	# clang-cl doesn't find _mm_set_ss
@@ -187,7 +188,7 @@ if (ENABLE_IMGUI)
 		IMGUI_DISABLE_SSE=1)
 
 	set_property(
-		SOURCE imgui/imgui_draw.cpp
+		SOURCE 3rdParty/imgui/imgui_draw.cpp
 		PROPERTY COMPILE_DEFINITIONS
 		_CRT_USE_BUILTIN_OFFSETOF=1)
 endif()

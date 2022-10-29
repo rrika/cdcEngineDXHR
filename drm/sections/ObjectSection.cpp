@@ -9,7 +9,7 @@
 #include "config.h"
 
 #ifdef ENABLE_IMGUI
-#include "../../imgui/imgui.h"
+#include "imgui/imgui.h"
 #endif
 
 namespace cdc {
