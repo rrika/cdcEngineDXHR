@@ -3,7 +3,7 @@
 #include "ArchiveFileSystem.h"
 #include "FileUserBufferReceiver.h"
 #include "HackFileSystem.h"
-#include "../sys/Assert.h"
+#include "cdcSys/Assert.h"
 
 namespace cdc {
 

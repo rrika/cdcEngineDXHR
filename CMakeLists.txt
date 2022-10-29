@@ -162,7 +162,7 @@ add_subdirectory(postprocessing)
 add_subdirectory(rendering)
 add_subdirectory(scene)
 add_subdirectory(sound)
-add_subdirectory(sys)
+add_subdirectory(cdcSys)
 add_subdirectory(cdcWorld)
 
 if (ENABLE_IMGUI)

@@ -3,7 +3,7 @@
 #include <cstring>
 #include "ArchiveFileSystem.h"
 #include "FileUserBufferReceiver.h"
-#include "../sys/Assert.h" // for FatalError
+#include "cdcSys/Assert.h" // for FatalError
 
 using namespace cdc;
 
