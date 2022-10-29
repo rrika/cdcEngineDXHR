@@ -547,6 +547,8 @@ int spinnyCube(HWND window,
 
 		static_cast<cdc::PCDX11RenderModelInstance*>(rmiDrawable.rmi)->baseMask = 0x1002; // normals & composite
 
+		std::vector<std::unique_ptr<RMIDrawableBase>> recycleRMI;
+
 		// all the other objects
 		for (uint32_t i=introShowRange[0]; i<numIntros && i<introShowRange[1]; i++) {
 			auto &intro = intros[i];
@@ -566,7 +568,8 @@ int spinnyCube(HWND window,
 			if (renderModel) {
 				// printf("%p %s\n", renderModel, typeid(*(cdc::RenderMesh*)renderModel).name());
 				// printf("%p\n", renderModel->getMesh());
-				auto *instanceRMIDrawable = new (renderDevice) RMIDrawableBase(renderModel);
+				auto *instanceRMIDrawable = new RMIDrawableBase(renderModel);
+				recycleRMI.emplace_back(instanceRMIDrawable);
 				static_cast<cdc::PCDX11RenderModelInstance*>(instanceRMIDrawable->rmi)->baseMask = 0x1002; // normals & composite
 				instanceRMIDrawable->draw(&instanceMatrix, 0.0f);
 			} else {
