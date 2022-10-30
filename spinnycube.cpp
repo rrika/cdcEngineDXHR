@@ -326,6 +326,10 @@ int spinnyCube(HWND window,
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	cdc::RenderViewport renderViewport;
+	renderViewport.nearz = n;
+	renderViewport.farz = f;
+	renderViewport.fov = 0.925f;
+	renderViewport.aspect = w;
 	renderViewport.mask = 0x3103; // pass 0, 12. 13, 1, and 8
 	// pass 12 normals (function set 10, draw bottle normals)
 	// pass 13 deferred shading (just contains a cleardrawable)
@@ -463,6 +467,7 @@ int spinnyCube(HWND window,
 			static_cast<float>(renderContext->height),
 			0.0f, 1.0f };
 		float w = viewport.Width / viewport.Height; // width (aspect ratio)
+		renderViewport.aspect = w;
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -493,9 +498,6 @@ int spinnyCube(HWND window,
 			cameraRotate.m[1][0],
 			cameraRotate.m[2][0]} * (speedModifier * sideways);
 
-		// cdc::Matrix project = { 2 * n / w, 0, 0, 0, 0, 2 * n / h, 0, 0, 0, 0, f / (f - n), 1, 0, 0, n * f / (n - f), 0 };
-		cdc::Matrix project = cdc::BuildPerspectiveLH(0.925f, w / h, n, f); // 0.925 rad = 52° but it looks a lot closer to 90° no idea why
-
 		renderDevice->resetRenderLists();
 		renderDevice->beginRenderList(nullptr);
 		auto *scene = renderDevice->createSubScene(
@@ -503,7 +505,6 @@ int spinnyCube(HWND window,
 			renderContext->renderTarget2C,
 			renderContext->depthBuffer);
 		scene->viewMatrix = cameraRotate * cameraTranslate;
-		scene->projectMatrix = project;
 
 		cdc::Matrix bottleWorldMatrix = bottleTranslate * bottleScale;
 

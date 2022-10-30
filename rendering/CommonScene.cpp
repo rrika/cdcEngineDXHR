@@ -1,4 +1,5 @@
 #include "CommonScene.h"
+#include "Projection.h"
 
 namespace cdc {
 
@@ -23,6 +24,19 @@ CommonScene::CommonScene(
 {
 	this->viewport = *viewport;
 	this->globalState = *globalState;
+
+	if (viewport->fov <= 0.0f)
+		projectMatrix = cdc::BuildOrthographicLH(
+			viewport->width,
+			viewport->height,
+			viewport->nearz,
+			viewport->farz);
+	else
+		projectMatrix = cdc::BuildPerspectiveLH(
+			viewport->fov,
+			viewport->aspect,
+			viewport->nearz,
+			viewport->farz);
 
 	fogScaleOffset[0] = 0.0f;
 	fogScaleOffset[1] = 0.0f;

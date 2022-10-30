@@ -14,6 +14,12 @@ class DrawableListsAndMasks;
 struct RenderPasses;
 
 struct RenderViewport {
+	float nearz; // 18
+	float farz; // 1C
+	float fov; // 20
+	float aspect; // 24
+	float width; // 28
+	float height; // 2C
 	float cameraDirection[4]; // 50
 	float cameraPosition[4]; // 60
 	uint32_t dwordC0; // C0, for PCDX11DepthPassCallbacks::pre
@@ -54,8 +60,8 @@ public:
 	// uint32_t dword2A4;
 	// uint32_t dword2A8;
 	// uint32_t dword2AC;
-	Matrix viewMatrix;
-	Matrix projectMatrix;
+	Matrix viewMatrix; // 2B0
+	Matrix projectMatrix; // 2F0
 	// Matrix mat330;
 	// Matrix mat370;
 	// Matrix mat3B0_maybe;
