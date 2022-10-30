@@ -11,7 +11,7 @@ namespace cdc {
 class CommonRenderDevice;
 class CommonScene;
 class DrawableListsAndMasks;
-class RenderPasses;
+struct RenderPasses;
 
 struct RenderViewport {
 	float cameraDirection[4]; // 50
@@ -116,21 +116,7 @@ public:
 		/* ... */
 		RenderGlobalState *globalState,
 		/* ... */
-		RenderPasses *renderPasses)
-	:
-		renderTarget(renderTarget),
-		parentScene(parentScene),
-		nextScene(nullptr),
-		prevScene(nullptr),
-		depthBuffer(depthBuffer),
-		numSubScenes(0)
-	{
-		this->viewport = *viewport;
-		this->globalState = *globalState;
-
-		fogScaleOffset[0] = 0.0f;
-		fogScaleOffset[1] = 0.0f;
-	}
+		RenderPasses *renderPasses);
 
 	Matrix& getViewMatrix() override { return viewMatrix; }
 	void scene4() override {}
