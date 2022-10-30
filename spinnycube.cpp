@@ -52,6 +52,7 @@
 #include "rendering/PCDX11Scene.h"
 #include "rendering/PCDX11StateManager.h"
 #include "rendering/PCDX11StreamDecl.h"
+#include "rendering/Projection.h"
 #include "rendering/RenderModelInstance.h"
 #include "rendering/RenderPasses.h"
 #include "rendering/shaders/PCDX11PixelShader.h"
@@ -492,7 +493,8 @@ int spinnyCube(HWND window,
 			cameraRotate.m[1][0],
 			cameraRotate.m[2][0]} * (speedModifier * sideways);
 
-		cdc::Matrix project = { 2 * n / w, 0, 0, 0, 0, 2 * n / h, 0, 0, 0, 0, f / (f - n), 1, 0, 0, n * f / (n - f), 0 };
+		// cdc::Matrix project = { 2 * n / w, 0, 0, 0, 0, 2 * n / h, 0, 0, 0, 0, f / (f - n), 1, 0, 0, n * f / (n - f), 0 };
+		cdc::Matrix project = cdc::BuildPerspectiveLH(0.925f, w / h, n, f); // 0.925 rad = 52° but it looks a lot closer to 90° no idea why
 
 		renderDevice->resetRenderLists();
 		renderDevice->beginRenderList(nullptr);
