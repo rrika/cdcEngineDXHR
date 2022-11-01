@@ -148,7 +148,7 @@ include_directories(3rdParty)
 include_directories(eventually_generated)
 
 add_subdirectory(3rdParty/miniz)
-add_subdirectory(animation)
+add_subdirectory(cdcAnim)
 add_subdirectory(camera)
 add_subdirectory(drm)
 add_subdirectory(cdcFile)
