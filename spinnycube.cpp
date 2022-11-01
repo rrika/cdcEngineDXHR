@@ -313,7 +313,7 @@ int spinnyCube(HWND window,
 	float w = viewport.Width / viewport.Height; // width (aspect ratio)
 	float h = 1.0f;                             // height
 	float n = 1.0f;                             // near
-	float f = 1000.0f;                             // far
+	float f = 10000.0f;                         // far
 
 	float scale = 1.f;
 	cdc::Vector modelRotation    = { 0.0f, 0.0f, 0.0f };
@@ -330,10 +330,11 @@ int spinnyCube(HWND window,
 	renderViewport.farz = f;
 	renderViewport.fov = 0.925f;
 	renderViewport.aspect = w;
-	renderViewport.mask = 0x3103; // pass 0, 12. 13, 1, and 8
+	renderViewport.mask = 0x310B; // pass 0, 12. 13, 1, and 8
 	// pass 12 normals (function set 10, draw bottle normals)
 	// pass 13 deferred shading (just contains a cleardrawable)
 	// pass 1 composite (draw bottle textures)
+	// pass 3 translucent
 	// pass 8 runs last and is where I put imgui since it messes with the render state
 
 	SpinnyCubePass cubePass;
@@ -545,7 +546,6 @@ int spinnyCube(HWND window,
 
 				auto *instanceRMIDrawable = new RMIDrawableBase(renderModel);
 				recycleRMI.emplace_back(instanceRMIDrawable);
-				static_cast<cdc::PCDX11RenderModelInstance*>(instanceRMIDrawable->rmi)->baseMask = 0x1002; // normals & composite
 				instanceRMIDrawable->draw(&instanceMatrix, 0.0f);
 			} else {
 				rmiDrawable.draw(&instanceMatrix, 0.0f);

@@ -91,7 +91,7 @@ public:
 		uint32_t vsSelect,
 		VertexAttributeLayoutA *layout,
 		uint8_t flags,
-		bool flag,
+		bool isTranslucentPass,
 		float floatX,
 		float floatY);
 

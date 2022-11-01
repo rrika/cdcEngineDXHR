@@ -18,7 +18,7 @@ public:
 		CommonRenderModelInstance(renderModel),
 		PCDX11RenderExternalResource(renderDevice)
 	{
-		baseMask = 1; // hack
+		baseMask = 0xffffffff; // hack
 	}
 
 	void resFree() override { /*TODO*/ };

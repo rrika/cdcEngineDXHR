@@ -281,7 +281,8 @@ void PCDX11Material::setupSinglePassTranslucent(
 		// TODO
 	}
 
-	stateManager->setDepthState(D3D11_COMPARISON_ALWAYS, 0);
+	stateManager->setDepthState(
+		(matInstance->dword14 & 0x400) ? D3D11_COMPARISON_ALWAYS : D3D11_COMPARISON_LESS_EQUAL, 0);
 
 
 	// redo some of what setupStencil did earlier
@@ -483,7 +484,7 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl038(
 	uint32_t vsSelect,
 	VertexAttributeLayoutA *layoutA,
 	uint8_t flags,
-	bool flag,
+	bool isTranslucentPass,
 	float floatX,
 	float floatY)
 {
@@ -498,7 +499,7 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl038(
 		x = false;
 
 	uint32_t subMaterialIndex;
-	if (flag) {
+	if (isTranslucentPass) {
 		subMaterialIndex = 8;
 		setupSinglePassTranslucent(renderDevice, /*0,*/ matInstance, flags, floatX);
 	} else {

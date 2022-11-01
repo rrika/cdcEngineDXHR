@@ -2,6 +2,7 @@
 #include "PCDX11MatrixState.h"
 #include "PCDX11ModelDrawable.h"
 #include "PCDX11RenderDevice.h"
+#include "CommonMaterial.h"
 #include <cstdio>
 #include <cmath>
 
@@ -68,6 +69,12 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 			PersistentPGData *tab0ext128 = &this->tab0Ext128[tab0index];
 
 			uint32_t mask = baseMask; // & tab0ext16->mask8;
+
+			if (static_cast<CommonMaterial*>(primGroup->material)->materialBlob->blendStateC & 1)
+				mask &= 0x0008; // translucent
+			else
+				mask &= 0x1002;  // normals & composite
+
 			auto drawable = new (renderDevice->getLinear(), 6, true) PCDX11ModelDrawable(
 				getRenderModel(),
 				ext,
