@@ -38,7 +38,7 @@ void PCDX11RenderTexture::ensureResource() {
 		if (isDepthBuffer == false)
 			desc.BindFlags |= D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS;
 		else if (isDepthBuffer == true)
-			desc.BindFlags |= D3D11_BIND_DEPTH_STENCIL;
+			desc.BindFlags |= D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // confirm
 
 		auto *device = deviceManager->getD3DDevice();
 		ID3D11Texture2D *texture;

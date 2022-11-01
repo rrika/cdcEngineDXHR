@@ -711,7 +711,7 @@ void PCDX11RenderDevice::clearRenderTargetNow(char flags, float *color, float de
 	auto deviceContext = d3dDeviceContext111580;
 	auto stateManager = deviceManager->getStateManager();
 	if (auto depthBuffer = stateManager->m_depthBuffer) {
-		ID3D11DepthStencilView *view = depthBuffer->getDepthStencilView();
+		ID3D11DepthStencilView *view = depthBuffer->getRWDepthStencilView();
 		deviceContext->ClearDepthStencilView(view, (flags >> 1) & 3, depth, stencil);
 	}
 	if (auto renderTarget = stateManager->m_renderTarget) {

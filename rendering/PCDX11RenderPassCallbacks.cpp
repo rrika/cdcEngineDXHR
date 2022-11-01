@@ -43,6 +43,7 @@ bool PCDX11NormalPassCallbacks::pre(
 		rt->getHeight(),
 		0x11 /*TODO*/, 0, 0, 4);
 	static_cast<PCDX11RenderTarget*>(rt)->getRenderTexture11()->createRenderTargetView(); // HACK
+	static_cast<PCDX11DepthBuffer*>(db)->isLocked = false;
 
 	stateManager->pushRenderTargets(
 		static_cast<PCDX11RenderTarget*>(rt),
@@ -66,6 +67,7 @@ void PCDX11NormalPassCallbacks::post(
 	auto *db = stateManager->m_depthBuffer;
 	stateManager->popRenderTargets();
 
+	static_cast<PCDX11DepthBuffer*>(db)->isLocked = true;
 	scene->setSharedTextureToRenderTarget(rt, 6, 0);
 	scene->setSharedTextureToDepthBuffer(db, 5);
 

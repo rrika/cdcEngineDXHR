@@ -20,7 +20,7 @@ public:
 	ID3D11Resource *resource = nullptr; // 38
 	ID3D11View *view = nullptr; // 3C (color or depth)
 	ID3D11ShaderResourceView *shaderResourceView = nullptr; // 40
-	ID3D11DepthStencilView *depthStencilView = nullptr; // 44
+	ID3D11DepthStencilView *depthStencilView = nullptr; // 44 (read-only version of view)
 	ID3D11UnorderedAccessView *unorderedAccessView = nullptr; // 48
 	bool registeredForDeletionAfterFrame = false; // 4C
 	bool borrowedResource = false; // 4D
@@ -61,7 +61,7 @@ public:
 	ID3D11UnorderedAccessView *createUnorderedAccessView() override;
 
 	ID3D11RenderTargetView *createRenderTargetView();
-	ID3D11DepthStencilView *createDepthStencilView();
+	ID3D11DepthStencilView *createDepthStencilView(); // read-only depth
 	void createShaderResourceView_internal(ID3D11Resource *, ID3D11ShaderResourceView **);
 };
 

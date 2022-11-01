@@ -10,6 +10,7 @@ class PCDX11RenderDevice;
 class PCDX11DepthBuffer : public CommonDepthBuffer {
 public:
 	uint32_t flagsC = 0;
+	bool isLocked = true;
 	PCDX11RenderTexture renderTexture; // 18
 
 	PCDX11DepthBuffer(
@@ -27,8 +28,11 @@ public:
 	void registerAtScene(void *ptr) override { /*TODO*/ };
 	void method_14() override { /*TODO*/ };
 
-	ID3D11DepthStencilView *getDepthStencilView() {
+	ID3D11DepthStencilView *getRWDepthStencilView() {
 		return static_cast<ID3D11DepthStencilView*>(renderTexture.getView());
+	}
+	ID3D11DepthStencilView *getRODepthStencilView() {
+		return renderTexture.createDepthStencilView();
 	}
 };
 

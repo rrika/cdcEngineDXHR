@@ -809,7 +809,8 @@ void PCDX11StateManager::updateRenderTargets(
 	m_depthBuffer = depthBuffer;
 
 	ID3D11RenderTargetView *renderTargetView = renderTarget ? renderTarget->getRenderTargetView() : nullptr;
-	ID3D11DepthStencilView *depthStencilView = depthBuffer ? depthBuffer->getDepthStencilView() : nullptr;
+	ID3D11DepthStencilView *depthStencilView = depthBuffer ?
+		depthBuffer->isLocked ? depthBuffer->getRODepthStencilView() : depthBuffer->getRWDepthStencilView() : nullptr;
 	m_deviceContext->OMSetRenderTargets(
 		!!renderTargetView,
 		&renderTargetView,
