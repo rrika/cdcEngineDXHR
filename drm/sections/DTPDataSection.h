@@ -1,9 +1,7 @@
 #pragma once
 #include "../ResolveSection.h"
 
-namespace cdc {
-
-class DTPDataSection : public ResolveSection {
+class DTPDataSection : public cdc::ResolveSection {
 	struct DTPData {
 		uint16_t refCount;
 		uint16_t sectionWord6;
@@ -27,5 +25,3 @@ public:
 
 	static void *getPointer(uint32_t);
 };
-
-}

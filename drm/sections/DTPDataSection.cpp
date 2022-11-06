@@ -1,8 +1,6 @@
 #include <cstring> // for memcpy
 #include "DTPDataSection.h"
 
-namespace cdc {
-
 DTPDataSection::DTPData *DTPDataSection::dtpData[0x18000];
 
 uint32_t DTPDataSection::allocate(uint32_t sectionId, uint32_t sectionSubType, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
@@ -58,6 +56,4 @@ void *DTPDataSection::getPointer(uint32_t id) {
 		return nullptr;
 
 	return (void*)dtp->data;
-}
-
 }
