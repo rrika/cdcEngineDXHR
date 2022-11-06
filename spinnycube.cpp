@@ -64,6 +64,7 @@
 #include "cdcResource/ResolveReceiver.h"
 #include "cdcResource/ResolveSection.h"
 #include "cdcResource/WaveSection.h"
+#include "cdcScript/ScriptType.h"
 #include "scene/IMFTypes.h"
 #include "cdcWorld/RMIDrawableBase.h"
 #include "cdcWorld/stream.h" // for buildUnitsUI
@@ -779,6 +780,12 @@ int spinnyCube(HWND window,
 								((cdc::WaveSection*)cdc::g_resolveSections[6])->playSound(section.id);
 							}
 							ImGui::PopID();
+						}
+						if (section.type == 8) { // Script
+							if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->getWrapped(section.id)) {
+								ImGui::SameLine();
+								ImGui::Text(" %s", ty->blob->shortName);
+							}
 						}
 					}
 					ImGui::TreePop();

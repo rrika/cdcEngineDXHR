@@ -20,13 +20,14 @@ private:
 
 template <typename T>
 class Handle { // line 88
-	HandleData *m_handle; // line 113
+protected:
+	mutable HandleData *m_handle; // line 113
 public:
 	Handle(); // line 572
 	Handle(T*); // line 581
 	Handle(Handle const&); // line 596
 	~Handle(); // line 589
-	T& operator=(Handle const&); // line 604
+	Handle& operator=(Handle const&); // line 604
 	T& operator=(T const*); // line 615
 	T *Get() const; // line 631
 	operator T*() const; // line 647
@@ -101,7 +102,6 @@ private:
 
 public:
 	void RemReference() { // line 355
-		m_object = nullptr; // possible bug, TR2013 doesn't do this
 		if (--m_refCount == 0) {
 			m_object = (void*)s_free;
 			s_free = this;
@@ -200,8 +200,11 @@ inline T *RCPtr<T>::operator->() const { return m_object; } // line 537
 
 // ------------------------------------------------------------------------- //
 
-// template <typename T>
-// inline Handle<T>::Handle(); // line 572
+template <typename T>
+inline Handle<T>::Handle() : m_handle(nullptr) { // line 572
+	if (!IsHandlePoolValid())
+		InitHandlePool(0x2000);
+}
 
 template <typename T>
 inline Handle<T>::Handle(T *t) { // line 581
@@ -223,15 +226,27 @@ inline Handle<T>::~Handle() { // line 589
 // template <typename T>
 // inline Handle<T>::Handle(Handle const&); // line 596
 
-// template <typename T>
-// inline T& Handle<T>::operator=(Handle const&); // line 604
+template <typename T>
+inline Handle<T>& Handle<T>::operator=(Handle const& other) { // line 604
+	if (m_handle)
+		m_handle->RemReference();
+	m_handle = other.m_handle;
+	if (m_handle)
+		m_handle->AddReference();
+	return *this;
+}
 
 // template <typename T>
 // inline T& Handle<T>::operator=(T const*); // line 615
 
 template <typename T>
 inline T *Handle<T>::Get() const { // line 631
-	return reinterpret_cast<T*>(m_handle->Get());
+	auto *t = reinterpret_cast<T*>(m_handle->Get());
+	if (!t) {
+		m_handle->RemReference();
+		m_handle = nullptr;
+	}
+	return t;
 }
 
 template <typename T>
