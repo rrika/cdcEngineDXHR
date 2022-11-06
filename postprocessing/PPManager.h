@@ -30,16 +30,16 @@ struct PPUnknown2 {
 
 class PPManager {
 public:
-	Array<dtp::PPActiveSet*> activeSets; // 4
-	Array<PPTexture> textures; // 10
-	Array<PPVariable> variables; // 1C
+	cdc::Array<dtp::PPActiveSet*> activeSets; // 4
+	cdc::Array<PPTexture> textures; // 10
+	cdc::Array<PPVariable> variables; // 1C
 	uint32_t rootPasses28;
 	uint32_t dwords2C[32];
 	uint32_t dwordsAC[32];
 	uint32_t dwords12C[32];
 	uint32_t width;
 	uint32_t height;
-	Array<PPUnknown2*> unknowns2; // 1B4
+	cdc::Array<PPUnknown2*> unknowns2; // 1B4
 
 	PPManager();
 	virtual ~PPManager() = default;

@@ -2,6 +2,8 @@
 #include <cstdint>
 #include "Allocator.h"
 
+namespace cdc {
+
 template <typename T>
 struct Array {
 	uint32_t m_size;
@@ -36,3 +38,5 @@ struct Array {
 		}
 	}
 };
+
+}

@@ -1,5 +1,7 @@
 #pragma once
 
+namespace cdc {
+
 template <typename T>
 struct Link {
 	Link *next;
@@ -15,7 +17,7 @@ struct LinkIterator {
 };
 
 template <typename T>
-struct LinkedList {
+struct SList {
 	Link<T> *head = nullptr;
 
 	inline void insert(T item) {
@@ -25,3 +27,5 @@ struct LinkedList {
 	inline LinkIterator<T> begin() { return {head}; }
 	inline LinkIterator<T> end() { return {nullptr}; }
 };
+
+}

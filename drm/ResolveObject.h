@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "cdcSys/LinkedList.h"
+#include "cdcSys/SList.h"
 
 namespace cdc {
 
@@ -15,9 +15,9 @@ public:
 	DRMReadDets *drmReadDets = nullptr; // C
 	const char *path; // 18
 	uint32_t rootSection = ~0u; // 1C
-	LinkedList<ResolveObject *> dependencies; // 20
+	SList<ResolveObject *> dependencies; // 20
 	uint32_t numPendingDependencies = 0; // 24
-	LinkedList<ResolveObject *> dependants; // 28
+	SList<ResolveObject *> dependants; // 28
 	ResolveReceiver *resolveReceiver = nullptr; // 38
 
 	static ResolveObject *create(
