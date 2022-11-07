@@ -1,6 +1,6 @@
 #pragma once
 #include <unordered_map> // not sure what STL this game uses
-#include "../ResolveSection.h"
+#include "ResolveSection.h"
 
 namespace cdc {
 

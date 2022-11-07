@@ -1,5 +1,5 @@
 #pragma once
-#include "../ResolveSection.h"
+#include "ResolveSection.h"
 
 class DTPDataSection : public cdc::ResolveSection {
 	struct DTPData {

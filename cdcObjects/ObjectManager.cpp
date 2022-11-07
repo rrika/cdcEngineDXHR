@@ -2,10 +2,10 @@
 #include <cstring>
 #include "config.h"
 #include "ObjectManager.h"
-#include "../drm/ResolveObject.h"
 #include "cdcFile/FileHelpers.h"
 #include "cdcFile/FileSystem.h"
 #include "../gameshell/cdcGameShell.h"
+#include "cdcResource/ResolveObject.h"
 
 #if ENABLE_IMGUI
 #include "../imgui/imgui.h"

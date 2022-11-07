@@ -1,11 +1,12 @@
 #include "ResolveSection.h"
-#include "sections/DTPDataSection.h"
-#include "sections/GenericSection.h"
-#include "sections/MaterialSection.h"
-#include "sections/ObjectSection.h"
-#include "sections/RenderResourceSection.h"
-#include "sections/ShaderLibSection.h"
-#include "sections/WaveSection.h"
+
+#include "DTPDataSection.h"
+#include "GenericSection.h"
+#include "MaterialSection.h"
+#include "ObjectSection.h"
+#include "RenderResourceSection.h"
+#include "ShaderLibSection.h"
+#include "WaveSection.h"
 
 namespace cdc {
 

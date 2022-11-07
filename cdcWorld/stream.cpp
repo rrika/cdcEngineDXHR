@@ -3,11 +3,11 @@
 #include "SceneLayer.h" // for StreamingCallback
 #include "stream.h"
 #include "StreamUnit.h"
-#include "../drm/ResolveObject.h"
 #include "cdcFile/FileHelpers.h"
 #include "cdcFile/FileSystem.h"
 #include "../gameshell/cdcGameShell.h" // for LOAD_UnitFileName
 #include "cdcObjects/ObjectManager.h" // for readAndParseObjectList
+#include "cdcResource/ResolveObject.h"
 
 #if ENABLE_IMGUI
 #include "../game/Gameloop.h"

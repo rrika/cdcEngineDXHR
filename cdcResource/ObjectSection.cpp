@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstring>
 #include "ObjectSection.h"
-#include "../ResolveObject.h"
+#include "ResolveObject.h"
 #include "cdcFile/FileHelpers.h"
 #include "cdcFile/FileSystem.h"
 #include "cdcObjects/Object.h"

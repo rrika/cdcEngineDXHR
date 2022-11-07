@@ -1,5 +1,5 @@
 #pragma once
-#include "../ResolveSection.h"
+#include "ResolveSection.h"
 #include "cdcSound/RingBuffer.h"
 #include "cdcSound/Sample.h"
 

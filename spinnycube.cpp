@@ -14,11 +14,6 @@
 #include "spinnycube.h"
 #include "types.h"
 #include "cdc/dtp/objectproperties/imfref.h"
-#include "drm/DRMIndex.h"
-#include "drm/ResolveObject.h"
-#include "drm/ResolveReceiver.h"
-#include "drm/ResolveSection.h"
-#include "drm/sections/WaveSection.h"
 #include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h" // for archiveFileSystem_default
 #include "cdcFile/FileSystem.h" // for enum cdc::FileRequest::Priority
@@ -61,6 +56,11 @@
 #include "rendering/surfaces/PCDX11DepthBuffer.h"
 #include "rendering/surfaces/PCDX11Texture.h"
 #include "rendering/VertexAttribute.h"
+#include "cdcResource/DRMIndex.h"
+#include "cdcResource/ResolveObject.h"
+#include "cdcResource/ResolveReceiver.h"
+#include "cdcResource/ResolveSection.h"
+#include "cdcResource/WaveSection.h"
 #include "cdcWorld/RMIDrawableBase.h"
 #include "cdcWorld/stream.h" // for buildUnitsUI
 #include "cdcWorld/StreamUnit.h"

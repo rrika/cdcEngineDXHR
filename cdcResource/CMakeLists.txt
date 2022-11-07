@@ -1,4 +1,9 @@
 target_sources(dxhr PRIVATE
+	Resolve.cpp
+	ResolveObject.cpp
+	ResolveReceiver.cpp
+	ResolveSection.cpp
+
 	AnimationSection.cpp
 	CollisionMeshSection.cpp
 	DTPDataSection.cpp
