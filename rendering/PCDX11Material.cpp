@@ -25,6 +25,8 @@ void PCDX11Material::load(MaterialBlob *newBlob) {
 	// TODO
 	materialBlob = newBlob;
 	// TODO
+	SetRenderPasses();
+	// TODO
 	for (uint32_t i = 0; i < 16; i++) {
 		MaterialBlobSub *sub = materialBlob->subMat4C[i];
 
@@ -48,7 +50,7 @@ void PCDX11Material::load(MaterialBlob *newBlob) {
 	}
 }
 
-void PCDX11Material::method_08() {
+void PCDX11Material::Release() {
 	// TODO
 }
 

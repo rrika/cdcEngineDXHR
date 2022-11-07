@@ -68,12 +68,8 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 			// NonPersistentPGData *tab0ext16 = &this->tab0Ext16[tab0index];
 			PersistentPGData *tab0ext128 = &this->tab0Ext128[tab0index];
 
-			uint32_t mask = baseMask; // & tab0ext16->mask8;
-
-			if (static_cast<CommonMaterial*>(primGroup->material)->materialBlob->blendStateC & 1)
-				mask &= 0x0008; // translucent
-			else
-				mask &= 0x1002;  // normals & composite
+			bool isFading = fade < 1.0f;
+			uint32_t mask = baseMask & primGroup->material->GetRenderPassMask(isFading); // & tab0ext16->mask8;
 
 			auto drawable = new (renderDevice->getLinear(), 6, true) PCDX11ModelDrawable(
 				getRenderModel(),

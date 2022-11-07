@@ -7,10 +7,10 @@ struct MaterialBlob;
 class IMaterial {
 public:
 	virtual void load(MaterialBlob*) = 0;
-	virtual void method_04() = 0;
-	virtual void method_08() = 0;
-	virtual void method_0C() = 0;
-	virtual void method_10() = 0;
+	virtual MaterialBlob *GetMaterialData() = 0;
+	virtual void Release() = 0;
+	virtual void SetRenderPassMask(uint32_t mask, bool fading) = 0;
+	virtual uint32_t GetRenderPassMask(bool fading) = 0;
 	virtual ~IMaterial() = default;
 };
 

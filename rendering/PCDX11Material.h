@@ -42,7 +42,7 @@ public:
 	{}
 
 	void load(MaterialBlob *) override;
-	void method_08() override;
+	void Release() override;
 	~PCDX11Material() = default;
 	void method_18() override;
 
