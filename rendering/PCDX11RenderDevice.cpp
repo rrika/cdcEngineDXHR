@@ -174,15 +174,15 @@ void PCDX11RenderDevice::registerComparatorsAndDrawersModel() {
 	registerComparator(funcIndex, /*4*/ kRenderFunctionComposite,     PCDX11ModelDrawable::compare46);
 	registerComparator(funcIndex, /*6*/ kRenderFunctionPredator,      PCDX11ModelDrawable::compare46);
 
-	registerDrawer(funcIndex, /*1*/ kRenderFunctionDepth,         PCDX11ModelDrawable::draw1);
-	registerDrawer(funcIndex, /*2*/ kRenderFunctionShadow,        PCDX11ModelDrawable::draw2);
-	registerDrawer(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, PCDX11ModelDrawable::draw7);
-	registerDrawer(funcIndex, /*4*/ kRenderFunctionComposite,     PCDX11ModelDrawable::draw4);
-	registerDrawer(funcIndex, /*5*/ kRenderFunctionTranslucent,   PCDX11ModelDrawable::draw56);
-	registerDrawer(funcIndex, /*6*/ kRenderFunctionPredator,      PCDX11ModelDrawable::draw56);
+	registerDrawer(funcIndex, /*1*/ kRenderFunctionDepth,         PCDX11ModelDrawable::drawDepth);
+	registerDrawer(funcIndex, /*2*/ kRenderFunctionShadow,        PCDX11ModelDrawable::drawShadow);
+	registerDrawer(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, PCDX11ModelDrawable::drawAlphaBloom);
+	registerDrawer(funcIndex, /*4*/ kRenderFunctionComposite,     PCDX11ModelDrawable::drawComposite);
+	registerDrawer(funcIndex, /*5*/ kRenderFunctionTranslucent,   PCDX11ModelDrawable::drawTranslucent);
+	registerDrawer(funcIndex, /*6*/ kRenderFunctionPredator,      PCDX11ModelDrawable::drawTranslucent);
 
-	registerComparator(funcIndex, /*10*/ kRenderFunctionNormal, PCDX11ModelDrawable::compareA);
-	registerDrawer(funcIndex, /*10*/ kRenderFunctionNormal, PCDX11ModelDrawable::drawA);
+	registerComparator(funcIndex, /*10*/ kRenderFunctionNormal, PCDX11ModelDrawable::compareNormal);
+	registerDrawer(funcIndex, /*10*/ kRenderFunctionNormal, PCDX11ModelDrawable::drawNormal);
 }
 
 void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain1() {

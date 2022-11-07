@@ -41,17 +41,17 @@ public:
 	inline bool getFrontCounterClockwise() const { return (flags34 >> 1) & 1; }
 	inline uint32_t getTriangleCount() const { return (flags34 >> 8); }
 
-	static void draw1(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
-	static void draw2(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
-	static void draw7(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
-	static void draw4(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
-	static void draw56(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
-	static void drawA(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
+	static void drawDepth(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
+	static void drawShadow(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
+	static void drawAlphaBloom(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
+	static void drawComposite(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
+	static void drawTranslucent(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
+	static void drawNormal(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
 
 	static bool compare128(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
 	static bool compare7(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
 	static bool compare46(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
-	static bool compareA(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
+	static bool compareNormal(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
 
 	void draw(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) override;
 	uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) override;
