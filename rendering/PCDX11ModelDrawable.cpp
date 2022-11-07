@@ -54,7 +54,7 @@ void PCDX11ModelDrawable::draw1(uint32_t funcSetIndex, IRenderDrawable *drawable
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
-	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl015(
+	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupDepthPass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		mesh->vsSelect4C,
@@ -79,7 +79,7 @@ void PCDX11ModelDrawable::draw2(uint32_t funcSetIndex, IRenderDrawable *drawable
 
 	/*auto *lightManager = static_cast<PCDX11LightManager*>(renderDevice->lightManager84);
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
-	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl01(
+	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupShadowPass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		(*(char**)lightManager->ptr434)[276],
@@ -104,7 +104,7 @@ void PCDX11ModelDrawable::draw7(uint32_t funcSetIndex, IRenderDrawable *drawable
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
-	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl4(
+	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupBloomPass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		mesh->vsSelect4C,
@@ -127,7 +127,7 @@ void PCDX11ModelDrawable::draw4(uint32_t funcSetIndex, IRenderDrawable *drawable
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
-	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl038(
+	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupSinglePass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		thisModel->lightConstantBufferData,
@@ -156,7 +156,7 @@ void PCDX11ModelDrawable::draw56(uint32_t funcSetIndex, IRenderDrawable *drawabl
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
-	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl038(
+	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupSinglePass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		thisModel->lightConstantBufferData,
@@ -185,7 +185,7 @@ void PCDX11ModelDrawable::drawA(uint32_t funcSetIndex, IRenderDrawable *drawable
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
-	PCDX11StreamDecl *streamDecl = mt0x128->material->buildStreamDecl7(
+	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupNormalMapPass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		mesh->vsSelect4C,

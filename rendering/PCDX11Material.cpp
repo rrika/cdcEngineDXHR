@@ -313,7 +313,8 @@ void PCDX11Material::invalidate() {
 	mg_layoutA = nullptr;
 }
 
-PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
+// submaterial 0, 1 and 5
+PCDX11StreamDecl *PCDX11Material::SetupDepthPass(
 	MaterialInstanceData* matInstance,
 	void *drawableExtDword50,
 	uint32_t vsSelect,
@@ -418,7 +419,8 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl015(
 	return mg_streamDecl;
 }
 
-PCDX11StreamDecl *PCDX11Material::buildStreamDecl01(
+// submaterial 0 and 1
+PCDX11StreamDecl *PCDX11Material::SetupShadowPass(
 	MaterialInstanceData*,
 	void *drawableExtDword50,
 	uint8_t lightManager434_114,
@@ -432,7 +434,8 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl01(
 	return nullptr;
 }
 
-PCDX11StreamDecl *PCDX11Material::buildStreamDecl4(
+// submaterial 4
+PCDX11StreamDecl *PCDX11Material::SetupBloomPass(
 	MaterialInstanceData *matInstance,
 	void *drawableExtDword50,
 	uint32_t vsSelect,
@@ -479,7 +482,8 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl4(
 	return streamDecl;
 }
 
-PCDX11StreamDecl *PCDX11Material::buildStreamDecl038(
+// submaterial 0, 3 and 8
+PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 	MaterialInstanceData *matInstance,
 	void *drawableExtDword50,
 	void *lightConstantBufferData,
@@ -578,7 +582,8 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl038(
 	return mg_streamDecl;
 }
 
-PCDX11StreamDecl *PCDX11Material::buildStreamDecl7(
+// submaterial 7
+PCDX11StreamDecl *PCDX11Material::SetupNormalMapPass(
 	MaterialInstanceData *matInstance,
 	void *drawableExtDword50,
 	uint32_t vsSelect,
@@ -594,7 +599,7 @@ PCDX11StreamDecl *PCDX11Material::buildStreamDecl7(
 	uint16_t renderTargetWriteMask = materialBlob->renderTargetWriteMask;
 	stateManager->setRenderTargetWriteMask(renderTargetWriteMask & 7);
 
-	return buildStreamDecl015(
+	return SetupDepthPass(
 		matInstance,
 		drawableExtDword50,
 		vsSelect,

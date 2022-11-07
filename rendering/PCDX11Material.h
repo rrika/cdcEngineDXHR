@@ -56,7 +56,7 @@ public:
 	void setupSinglePassTranslucent(PCDX11RenderDevice*, MaterialInstanceData*, uint32_t, float);
 	static void invalidate();
 
-	PCDX11StreamDecl *buildStreamDecl015(
+	PCDX11StreamDecl *SetupDepthPass(
 		MaterialInstanceData*,
 		void *drawableExtDword50,
 		uint32_t vsSelect,
@@ -66,7 +66,7 @@ public:
 		float floatX,
 		float floatY);
 
-	PCDX11StreamDecl *buildStreamDecl01(
+	PCDX11StreamDecl *SetupShadowPass(
 		MaterialInstanceData*,
 		void *drawableExtDword50,
 		uint8_t lightManager434_114,
@@ -76,7 +76,7 @@ public:
 		float floatX,
 		float floatY);
 
-	PCDX11StreamDecl *buildStreamDecl4(
+	PCDX11StreamDecl *SetupBloomPass(
 		MaterialInstanceData*,
 		void *drawableExtDword50,
 		uint32_t vsSelect,
@@ -84,7 +84,7 @@ public:
 		uint8_t flags,
 		float floatX);
 
-	PCDX11StreamDecl *buildStreamDecl038(
+	PCDX11StreamDecl *SetupSinglePass(
 		MaterialInstanceData*,
 		void *drawableExtDword50,
 		void *drawableDword24,
@@ -95,7 +95,7 @@ public:
 		float floatX,
 		float floatY);
 
-	PCDX11StreamDecl *buildStreamDecl7(
+	PCDX11StreamDecl *SetupNormalMapPass(
 		MaterialInstanceData*,
 		void *drawableExtDword50,
 		uint32_t vsSelect,
