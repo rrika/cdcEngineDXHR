@@ -115,7 +115,7 @@ private:
 
 	uint32_t m_samplerFilter[16 + 4]; // 248
 	uint32_t m_samplerRepeat[16 + 4]; // 298
-	StencilSettings m_stencilSettings; // 2EC
+	StencilParams m_stencilParams; // 2EC
 
 	float m_materialOpacity; // 300
 	float m_fogColor[4]; // 310
@@ -162,7 +162,7 @@ public:
 	void setDepthLayer(bool layer);
 	void setCullMode(CullMode cullMode, bool frontIsCounterClockwise);
 	void setDepthState(D3D11_COMPARISON_FUNC comparisonFunc, bool depthWriteMask);
-	void setStencil(StencilSettings*);
+	void setStencil(StencilParams*);
 	void setDepthRange(float, float);
 	void setDepthBias(int32_t);
 	void setDepthBiasClamp(float);

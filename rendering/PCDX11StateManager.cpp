@@ -237,9 +237,7 @@ void PCDX11StateManager::setDepthState(D3D11_COMPARISON_FUNC comparisonFunc, boo
 	}
 }
 
-void PCDX11StateManager::setStencil(StencilSettings *stencilSettings) {
-
-	// untested
+void PCDX11StateManager::setStencil(StencilParams *stencilParams) {
 
 	static const D3D11_COMPARISON_FUNC decodeStencilFunc[] = {
 		D3D11_COMPARISON_NEVER,
@@ -263,33 +261,33 @@ void PCDX11StateManager::setStencil(StencilSettings *stencilSettings) {
 		D3D11_STENCIL_OP_INVERT
 	};
 
-	if (memcmp(&m_stencilSettings, stencilSettings, 12) != 0) {
-		bool stencilEnable = stencilSettings->front & 1 || stencilSettings->back & 1;
+	if (memcmp(&m_stencilParams, stencilParams, 12) != 0) {
+		bool stencilEnable = (stencilParams->m_frontParams & 1) || (stencilParams->m_backParams & 1);
 		D3D11_DEPTH_STENCIL_DESC& desc = m_depthStencilDesc;
 		desc.StencilEnable = stencilEnable;
-		desc.StencilReadMask = stencilSettings->stencilReadMask;
-		desc.StencilWriteMask = stencilSettings->stencilWriteMask;
-		if (stencilSettings->front & 1) {
-			desc.FrontFace.StencilFunc = decodeStencilFunc[(stencilSettings->front >> 1) & 7];
-			desc.FrontFace.StencilDepthFailOp = decodeStencilOp[(stencilSettings->front >> 12) & 0xF];
-			desc.FrontFace.StencilFailOp = decodeStencilOp[(stencilSettings->front >> 8) & 0xF];
-			desc.FrontFace.StencilPassOp = decodeStencilOp[(stencilSettings->front >> 4) & 0xF];
+		desc.StencilReadMask = stencilParams->m_frontParams >> 24; // byte 3
+		desc.StencilWriteMask = stencilParams->m_writeMasks & 0xff; // byte 8
+		if (stencilParams->m_frontParams & 1) {
+			desc.FrontFace.StencilFunc = decodeStencilFunc[(stencilParams->m_frontParams >> 1) & 7];
+			desc.FrontFace.StencilDepthFailOp = decodeStencilOp[(stencilParams->m_frontParams >> 12) & 0xF];
+			desc.FrontFace.StencilFailOp = decodeStencilOp[(stencilParams->m_frontParams >> 8) & 0xF];
+			desc.FrontFace.StencilPassOp = decodeStencilOp[(stencilParams->m_frontParams >> 4) & 0xF];
 		} else {
 			desc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 			desc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 			desc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 			desc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 		}
-		if (stencilSettings->back & 1) {
-			desc.BackFace.StencilFunc = decodeStencilFunc[(stencilSettings->back >> 1) & 7];
-			desc.BackFace.StencilDepthFailOp = decodeStencilOp[(stencilSettings->back >> 12) & 0xF];
-			desc.BackFace.StencilFailOp = decodeStencilOp[(stencilSettings->back >> 8) & 0xF];
-			desc.BackFace.StencilPassOp = decodeStencilOp[(stencilSettings->back >> 4) & 0xF];
+		if (stencilParams->m_backParams & 1) {
+			desc.BackFace.StencilFunc = decodeStencilFunc[(stencilParams->m_backParams >> 1) & 7];
+			desc.BackFace.StencilDepthFailOp = decodeStencilOp[(stencilParams->m_backParams >> 12) & 0xF];
+			desc.BackFace.StencilFailOp = decodeStencilOp[(stencilParams->m_backParams >> 8) & 0xF];
+			desc.BackFace.StencilPassOp = decodeStencilOp[(stencilParams->m_backParams >> 4) & 0xF];
 		} else {
 			desc.BackFace = desc.FrontFace;
 		}
 
-		m_stencilSettings = *stencilSettings;
+		m_stencilParams = *stencilParams;
 		m_dirtyDepthStencilState = true;
 	}
 }
@@ -620,7 +618,8 @@ void PCDX11StateManager::updateDepthStencilState() {
 
 		m_deviceContext->OMSetDepthStencilState(
 			depthStencilState,
-			m_stencilSettings.stencilRef);
+			(m_stencilParams.m_frontParams >> 16) & 0xff // byte 2
+		);
 
 		m_dirtyDepthStencilState = false;
 	}
@@ -867,7 +866,7 @@ bool PCDX11StateManager::internalCreate() {
 	m_depthStencilDesc.StencilWriteMask = 255;
 	m_renderTargetWriteMask = 0;
 
-	// TODO: stencilSettings
+	// TODO: stencilParams
 
 	reset();
 	// TODO: clipPlanes

@@ -68,7 +68,7 @@ struct MaterialBlob {
 	uint8_t byte_2B;
 	int negDepthBias;
 	float negSlopeScaledDepthBias;
-	StencilSettings stencilSettings34;
+	StencilParams stencilSettings34;
 	int name_44;
 	int dword48;
 	MaterialBlobSub *subMat4C[16];
@@ -87,7 +87,7 @@ struct MaterialInstanceData {
 	float minDepth; // = m_depthBoundsMin
 	float maxDepth; // = m_depthBoundsMax
 	CommonStreamDecl *streamDecls24[16]; // = m_apPassStreamDecls
-	StencilSettings *stencilSettings64; // = m_pStencilParams
+	StencilParams *stencilSettings64; // = m_pStencilParams
 };
 
 }

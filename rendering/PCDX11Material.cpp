@@ -201,13 +201,13 @@ void PCDX11Material::setupStencil(
 	uint32_t flags)
 {
 	auto *stateManager = deviceManager->getStateManager();
-	StencilSettings *stencilSettings = matInstance->stencilSettings64
+	StencilParams *stencilSettings = matInstance->stencilSettings64
 		? matInstance->stencilSettings64
 		: &materialBlob->stencilSettings34;
 
 	uint32_t matDword18 = materialBlob->dword18;
 	bool frontCounterClockwise = bool(flags & 2);
-	bool stencilDoubleSided = bool(stencilSettings->back & 1);
+	bool stencilDoubleSided = bool(stencilSettings->m_backParams & 1);
 	bool matInstanceDoubleSided = bool(matInstance->dword14 & 0x40);
 	bool materialDoubleSided = bool(matDword18 & 0x80);
 	bool materialRenderTwice = bool(matDword18 & 0x800);

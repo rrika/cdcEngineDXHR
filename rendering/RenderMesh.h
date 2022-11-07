@@ -5,7 +5,7 @@ namespace cdc {
 
 class IMaterial;
 class PCDX11StaticVertexBuffer;
-// struct StencilSettings;
+// struct StencilParams;
 struct NonPersistentPGData;
 struct PersistentPGData;
 

@@ -155,7 +155,7 @@ void PCDX11DepthPassCallbacks::post(
 
 	stateManager->popRenderTargets();
 	// TODO:
-	// StencilSettings stencilSettings {
+	// StencilParams stencilSettings {
 	// 	0xFF00000E,
 	// 	0xFF00000E,
 	// 	0x0000FFFF,
