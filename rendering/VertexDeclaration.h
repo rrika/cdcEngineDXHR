@@ -31,7 +31,7 @@ struct VertexAttributeA { // VertexElem
 	uint8_t bufferIndex;
 };
 
-struct VertexAttributeLayoutA {
+struct VertexDecl {
 	uint32_t hash0;
 	uint32_t hash4;
 	uint16_t numAttr;
@@ -40,8 +40,8 @@ struct VertexAttributeLayoutA {
 	uint32_t dwordC;
 	VertexAttributeA attrib[];
 
-	static VertexAttributeLayoutA *Create(VertexAttributeA *attrs, uint32_t count, uint8_t stride) {
-		auto *p = (VertexAttributeLayoutA*)new char[16 + sizeof(VertexAttributeA) * count];
+	static VertexDecl *Create(VertexAttributeA *attrs, uint32_t count, uint8_t stride) {
+		auto *p = (VertexDecl*)new char[16 + sizeof(VertexAttributeA) * count];
 		p->hash0 = 0;
 		p->hash4 = 0;
 		p->numAttr = count;
@@ -70,7 +70,7 @@ struct VertexAttributeB {
 	float vw;
 };
 
-struct VertexAttributeLayoutB {
+struct ShaderInputSpec {
 	uint32_t hash0;
 	uint32_t hash4;
 	uint32_t numAttribs;
@@ -79,7 +79,7 @@ struct VertexAttributeLayoutB {
 };
 
 uint16_t getLayoutAIndexFromHash(
-	VertexAttributeLayoutA *layoutA,
+	VertexDecl *layoutA,
 	uint32_t hash);
 
 void decodeVertexAttribA(

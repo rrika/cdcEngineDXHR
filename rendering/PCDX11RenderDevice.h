@@ -3,7 +3,7 @@
 #include "CommonRenderDevice.h"
 #include "PCDX11InternalResource.h"
 #include "PCDX11StreamDeclCache.h"
-#include "VertexAttribute.h"
+#include "VertexDeclaration.h"
 #include "shaders/PCDX11ShaderLib.h"
 #include "shaders/PCDX11ShaderTable.h" // for PixelShaderTable and VertexShaderTable
 
@@ -56,7 +56,7 @@ public:
 	PCDX11StaticPool *staticPool10D10 = nullptr;
 	// PCDX11StaticPool *staticPool10D14;
 
-	VertexAttributeLayoutA *drawVertexDecls[7] = {}; // 10BBC
+	VertexDecl *drawVertexDecls[7] = {}; // 10BBC
 
 	PCDX11StreamDecl *vertex2DStreamDecl; // 10BDC
 

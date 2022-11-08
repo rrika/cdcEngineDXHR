@@ -25,8 +25,8 @@ namespace cdc {
 class PCDX11RenderDevice;
 class PCDX11ShaderSub;
 class PCDX11StreamDecl;
-struct VertexAttributeLayoutA;
-struct VertexAttributeLayoutB;
+struct VertexDecl;
+struct ShaderInputSpec;
 
 struct PCDX11StreamDeclCache {
 
@@ -39,12 +39,12 @@ struct PCDX11StreamDeclCache {
 	uint32_t dword18;
 
 	PCDX11StreamDecl *buildStreamDecl(
-		VertexAttributeLayoutA *layoutA,
+		VertexDecl *layoutA,
 		PCDX11ShaderSub *shaderSub);
 
 	PCDX11StreamDecl *buildStreamDecl(
-		VertexAttributeLayoutA *layoutA,
-		VertexAttributeLayoutB *layoutB,
+		VertexDecl *layoutA,
+		ShaderInputSpec *layoutB,
 		bool a4,
 		PCDX11ShaderSub *shaderSub);
 };

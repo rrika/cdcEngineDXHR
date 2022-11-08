@@ -136,17 +136,17 @@ void PCDX11RenderDevice::createDefaultVertexAttribLayouts() {
 	attrs.push_back({VertexAttributeA::kColor1,    0xffff, 4, 0});
 	attrs.push_back({VertexAttributeA::kTexcoord1, 0xffff, 1, 0});
 	attrs.push_back({VertexAttributeA::kTexcoord2, 0xffff, 1, 0});
-	drawVertexDecls[0] = VertexAttributeLayoutA::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
+	drawVertexDecls[0] = VertexDecl::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
 
 	attrs.clear();
 	attrs.push_back({VertexAttributeA::kPosition,  0xffff, 2, 0});
 	attrs.push_back({VertexAttributeA::kColor1,    0xffff, 4, 0});
 	attrs.push_back({VertexAttributeA::kTexcoord0, 0xffff, 1, 0}); // HACK
-	drawVertexDecls[5] = VertexAttributeLayoutA::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
+	drawVertexDecls[5] = VertexDecl::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
 
 	attrs.clear();
 	attrs.push_back({VertexAttributeA::kPosition,  0xffff, 2, 0});
-	drawVertexDecls[6] = VertexAttributeLayoutA::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
+	drawVertexDecls[6] = VertexDecl::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
 
 	auto *vs = static_cast<PCDX11VertexShaderTable*>(shlib_21->table)->vertexShaders[0];
 	vertex2DStreamDecl = streamDeclCache.buildStreamDecl(drawVertexDecls[5], &vs->m_sub);

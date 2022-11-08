@@ -5,14 +5,14 @@
 #include "PCDX11StreamDecl.h"
 #include "PCDX11StreamDeclCache.h"
 #include "shaders/PCDX11Shader.h"
-#include "VertexAttribute.h"
+#include "VertexDeclaration.h"
 
 namespace cdc {
 
 DXGI_FORMAT decodeFormat(uint16_t format);
 
 PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
-	VertexAttributeLayoutA *layout,
+	VertexDecl *layout,
 	PCDX11ShaderSub *shaderSub)
 {
 	StreamDeclCacheKey key {0, layout->hash0};
@@ -40,8 +40,8 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 }
 
 PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
-	VertexAttributeLayoutA *layoutA,
-	VertexAttributeLayoutB *layoutB,
+	VertexDecl *layoutA,
+	ShaderInputSpec *layoutB,
 	bool a4,
 	PCDX11ShaderSub *shaderSub)
 {

@@ -9,7 +9,7 @@
 #include "PCDX11TerrainDrawable.h"
 #include "TerrainData.h"
 #include "Types.h"
-#include "VertexAttribute.h"
+#include "VertexDeclaration.h"
 
 namespace cdc {
 
@@ -197,9 +197,9 @@ void PCDX11RenderTerrain::resConstruct() {
 
 	// index layout information
 	auto *layoutStream = (uint32_t*)(((char*)header) + header->layoutOffset);
-	auto *layouts = new VertexAttributeLayoutA*[header->numLayouts];
+	auto *layouts = new VertexDecl*[header->numLayouts];
 	for (uint32_t i=0; i<header->numLayouts; i++) {
-		layouts[i] = (VertexAttributeLayoutA*) layoutStream;
+		layouts[i] = (VertexDecl*) layoutStream;
 		layoutStream += 4 + 2 * layouts[i]->numAttr;
 	}
 

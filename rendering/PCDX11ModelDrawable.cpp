@@ -11,7 +11,7 @@
 #include "PCDX11StateManager.h"
 #include "PCDX11StreamDecl.h"
 #include "Types.h"
-#include "VertexAttribute.h"
+#include "VertexDeclaration.h"
 
 namespace cdc {
 
@@ -59,7 +59,7 @@ void PCDX11ModelDrawable::drawDepth(uint32_t funcSetIndex, IRenderDrawable *draw
 		(void*)thisModel->ext->instanceParams,
 		mesh->vsSelect4C,
 		false,
-		(VertexAttributeLayoutA*)thisModel->meshSub->format,
+		(VertexDecl*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		thisModel->opacity,
 		thisModel->float30);
@@ -84,7 +84,7 @@ void PCDX11ModelDrawable::drawShadow(uint32_t funcSetIndex, IRenderDrawable *dra
 		(void*)thisModel->ext->instanceParams,
 		(*(char**)lightManager->ptr434)[276],
 		mesh->vsSelect4C,
-		(VertexAttributeLayoutA*)thisModel->meshSub->format,
+		(VertexDecl*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		thisModel->opacity,
 		thisModel->float30); */
@@ -108,7 +108,7 @@ void PCDX11ModelDrawable::drawAlphaBloom(uint32_t funcSetIndex, IRenderDrawable 
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		mesh->vsSelect4C,
-		(VertexAttributeLayoutA*)thisModel->meshSub->format,
+		(VertexDecl*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		0.0f);
 	bool renderTwice = (mt0x128->material->materialBlob->dword18 >> 11) & 1;
@@ -132,7 +132,7 @@ void PCDX11ModelDrawable::drawComposite(uint32_t funcSetIndex, IRenderDrawable *
 		(void*)thisModel->ext->instanceParams,
 		thisModel->lightConstantBufferData,
 		mesh->vsSelect4C,
-		(VertexAttributeLayoutA*)thisModel->meshSub->format,
+		(VertexDecl*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		0,
 		thisModel->opacity,
@@ -161,7 +161,7 @@ void PCDX11ModelDrawable::drawTranslucent(uint32_t funcSetIndex, IRenderDrawable
 		(void*)thisModel->ext->instanceParams,
 		thisModel->lightConstantBufferData,
 		mesh->vsSelect4C,
-		(VertexAttributeLayoutA*)thisModel->meshSub->format,
+		(VertexDecl*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		1,
 		thisModel->opacity,
@@ -189,7 +189,7 @@ void PCDX11ModelDrawable::drawNormal(uint32_t funcSetIndex, IRenderDrawable *dra
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		mesh->vsSelect4C,
-		(VertexAttributeLayoutA*)thisModel->meshSub->format,
+		(VertexDecl*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		thisModel->opacity,
 		thisModel->float30);
@@ -249,7 +249,7 @@ void PCDX11ModelDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *prevDrawa
 		(tab0Ext128->sub10.polyFlags & 0x100) ? 0 :
 		renderDevice->scene78->byte25C ? 7 : 15);
 
-	auto *layout = (VertexAttributeLayoutA*)meshSub->format;
+	auto *layout = (VertexDecl*)meshSub->format;
 	PCDX11StreamDecl *streamDecl = renderDevice->streamDeclCache.buildStreamDecl(layout, &vertexShader->m_sub);
 
 	draw(renderDevice, stateManager, streamDecl, false);

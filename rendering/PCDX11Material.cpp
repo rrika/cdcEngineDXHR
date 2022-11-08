@@ -14,7 +14,7 @@ namespace cdc {
 uint32_t PCDX11Material::mg_state = 0;
 uint32_t PCDX11Material::mg_vsSelectAndFlags;
 PCDX11StreamDecl *PCDX11Material::mg_streamDecl;
-VertexAttributeLayoutA *PCDX11Material::mg_layoutA;
+VertexDecl *PCDX11Material::mg_layoutA;
 PCDX11Material *PCDX11Material::mg_material;
 void *PCDX11Material::mg_cbdata;
 MaterialInstanceData *PCDX11Material::mg_matInstance;
@@ -320,7 +320,7 @@ PCDX11StreamDecl *PCDX11Material::SetupDepthPass(
 	void *drawableExtDword50,
 	uint32_t vsSelect,
 	bool arg4,
-	VertexAttributeLayoutA *layoutA,
+	VertexDecl *layoutA,
 	uint8_t flags,
 	float floatX, // opacity scale?
 	float floatY)
@@ -391,7 +391,7 @@ PCDX11StreamDecl *PCDX11Material::SetupDepthPass(
 
 		auto *streamDecl = static_cast<PCDX11StreamDecl*>(matInstance->streamDecls24[subMaterialIndex]);
 		if (!streamDecl) {
-			VertexAttributeLayoutB *layoutB = subMaterial->vsLayout[vsSelect];
+			ShaderInputSpec *layoutB = subMaterial->vsLayout[vsSelect];
 
 			streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
 				layoutA,
@@ -426,7 +426,7 @@ PCDX11StreamDecl *PCDX11Material::SetupShadowPass(
 	void *drawableExtDword50,
 	uint8_t lightManager434_114,
 	uint32_t vsSelect,
-	VertexAttributeLayoutA *layout,
+	VertexDecl *layout,
 	uint8_t flags,
 	float floatX,
 	float floatY)
@@ -440,7 +440,7 @@ PCDX11StreamDecl *PCDX11Material::SetupBloomPass(
 	MaterialInstanceData *matInstance,
 	void *drawableExtDword50,
 	uint32_t vsSelect,
-	VertexAttributeLayoutA *layoutA,
+	VertexDecl *layoutA,
 	uint8_t flags,
 	float floatX)
 {
@@ -471,7 +471,7 @@ PCDX11StreamDecl *PCDX11Material::SetupBloomPass(
 
 	auto *streamDecl = static_cast<PCDX11StreamDecl*>(matInstance->streamDecls24[subMaterialIndex]);
 	if (!streamDecl) {
-		VertexAttributeLayoutB *layoutB = subMaterial->vsLayout[vsSelect];
+		ShaderInputSpec *layoutB = subMaterial->vsLayout[vsSelect];
 
 		streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
 			layoutA,
@@ -489,7 +489,7 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 	void *drawableExtDword50,
 	void *lightConstantBufferData,
 	uint32_t vsSelect,
-	VertexAttributeLayoutA *layoutA,
+	VertexDecl *layoutA,
 	uint8_t flags,
 	bool isTranslucentPass,
 	float opacityMultiplier,
@@ -563,7 +563,7 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 
 	auto *streamDecl = static_cast<PCDX11StreamDecl*>(matInstance->streamDecls24[subMaterialIndex]);
 	if (!streamDecl) {
-		VertexAttributeLayoutB *layoutB = subMaterial->vsLayout[vsSelect];
+		ShaderInputSpec *layoutB = subMaterial->vsLayout[vsSelect];
 
 		streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
 			layoutA,
@@ -588,7 +588,7 @@ PCDX11StreamDecl *PCDX11Material::SetupNormalMapPass(
 	MaterialInstanceData *matInstance,
 	void *drawableExtDword50,
 	uint32_t vsSelect,
-	VertexAttributeLayoutA *layout,
+	VertexDecl *layout,
 	uint8_t flags,
 	float floatX,
 	float floatY)

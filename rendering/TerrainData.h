@@ -8,7 +8,7 @@ class CommonMaterial;
 class CommonVertexBuffer;
 class TextureMap;
 struct RenderTerrainDataHeader;
-struct VertexAttributeLayoutA;
+struct VertexDecl;
 
 struct RenderTerrainData { // 33
 	template <typename T>
@@ -98,7 +98,7 @@ struct RenderTerrainVertexBuffer { // 194
 	uint32_t secondaryVertexDataOffset;
 	uint32_t numVertices;
 	union {
-		VertexAttributeLayoutA *pVertexDecl;
+		VertexDecl *pVertexDecl;
 		uint32_t vertexDeclIndex;
 	};
 };

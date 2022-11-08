@@ -6,7 +6,7 @@ namespace cdc {
 class CommonStreamDecl;
 class IShaderLib;
 class TextureMap;
-struct VertexAttributeLayoutB;
+struct ShaderInputSpec;
 
 struct MaterialTexRef { // = cdc::MaterialData::TextureEntry
 	TextureMap *tex;
@@ -46,7 +46,7 @@ struct MaterialBlobSub { // = cdc::PassData
 	uint8_t vsBufferFirstRow; // 36
 	uint8_t vsBufferNumRows; // 37
 
-	VertexAttributeLayoutB *vsLayout[8]; // 38
+	ShaderInputSpec *vsLayout[8]; // 38
 };
 
 struct MaterialBlob {

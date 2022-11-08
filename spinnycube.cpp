@@ -57,7 +57,7 @@
 #include "rendering/surfaces/PCDX11DefaultRenderTarget.h"
 #include "rendering/surfaces/PCDX11DepthBuffer.h"
 #include "rendering/surfaces/PCDX11Texture.h"
-#include "rendering/VertexAttribute.h"
+#include "rendering/VertexDeclaration.h"
 #include "cdcResource/DRMIndex.h"
 #include "cdcResource/ResolveObject.h"
 #include "cdcResource/ResolveReceiver.h"

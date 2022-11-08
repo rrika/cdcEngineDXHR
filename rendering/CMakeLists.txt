@@ -42,7 +42,7 @@ target_sources(dxhr PRIVATE
 	Projection.cpp
 	RenderPasses.cpp
 	RenderResource.cpp
-	VertexAttribute.cpp)
+	VertexDeclaration.cpp)
 
 if (ENABLE_IMGUI)
 	target_sources(dxhr PRIVATE

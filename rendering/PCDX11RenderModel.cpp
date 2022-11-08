@@ -6,7 +6,7 @@
 #include "PCDX11RenderDevice.h"
 #include "buffers/PCDX11StaticIndexBuffer.h"
 #include "buffers/PCDX11StaticVertexBuffer.h"
-#include "VertexAttribute.h"
+#include "VertexDeclaration.h"
 
 namespace cdc {
 
@@ -91,7 +91,7 @@ void PCDX11RenderModel::resConstruct() {
 		auto *sub1 = &modelBatches[i];
 		sub1->vertices += (uintptr_t)mesh;
 		sub1->format += (uintptr_t)mesh;
-		auto *layout = (VertexAttributeLayoutA*)sub1->format;
+		auto *layout = (VertexDecl*)sub1->format;
 		sub1->staticVertexBuffer = new PCDX11StaticVertexBuffer(
 			PCDX11RenderExternalResource::renderDevice->staticPool10D10,
 			layout->vertStrideA,

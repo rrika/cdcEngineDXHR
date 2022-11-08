@@ -1,10 +1,10 @@
-#include "VertexAttribute.h"
+#include "VertexDeclaration.h"
 #include <d3d11.h>
 
 namespace cdc {
 
 uint16_t getLayoutAIndexFromHash(
-	VertexAttributeLayoutA *layoutA,
+	VertexDecl *layoutA,
 	uint32_t hash)
 {
 	for (uint32_t i=0; i<layoutA->numAttr; i++) {

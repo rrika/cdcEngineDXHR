@@ -10,7 +10,7 @@ namespace cdc {
 class PCDX11StreamDecl;
 struct MaterialBlobSub;
 struct MaterialInstanceData;
-struct VertexAttributeLayoutA;
+struct VertexDecl;
 
 class PCDX11Material :
 	public CommonMaterial,
@@ -30,7 +30,7 @@ class PCDX11Material :
 
 	// these globals might be declared elsewhere
 	static PCDX11StreamDecl *mg_streamDecl;     // 00EAAD18
-	static VertexAttributeLayoutA *mg_layoutA;  // 00EAAD1C
+	static VertexDecl *mg_layoutA;  // 00EAAD1C
 	static PCDX11Material *mg_material;         // 00EAAD20
 	static void *mg_cbdata;                     // 00EAAD24
 	static MaterialInstanceData *mg_matInstance; // 00EAAD28
@@ -61,7 +61,7 @@ public:
 		void *drawableExtDword50,
 		uint32_t vsSelect,
 		bool arg4,
-		VertexAttributeLayoutA *layout,
+		VertexDecl *layout,
 		uint8_t flags,
 		float floatX,
 		float floatY);
@@ -71,7 +71,7 @@ public:
 		void *drawableExtDword50,
 		uint8_t lightManager434_114,
 		uint32_t vsSelect,
-		VertexAttributeLayoutA *layout,
+		VertexDecl *layout,
 		uint8_t flags,
 		float floatX,
 		float floatY);
@@ -80,7 +80,7 @@ public:
 		MaterialInstanceData*,
 		void *drawableExtDword50,
 		uint32_t vsSelect,
-		VertexAttributeLayoutA *layout,
+		VertexDecl *layout,
 		uint8_t flags,
 		float floatX);
 
@@ -89,7 +89,7 @@ public:
 		void *drawableExtDword50,
 		void *drawableDword24,
 		uint32_t vsSelect,
-		VertexAttributeLayoutA *layout,
+		VertexDecl *layout,
 		uint8_t flags,
 		bool isTranslucentPass,
 		float opacityMultiplier,
@@ -99,7 +99,7 @@ public:
 		MaterialInstanceData*,
 		void *drawableExtDword50,
 		uint32_t vsSelect,
-		VertexAttributeLayoutA *layout,
+		VertexDecl *layout,
 		uint8_t flags,
 		float floatX,
 		float floatY);
