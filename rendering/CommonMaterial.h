@@ -4,7 +4,9 @@
 
 namespace cdc {
 
+class TextureMap;
 struct MaterialBlob;
+struct MaterialInstanceData;
 
 class CommonMaterial : public IMaterial {
 	uint32_t m_renderPassesMask; // 4
@@ -19,6 +21,7 @@ public:
 	~CommonMaterial() = default;
 	virtual void method_18() = 0;
 
+	void InitInstanceData(MaterialInstanceData*, TextureMap**);
 	void SetRenderPasses();
 };
 

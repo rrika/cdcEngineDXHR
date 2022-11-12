@@ -27,6 +27,18 @@ void CommonMaterial::method_18() {
 	// TODO
 }
 
+void CommonMaterial::InitInstanceData(MaterialInstanceData *instData, TextureMap **tex) {
+	*instData = MaterialInstanceData();
+	for (uint32_t i=0; i<4; i++) {
+		// TODO: MaterialInstanceData::setTexture
+		instData->pInstanceTextures[i] = tex[i];
+		if (tex[i])
+			instData->m_updateTextureMask |= 1 << i;
+		else
+			instData->m_updateTextureMask &= ~(1 << i);
+	}
+}
+
 void CommonMaterial::SetRenderPasses() { // HACK
 	uint32_t mask;
 
