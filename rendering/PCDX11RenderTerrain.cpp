@@ -56,6 +56,23 @@ void PCDX11RenderTerrain::BuildDrawables(PCDX11TerrainState *terrainState) {
 
 	uint32_t flags = 0; // TODO
 
+	{
+		Matrix& m = terrainState->m_toWorld;
+		float *a = m.m[0];
+		float *b = m.m[1];
+		float *c = m.m[2];
+		float cross[] = {
+			a[1] * b[2] - a[2] * b[1],
+			a[2] * b[0] - a[0] * b[2],
+			a[0] * b[1] - a[1] * b[0]
+		};
+		float sign = cross[0] * c[0] + cross[1] * c[1] + cross[2] * c[2];
+		// sign *= terrainState->scene.viewport.invViewMatrix.m[0][0];
+		sign *= -1.0f; // HACK
+		if (sign < 0.0f)
+			flags |= 2;
+	}
+
 	// hack implementation
 	for (uint32_t i=0; i<m_pHeader->numNodes; i++) {
 		TerrainChunkArray *chunkArray = m_ppGeometry[i];

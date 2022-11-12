@@ -207,7 +207,7 @@ void PCDX11TerrainDrawable::draw(
 	stateManager->setVertexBuffer(vertexBuffer);
 	stateManager->setStreamDecl(streamDecl);
 	stateManager->setIndexBuffer(indexBuffer);
-	
+
 	for (uint32_t i=0; i<m_numGeoms; i++) {
 
 		// TODO: accumulate chunks
