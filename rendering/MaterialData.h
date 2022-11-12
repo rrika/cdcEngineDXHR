@@ -76,17 +76,14 @@ struct MaterialBlob {
 
 struct MaterialInstanceData {
 	// see also PCDX11Material::setupPixelResources
-	uint32_t dword0; // = pInstanceTextures (TextureMap*[5])
-	uint32_t dword4;
-	uint32_t dword8;
-	uint32_t dwordC;
-	float float10; // = opacity
-	uint32_t dword14; // = polyFlags
+	TextureMap *pInstanceTextures[4] = {}; // = pInstanceTextures (TextureMap*[5])
+	float opacity = 1.0f; // 10
+	uint32_t polyFlags = 0; // 14
 	// 0x20000000: see PCDX11Material::setupDepthBias
-	uint32_t dword18;
-	float minDepth; // = m_depthBoundsMin
-	float maxDepth; // = m_depthBoundsMax
-	CommonStreamDecl *streamDecls24[16]; // = m_apPassStreamDecls
+	uint32_t m_updateTextureMask = 0;
+	float minDepth = 0.0f; // = m_depthBoundsMin
+	float maxDepth = 1.0f; // = m_depthBoundsMax
+	CommonStreamDecl *streamDecls24[16] = {}; // = m_apPassStreamDecls
 	StencilParams *stencilSettings64; // = m_pStencilParams
 };
 

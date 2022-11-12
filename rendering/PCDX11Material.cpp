@@ -184,7 +184,7 @@ void PCDX11Material::setupDepthBias(MaterialInstanceData *matInstance) {
 	if (materialBlob->negDepthBias) {
 		depthBias = -materialBlob->negDepthBias;
 		slopeScaledDepthBias = -materialBlob->negSlopeScaledDepthBias;
-	} else if (matInstance->dword14 & 0x20000000) {
+	} else if (matInstance->polyFlags & 0x20000000) {
 		depthBias = -1.0f;
 		slopeScaledDepthBias = -10.0f;
 	}
@@ -208,7 +208,7 @@ void PCDX11Material::setupStencil(
 	uint32_t matDword18 = materialBlob->dword18;
 	bool frontCounterClockwise = bool(flags & 2);
 	bool stencilDoubleSided = bool(stencilSettings->m_backParams & 1);
-	bool matInstanceDoubleSided = bool(matInstance->dword14 & 0x40);
+	bool matInstanceDoubleSided = bool(matInstance->polyFlags & 0x40);
 	bool materialDoubleSided = bool(matDword18 & 0x80);
 	bool materialRenderTwice = bool(matDword18 & 0x800);
 	bool materialCullFront = bool(matDword18 & 0x2000);
@@ -246,7 +246,7 @@ void PCDX11Material::setupSinglePassOpaque(
 	// redo some of what setupStencil did earlier
 	uint32_t matDword18 = materialBlob->dword18;
 	bool frontCounterClockwise = bool(flags & 2);
-	bool matInstanceDoubleSided = bool(matInstance->dword14 & 0x40);
+	bool matInstanceDoubleSided = bool(matInstance->polyFlags & 0x40);
 	bool materialDoubleSided = bool(matDword18 & 0x80);
 	bool materialRenderTwice = bool(matDword18 & 0x800);
 	bool materialCullFront = bool(matDword18 & 0x2000);
@@ -272,7 +272,7 @@ void PCDX11Material::setupSinglePassTranslucent(
 		mg_state = 5;
 	}
 
-	float opacity = matInstance->float10 * floatX;
+	float opacity = matInstance->opacity * floatX;
 	uint32_t blendState = materialBlob->blendStateC;
 	if ((blendState & 1) || opacity >= 1.0) {
 		stateManager->setBlendStateAndBlendFactors( // TODO: impl in StateManager
@@ -284,13 +284,13 @@ void PCDX11Material::setupSinglePassTranslucent(
 	}
 
 	stateManager->setDepthState(
-		(matInstance->dword14 & 0x400) ? D3D11_COMPARISON_ALWAYS : D3D11_COMPARISON_LESS_EQUAL, 0);
+		(matInstance->polyFlags & 0x400) ? D3D11_COMPARISON_ALWAYS : D3D11_COMPARISON_LESS_EQUAL, 0);
 
 
 	// redo some of what setupStencil did earlier
 	/*uint32_t matDword18 = materialBlob->dword18;
 	bool frontCounterClockwise = bool(flags & 2);
-	bool matInstanceDoubleSided = bool(matInstance->dword14 & 0x40);
+	bool matInstanceDoubleSided = bool(matInstance->polyFlags & 0x40);
 	bool materialDoubleSided = bool(matDword18 & 0x80);
 	bool materialRenderTwice = bool(matDword18 & 0x800);
 	bool materialCullFront = bool(matDword18 & 0x2000);
@@ -334,7 +334,7 @@ PCDX11StreamDecl *PCDX11Material::SetupDepthPass(
 		mg_state = 1;
 	}
 
-	float opacity = matInstance->float10 * floatX;
+	float opacity = matInstance->opacity * floatX;
 	uint32_t blendState = materialBlob->blendStateC;
 	bool noPixelShader = true;
 	if ((blendState & 1) || (blendState & 0x7000000) != 0x7000000 || opacity < 1.0)
@@ -494,7 +494,7 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 	float floatX,
 	float floatY)
 {
-	float opacity = matInstance->float10 * floatX;
+	float opacity = matInstance->opacity * floatX;
 	uint32_t blendState = materialBlob->blendStateC;
 	bool x = true;
 	if ((materialBlob->dword18 & 1) == 0 ||

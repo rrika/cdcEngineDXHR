@@ -246,7 +246,7 @@ void PCDX11ModelDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *prevDrawa
 	// renderDevice->setTexture(1, renderDevice->missingTexture1, /*format=*/256, 0.0);
 
 	stateManager->setRenderTargetWriteMask(
-		(tab0Ext128->sub10.dword14 & 0x100) ? 0 :
+		(tab0Ext128->sub10.polyFlags & 0x100) ? 0 :
 		renderDevice->scene78->byte25C ? 7 : 15);
 
 	auto *layout = (VertexAttributeLayoutA*)meshSub->format;

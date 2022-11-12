@@ -128,7 +128,7 @@ void PCDX11RenderModel::resConstruct() {
 		for (uint32_t i=0; i<numPrimGroups; i++) {
 			// TODO
 			tab0Ext128Byte[i].material = static_cast<PCDX11Material*>(primGroups[i].material);
-			tab0Ext128Byte[i].sub10.dword14 = 0;
+			tab0Ext128Byte[i].sub10.polyFlags = 0;
 			tab0Ext128Byte[i].sub10.stencilSettings64 = nullptr;
 			for (uint32_t j=0; j<16; j++)
 				tab0Ext128Byte[i].sub10.streamDecls24[j] = nullptr;
