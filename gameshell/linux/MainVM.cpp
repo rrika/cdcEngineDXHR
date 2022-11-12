@@ -11,6 +11,8 @@
 using namespace cdc;
 
 HWND hwnd1;
+HWND hwnd2;
+HWND hwnd3;
 
 bool createWindow() {
 	SDL_Window* window = SDL_CreateWindow(
@@ -23,7 +25,9 @@ bool createWindow() {
 		return false;
 	}
 
-	hwnd1 = window;
+	SDL_CaptureMouse(SDL_TRUE);
+
+	hwnd1 = hwnd2 = hwnd3 = window;
 	return true;
 }
 

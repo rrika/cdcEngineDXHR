@@ -5,8 +5,6 @@
 # How to build (Linux 32-bit binary on Linux)
 This build uses DirectX 11 through the [dxvk-native](https://github.com/Joshua-Ashton/dxvk-native) project. CMake will automatically download and build the sources.
 
-Note: Looking around using the mouse is not supported right now.
-
     git clone https://github.com/rrika/cdcEngineDXHR.git
     cd cdcEngineDXHR
     mkdir native_build

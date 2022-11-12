@@ -2,6 +2,10 @@
 #include <windows.h>
 #include "InputProducer.h"
 
+#ifdef __linux__
+union SDL_Event;
+#endif
+
 namespace cdc {
 
 struct Keybind {
@@ -13,6 +17,9 @@ public:
 	PCMouseKeyboard();
 #ifdef _WIN32
 	void processWndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
+#endif
+#ifdef __linux__
+	void processSDLEvent(SDL_Event *event);
 #endif
 	void setCursorPos(float x, float y);
 	void setupClip();

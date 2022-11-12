@@ -7,6 +7,10 @@
 #include <hidusage.h>
 #endif
 
+#ifdef __linux__
+#include <SDL2/SDL.h>
+#endif
+
 extern HWND hwnd2;
 
 float g_mouseXSensitivity2 = 0.00135f;
@@ -47,6 +51,19 @@ void PCMouseKeyboard::processWndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 }
 #endif
 
+#ifdef __linux__
+void PCMouseKeyboard::processSDLEvent(SDL_Event *event) {
+	switch (event->type) {
+	case SDL_MOUSEMOTION: {
+		deltaX += event->motion.xrel;
+		deltaY += event->motion.yrel;
+	}
+	default:
+		break;
+	}
+}
+#endif
+
 void PCMouseKeyboard::setCursorPos(float x, float y) {
 #ifdef _WIN32
 	if (cursorGrab) {
@@ -74,6 +91,10 @@ void PCMouseKeyboard::setupClip() {
 		ClientToScreen(hwnd2, reinterpret_cast<POINT*>(&m_rect.right));
 		ClipCursor(&m_rect);
 	}
+
+#elif defined(__linux__)
+	SDL_SetWindowGrab((SDL_Window*) hwnd2, (SDL_bool)cursorGrab);
+	SDL_SetRelativeMouseMode((SDL_bool)cursorGrab);
 #endif
 }
 

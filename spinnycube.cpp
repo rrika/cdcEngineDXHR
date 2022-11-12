@@ -405,7 +405,13 @@ int spinnyCube(HWND window,
 #if ENABLE_IMGUI
 			ImGui_ImplSDL2_ProcessEvent(&event);
 #endif
+			mouseKeyboard->processSDLEvent(&event);
+
 			switch (event.type) {
+				case SDL_WINDOWEVENT:
+					if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+						renderDevice->handleResize(event.window.data1, event.window.data2);
+					break;
 				case SDL_QUIT:
 					goto end;
 				default:
