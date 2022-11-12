@@ -92,8 +92,8 @@ public:
 		VertexAttributeLayoutA *layout,
 		uint8_t flags,
 		bool isTranslucentPass,
-		float floatX,
-		float floatY);
+		float opacityMultiplier,
+		float lodDistance);
 
 	PCDX11StreamDecl *SetupNormalMapPass(
 		MaterialInstanceData*,

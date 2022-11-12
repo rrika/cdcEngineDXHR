@@ -491,10 +491,10 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 	VertexAttributeLayoutA *layoutA,
 	uint8_t flags,
 	bool isTranslucentPass,
-	float floatX,
-	float floatY)
+	float opacityMultiplier,
+	float lodDistance)
 {
-	float opacity = matInstance->opacity * floatX;
+	float opacity = matInstance->opacity * opacityMultiplier;
 	uint32_t blendState = materialBlob->blendStateC;
 	bool x = true;
 	if ((materialBlob->dword18 & 1) == 0 ||
@@ -507,7 +507,7 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 	uint32_t subMaterialIndex;
 	if (isTranslucentPass) {
 		subMaterialIndex = 8;
-		setupSinglePassTranslucent(renderDevice, /*0,*/ matInstance, flags, floatX);
+		setupSinglePassTranslucent(renderDevice, /*0,*/ matInstance, flags, opacityMultiplier);
 	} else {
 		subMaterialIndex = 3;
 		setupSinglePassOpaque(renderDevice, /*0,*/ matInstance, flags);
