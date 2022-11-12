@@ -262,7 +262,7 @@ void PCDX11Material::setupSinglePassOpaque(
 void PCDX11Material::setupSinglePassTranslucent(
 	PCDX11RenderDevice *renderDevice,
 	MaterialInstanceData *matInstance,
-	uint32_t arg3,
+	uint32_t flags,
 	float floatX)
 {
 	// lights use this function (eg. deferred_fast_omni_diffuse.drm)
@@ -282,6 +282,7 @@ void PCDX11Material::setupSinglePassTranslucent(
 	} else {
 		// TODO
 	}
+	setupStencil(matInstance, true, flags);
 
 	stateManager->setDepthState(
 		(matInstance->polyFlags & 0x400) ? D3D11_COMPARISON_ALWAYS : D3D11_COMPARISON_LESS_EQUAL, 0);
