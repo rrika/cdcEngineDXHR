@@ -803,10 +803,20 @@ int spinnyCube(HWND window,
 				cdc::CellGroupData *cellGroupData = level->sub50;
 				uint32_t numCells = cellGroupData->header->numTotalCells;
 				for (uint32_t i=0; i < numCells; i++) {
-					auto *cell = cellGroupData->cells[i];
+					cdc::CellData *cell = cellGroupData->cells[i];
 					ImGui::Text("cell %i: %s", i, cell->sub0->name);
 					// RenderTerrain at cell->sub4->pTerrain
 					// RenderMesh at cell->renderMesh (for visibility)
+					ImGui::SameLine();
+  					ImGui::PushID(i);
+					if (ImGui::SmallButton("Teleport to")) {
+						float *mins = cell->sub0->vec10;
+						float *maxs = cell->sub0->vec20;
+						cameraPos.x = (mins[0] + maxs[0]) / 2.0f;
+						cameraPos.y = (mins[1] + maxs[1]) / 2.0f;
+						cameraPos.z = (mins[2] + maxs[2]) / 2.0f;
+					}
+					ImGui::PopID();
 				}
 
 				auto *admd = level->admdData;
