@@ -14,6 +14,7 @@
 #include "spinnycube.h"
 #include "types.h"
 #include "cdc/dtp/objectproperties/imfref.h"
+#include "cdc/dtp/objectproperties/intermediatemesh.h"
 #include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h" // for archiveFileSystem_default
 #include "cdcFile/FileSystem.h" // for enum cdc::FileRequest::Priority
@@ -63,6 +64,7 @@
 #include "cdcResource/ResolveReceiver.h"
 #include "cdcResource/ResolveSection.h"
 #include "cdcResource/WaveSection.h"
+#include "scene/IMFTypes.h"
 #include "cdcWorld/RMIDrawableBase.h"
 #include "cdcWorld/stream.h" // for buildUnitsUI
 #include "cdcWorld/StreamUnit.h"
@@ -622,11 +624,11 @@ int spinnyCube(HWND window,
 			}
 			if (isLoaded(ref.m_pResolveObject)) {
 				//printf("%d %04x %s ", i, ref.dtpID, ref.m_imfDRMName);
-				auto dtp = (cdc::PCDX11RenderModel**)cdc::g_resolveSections[7]->getWrapped(ref.dtpID);
-				//printf("%p ", dtp);
-				auto model = dtp[1];
+				dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(ref.dtpID);
+				//printf("%p ", im);
+				cdc::RenderMesh *model = im->pRenderModel;
 				//printf("%p\n", model);
-				putObject(model, ref.m_transform);
+				putObject(static_cast<cdc::PCDX11RenderModel*>(model), ref.m_transform);
 			}
 		}
 
