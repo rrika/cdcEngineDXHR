@@ -39,7 +39,7 @@ struct RenderPasses { // = cdc::RenderPassData
 	uint32_t requestedPassesScene[33]; // = m_sceneExecutionList
 	uint32_t requestedPassesShadow[33]; // = m_shadowExecutionList
 	uint32_t dword408[3]; // = m_bitMasks
-	uint32_t depthSortedPasses;
+	uint32_t depthSortedPasses; // 414
 	uint32_t activeFuncBitfield; // 418 = m_drawableTypes
 	CompareFunctionSet comparators[20]; // 41C
 	RenderFunctionSet drawers[20]; // 91C

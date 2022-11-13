@@ -364,13 +364,13 @@ void PCDX11ModelDrawable::buildAndAssignLightBuffer(
 	PCDX11StateManager *stateManager)
 {
 	auto lightManager = static_cast<PCDX11LightManager*>(renderModel->renderDevice->lightManager);
-    // if (lightManager->lightDataX_E10 != lightReceiverData)
-        lightManager->fillLightBuffer(lightReceiverData);
+	// if (lightManager->lightDataX_E10 != lightReceiverData)
+		lightManager->fillLightBuffer(lightReceiverData);
 
-    if (lightConstantBufferData) {
-        // if (lightManager->mostRecentAssignmentToCommonCB5 != lightConstantBufferData)
-            lightManager->assignCommonCB5((char*)lightConstantBufferData);
-    }
+	if (lightConstantBufferData) {
+		// if (lightManager->mostRecentAssignmentToCommonCB5 != lightConstantBufferData)
+			lightManager->assignCommonCB5((char*)lightConstantBufferData);
+	}
 }
 
 }

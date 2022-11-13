@@ -79,9 +79,9 @@ struct RenderLightData {
 	void render2(void*, void*);
 };
 
+// PCDX11LightSet
 struct LightReceiverData {
-	uint8_t byte0;
-	uint8_t pad[3];
+	LightReceiverData *nextMaybe;
 	uint16_t word4;
 	uint16_t word6;
 	RenderLightData *dword8[16];
