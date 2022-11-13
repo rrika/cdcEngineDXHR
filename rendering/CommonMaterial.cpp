@@ -27,6 +27,27 @@ void CommonMaterial::method_18() {
 	// TODO
 }
 
+uint32_t CommonMaterial::GetBlendMode() {
+	return materialBlob->blendStateC;
+}
+
+uint32_t CommonMaterial::GetFadeBlendMode() {
+	switch (materialBlob->fadeMode) {
+	case /*0*/ MaterialBlob::kFadeOff:
+		return 0x07010010;
+	case /*1*/ MaterialBlob::kFadeAlphaBlend:
+		return 0x06540541;
+	case /*2*/ MaterialBlob::kFadeAlphaTest:
+		return 0x06010010;
+	case /*3*/ MaterialBlob::kFadeAlphaToMask:
+		return 0x0E010010;
+	case /*4*/ MaterialBlob::kFadeAlphaToMaskDither:
+		return 0x16010010;
+	default:
+		return 0x06540541;
+	}
+}
+
 void CommonMaterial::InitInstanceData(MaterialInstanceData *instData, TextureMap **tex) {
 	*instData = MaterialInstanceData();
 	for (uint32_t i=0; i<4; i++) {

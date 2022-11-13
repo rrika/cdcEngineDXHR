@@ -274,16 +274,23 @@ void PCDX11Material::setupSinglePassTranslucent(
 
 	float opacity = matInstance->opacity * floatX;
 	uint32_t blendState = materialBlob->blendStateC;
+	uint32_t alphaThreshold = materialBlob->alphaThreshold;
 	if ((blendState & 1) || opacity >= 1.0) {
-		stateManager->setBlendStateAndBlendFactors( // TODO: impl in StateManager
-			materialBlob->blendStateC,
-			materialBlob->alphaThreshold,
-			materialBlob->blendFactors);
+		// empty
 	} else {
-		// TODO
+		blendState = GetFadeBlendMode();
+		if (blendState == 0x6540541)
+			alphaThreshold = 1;
 	}
+
+	stateManager->setBlendStateAndBlendFactors(
+		blendState,
+		alphaThreshold,
+		materialBlob->blendFactors);
+
 	setupStencil(matInstance, true, flags);
 
+	stateManager->setOpacity(opacity);
 	stateManager->setDepthState(
 		(matInstance->polyFlags & 0x400) ? D3D11_COMPARISON_ALWAYS : D3D11_COMPARISON_LESS_EQUAL, 0);
 

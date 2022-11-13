@@ -50,6 +50,23 @@ struct MaterialBlobSub { // = cdc::PassData
 };
 
 struct MaterialBlob {
+
+	// unconfirmed
+	// enum FogType { // 77
+	// 	kFogNone = 0,
+	// 	kFogLinearDist = 1,
+	// 	kFogNonLinearDist = 2,
+	// 	kFogNonLinearDistAndHeight = 3
+	// };
+
+	enum FadeMode { // 85
+		kFadeOff = 0,
+		kFadeAlphaBlend = 1,
+		kFadeAlphaTest = 2,
+		kFadeAlphaToMask = 3,
+		kFadeAlphaToMaskDither = 4
+	};
+
 	uint16_t word0;
 	uint16_t word2;
 	int dword4;
@@ -57,7 +74,7 @@ struct MaterialBlob {
 	int blendStateC; // for submat 0, 1, 5
 	int blendFactors;
 	uint16_t word14;
-	uint16_t word16;
+	uint16_t fadeMode; // 16
 	int dword18; // flags, bit 11 controls renderTwice in ModelDrawable
 	int dword1C;
 	int dword20;
