@@ -3,7 +3,7 @@
 #include "../../ui/Scaleform/ScaleformMovieInstance.h"
 #include "NsMainMenuMovieController.h"
 
-uint32_t NsMainMenuMovieController::ProcessMovieFunction(const char *name, GFxValue *args, uint32_t numArgs) {
+int32_t NsMainMenuMovieController::ProcessMovieFunction(const char *name, GFxValue *args, uint32_t numArgs) {
 	bool canContinue = false;
 	bool isNewGamePlusAvailable = false;
 	bool canPlayCredits = false;

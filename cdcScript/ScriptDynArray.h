@@ -13,7 +13,7 @@ public:
 	// RCPtr<ScriptType> *m_script;
 
 	ScriptDynArrayImpl(int32_t stride) : m_stride(stride) {}
-	void Reserve(int32_t size) { m_data = new uint8_t[size * m_stride]; }
+	void Reserve(int32_t size) { m_size = size; m_data = new uint8_t[size * m_stride]; }
 	~ScriptDynArrayImpl() { delete[] m_data; }
 };
 

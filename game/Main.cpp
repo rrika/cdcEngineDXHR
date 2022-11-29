@@ -11,6 +11,7 @@
 #include "cdcResource/ResolveObject.h"
 #include "cdcResource/ResolveSection.h"
 #include "../spinnycube.h"
+#include "cdcScript/ScriptManager.h"
 #include "cdcSound/Sound.h"
 #include "cdcWorld/SceneLayer.h"
 #include "cdcWorld/stream.h"
@@ -77,7 +78,14 @@ void loadDatabases() {
 	// TODO
 }
 
+void Init_NativeScripts();
+
 void MAIN_DoMainInit() {
+	// TODO
+
+	ScriptManager::s_instance = new ScriptManager();
+	Init_NativeScripts();
+
 	// TODO
 
 	STREAM_Init();

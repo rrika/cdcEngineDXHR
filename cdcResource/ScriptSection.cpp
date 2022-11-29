@@ -6,6 +6,8 @@
 #include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcResource/ResolveObject.h"
+#include "cdcScript/NativeScriptType.h"
+#include "cdcScript/ScriptManager.h"
 #include "cdcScript/ScriptType.h"
 
 namespace cdc {
@@ -43,8 +45,18 @@ void ScriptSection::fill(uint32_t domainId, void* src, size_t size, size_t offse
 	// return size;
 }
 
-void ScriptSection::construct(uint32_t, void *) {
+void ScriptSection::construct(uint32_t domainId, void *) {
 	s_loader.Link();
+
+	// HACK
+	ScriptType *ty = FindScript(domainId);
+	auto *nt = ScriptManager::s_instance->GetNativeScriptType(
+		ty->blob->package,
+		ty->blob->name);
+
+	if (nt) {
+		nt->InitType(ty);
+	}
 }
 
 void *ScriptSection::getWrapped(uint32_t domainId) {

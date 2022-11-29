@@ -5,5 +5,7 @@
 
 class NsMainMenuMovieController : public NsScaleformMovieController {
 public:
-	uint32_t ProcessMovieFunction(const char *name, GFxValue *args, uint32_t numArgs) override;
+	NsMainMenuMovieController(cdc::ScriptType *ty) : NsScaleformMovieController(ty) {}
+
+	int32_t ProcessMovieFunction(const char *name, GFxValue *args, uint32_t numArgs) override;
 };

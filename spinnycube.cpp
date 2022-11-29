@@ -218,9 +218,9 @@ int spinnyCube(HWND window,
 		0,
 		cdc::FileRequest::NORMAL
 	);
-/*
+
 	auto obj5 = cdc::ResolveObject::create(
-		"pc-w\\scenario_database.drm",
+		"pc-w\\globaloutershell.drm",
 		nullptr,
 		nullptr,
 		nullptr,
@@ -230,7 +230,7 @@ int spinnyCube(HWND window,
 		0,
 		cdc::FileRequest::NORMAL
 	);
-*/
+
 	cdc::archiveFileSystem_default->processAll();
 
 	cdc::ResolveSection *objectSection = cdc::g_resolveSections[11];
@@ -373,8 +373,10 @@ int spinnyCube(HWND window,
 	std::vector<std::pair<void*, cdc::CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
 
+	cdc::ScriptType *mainMenuScriptType =
+		(cdc::ScriptType*)cdc::g_resolveSections[8]->getWrapped(0x154a7); // pc-w/globaloutershell.drm section 0xb7
 	ScaleformMovieInstance mainMenuInstance(&mainMenuMovie);
-	NsMainMenuMovieController mainMenuMovieController;
+	NsMainMenuMovieController mainMenuMovieController(mainMenuScriptType);
 
 	// unsure how this link is established in the game
 	mainMenuInstance.m_controllerArray.push_back(&mainMenuMovieController);
@@ -784,7 +786,7 @@ int spinnyCube(HWND window,
 						if (section.type == 8) { // Script
 							if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->getWrapped(section.id)) {
 								ImGui::SameLine();
-								ImGui::Text(" %s", ty->blob->shortName);
+								ImGui::Text(" %s", ty->blob->name);
 							}
 						}
 					}
@@ -856,7 +858,7 @@ int spinnyCube(HWND window,
 			ImGui::End();
 		}
 
-		// mainMenuInstance.buildUI();
+		mainMenuInstance.buildUI();
 #endif
 
 		renderDevice->drawRenderLists();
