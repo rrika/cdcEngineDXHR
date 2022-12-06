@@ -2,6 +2,14 @@
 
 ![Screenshot](/res/screenshot1.png)
 
+Code here is decompiled with IDA Pro and manually cleaned up, uninlined and rewritten to use templates. It is not a matching decompilation, and there is no workflow to merge the functions here with functions from the binary. The .exe contains class names as part of RTTI (see objtree.txt) but there has been no source leak. There has however been a *debug info leak* for Tomb Raider (2013). It's different game, but a similar engine. This debug info contains:
+- file names and line numbers
+- function and class names
+- function signatures (argument and return types)
+- struct layouts (including inheritance and template names)
+
+The first commit to integrate information from Tomb Raider is dated 14 July 2022. Some parts have no correspondence to Tomb Raider, for example everything in the 'input' or 'postprocessing' subdirectory.
+
 # How to build (Linux 32-bit binary on Linux)
 This build uses DirectX 11 through the [dxvk-native](https://github.com/Joshua-Ashton/dxvk-native) project. CMake will automatically download and build the sources.
 
