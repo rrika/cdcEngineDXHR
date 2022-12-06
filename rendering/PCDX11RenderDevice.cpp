@@ -316,12 +316,16 @@ bool PCDX11RenderDevice::hasRenderList() {
 	return renderList_current != nullptr;
 }
 
-void PCDX11RenderDevice::method_28() {
+uint32_t PCDX11RenderDevice::getSubFrameWidth() {
+	// called from PCDX11RenderTexture::UpdateAbsoluteSize
 	// TODO
+	return 0;
 }
 
-void PCDX11RenderDevice::method_2C() {
+uint32_t PCDX11RenderDevice::getSubFrameHeight() {
+	// called from PCDX11RenderTexture::UpdateAbsoluteSize
 	// TODO
+	return 0;
 }
 
 void PCDX11RenderDevice::method_30() {
@@ -513,7 +517,7 @@ void PCDX11RenderDevice::createIndexBuffer() {
 IRenderTarget *PCDX11RenderDevice::createRenderTarget(
 	uint32_t width,
 	uint32_t height,
-	uint32_t arg3,
+	uint32_t flags,
 	uint32_t cdcFormat,
 	uint32_t ignored6,
 	uint32_t arg7
@@ -521,7 +525,7 @@ IRenderTarget *PCDX11RenderDevice::createRenderTarget(
 	uint32_t dxgiFormat = decodeFormat(cdcFormat);
 	if (dxgiFormat == 0)
 		dxgiFormat = 0x1C; // DXGI_FORMAT_R8G8B8A8_UNORM
-	return dx11_createRenderTarget(width, height, dxgiFormat, arg3, arg7);
+	return dx11_createRenderTarget(width, height, dxgiFormat, flags, arg7);
 }
 
 IDepthBuffer *PCDX11RenderDevice::createDepthBuffer() {
@@ -644,16 +648,16 @@ PCDX11RenderTarget *PCDX11RenderDevice::dx11_createRenderTarget(
 	uint32_t width,
 	uint32_t height,
 	uint32_t dxgiFormat,
-	uint32_t arg4,
-	uint32_t arg5)
+	uint32_t flags,
+	uint32_t textureClass)
 {
-	if (arg4 & 0x10) {
+	if (flags & 0x10) {
 		auto *linear = useAlternateLinearAlloc() ? linear34 : linear30;
 		return new (linear, 12, true)
-			PCDX11DefaultRenderTarget(width, height, arg4 & ~4, dxgiFormat, this, 0, arg5);
+			PCDX11DefaultRenderTarget(width, height, flags & ~4, dxgiFormat, this, 0, textureClass);
 
 	} else {
-		// return new PCDX11HeapRenderTarget(width, height, arg4, dxgiFormat, this, arg5);
+		// return new PCDX11HeapRenderTarget(width, height, flags, dxgiFormat, this, textureClass);
 		return nullptr;
 	}
 }

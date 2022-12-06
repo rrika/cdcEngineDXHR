@@ -53,8 +53,8 @@ public:
 	virtual bool beginRenderList(float*) = 0;
 	virtual bool endRenderList() = 0; // 20
 	virtual bool hasRenderList() = 0;
-	virtual void method_28() = 0;
-	virtual void method_2C() = 0;
+	virtual uint32_t getSubFrameWidth() = 0;
+	virtual uint32_t getSubFrameHeight() = 0;
 	virtual void method_30() = 0;
 	virtual void method_34();
 	virtual void method_38();

@@ -15,8 +15,8 @@ class PCDX11RenderTexture :
 {
 public:
 	PCDX11RenderDevice *renderDevice; // 2C
-	uint32_t flags30;
-	IRenderSurface *originRenderSurface;
+	uint32_t flags; // 30
+	IRenderSurface *originRenderSurface = nullptr; // 34
 	ID3D11Resource *resource = nullptr; // 38
 	ID3D11View *view = nullptr; // 3C (color or depth)
 	ID3D11ShaderResourceView *shaderResourceView = nullptr; // 40
@@ -24,11 +24,11 @@ public:
 	ID3D11UnorderedAccessView *unorderedAccessView = nullptr; // 48
 	bool registeredForDeletionAfterFrame = false; // 4C
 	bool borrowedResource = false; // 4D
-	uint8_t sampleCount = 1;
-	uint8_t sampleQuality = 0;
-	uint16_t shortWidth;
-	uint16_t shortHeight;
-	uint32_t isDepthBuffer = 0;
+	uint8_t sampleCount = 0; // 4E, not setting this to 1 or higher causes issues
+	uint8_t sampleQuality = 0; // 4F
+	uint16_t shortWidth; // 50
+	uint16_t shortHeight; // 52
+	uint32_t isDepthBuffer = 0; // 54
 	// PCDX11RenderBuffer *renderBuffer; // 58
 
 	PCDX11RenderTexture(
@@ -36,6 +36,7 @@ public:
 		uint32_t unknown1, uint32_t isDepthBuffer,
 		PCDX11RenderDevice *renderDevice, uint32_t unknown2);
 
+	void UpdateAbsoluteSize();
 	void ensureResource();
 	void ensureRenderTargetView();
 	void ensureBuffer();

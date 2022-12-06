@@ -118,8 +118,8 @@ public:
 	bool beginRenderList(float*) override;
 	bool endRenderList() override;
 	bool hasRenderList() override;
-	void method_28() override;
-	void method_2C() override;
+	uint32_t getSubFrameWidth() override;
+	uint32_t getSubFrameHeight() override;
 	void method_30() override;
 	CommonScene *createSubScene(
 		RenderViewport *renderViewport,

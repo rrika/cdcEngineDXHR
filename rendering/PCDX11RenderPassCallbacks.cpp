@@ -89,10 +89,12 @@ bool PCDX11DeferredShadingPassCallbacks::pre(
 	auto *rt = scene->getRenderTarget();
 	auto *db = scene->getDepthBuffer();
 
-	rt = renderDevice->createRenderTarget(
+	rt = renderDevice->dx11_createRenderTarget(
 		rt->getWidth(),
 		rt->getHeight(),
-		0x18 /*TODO*/, 0, 1, 0 /*TODO*/);
+		0x18,
+		0x11 /*TODO*/,
+		1);
 	static_cast<PCDX11RenderTarget*>(rt)->getRenderTexture11()->createRenderTargetView(); // HACK
 
 	stateManager->pushRenderTargets(

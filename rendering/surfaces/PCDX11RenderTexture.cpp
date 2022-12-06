@@ -1,7 +1,8 @@
+#include <d3d11.h>
 #include "../PCDX11DeviceManager.h"
+#include "../PCDX11RenderContext.h"
 #include "../PCDX11RenderDevice.h"
 #include "PCDX11RenderTexture.h"
-#include <d3d11.h>
 
 namespace cdc {
 
@@ -11,14 +12,40 @@ PCDX11RenderTexture::PCDX11RenderTexture(
 	PCDX11RenderDevice *renderDevice, uint32_t unknown2)
 :
 	PCDX11BaseTexture(width, height, 0),
-	flags30(flags),
+	renderDevice(renderDevice),
+	flags(flags),
 	shortWidth(width),
 	shortHeight(height),
-	isDepthBuffer(isDepthBuffer),
-	renderDevice(renderDevice)
+	isDepthBuffer(isDepthBuffer)
 {
+	if (flags & 0x20) { // use MSAA config of display
+		auto *config = deviceManager->getDisplayConfig();
+		sampleCount = config->sampleCount;
+		sampleQuality = config->sampleQuality;
+	} else {
+		sampleCount = 1;
+		sampleQuality = 0;
+	}
 
-	// TODO
+	UpdateAbsoluteSize();
+}
+
+void PCDX11RenderTexture::UpdateAbsoluteSize() {
+	if (flags & 8) { // relative size
+		uint32_t referenceWidth, referenceHeight;
+
+		if (flags & 0x100) {
+			referenceWidth = renderDevice->getSubFrameWidth();
+			referenceHeight = renderDevice->getSubFrameHeight();
+		} else {
+			auto *context = renderDevice->getRenderContextAny();
+			referenceWidth = context->width;
+			referenceHeight = context->height;
+		}
+
+		width = referenceWidth * shortWidth / 100;
+		height = referenceHeight * shortHeight / 100;
+	}
 }
 
 void PCDX11RenderTexture::ensureResource() {
@@ -106,7 +133,7 @@ void PCDX11RenderTexture::ensureBuffer() {
 		ensureRenderTargetView();
 	}
 
-	if (!registeredForDeletionAfterFrame && (flags30 & 4) == 0) {
+	if (!registeredForDeletionAfterFrame && (flags & 4) == 0) {
 		auto& num = renderDevice->numTemporarySurfaces;
 		renderDevice->temporarySurfaces[num++] = originRenderSurface; 
 		registeredForDeletionAfterFrame = true;
