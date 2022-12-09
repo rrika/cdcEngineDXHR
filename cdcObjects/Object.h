@@ -1,42 +1,11 @@
 #pragma once
+#include "cdcWorld/cdcWorldTypes.h"
 
 namespace cdc {
 
 class AnimGraphRequest;
 class RenderMesh;
 class ObjectBlobAnim;
-
-struct ObjectBlobModel {
-	void *field_0;
-	char gap_4[4];
-	int field_8;
-	void *field_C;
-	void *field_10;
-	void *field_14;
-	void *field_18;
-	int field_1C;
-	int field_20;
-	int field_24;
-	int field_28;
-	void *field_2C;
-	int field_30;
-	int field_34;
-	int field_38;
-	int field_3C;
-	int field_40;
-	void *field_44;
-	void *field_48;
-	void *field_4C;
-	void *field_50;
-	int field_54;
-	int field_58;
-	int field_5C;
-	int field_60;
-	cdc::RenderMesh *renderMesh;
-	void *field_68;
-	uint32_t *pdword6C;
-	uint32_t dword70;
-};
 
 struct ObjectBlobSub_DTPData {
 	uint32_t dword0;
@@ -108,7 +77,7 @@ struct ObjectBlobSub_DTPData {
 	uint32_t dwordF8;
 	uint16_t numModels; // FC
 	uint8_t fFE[2];
-	ObjectBlobModel **models;
+	dtp::Model **models;
 	uint32_t dword104;
 	uint32_t dword108;
 	uint32_t dword10C;
@@ -142,7 +111,7 @@ struct ObjectBlob {
 	uint16_t uberFake2;
 	uint16_t word3C;
 	uint8_t f3E[2];
-	ObjectBlobModel **models;
+	dtp::Model **models;
 	uint32_t dword44;
 	uint32_t dword48;
 	uint32_t dword4C;
