@@ -28,7 +28,7 @@ uint32_t ObjectSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t 
 		entry->state = 2;
 	}
 
-	entry->objBlob = (ObjectBlob*) new char[size];
+	entry->objBlob = (Object*) new char[size];
 	return entry - objects;
 }
 
@@ -40,7 +40,7 @@ void ObjectSection::fill(uint32_t domainId, void* src, size_t size, size_t offse
 
 void ObjectSection::construct(uint32_t domainId, void *) {
 	ObjectTracker *objectTracker = &objects[domainId];
-	ObjectBlob *objBlob = objectTracker->objBlob;
+	Object *objBlob = objectTracker->objBlob;
 	printf("object\n");
 	printf("  domainId      = %x\n", domainId);
 	printf("  objectTracker = %p\n", objectTracker);

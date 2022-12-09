@@ -234,12 +234,12 @@ int spinnyCube(HWND window,
 	cdc::archiveFileSystem_default->processAll();
 
 	cdc::ResolveSection *objectSection = cdc::g_resolveSections[11];
-	cdc::ObjectBlob *bottleObject = (cdc::ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(0x04a8));
+	cdc::Object *bottleObject = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(0x04a8));
 	printf("have bottle object: %p\n", bottleObject);
 
 	// unrelated: get the name of the first map in the game
 	uint32_t globalDatabaseId = cdc::objectIdByName("GlobalDatabase");
-	cdc::ObjectBlob *globalDatabaseObject = (cdc::ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(globalDatabaseId));
+	cdc::Object *globalDatabaseObject = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(globalDatabaseId));
 	auto *globalDatabase = (GlobalDatabase*)globalDatabaseObject->dword58;
 
 	printf("first map is: %s\n", globalDatabase->newGameMap);
@@ -281,7 +281,7 @@ int spinnyCube(HWND window,
 	// s_scn_det_sarifhq_rail_tutorial_barrettintro_det_sarifhq_rail_tutorial.drm/7: Material 12 a4 unk6:7a84 DX11 (7e0 bytes)
 
 
-	cdc::ObjectBlob *lightObject = (cdc::ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(lightIndex));
+	cdc::Object *lightObject = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(lightIndex));
 	printf("have light object: %p\n", lightObject);
 
 	auto lightRenderModel = (cdc::PCDX11RenderModel*)lightObject->models[0]->renderMesh;
@@ -599,7 +599,7 @@ int spinnyCube(HWND window,
 			};
 			if (intro.objectListIndex == 0)
 				continue;
-			cdc::ObjectBlob *object = (cdc::ObjectBlob*)objectSection->getWrapped(objectSection->getDomainId(intro.objectListIndex));
+			cdc::Object *object = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(intro.objectListIndex));
 			if (!object)
 				continue;
 			if (object->numModels == 0)

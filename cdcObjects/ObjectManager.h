@@ -5,12 +5,12 @@
 namespace cdc {
 
 class ResolveObject;
-struct ObjectBlob;
+struct Object;
 
 struct ObjectTracker {
 	ResolveObject *resolveObject; // 0
 	char *name; // 4
-	ObjectBlob *objBlob; // 8
+	Object *objBlob; // 8
 	uint32_t objectListIndex; // C
 	uint16_t state; // 10
 		// 0 - invalid

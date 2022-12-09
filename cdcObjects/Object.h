@@ -4,7 +4,7 @@
 
 namespace cdc {
 
-struct ObjectBlob {
+struct Object {
 	dtp::ObjectBaseData *dtpData;
 	uint16_t *punsigned4;
 	uint32_t dword8;
