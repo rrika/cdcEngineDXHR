@@ -3,7 +3,7 @@
 
 namespace cdc {
 
-AnimPipelineNode::AnimPipelineNode(AnimComponent *animComponent, /*uint32_t,*/ uint32_t numInputs, bool addToChain) :
+AnimPipelineNode::AnimPipelineNode(AnimComponentV2 *animComponent, /*uint32_t,*/ uint32_t numInputs, bool addToChain) :
 	IAnimGraphNode(animComponent, addToChain)
 {
 	inputs.resize(numInputs);

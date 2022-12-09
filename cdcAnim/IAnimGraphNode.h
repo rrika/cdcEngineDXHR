@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "AnimComponent.h"
+#include "AnimComponentV2.h"
 
 class Instance;
 
@@ -12,11 +12,11 @@ struct AnimGraphNodeMethod18Args {
 
 class IAnimGraphNode {
 protected:
-	AnimComponent *animComponent; // 4
+	AnimComponentV2 *animComponent; // 4
 	IAnimGraphNode *nextNode = nullptr; // 8
 	IAnimGraphNode *prevNode = nullptr; // C
 public:
-	IAnimGraphNode(AnimComponent *animComponent, bool addToChain) :
+	IAnimGraphNode(AnimComponentV2 *animComponent, bool addToChain) :
 		animComponent(animComponent)
 	{
 		if (addToChain) {

@@ -10,7 +10,7 @@ class AnimPipelineNode : public IAnimGraphNode {
 	IAnimGraphNode *output; // 1C
 	// uint32_t dword20 = 0;
 public:
-	AnimPipelineNode(AnimComponent*, /*uint32_t,*/ uint32_t numInputs, bool addToChain);
+	AnimPipelineNode(AnimComponentV2*, /*uint32_t,*/ uint32_t numInputs, bool addToChain);
 
 	void Activate(Instance*, float) override;
 	void Deactivate(Instance*) override;

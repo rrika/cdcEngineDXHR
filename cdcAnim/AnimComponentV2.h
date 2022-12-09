@@ -2,7 +2,7 @@
 
 namespace cdc { class IAnimGraphNode; }
 
-class AnimComponent {
+class AnimComponentV2 {
 public:
 	cdc::IAnimGraphNode *firstNode = nullptr; // 54
 };
