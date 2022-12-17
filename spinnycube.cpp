@@ -113,58 +113,68 @@ DRMIndex drmIndex;
 struct DRMExplorer {
 
 	void draw(bool *showWindow) {
-		ImGui::Begin("DRMs", showWindow);
-		for (auto& entry : drmIndex.sectionHeaders) {
-			if (ImGui::TreeNode(entry.first.c_str())) {
-				uint32_t i=0;
-				for (auto& section : entry.second) {
-					const char *names[] = {
-						"Generic",
-						"Empty",
-						"Animation",
-						"",
-						"",
-						"RenderResource",
-						"FMODSoundBank",
-						"DTPData",
-						"Script",
-						"ShaderLib",
-						"Material",
-						"Object",
-						"RenderMesh",
-						"CollisionMesh",
-						"StreamGroupList",
-						"AnyType",
-					};
-					ImGui::Text("%3d: %04x %s allocFlags:%d unk6:%x (%d bytes)",
-						i++, section.id, names[section.type], section.allocFlags, section.unknown06, section.payloadSize);
-					if (section.type == 5) { // RenderResource
-						ImGui::Text("    ");
-						ImGui::SameLine();
-						auto *resource = (cdc::RenderResource*)cdc::g_resolveSections[5]->getWrapped(section.id);
-						if (auto tex = dynamic_cast<cdc::PCDX11Texture*>(resource)) {
-							ImGui::Image(
-								tex->createShaderResourceView(), ImVec2(256, 256));
+		ImGui::Begin("DRM Explorer", showWindow);
+
+		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+		if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
+
+			if (ImGui::BeginTabItem("Loaded DRMs")) {
+				for (auto& entry : drmIndex.sectionHeaders) {
+					if (ImGui::TreeNode(entry.first.c_str())) {
+						uint32_t i=0;
+						for (auto& section : entry.second) {
+							const char *names[] = {
+								"Generic",
+								"Empty",
+								"Animation",
+								"",
+								"",
+								"RenderResource",
+								"FMODSoundBank",
+								"DTPData",
+								"Script",
+								"ShaderLib",
+								"Material",
+								"Object",
+								"RenderMesh",
+								"CollisionMesh",
+								"StreamGroupList",
+								"AnyType",
+							};
+							ImGui::Text("%3d: %04x %s allocFlags:%d unk6:%x (%d bytes)",
+								i++, section.id, names[section.type], section.allocFlags, section.unknown06, section.payloadSize);
+							if (section.type == 5) { // RenderResource
+								ImGui::Text("    ");
+								ImGui::SameLine();
+								auto *resource = (cdc::RenderResource*)cdc::g_resolveSections[5]->getWrapped(section.id);
+								if (auto tex = dynamic_cast<cdc::PCDX11Texture*>(resource)) {
+									ImGui::Image(
+										tex->createShaderResourceView(), ImVec2(256, 256));
+								}
+							}
+							if (section.type == 6) { // FMOD
+								ImGui::PushID(section.id);
+								ImGui::SameLine();
+								if (ImGui::SmallButton("Play")) {
+									((cdc::WaveSection*)cdc::g_resolveSections[6])->playSound(section.id);
+								}
+								ImGui::PopID();
+							}
+							if (section.type == 8) { // Script
+								if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->getWrapped(section.id)) {
+									ImGui::SameLine();
+									ImGui::Text(" %s", ty->blob->name);
+								}
+							}
 						}
-					}
-					if (section.type == 6) { // FMOD
-						ImGui::PushID(section.id);
-						ImGui::SameLine();
-						if (ImGui::SmallButton("Play")) {
-							((cdc::WaveSection*)cdc::g_resolveSections[6])->playSound(section.id);
-						}
-						ImGui::PopID();
-					}
-					if (section.type == 8) { // Script
-						if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->getWrapped(section.id)) {
-							ImGui::SameLine();
-							ImGui::Text(" %s", ty->blob->name);
-						}
+						ImGui::TreePop();
 					}
 				}
-				ImGui::TreePop();
+				ImGui::EndTabItem();
 			}
+			ImGui::EndTabBar();
 		}
+
 		ImGui::End();
 	}
 } drmexplorer;
