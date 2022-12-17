@@ -4,10 +4,15 @@
 
 namespace cdc {
 
+class SoundPlex;
+
 class SoundOwner : public RCObject, protected SoundTypes {
 public:
-	Controls controls;
-	Controls3d controls3d;
+	SoundPlex *plex; // 8
+	Controls controls; // 14
+	Controls3d controls3d; // 50
 };
+
+using SoundHandle = Handle<SoundOwner>;
 
 }

@@ -23,6 +23,24 @@ struct SoundPlex {
 		SoundPlexSelector_Cinematic = 15,
 		SoundPlexSelector_Stitching = 16
 	};
+
+	struct Assignment {
+		SoundPlex *m_sound;
+		// TODO
+	};
+
+	struct Choice {
+		uint32_t m_numSounds;
+		SoundPlex **m_sounds;
+		SoundPlex *m_soundData;
+		// TODO
+	};
+
+	struct Wave {
+		uint32_t m_id;
+		// TODO
+	};
+
 	int32_t m_type;
 	void *m_data;
 };

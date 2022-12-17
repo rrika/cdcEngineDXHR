@@ -15,6 +15,7 @@
 #include "types.h"
 #include "cdc/dtp/objectproperties/imfref.h"
 #include "cdc/dtp/objectproperties/intermediatemesh.h"
+#include "cdc/dtp/soundplex.h"
 #include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h" // for archiveFileSystem_default
 #include "cdcFile/FileSystem.h" // for enum cdc::FileRequest::Priority
@@ -66,6 +67,7 @@
 #include "cdcResource/WaveSection.h"
 #include "cdcScript/ScriptType.h"
 #include "scene/IMFTypes.h"
+#include "cdcSound/SoundPlex.h"
 #include "cdcWorld/RMIDrawableBase.h"
 #include "cdcWorld/stream.h" // for buildUnitsUI
 #include "cdcWorld/StreamUnit.h"
@@ -155,10 +157,23 @@ struct DRMExplorer {
 							if (section.type == 6) { // FMOD
 								ImGui::PushID(section.id);
 								ImGui::SameLine();
-								if (ImGui::SmallButton("Play")) {
+								if (ImGui::SmallButton("Play sound")) {
 									((cdc::WaveSection*)cdc::g_resolveSections[6])->playSound(section.id);
 								}
 								ImGui::PopID();
+							}
+							if (section.type == 7 && section.allocFlags == 0xD) { // DTP (SoundPlex)
+								ImGui::PushID(section.id);
+								ImGui::SameLine();
+								auto *plex = (dtp::SoundPlex*)cdc::g_resolveSections[7]->getWrapped(section.id);
+								if (plex) {
+									if (ImGui::SmallButton("Play soundplex")) {
+										cdc::SOUND_StartPaused(plex, /*delay=*/ 0.0f);
+									}
+									buildUI(plex, /*indent=*/ "    ");
+								}
+								ImGui::PopID();
+
 							}
 							if (section.type == 8) { // Script
 								if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->getWrapped(section.id)) {
