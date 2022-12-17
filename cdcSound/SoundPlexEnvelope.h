@@ -3,7 +3,7 @@
 
 namespace cdc {
 
-class SoundPlexEnvelope : public SoundPlex {
+class SoundPlexEnvelope : public SoundPlexSingleChild {
 public:
 	SoundPlexEnvelope(
 		void *data,
@@ -11,7 +11,7 @@ public:
 		Controls3d *controls3d,
 		SoundOwner *owner)
 	:
-		SoundPlex(controls, controls3d, owner)
+		SoundPlexSingleChild(controls, controls3d, owner)
 	{
 		// TODO
 	}

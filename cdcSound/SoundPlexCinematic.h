@@ -3,7 +3,7 @@
 
 namespace cdc {
 
-class SoundPlexCinematic : public SoundPlex {
+class SoundPlexCinematic : public SoundPlexSingleChild {
 public:
 	SoundPlexCinematic(
 		void *data,
@@ -11,7 +11,7 @@ public:
 		Controls3d *controls3d,
 		SoundOwner *owner)
 	:
-		SoundPlex(controls, controls3d, owner)
+		SoundPlexSingleChild(controls, controls3d, owner)
 	{
 		// TODO
 	}

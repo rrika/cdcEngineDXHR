@@ -50,6 +50,15 @@ public:
 class SoundPlexSingleChild : public SoundPlex { // 146
 protected:
 	SoundPlex *m_plex;
+
+public:
+	SoundPlexSingleChild(
+		Controls *controls,
+		Controls3d *controls3d,
+		SoundOwner *owner)
+	:
+		SoundPlex(controls, controls3d, owner)
+	{}
 };
 
 SoundHandle SOUND_StartPaused(
