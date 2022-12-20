@@ -3,7 +3,7 @@
 
 namespace cdc {
 
-WaveSectionEntry *WaveSection::lookupEntry(
+Wave *WaveSection::lookupEntry(
 	uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded)
 {
 	if (sectionId < 4096) {
@@ -39,7 +39,7 @@ void WaveSection::fill(uint32_t sectionId, void *vsrc, uint32_t size, uint32_t i
 		return;
 
 	char *src = (char*)vsrc;
-	WaveSectionEntry &entry = entries[sectionId];
+	Wave &entry = entries[sectionId];
 	uint32_t offset = 0;
 	uint32_t bytesLeftToProcess = size;
 	while (size && bytesLeftToProcess) {
@@ -116,6 +116,13 @@ uint32_t WaveSection::getDomainId(uint32_t sectionId) {
 		return sectionId;
 	else
 		return ~0u;
+}
+
+// called from SoundPlexWave::SoundPlexWave
+Wave *WaveSection::WaveFind(uint32_t sectionId) {
+	if (entries[sectionId].refCount != 0)
+		return &entries[sectionId];
+	return nullptr;
 }
 
 // HACK

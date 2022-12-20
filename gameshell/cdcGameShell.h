@@ -4,6 +4,8 @@ namespace cdc {
 
 class GameShell {
 public:
+	static bool UpdateLoop(float timeInFrames);
+
 	static void LOAD_ObjectFileName(char *name, const char *object);
 	static void LOAD_UnitFileName(char *name, const char *unit);
 	// static void LOAD_SoftAccessoryFileName(char *name, const char *sa);

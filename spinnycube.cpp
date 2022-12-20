@@ -471,6 +471,8 @@ int spinnyCube(HWND window,
 
 	std::unordered_map<cdc::IRenderTerrain*, cdc::CommonRenderTerrainInstance *> renderTerrainInstances;
 
+	cdc::GameShell::UpdateLoop(0.5);
+
 	while (true)
 	{
 #ifdef _WIN32
@@ -898,6 +900,8 @@ int spinnyCube(HWND window,
 		///////////////////////////////////////////////////////////////////////////////////////////
 
 		renderContext->present();
+
+		cdc::GameShell::UpdateLoop(1.0f /*TODO*/);
 	}
 end:
 #if ENABLE_IMGUI 

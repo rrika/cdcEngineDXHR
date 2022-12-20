@@ -1,5 +1,7 @@
 #include <cstdio>
 #include "cdc/dtp/soundplex.h"
+#include "cdcResource/ResolveSection.h"
+#include "cdcResource/WaveSection.h"
 #include "SoundPlex.h"
 #include "SoundPlexAssignment.h"
 #include "SoundPlexCinematic.h"
@@ -72,7 +74,17 @@ SoundPlex *SoundPlexCollection::Create( // line 126
 	case dtp::SoundPlex::SoundPlexSelector_Wave: { // 3
 		// TODO
 		auto *data = (dtp::SoundPlex::Wave*)snd->m_data;
-		plex = new SoundPlexWave(snd->m_data, controls, controls3d, owner);
+		if (!data)
+			return nullptr;
+
+		Wave *wave = ((WaveSection*)g_resolveSections[6])->WaveFind(data->m_id);
+		if (!wave)
+			return nullptr;
+
+		if (!wave->sample)
+			return nullptr;
+
+		plex = new SoundPlexWave(data, controls, controls3d, owner);
 		break;
 	}
 
@@ -188,10 +200,16 @@ SoundHandle SOUND_StartPaused( // 382
 
 void buildUI(dtp::SoundPlex *snd, std::string indent) {
 #if ENABLE_IMGUI
+	ImGui::PushID((uint32_t)snd);
 
 	ImGui::Text("%s%s",
 		indent.c_str(),
 		snd->m_type >= 17 ? "[error]" : cdc::soundPlexNodeNames[snd->m_type]);
+
+	ImGui::SameLine();
+	if (ImGui::SmallButton("Play")) {
+		cdc::SOUND_StartPaused(snd, /*delay=*/ 0.0f);
+	}
 
 	switch (snd->m_type) {
 	case dtp::SoundPlex::SoundPlexSelector_Silence: // 0
@@ -259,5 +277,7 @@ void buildUI(dtp::SoundPlex *snd, std::string indent) {
 		break;
 
 	}
+
+	ImGui::PopID();
 #endif
 }

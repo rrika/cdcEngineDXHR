@@ -2,7 +2,11 @@
 #include "cdc/dtp/soundgroup.h"
 #include "cdc/dtp/controls3d.h"
 
+namespace FMOD { class System; }
+
 namespace cdc {
+
+extern FMOD::System *gFMOD;
 
 class SoundTypes {
 public:

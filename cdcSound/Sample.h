@@ -3,9 +3,11 @@
 #ifdef _WIN32
 #define WIN32 // make fmod use stdcall
 #endif
-#include "../fmod/fmod.hpp"
+#include "3rdParty/fmod/fmod.hpp"
 
 namespace cdc {
+
+class VoiceCollection;
 
 class Sample {
 protected:
@@ -20,6 +22,8 @@ protected:
 	uint32_t dword20;
 	uint32_t dword24;
 	uint32_t zeroOneTwo28;
+
+	friend class VoiceCollection;
 
 public:
 	static Sample *Create(
