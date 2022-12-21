@@ -4,7 +4,7 @@
 #include "cdcFile/FileHelpers.h"
 #include "../game/Gameloop.h"
 #include "../game/objects/objects.h"
-#include "../gameshell/cdcGameShell.h"
+#include "cdcGameShell/cdcGameShell.h"
 #include "cdcObjects/ObjectManager.h"
 #include "../rendering/PCDX11DeviceManager.h"
 #include "cdcResource/Resolve.h"

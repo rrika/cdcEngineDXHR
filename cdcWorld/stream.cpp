@@ -5,7 +5,7 @@
 #include "StreamUnit.h"
 #include "cdcFile/FileHelpers.h"
 #include "cdcFile/FileSystem.h"
-#include "../gameshell/cdcGameShell.h" // for LOAD_UnitFileName
+#include "cdcGameShell/cdcGameShell.h" // for LOAD_UnitFileName
 #include "cdcObjects/ObjectManager.h" // for readAndParseObjectList
 #include "cdcResource/ResolveObject.h"
 

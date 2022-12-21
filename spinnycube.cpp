@@ -25,9 +25,9 @@
 #include "game/script/game/NsMainMenuMovieController.h"
 #include "game/ui/FakeScaleform/fakescaleform.h"
 #include "game/ui/Scaleform/ScaleformMovieInstance.h"
-#include "gameshell/cdcGameShell.h" // for LOAD_IMFFileName
+#include "cdcGameShell/cdcGameShell.h" // for LOAD_IMFFileName
 #ifdef _WIN32
-#include "gameshell/win32/MainVM.h" // for yellowCursor
+#include "cdcGameShell/win32/MainVM.h" // for yellowCursor
 #endif
 #include "input/PCMouseKeyboard.h"
 #include "cdcLocale/localstr.h"

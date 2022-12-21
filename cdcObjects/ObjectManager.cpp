@@ -4,7 +4,7 @@
 #include "ObjectManager.h"
 #include "cdcFile/FileHelpers.h"
 #include "cdcFile/FileSystem.h"
-#include "../gameshell/cdcGameShell.h"
+#include "cdcGameShell/cdcGameShell.h"
 #include "cdcResource/ResolveObject.h"
 
 #if ENABLE_IMGUI
