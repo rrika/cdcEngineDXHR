@@ -102,11 +102,11 @@ void ResolveObject::markForRetry(uint32_t missingDeps, ResolveReceiver *rr) {
 }
 
 void ResolveObject::addDependency(ResolveObject *other) {
-	dependencies.insert(other);
+	dependencies.push_front(other);
 }
 
 void ResolveObject::addDependant(ResolveObject *other) {
-	dependants.insert(other);
+	dependants.push_front(other);
 }
 
 void ResolveObject::notifyDependants() {

@@ -10,7 +10,7 @@ Voice::UpdateCode VoiceImpl::Update() { // 498
 
 void VoiceCollection::Add(VoiceImpl *voice) { // line 1239
 	m_nVoices++;
-	m_voices.insert(voice);
+	m_voices.push_front(voice);
 	// TODO
 }
 
