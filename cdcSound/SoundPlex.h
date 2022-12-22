@@ -27,7 +27,11 @@ public:
 		float delay
 		// TODO
 	);
+
+	void Update(float time);
 };
+
+extern SoundPlexCollection gSoundPlexCollection;
 
 class SoundPlex : protected SoundTypes { // 72
 protected:

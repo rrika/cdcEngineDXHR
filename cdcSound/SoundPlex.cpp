@@ -25,7 +25,7 @@
 
 namespace cdc {
 
-static SoundPlexCollection gSoundPlexCollection;
+SoundPlexCollection gSoundPlexCollection;
 
 static const char *soundPlexNodeNames[] = {
 	"Silence",
@@ -148,7 +148,7 @@ SoundPlex *SoundPlexCollection::Create( // line 126
 		// TODO
 	}
 
-	return nullptr;
+	return plex;
 }
 
 SoundHandle SoundPlexCollection::StartPaused( // 178
@@ -186,6 +186,19 @@ SoundHandle SoundPlexCollection::StartPaused( // 178
 	}
 
 	return nullptr;
+}
+
+void SoundPlexCollection::Update(float time) {
+	auto ownerIt = m_plexes.begin();
+	while (ownerIt != m_plexes.end()) {
+		auto replacementPlex = (*ownerIt)->plex->Update(time);
+		if (replacementPlex) {
+			(*ownerIt)->plex = replacementPlex;
+			ownerIt++;
+		}
+		else
+			ownerIt = m_plexes.erase(ownerIt);
+	}
 }
 
 SoundHandle SOUND_StartPaused( // 382
