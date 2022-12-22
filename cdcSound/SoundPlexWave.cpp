@@ -20,9 +20,27 @@ SoundPlexWave::SoundPlexWave(
 	}
 }
 
+SoundPlexWave::~SoundPlexWave() {
+	// TODO
+	if (m_voice)
+		delete m_voice;
+}
+
 SoundPlex *SoundPlexWave::Update(float time) {
 	// TODO
-	return nullptr;
+	if (auto voice = static_cast<VoiceImpl*>(m_voice)) {
+		if (voice->m_bStoppedFMOD) {
+			delete voice;
+			m_voice = nullptr;
+		}
+	}
+	if (m_voice) {
+		// TODO
+		return this;
+	} else {
+		delete this;
+		return nullptr;
+	}
 }
 
 void SoundPlexWave::End(SoundPlexWave::EndType end) {

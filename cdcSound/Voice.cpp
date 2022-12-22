@@ -81,13 +81,109 @@ VoiceImpl::~VoiceImpl() {
 }
 
 void VoiceCollection::Add(VoiceImpl *voice) { // line 1239
+
 	m_nVoices++;
-	m_voices.push_front(voice);
-	// TODO
+
+	if (m_voices.empty()) {
+
+		// head    [BEFORE]
+		//   | `---.
+		//   v      \
+		// link1 -> voice1
+		//  ...
+
+		m_voices.push_front(voice);
+		voice->it = m_voices.begin();
+
+		// head    [BETWEEN]
+		//   | `----------.
+		//   v      \      \
+		// link2 -> voice2  )
+		//   |             /
+		//   v            /
+		// link1 -> voice1
+		//  ...
+
+		auto it = m_voices.begin(); ++it;
+		it->it = it;
+
+		// head     [AFTER]
+		//   | `---.
+		//   v      \
+		// link2 -> voice2
+		//   | `---.
+		//   v      \
+		// link1 -> voice1
+		//  ...
+
+	} else {
+
+		// head    [BEFORE]
+		//   |
+		//   v
+		// nullptr
+
+		m_voices.push_front(voice);
+		voice->it = m_voices.begin();
+
+		// head     [AFTER]
+		//   | `---.
+		//   v      \
+		// link1 -> voice1
+		//   |
+		//   v
+		// nullptr
+	}
 }
 
 void VoiceCollection::Remove(VoiceImpl *voice) { // line 1260
-	// TODO: remove voice from linked list
+	auto nextIt = voice->it; ++nextIt;
+
+	if (nextIt == m_voices.end()) {
+
+		// iterator
+		//   | `---.
+		//   v      \
+		// link1 -> voice1
+		//   |
+		//   v
+		// nullptr
+
+		m_voices.erase(voice->it);
+
+		// iterator
+		//   |
+		//   v     (voice1)
+		// nullptr
+
+	} else {
+
+		// iterator
+		//   | `---.
+		//   v      \
+		// link1 -> voice1
+		//   | `---.
+		//   v      \
+		// link0 -> voice0
+		//  ...
+
+		m_voices.erase(voice->it);
+
+		// iterator <- (voice1)
+		//   |
+		//   v
+		// link0 -> voice0
+		//  ...
+
+		nextIt->it = voice->it;
+
+		// iterator <- (voice1)
+		//   | `---.
+		//   v      \
+		// link0 -> voice0
+		//  ...
+
+	}
 }
 
 void VoiceCollection::Update(float seconds) { // line 1283

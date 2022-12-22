@@ -13,7 +13,9 @@ struct SList {
 	struct iterator {
 		Node **link;
 		inline T& operator*() { return (*link)->item; }
+		inline T& operator->() { return (*link)->item; }
 		inline void operator++() { link = &(*link)->next; }
+		inline bool operator==(iterator const& other) { return *link == *other.link; }
 		inline bool operator!=(iterator const& other) { return *link != *other.link; }
 	};
 
@@ -26,6 +28,19 @@ struct SList {
 
 	inline iterator begin() { return {&head}; }
 	inline iterator end() { return {&endPtr}; }
+	inline bool empty() { return head != nullptr; }
+
+	inline void erase(iterator it) {
+		if (auto link = it.link) {
+			Node *erasedLink = *link;
+			if (erasedLink) {
+				*link = erasedLink->next;
+				delete erasedLink;
+			} else {
+				*link = nullptr;
+			}
+		}
+	}
 };
 
 }
