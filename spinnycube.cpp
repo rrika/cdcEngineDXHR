@@ -892,7 +892,7 @@ int spinnyCube(HWND window,
 			ImGui::End();
 		}
 
-		mainMenuInstance.buildUI();
+		// mainMenuInstance.buildUI();
 #endif
 
 		renderDevice->drawRenderLists();
