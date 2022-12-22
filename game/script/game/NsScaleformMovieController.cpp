@@ -1,6 +1,6 @@
 #include "NsScaleformMovieController.h"
 #include "cdcScript/ScriptSymbol.h"
-#include "code/game/script/game/_NsScaleformMovieController.h"
+#include "game/script/game/_NsScaleformMovieController.h"
 
 int32_t NsScaleformMovieController::TestPrefixAndProcessMovieFunction(
 	const char *methodName,
