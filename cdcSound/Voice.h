@@ -23,6 +23,7 @@ public:
 	uint32_t m_nVoices = 0; // 100C
 
 	Voice *Create(Sample *sample);
+	void Remove(VoiceImpl *voice);
 	void Update(float seconds);
 };
 
@@ -40,7 +41,9 @@ public:
 class VoiceImpl : public Voice {
 public:
 	UpdateCode Update();
+	~VoiceImpl();
 
+	cdc::SList<VoiceImpl*>::iterator it; // 4
 	FMOD::Channel *m_channel; // 8
 	Sample *m_sample; // C
 

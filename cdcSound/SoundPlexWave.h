@@ -4,7 +4,11 @@
 
 namespace cdc {
 
+class Voice;
+
 class SoundPlexWave : public SoundPlex {
+	Voice *m_voice = nullptr; // 14
+
 public:
 	SoundPlexWave(
 		dtp::SoundPlex::Wave *data,
@@ -13,8 +17,8 @@ public:
 		SoundOwner *owner);
 
 	~SoundPlexWave() = default;
-	SoundPlex *Update(float) override { /*TODO*/ return nullptr; }
-	void End(EndType) override { /*TODO*/ }
+	SoundPlex *Update(float) override;
+	void End(EndType) override;
 };
 
 }

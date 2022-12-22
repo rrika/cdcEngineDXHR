@@ -31,9 +31,10 @@ public:
 
 class SoundPlex : protected SoundTypes { // 72
 protected:
-	Controls *m_controls;
-	Controls3d *m_controls3d;
-	SoundOwner *m_owner;
+	uint32_t m_state; // 4
+	Controls *m_controls; // 8
+	Controls3d *m_controls3d; // C
+	SoundOwner *m_owner; // 10
 
 public:
 	SoundPlex(

@@ -38,6 +38,9 @@ public:
 		void *src,
 		uint32_t bytes);
 
+	void AddRef() { m_referenceCount++; }
+	void RemoveRef() { m_referenceCount--; }
+
 	// HACK
 	void Play();
 };

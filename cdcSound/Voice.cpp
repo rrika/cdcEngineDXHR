@@ -8,10 +8,46 @@ Voice::UpdateCode VoiceImpl::Update() { // 498
 	return hackState;
 }
 
+VoiceImpl::~VoiceImpl() {
+	// this is called through "delete voice;" in
+	//   SoundPlexWave::Update
+	//   SoundPlexWave::End
+	//   SoundPlexWave::~SoundPlexWave
+	//   SoundPlexStitching::Update
+	//   SoundPlexStitching::End
+	//   SoundPlexStitching::~SoundPlexStitching
+	//   ...
+
+	// In Deus Ex
+	//   cdc::SoundPlexWave::Update (and others)
+	//    -> VoiceImpl::~VoiceImpl
+	//        -> Sample::RemoveRef
+	//        -> VoiceCollection::Remove
+	//        -> FMOD::Channel::stop
+
+	// In Tomb Raider
+	//   cdc::SoundPlexWave::Update (and others)
+	//    -> cdc::Voice::Release
+	//        -> VoiceCollection::Destroy
+	//            -> Sample::RemoveRef
+	//            -> VoiceCollection::Remove
+	//            -> VoiceImpl::~VoiceImpl
+	//                -> FMOD::Channel::stop
+
+	m_sample->RemoveRef();
+	Voice::s_voiceCollection.Remove(this);
+	m_channel->stop(); // this is FMOD::Channel::stop
+	Voice::s_voiceCollection.byte4 = 1;
+}
+
 void VoiceCollection::Add(VoiceImpl *voice) { // line 1239
 	m_nVoices++;
 	m_voices.push_front(voice);
 	// TODO
+}
+
+void VoiceCollection::Remove(VoiceImpl *voice) { // line 1260
+	// TODO: remove voice from linked list
 }
 
 void VoiceCollection::Update(float seconds) { // line 1283
