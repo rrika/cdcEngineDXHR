@@ -11,6 +11,10 @@ public:
 		Controls *controls,
 		Controls3d *controls3d,
 		SoundOwner *owner);
+
+	~SoundPlexWave() = default;
+	SoundPlex *Update(float) override { /*TODO*/ return nullptr; }
+	void End(EndType) override { /*TODO*/ }
 };
 
 }

@@ -45,6 +45,13 @@ public:
 		m_controls3d(controls3d),
 		m_owner(owner)
 	{}
+
+	virtual ~SoundPlex() = default; // 0
+	virtual SoundPlex *Update(float) = 0; // 4
+	// virtual uint8_t Method8(uint32_t) { return 0; }
+	// virtual void MethodC(uint32_t, uint32_t) {}
+	virtual void End(EndType) = 0; // 10
+
 };
 
 class SoundPlexSingleChild : public SoundPlex { // 146

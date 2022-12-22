@@ -15,6 +15,9 @@ public:
 	{
 		// TODO
 	}
+
+	SoundPlex *Update(float) override { /*TODO*/ return nullptr; }
+	void End(EndType) override { /*TODO*/ }
 };
 
 }
