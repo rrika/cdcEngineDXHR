@@ -3,9 +3,49 @@
 
 namespace cdc {
 
+F_STDCALL FMOD_RESULT FmodChannelCallback(FMOD_CHANNEL *channel, FMOD_CHANNEL_CALLBACKTYPE type, void *commanddata1, void *commanddata2) { // line 159
+	void *userdata = nullptr;
+	FMOD_Channel_GetUserData(channel, &userdata);
+	auto *voice = (VoiceImpl*) userdata;
+
+	if (type == FMOD_CHANNEL_CALLBACKTYPE_END)
+		return voice->EndCallback();
+	else if (type == FMOD_CHANNEL_CALLBACKTYPE_VIRTUALVOICE)
+		return voice->VirtualCallback((bool)commanddata1);
+
+	return FMOD_OK;
+}
+
+FMOD_RESULT VoiceImpl::EndCallback() { // line 192
+	m_bStoppedFMOD = true;
+	return FMOD_OK;
+}
+
+FMOD_RESULT VoiceImpl::VirtualCallback(bool nowVirtual) { // line 233
+	if (nowVirtual && m_bPreventVol0Virtual) {
+		unsigned int position;
+		m_channel->getPosition(&position, FMOD_TIMEUNIT_PCM);
+		// and then nothing
+	}
+	return FMOD_OK;
+}
+
 Voice::UpdateCode VoiceImpl::Update() { // 498
+	if (m_bStoppedFMOD)
+		return kNormal;
 	// TODO
-	return hackState;
+	bool isVirtual, isPaused;
+	m_channel->isVirtual(&isVirtual);
+	m_channel->getPaused(&isPaused);
+	// TODO
+	if (isPaused) {
+		if (isVirtual)
+			return kSyncStalled;
+		else
+			return kSyncReady;
+	}
+
+	return kNormal;
 }
 
 VoiceImpl::~VoiceImpl() {
@@ -59,7 +99,6 @@ void VoiceCollection::Update(float seconds) { // line 1283
 		case Voice::kNormal: break;
 		case Voice::kSyncReady:
 			m_arrayChannelsToSyncStart[numPending++] = voice->m_channel;
-			voice->hackState = Voice::kNormal;
 			break;
 		case Voice::kSyncStalled:
 			noneStalled = false;
@@ -99,6 +138,8 @@ Voice *VoiceCollection::Create(Sample *sample) { // line 1348
 	auto *voice = new VoiceImpl;
 	voice->m_channel = channel;
 	voice->m_sample = sample;
+	channel->setUserData(voice);
+	channel->setCallback(&FmodChannelCallback);
 
 	Add(voice);
 

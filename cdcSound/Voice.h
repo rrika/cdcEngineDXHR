@@ -41,13 +41,15 @@ public:
 class VoiceImpl : public Voice {
 public:
 	UpdateCode Update();
+	FMOD_RESULT EndCallback();
+	FMOD_RESULT VirtualCallback(bool);
 	~VoiceImpl();
 
 	cdc::SList<VoiceImpl*>::iterator it; // 4
 	FMOD::Channel *m_channel; // 8
 	Sample *m_sample; // C
-
-	UpdateCode hackState = kSyncReady;
+	bool m_bPreventVol0Virtual = false; // 25
+	bool m_bStoppedFMOD = false; // 26
 };
 
 }
