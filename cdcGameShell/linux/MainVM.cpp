@@ -6,7 +6,9 @@
 #include "../../rendering/IPCDeviceManager.h"
 #include "../../rendering/PCDX11DeviceManager.h"
 #include "../../rendering/PCDX11RenderDevice.h"
+#include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h"
+#include "cdcLocale/localstr.h"
 
 using namespace cdc;
 
@@ -40,6 +42,10 @@ int main(int argc, char** argv) {
 	loadBuiltinResources();
 	createLowerFileSystems();
 	createHigherFileSystems();
+	if (archiveFileSystem_default) {
+		SetupBuildDir(archiveFileSystem_default->getPrefix());
+	}
+	localstr_reload(); // HACK
 
 	auto deviceManager = createPCDX11DeviceManager();
 	if (!createWindow())
