@@ -40,6 +40,8 @@ protected:
 	Controls3d *m_controls3d; // C
 	SoundOwner *m_owner; // 10
 
+	friend class SoundPlexAssignment; // or add a GetState method
+
 public:
 	SoundPlex(
 		Controls *controls,
@@ -61,7 +63,7 @@ public:
 
 class SoundPlexSingleChild : public SoundPlex { // 146
 protected:
-	SoundPlex *m_plex;
+	SoundPlex *m_plex = nullptr;
 
 public:
 	SoundPlexSingleChild(
@@ -71,6 +73,11 @@ public:
 	:
 		SoundPlex(controls, controls3d, owner)
 	{}
+
+	~SoundPlexSingleChild() {
+		if (m_plex)
+			delete m_plex;
+	}
 };
 
 SoundHandle SOUND_StartPaused(

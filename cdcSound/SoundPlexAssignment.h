@@ -1,4 +1,5 @@
 #pragma once
+#include "cdc/dtp/soundplex.h"
 #include "SoundPlex.h"
 
 namespace cdc {
@@ -6,18 +7,13 @@ namespace cdc {
 class SoundPlexAssignment : public SoundPlexSingleChild {
 public:
 	SoundPlexAssignment(
-		void *data,
+		dtp::SoundPlex::Assignment *data,
 		Controls *controls,
 		Controls3d *controls3d,
-		SoundOwner *owner)
-	:
-		SoundPlexSingleChild(controls, controls3d, owner)
-	{
-		// TODO
-	}
+		SoundOwner *owner);
 
-	SoundPlex *Update(float) override { /*TODO*/ return nullptr; }
-	void End(EndType) override { /*TODO*/ }
+	SoundPlex *Update(float) override;
+	void End(EndType) override;
 };
 
 }

@@ -3,6 +3,7 @@ target_sources(dxhr PRIVATE
 	Sample.cpp
 	Sound.cpp
 	SoundPlex.cpp
+	SoundPlexAssignment.cpp
 	SoundPlexWave.cpp
 	Voice.cpp
 	snd.cpp)

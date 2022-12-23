@@ -92,9 +92,11 @@ SoundPlex *SoundPlexCollection::Create( // line 126
 		plex = new SoundPlexStream(snd->m_data, controls, controls3d, owner);
 		break;
 
-	case dtp::SoundPlex::SoundPlexSelector_Assignment: // 5
-		plex = new SoundPlexAssignment(snd->m_data, controls, controls3d, owner);
+	case dtp::SoundPlex::SoundPlexSelector_Assignment: { // 5
+		auto *data = (dtp::SoundPlex::Assignment*)snd->m_data;
+		plex = new SoundPlexAssignment(data, controls, controls3d, owner);
 		break;
+	}
 
 	case dtp::SoundPlex::SoundPlexSelector_Envelope: // 6
 		plex = new SoundPlexEnvelope(snd->m_data, controls, controls3d, owner);
