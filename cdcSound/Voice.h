@@ -12,7 +12,7 @@ namespace cdc {
 class Voice;
 class VoiceImpl;
 
-class VoiceCollection : protected SoundTypes { // 28
+class VoiceCollection : protected SoundTypes { // line 28
 	void Add(VoiceImpl *voice);
 
 public:
@@ -25,6 +25,9 @@ public:
 	Voice *Create(Sample *sample);
 	void Remove(VoiceImpl *voice);
 	void Update(float seconds);
+	inline bool IsOutOfMemory() { // line 42
+		return !byte4 || m_nVoices >= 0x200;
+	}
 };
 
 class Voice { // 74

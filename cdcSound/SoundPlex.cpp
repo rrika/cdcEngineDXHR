@@ -5,6 +5,7 @@
 #include "SoundPlex.h"
 #include "SoundPlexAssignment.h"
 #include "SoundPlexCinematic.h"
+#include "SoundPlexChoiceList.h"
 #include "SoundPlexEffect.h"
 #include "SoundPlexEnvelope.h"
 #include "SoundPlexMaterialList.h"
@@ -17,6 +18,7 @@
 #include "SoundPlexStream.h"
 #include "SoundPlexTimeIn.h"
 #include "SoundPlexWave.h"
+#include "Voice.h"
 
 #include "config.h" // for ENABLE_IMGUI
 #if ENABLE_IMGUI
@@ -55,11 +57,12 @@ SoundPlex *SoundPlexCollection::Create( // line 126
 ) {
 	SoundPlex *plex = nullptr;
 
-	// TODO
-
 	printf("SoundPlexCollection::Create type=%d (%s)\n",
 		snd->m_type,
 		snd->m_type >= 17 ? "???" : soundPlexNodeNames[snd->m_type]);
+
+	if (Voice::s_voiceCollection.IsOutOfMemory())
+		return nullptr;
 
 	switch (snd->m_type) {
 	case dtp::SoundPlex::SoundPlexSelector_Silence: // 0
@@ -106,9 +109,20 @@ SoundPlex *SoundPlexCollection::Create( // line 126
 		plex = new SoundPlexSelector(snd->m_data, controls, controls3d, owner);
 		break;
 
-	case dtp::SoundPlex::SoundPlexSelector_ChoiceList: // 8
-		// TODO
+	case dtp::SoundPlex::SoundPlexSelector_ChoiceList: { // 8
+		auto *data = (dtp::SoundPlex::ChoiceList*)snd->m_data;
+
+		// retry m_numSounds times
+		for (uint32_t i = 0; i < data->m_numSounds; i++) {
+			if (Voice::s_voiceCollection.IsOutOfMemory())
+				break;
+
+			plex = SoundPlexChoiceList::GetSoundPlexObject(*data, controls, controls3d, owner);
+			if (plex)
+				break;
+		}
 		break;
+	}
 
 	case dtp::SoundPlex::SoundPlexSelector_MaterialList: // 9
 		plex = new SoundPlexMaterialList(snd->m_data, controls, controls3d, owner);
@@ -259,7 +273,7 @@ void buildUI(dtp::SoundPlex *snd, std::string indent) {
 		break;
 
 	case dtp::SoundPlex::SoundPlexSelector_ChoiceList: { // 8
-		auto *data = (dtp::SoundPlex::Choice*)snd->m_data;
+		auto *data = (dtp::SoundPlex::ChoiceList*)snd->m_data;
 		for (uint32_t i=0; i<data->m_numSounds; i++) {
 			auto *subPlex = data->m_sounds[i];
 			buildUI(subPlex, indent + "  ");

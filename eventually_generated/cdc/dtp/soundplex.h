@@ -29,11 +29,13 @@ struct SoundPlex {
 		// TODO
 	};
 
-	struct Choice {
-		uint32_t m_numSounds;
-		SoundPlex **m_sounds;
-		SoundPlex *m_soundData;
-		// TODO
+	struct ChoiceList {
+		uint32_t m_numSounds; // 0
+		SoundPlex **m_sounds; // 4
+		SoundPlex *m_soundData; // 8
+		int8_t m_sequence; // C
+		int8_t m_trackType; // D
+		uint32_t m_counter; // 10
 	};
 
 	struct Wave {
