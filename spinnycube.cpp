@@ -69,6 +69,7 @@
 #include "cdcScript/ScriptType.h"
 #include "scene/IMFTypes.h"
 #include "scene/IScene.h"
+#include "scene/SceneCellGroup.h" // for SceneCellGroup to ISceneCellGroup cast
 #include "scene/SceneEntity.h"
 #include "cdcSound/SoundPlex.h"
 #include "cdcWorld/RMIDrawableBase.h"
@@ -358,6 +359,7 @@ int spinnyCube(HWND window,
 
 	auto sceneCube = g_scene->CreateEntity();
 	sceneCube->setDrawable(&rmiDrawable);
+	sceneCube->setCellGroup(g_scene->GetCellGroup(0));
 
 	// cdc::RenderModelInstance *bottleRenderModelInstance =
 	// 	renderDevice->createRenderModelInstance(bottleRenderModel);

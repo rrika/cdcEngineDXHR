@@ -4,6 +4,7 @@
 namespace cdc {
 
 class IDrawable;
+class ISceneCellGroup;
 
 class ISceneEntity {
 public:
@@ -12,6 +13,7 @@ public:
 	virtual Matrix& getMatrix() = 0; // 8
 	virtual void setDrawable(IDrawable *) = 0; // C
 	virtual IDrawable *getDrawable() = 0; // 10
+	virtual void setCellGroup(ISceneCellGroup *) = 0; // 38
 };
 
 }

@@ -5,6 +5,7 @@
 namespace cdc {
 
 class IDrawable;
+class ISceneCellGroup;
 class Scene;
 class SceneCellGroup;
 
@@ -13,7 +14,9 @@ public:
 	Scene *scene; // 4
 	Matrix matrix; // 20
 	IDrawable *drawable = nullptr; // 6C
-	SceneCellGroup *sceneCellGroup; // 70
+	SceneCellGroup *sceneCellGroup = nullptr; // 70
+
+	void UpdateData(bool);
 
 public:
 	SceneEntity(Scene *scene) : scene(scene) {}
@@ -23,6 +26,7 @@ public:
 	Matrix& getMatrix() override;
 	void setDrawable(IDrawable *) override;
 	IDrawable *getDrawable() override;
+	void setCellGroup(ISceneCellGroup *) override;
 };
 
 }

@@ -19,10 +19,17 @@ public:
 	Scene(CommonRenderDevice *renderDevice);
 
 	// for DoRender
+	bool SetupView(/*TODO*/);
+	void TraverseForView(/*TODO*/);
+	void TraverseForLights(/*TODO*/);
+	void CallCallbacks(/*TODO*/);
+	void DrawTerrain(/*TODO*/);
 	void DrawEntities(/*TODO*/);
+	void DoRender();
 
 	// 43 methods
 	void Draw() override;
+	SceneCellGroup *GetCellGroup(uint32_t index) override;
 	SceneEntity *CreateEntity() override;
 };
 

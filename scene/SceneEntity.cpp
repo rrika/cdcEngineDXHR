@@ -22,4 +22,27 @@ IDrawable *SceneEntity::getDrawable() {
 	return drawable;
 }
 
+void SceneEntity::setCellGroup(ISceneCellGroup *newICellGroup) {
+	auto newCellGroup = static_cast<SceneCellGroup*>(newICellGroup);
+	if (sceneCellGroup != newCellGroup) {
+		// TODO
+		sceneCellGroup = newCellGroup;
+		UpdateData(true);
+	}
+}
+
+void SceneEntity::UpdateData(bool reInitCell) {
+	// HACK
+	auto cell = sceneCellGroup->cellByIndex(0);
+	if (reInitCell) {
+		auto subCell = &cell->subCells[0];
+		bool alreadyPresent = false;
+		for (auto ent : subCell->entities)
+			if (ent == this)
+				alreadyPresent = true;
+		if (!alreadyPresent)
+			subCell->entities.push_back(this);
+	}
+}
+
 }
