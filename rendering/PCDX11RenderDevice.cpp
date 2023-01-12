@@ -537,7 +537,7 @@ void PCDX11RenderDevice::method_174() {
 	// TODO
 }
 
-void PCDX11RenderDevice::getWindowSize(uint *width, uint *height) {
+void PCDX11RenderDevice::getWindowSize(uint32_t *width, uint32_t *height) {
 	// TODO
 }
 
@@ -838,7 +838,7 @@ void PCDX11RenderDevice::doFXAA(
 }
 
 
-CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown) {
+CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t height, bool unknown) {
 	// createPCDX11DeviceManager(); // already done, else wouldn't have an hwnd
 	g_renderDevice = new PCDX11RenderDevice(hwnd, width, height/*, unknown*/);
 	return g_renderDevice;

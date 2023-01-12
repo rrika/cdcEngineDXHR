@@ -166,7 +166,7 @@ public:
 	IRenderTarget *createRenderTarget(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t) override;
 	IDepthBuffer *createDepthBuffer() override;
 	void method_174() override;
-	void getWindowSize(uint *width, uint *height) override;
+	void getWindowSize(uint32_t *width, uint32_t *height) override;
 	void method_17C() override;
 	void method_180() override;
 
@@ -221,6 +221,6 @@ public:
 	void doFXAA(uint32_t quality, PCDX11Texture *texture, PCDX11RenderTarget *renderTarget);
 };
 
-CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint width, uint height, bool unknown);
+CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t height, bool unknown);
 
 }

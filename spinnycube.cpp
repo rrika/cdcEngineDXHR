@@ -12,7 +12,6 @@
 #endif
 
 #include "spinnycube.h"
-#include "types.h"
 #include "camera/CameraManager.h"
 #include "camera/GenericCamera.h"
 #include "cdc/dtp/objectproperties/imfref.h"

@@ -1,6 +1,5 @@
 #pragma once
 #include <stdint.h>
-#include "../types.h"
 #include "CommonScene.h"
 #include "LinearAllocator.h"
 #include "RenderPasses.h"
@@ -152,7 +151,7 @@ public:
 	virtual IRenderTarget *createRenderTarget(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t) = 0;
 	virtual IDepthBuffer *createDepthBuffer() = 0;
 	virtual void method_174() = 0;
-	virtual void getWindowSize(uint *width, uint *height) = 0;
+	virtual void getWindowSize(uint32_t *width, uint32_t *height) = 0;
 	virtual void method_17C() = 0;
 	virtual void method_180() = 0;
 	virtual void method_184();
