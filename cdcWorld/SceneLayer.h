@@ -24,10 +24,10 @@
 // 	float dword34;
 // };
 
-namespace cdc { class CellStreamGroupData; class Scene; }
+namespace cdc { class CellStreamGroupData; class IScene; }
 struct StreamUnit;
 
-extern cdc::Scene *g_scene;
+extern cdc::IScene *g_scene;
 
 class StreamingCallback { // 57
 public:

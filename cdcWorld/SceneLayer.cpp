@@ -7,7 +7,7 @@ namespace cdc {
 	extern CommonRenderDevice *g_renderDevice;
 }
 
-cdc::Scene *g_scene = nullptr;
+cdc::IScene *g_scene = nullptr;
 
 class MyStreamingCallback : public StreamingCallback { // 236
 public:
@@ -19,7 +19,7 @@ public:
 
 void SceneLayer::init() { // 1001
 	auto *sceneManager = cdc::SceneManager::create();
-	sceneManager->createScene(cdc::g_renderDevice);
+	g_scene = sceneManager->createScene(cdc::g_renderDevice);
 }
 
 uint32_t s_numStreamingCallbacks = 0;

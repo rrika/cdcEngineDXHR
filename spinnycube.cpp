@@ -68,10 +68,13 @@
 #include "cdcResource/WaveSection.h"
 #include "cdcScript/ScriptType.h"
 #include "scene/IMFTypes.h"
+#include "scene/IScene.h"
+#include "scene/SceneEntity.h"
 #include "cdcSound/SoundPlex.h"
 #include "cdcWorld/RMIDrawableBase.h"
 #include "cdcWorld/stream.h" // for buildUnitsUI
 #include "cdcWorld/StreamUnit.h"
+#include "cdcWorld/SceneLayer.h" // for g_scene
 
 #if ENABLE_IMGUI
 #include "imgui/imgui.h"
@@ -352,6 +355,9 @@ int spinnyCube(HWND window,
 		printf("  bottle->tab0Ext128Byte[i].material = %p\n", bottleRenderModel->tab0Ext128Byte[i].material);
 
 	RMIDrawableBase rmiDrawable(bottleRenderModel);
+
+	auto sceneCube = g_scene->CreateEntity();
+	sceneCube->setDrawable(&rmiDrawable);
 
 	// cdc::RenderModelInstance *bottleRenderModelInstance =
 	// 	renderDevice->createRenderModelInstance(bottleRenderModel);
@@ -735,7 +741,9 @@ int spinnyCube(HWND window,
 		}
 
 		// single bottle at origin
-		rmiDrawable.draw(&bottleWorldMatrix, 0.0f);
+		// rmiDrawable.draw(&bottleWorldMatrix, 0.0f);
+		sceneCube->setMatrix(bottleWorldMatrix);
+		g_scene->Draw();
 
 		// draw cells
 		if (cdc::Level *level = STREAM_GetStreamUnitWithID(0)->level) {
