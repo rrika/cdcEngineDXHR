@@ -21,6 +21,9 @@ target_sources(dxhr PRIVATE
 	CommonRenderTerrainInstance.cpp
 	CommonScene.cpp
 	LinearAllocator.cpp
+
+	PCDeviceManager.cpp
+
 	PCDX11DeviceManager.cpp
 	PCDX11InternalResource.cpp
 	PCDX11LightManager.cpp
@@ -39,6 +42,7 @@ target_sources(dxhr PRIVATE
 	PCDX11StreamDecl.cpp
 	PCDX11StreamDeclCache.cpp
 	PCDX11TerrainDrawable.cpp
+
 	Projection.cpp
 	RenderPasses.cpp
 	RenderResource.cpp

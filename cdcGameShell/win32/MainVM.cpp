@@ -6,10 +6,11 @@
 #include "../../game/Main.h"
 #include "imgui/imgui.h"
 #include "cdcLocale/localstr.h"
-#include "../../rendering/BuiltinResources.h"
-#include "../../rendering/IPCDeviceManager.h"
-#include "../../rendering/PCDX11DeviceManager.h"
-#include "../../rendering/PCDX11RenderDevice.h"
+#include "rendering/BuiltinResources.h"
+#include "rendering/IPCDeviceManager.h"
+#include "rendering/PCDeviceManager.h"
+#include "rendering/PCDX11DeviceManager.h"
+#include "rendering/PCDX11RenderDevice.h"
 
 using namespace cdc;
 
@@ -41,14 +42,13 @@ bool createDeviceManager() {
 	hasSSE = true; // TODO
 	hasMMX = true; // TODO
 
-	haveDX9Device = false; // TODO
+	haveDX9Device = createPCDeviceManager() != nullptr;
 	haveDX11Device = createPCDX11DeviceManager() != nullptr;
 
 	return haveDX9Device || haveDX11Device;
 }
 
-IPCDeviceManager *deviceManager9 = nullptr;
-uint32_t useDX11 = 1;
+uint32_t useDX11 = 0;
 
 IPCDeviceManager *getDeviceManager() {
 	if (useDX11 == 0)

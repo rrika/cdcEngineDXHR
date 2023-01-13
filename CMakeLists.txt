@@ -45,7 +45,7 @@ if (NATIVE_BUILD)
 		GIT_TAG v2.0
 		PATCH_COMMAND patch -f -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/dxvk-meson.patch || true
 		CONFIGURE_COMMAND meson setup <SOURCE_DIR> --cross-file ${CMAKE_CURRENT_SOURCE_DIR}/dxvk-build-linux32.txt -Dcpp_std=c++17
-		BUILD_COMMAND ninja src/d3d11/libdxvk_d3d11.so
+		BUILD_COMMAND ninja src/d3d9/libdxvk_d3d9.so src/d3d11/libdxvk_d3d11.so
 		INSTALL_COMMAND "")
 
 	ExternalProject_Get_property(dxvk-native SOURCE_DIR BINARY_DIR)
@@ -59,9 +59,10 @@ if (NATIVE_BUILD)
 		${DXVK_SOURCE_DIR}/include/native/directx
 		${DXVK_SOURCE_DIR}/include/native/windows)
 	target_link_directories(dxhr PRIVATE
+		${DXVK_BINARY_DIR}/src/d3d9
 		${DXVK_BINARY_DIR}/src/d3d11)
 	target_link_libraries(dxhr PRIVATE
-		dxvk_d3d11 SDL2)
+		dxvk_d3d9 dxvk_d3d11 SDL2)
 	set_target_properties(dxhr PROPERTIES
 		CXX_STANDARD 17)
 
@@ -76,7 +77,7 @@ elseif (MSVC)
 	add_executable(dxhr WIN32
 		spinnycube.cpp)
 	target_link_libraries(dxhr PRIVATE
-		user32 d3d11)
+		user32 d3d9 d3d11)
 
 	if (ENABLE_D3DCOMPILER)
 		target_link_libraries(dxhr PRIVATE
@@ -121,7 +122,7 @@ else()
 		../winsdk/sdk/lib/um/x86
 		../winsdk/sdk/lib/ucrt/x86)
 	target_link_libraries(dxhr PRIVATE
-		-luser32 -ld3d11)
+		-luser32 -ld3d9 -ld3d11)
 	if (ENABLE_D3DCOMPILER)
 		target_link_libraries(dxhr PRIVATE
 			-ld3dcompiler)

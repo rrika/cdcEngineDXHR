@@ -1,11 +1,12 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
-#include "../../game/Main.h"
-#include "../../rendering/BuiltinResources.h"
-#include "../../rendering/IPCDeviceManager.h"
-#include "../../rendering/PCDX11DeviceManager.h"
-#include "../../rendering/PCDX11RenderDevice.h"
+#include "game/Main.h"
+#include "rendering/BuiltinResources.h"
+#include "rendering/IPCDeviceManager.h"
+#include "rendering/PCDeviceManager.h"
+#include "rendering/PCDX11DeviceManager.h"
+#include "rendering/PCDX11RenderDevice.h"
 #include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h"
 #include "cdcLocale/localstr.h"
@@ -47,7 +48,7 @@ int main(int argc, char** argv) {
 	}
 	localstr_reload(); // HACK
 
-	auto deviceManager = createPCDX11DeviceManager();
+	auto deviceManager = createPCDeviceManager();
 	if (!createWindow())
 		return 1;
 	cdc::DisplayConfig *displayConfig = deviceManager->getDisplayConfig();
