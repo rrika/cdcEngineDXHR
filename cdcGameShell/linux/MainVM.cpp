@@ -4,7 +4,7 @@
 #include "game/Main.h"
 #include "rendering/BuiltinResources.h"
 #include "rendering/IPCDeviceManager.h"
-#include "rendering/PCDeviceManager.h"
+#include "rendering/pc/PCDeviceManager.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11RenderDevice.h"
 #include "cdcFile/ArchiveFileSystem.h"

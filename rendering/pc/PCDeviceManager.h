@@ -1,6 +1,6 @@
 #pragma once
 #include <windows.h>
-#include "IPCDeviceManager.h"
+#include "../IPCDeviceManager.h"
 
 struct IDirect3D9;
 struct IDirect3D9Device;
