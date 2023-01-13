@@ -1,6 +1,3 @@
-[project options]
-dxvk_native_force = true
-
 [binaries]
 c = ['clang', '-target', 'i386-pc-linux-gnu']
 cpp = ['clang++', '-target', 'i386-pc-linux-gnu']

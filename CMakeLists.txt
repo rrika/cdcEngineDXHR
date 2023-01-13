@@ -41,10 +41,10 @@ if (NATIVE_BUILD)
 		spinnycube.cpp)
 
 	ExternalProject_Add(dxvk-native
-		GIT_REPOSITORY https://github.com/Joshua-Ashton/dxvk-native.git
-		GIT_TAG native-1.9.2a
+		GIT_REPOSITORY https://github.com/doitsujin/dxvk.git
+		GIT_TAG v2.0
 		PATCH_COMMAND patch -f -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/dxvk-meson.patch || true
-		CONFIGURE_COMMAND meson setup <SOURCE_DIR> --cross-file ${CMAKE_CURRENT_SOURCE_DIR}/dxvk-build-linux32.txt
+		CONFIGURE_COMMAND meson setup <SOURCE_DIR> --cross-file ${CMAKE_CURRENT_SOURCE_DIR}/dxvk-build-linux32.txt -Dcpp_std=c++17
 		BUILD_COMMAND ninja src/d3d11/libdxvk_d3d11.so
 		INSTALL_COMMAND "")
 
