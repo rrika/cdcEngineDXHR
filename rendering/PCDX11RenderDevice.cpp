@@ -835,8 +835,8 @@ void PCDX11RenderDevice::doFXAA(
 		/*writeDepth=*/ false
 	);
 	stateManager->popRenderTargets();
-}
 
+}
 
 CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t height, bool unknown) {
 	// createPCDX11DeviceManager(); // already done, else wouldn't have an hwnd

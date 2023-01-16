@@ -23,6 +23,7 @@ target_sources(dxhr PRIVATE
 	LinearAllocator.cpp
 
 	pc/PCDeviceManager.cpp
+	pc/PCRenderDevice.cpp
 
 	PCDX11DeviceManager.cpp
 	PCDX11InternalResource.cpp

@@ -9,6 +9,7 @@
 #include "rendering/BuiltinResources.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/pc/PCDeviceManager.h"
+#include "rendering/pc/PCRenderDevice.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11RenderDevice.h"
 
@@ -201,7 +202,7 @@ void createRenderDevice2(HWND hwnd) {
 	g_height = rect.bottom;
 
 	if (useDX11 == 0)
-		; // createPCRenderDevice(hwnd, g_width, g_height, 0);
+		createPCRenderDevice(hwnd, g_width, g_height, 0);
 	if (useDX11 == 1)
 		createPCDX11RenderDevice(hwnd, g_width, g_height, 0);
 	// TODO: ShaderUsageDX11.bin

@@ -5,6 +5,7 @@
 #include "rendering/BuiltinResources.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/pc/PCDeviceManager.h"
+#include "rendering/pc/PCRenderDevice.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11RenderDevice.h"
 #include "cdcFile/ArchiveFileSystem.h"
@@ -61,7 +62,7 @@ int main(int argc, char** argv) {
 	displayConfig->enableTripleBuffer = false;
 	displayConfig->enableVsync = true;
 	displayConfig->lockWindowResolution = false;
-	g_renderDevice = createPCDX11RenderDevice(hwnd1, 640, 480, 0);
+	g_renderDevice = createPCRenderDevice(hwnd1, 640, 480, 0);
 
 	MAIN_Init();
 	return 0;
