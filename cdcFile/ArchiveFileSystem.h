@@ -47,4 +47,6 @@ public:
 	cdc::FileRequest *createRequest(cdc::FileReceiver *receiver, const char *path, uint32_t offset) override;
 	cdc::File *createFile(const char *path) override;
 	uint32_t getSize(const char *path) override;
+	void setLanguageMask(uint32_t) override;
+	uint32_t getLanguageMask() override;
 };
