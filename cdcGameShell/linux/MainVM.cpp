@@ -9,6 +9,7 @@
 #include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h"
 #include "cdcLocale/localstr.h"
+#include "cdcResource/Specialisation.h"
 
 using namespace cdc;
 
@@ -61,6 +62,14 @@ int main(int argc, char** argv) {
 	displayConfig->enableVsync = true;
 	displayConfig->lockWindowResolution = false;
 	g_renderDevice = createPCDX11RenderDevice(hwnd1, 640, 480, 0);
+
+	{
+		FileSystem *fs = getDefaultFileSystem();
+		uint32_t mask = fs->getLanguageMask();
+		mask &= 0x3fffffff;
+		mask |= 0x80000000; // dx11
+		Specialisation::BlockingChange(mask);
+	}
 
 	MAIN_Init();
 	return 0;

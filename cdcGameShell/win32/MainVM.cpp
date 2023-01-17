@@ -13,6 +13,7 @@
 #include "../../rendering/PCDX11RenderDevice.h"
 #include "../../rendering/renderdevice.h"
 #include "cdcWorld/RenderLayer.h"
+#include "cdcResource/Specialisation.h"
 
 using namespace cdc;
 
@@ -131,6 +132,14 @@ int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
 	}
 
 	*deviceManager->getDisplayConfig() = g_displayConfig; // HACK
+
+	{
+		FileSystem *fs = getDefaultFileSystem();
+		uint32_t mask = fs->getLanguageMask();
+		mask &= 0x3fffffff;
+		mask |= 0x80000000; // dx11
+		Specialisation::BlockingChange(mask);
+	}
 
 	// TODO
 	MAIN_Init();
