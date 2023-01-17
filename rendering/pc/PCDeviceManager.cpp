@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <d3d9.h>
 #include "PCDeviceManager.h"
+#include "shaders/PCShaderManager.h"
 
 namespace cdc {
 
@@ -12,6 +13,8 @@ PCDeviceManager::PCDeviceManager(
 	d3d9lib(d3d9lib),
 	d3d9(d3d9)
 {
+	shaderManager = new PCShaderManager();
+	// stateManager = new PCStateManager();
 /*
 #if _WIN32
 	auto createDXGIFactory = (decltype(&CreateDXGIFactory))(GetProcAddress(d3d9, "CreateDXGIFactory"));

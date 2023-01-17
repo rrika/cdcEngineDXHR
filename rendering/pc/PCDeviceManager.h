@@ -7,16 +7,20 @@ struct IDirect3DDevice9;
 
 namespace cdc {
 
+class PCShaderManager;
+
 class PCDeviceManager :
 	public IPCDeviceManager
 {
 	HMODULE d3d9lib; // 18
-	IDirect3D9 *d3d9;
+	IDirect3D9 *d3d9; // 1C
 	IDirect3DDevice9 *d3d9Device;
 	DisplayConfig config1; // 15C
 	DisplayConfig config2; // 1E4
-public:
+	PCShaderManager *shaderManager; // 2B4
+	// PCStateManager *stateManager; // 2B8
 
+public:
 	PCDeviceManager(HMODULE d3d9, IDirect3D9*);
 	void method_00() override;
 	DisplayConfig *getDisplayConfig() override;
@@ -32,7 +36,7 @@ public:
 	IDirect3D9 *getD3D() { return d3d9; }
 	IDirect3DDevice9 *getD3DDevice() { return d3d9Device; }
 	// PCStateManager *getStateManager() { return stateManager; }
-	// PCShaderManager *getShaderManager() { return &shaderManager; }
+	PCShaderManager *getShaderManager() { return shaderManager; }
 };
 
 extern PCDeviceManager *deviceManager9;

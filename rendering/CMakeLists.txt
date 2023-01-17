@@ -5,6 +5,10 @@ target_sources(dxhr PRIVATE
 	drawables/PCDX11MLAADrawable.cpp
 	drawables/PCDX11SetRTDrawable.cpp
 
+	pc/shaders/PCPixelShader.cpp
+	pc/shaders/PCShaderLib.cpp
+	pc/shaders/PCVertexShader.cpp
+
 	shaders/PCDX11PixelShader.cpp
 	shaders/PCDX11ShaderLib.cpp
 	shaders/PCDX11VertexShader.cpp
@@ -23,6 +27,7 @@ target_sources(dxhr PRIVATE
 	LinearAllocator.cpp
 
 	pc/PCDeviceManager.cpp
+	pc/PCInternalResource.cpp
 	pc/PCRenderDevice.cpp
 
 	PCDX11DeviceManager.cpp

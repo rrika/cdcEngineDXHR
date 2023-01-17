@@ -1,10 +1,9 @@
 #pragma once
 #include <windows.h>
 #include "rendering/CommonRenderDevice.h"
+#include "rendering/pc/PCInternalResource.h"
 
 namespace cdc {
-
-class PCInternalResource {}; // TODO
 
 class PCRenderDevice :
 	public PCInternalResource,
@@ -134,6 +133,9 @@ public:
 	void *captureRenderLists() override;
 	void revisitRenderLists(void*) override;
 	void freeRenderLists(void*) override;
+
+	bool internalCreate() override;
+	void internalRelease() override;
 
 	static RenderResource *createResource(uint32_t, uint32_t);
 	LinearAllocator *getLinear() { return linear30; }

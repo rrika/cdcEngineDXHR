@@ -1,4 +1,5 @@
 #include "PCRenderDevice.h"
+#include "shaders/PCShaderLib.h"
 
 namespace cdc {
 
@@ -157,9 +158,8 @@ void PCRenderDevice::createProceduralTexture() {
 	// TODO
 }
 
-IShaderLib *PCRenderDevice::createShaderLib(uint32_t) {
-	// TODO
-	return nullptr;
+IShaderLib *PCRenderDevice::createShaderLib(uint32_t size) {
+	return new PCShaderLib(size, this);
 }
 
 RenderMesh *PCRenderDevice::createRenderModel(uint32_t) {
@@ -259,6 +259,14 @@ void PCRenderDevice::revisitRenderLists(void*) {
 }
 
 void PCRenderDevice::freeRenderLists(void*) {
+	// TODO
+}
+
+bool PCRenderDevice::internalCreate() {
+	// TODO
+	return true;
+}
+void PCRenderDevice::internalRelease() {
 	// TODO
 }
 
