@@ -12,6 +12,7 @@
 #include "rendering/pc/PCRenderDevice.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11RenderDevice.h"
+#include "cdcResource/Specialisation.h"
 
 using namespace cdc;
 
@@ -49,7 +50,7 @@ bool createDeviceManager() {
 	return haveDX9Device || haveDX11Device;
 }
 
-uint32_t useDX11 = 0;
+uint32_t useDX11 = 0; // cdc::g_CurrentRenderer
 
 IPCDeviceManager *getDeviceManager() {
 	if (useDX11 == 0)
@@ -260,6 +261,17 @@ int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
 	}
 
 	*deviceManager->getDisplayConfig() = g_displayConfig; // HACK
+
+	{
+		FileSystem *fs = getDefaultFileSystem();
+		uint32_t mask = fs->getLanguageMask();
+		mask &= 0x3fffffff;
+		if (useDX11)
+			mask |= 0x80000000;
+		else
+			mask |= 0x40000000;
+		Specialisation::BlockingChange(mask);
+	}
 
 	// TODO
 	MAIN_Init();

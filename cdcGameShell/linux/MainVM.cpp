@@ -11,12 +11,14 @@
 #include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h"
 #include "cdcLocale/localstr.h"
+#include "cdcResource/Specialisation.h"
 
 using namespace cdc;
 
 HWND hwnd1;
 HWND hwnd2;
 HWND hwnd3;
+uint32_t useDX11 = 0; // cdc::g_CurrentRenderer
 
 bool createWindow() {
 	SDL_Window* window = SDL_CreateWindow(
@@ -49,7 +51,10 @@ int main(int argc, char** argv) {
 	}
 	localstr_reload(); // HACK
 
-	auto deviceManager = createPCDeviceManager();
+	auto deviceManager = useDX11
+		? (IPCDeviceManager*)createPCDX11DeviceManager()
+		: (IPCDeviceManager*)createPCDeviceManager();
+
 	if (!createWindow())
 		return 1;
 	cdc::DisplayConfig *displayConfig = deviceManager->getDisplayConfig();
@@ -62,7 +67,20 @@ int main(int argc, char** argv) {
 	displayConfig->enableTripleBuffer = false;
 	displayConfig->enableVsync = true;
 	displayConfig->lockWindowResolution = false;
-	g_renderDevice = createPCRenderDevice(hwnd1, 640, 480, 0);
+	g_renderDevice = useDX11
+		? createPCDX11RenderDevice(hwnd1, 640, 480, 0)
+		: createPCRenderDevice(hwnd1, 640, 480, 0);
+
+	{
+		FileSystem *fs = getDefaultFileSystem();
+		uint32_t mask = fs->getLanguageMask();
+		mask &= 0x3fffffff;
+		if (useDX11)
+			mask |= 0x80000000;
+		else
+			mask |= 0x40000000;
+		Specialisation::BlockingChange(mask);
+	}
 
 	MAIN_Init();
 	return 0;
