@@ -8,6 +8,7 @@
 #include "ResolveObject.h"
 #include "ResolveReceiver.h"
 #include "ResolveSection.h"
+#include "cdcFile/FileHelpers.h"
 #include "cdcFile/FileSystem.h"
 #include "cdcFile/FileUserBufferReceiver.h"
 
@@ -174,6 +175,7 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 	std::vector<char> data,
 	ResolveSection **resolveSections,
 	ResolveObject *resolveObject,
+	uint32_t languageMask,
 	bool requestDependencies)
 {
 	data = decompressCDRM(data);
@@ -252,7 +254,7 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 		cursor = (cursor+15) & ~15;
 
 		auto *resolveSection = sectionHeader.type < 16 ? resolveSections[sectionHeader.type] : nullptr;
-		if (resolveSection && (sectionHeader.languageBits >> 30) != 1) {
+		if (resolveSection && (languageMask & sectionHeader.languageBits) == languageMask) {
 			bool alreadyLoaded = false;
 			uint32_t id = resolveSection->allocate(
 				sectionHeader.id,
@@ -274,7 +276,7 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 
 	for (uint32_t i = 0; i < header.sectionCount; i++) {
 		DRMSectionHeader& sectionHeader = sectionHeaders[i];
-		if (relocPtrs[i] && (sectionHeader.languageBits >> 30) != 1)
+		if (relocPtrs[i] && (languageMask & sectionHeader.languageBits) == languageMask)
 			if (sectionHeader.unknown05)
 				applyRelocs(resolveSections, sectionHeaders.data(), sectionDomainIds.data(), i, relocPtrs[i]);
 	}
@@ -282,7 +284,7 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 	for (uint32_t i = 0; i < header.sectionCount; i++) {
 		DRMSectionHeader& sectionHeader = sectionHeaders[i];
 		auto *resolveSection = sectionHeader.type < 16 ? resolveSections[sectionHeader.type] : nullptr;
-		if (resolveSection && (sectionHeader.languageBits >> 30) != 1)
+		if (resolveSection && (languageMask & sectionHeader.languageBits) == languageMask)
 			if (sectionHeader.unknown05)
 				resolveSection->construct(sectionDomainIds[i], nullptr);
 	}
@@ -317,7 +319,7 @@ void hackResolveReceiver(FileSystem *fs, const char *path, ResolveSection **reso
 	// req is owned by fs which takes care of it in processAll()
 	delete file;
 
-	auto sectionHeaders = hackResolveReceiver(buffer, resolveSections, resolveObject);
+	auto sectionHeaders = hackResolveReceiver(buffer, resolveSections, resolveObject, fs->getLanguageMask());
 	if (index)
 		index->sectionHeaders[std::string(path)] = std::move(sectionHeaders);
 }
@@ -339,7 +341,7 @@ void ResolveReceiver::requestFailed(FileRequest *req) {
 
 void ResolveReceiver::requestComplete(FileRequest *req) {
 	printf("loading %s\n", resolveObject->path);
-	auto sectionHeaders = hackResolveReceiver(std::move(buffer), g_resolveSections, resolveObject);
+	auto sectionHeaders = hackResolveReceiver(std::move(buffer), g_resolveSections, resolveObject, getDefaultFileSystem()->getLanguageMask());
 
 	if (sectionHeaders.empty()) {
 		// recreate this receiver, for a time when the dependencies have arrived

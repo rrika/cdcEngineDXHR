@@ -68,6 +68,14 @@ uint32_t HackFileSystem::getSize(const char *path) {
 	return hf.getSize();
 }
 
+void HackFileSystem::setLanguageMask(uint32_t) {
+	// empty
+}
+
+uint32_t HackFileSystem::getLanguageMask() {
+	return 0;
+}
+
 bool HackFileSystem::hasRequests() {
 	return !requests.empty();
 }

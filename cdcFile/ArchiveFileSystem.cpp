@@ -175,3 +175,11 @@ uint32_t ArchiveFileSystem::getSize(const char *path) {
 		return 0;
 }
 
+void ArchiveFileSystem::setLanguageMask(uint32_t mask) {
+	languageMask = mask;
+}
+
+uint32_t ArchiveFileSystem::getLanguageMask() {
+	return languageMask;
+}
+

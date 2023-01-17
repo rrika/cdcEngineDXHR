@@ -10,7 +10,7 @@ class ResolveObject;
 struct ObjectTracker;
 
 class ResolveSection;
-std::vector<DRMSectionHeader> hackResolveReceiver(std::vector<char> data, ResolveSection **sections, ResolveObject *resolveObject, bool requestDependencies=true);
+std::vector<DRMSectionHeader> hackResolveReceiver(std::vector<char> data, ResolveSection **sections, ResolveObject *resolveObject, uint32_t languageMask, bool requestDependencies=true);
 void hackResolveReceiver(FileSystem *fs, const char *path, ResolveSection **sections, ResolveObject *resolveObject, DRMIndex *index=nullptr);
 
 class ResolveReceiver : public FileReceiver {
