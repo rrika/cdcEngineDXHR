@@ -42,6 +42,9 @@
 #include "rendering/CommonRenderTerrainInstance.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/IRenderPassCallback.h"
+#include "rendering/pc/PCDeviceManager.h"
+#include "rendering/pc/PCRenderContext.h"
+#include "rendering/pc/PCRenderDevice.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11MatrixState.h"
 #include "rendering/PCDX11RenderContext.h"
@@ -79,6 +82,7 @@
 
 #if ENABLE_IMGUI
 #include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_dx9.h"
 #include "imgui/backends/imgui_impl_dx11.h"
 #ifdef _WIN32
 #include "imgui/backends/imgui_impl_win32.h"
@@ -202,6 +206,90 @@ struct DRMExplorer {
 } drmexplorer;
 
 int spinnyCube(HWND window) {
+
+	if (!useDX11) {
+		auto renderDevice9 = static_cast<cdc::PCRenderDevice*>(cdc::g_renderDevice);
+		cdc::PCRenderContext *renderContext = renderDevice9->getRenderContext();
+		renderContext->internalCreate();
+
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		ImGui::StyleColorsDark();
+	#ifdef _WIN32
+		ImGui_ImplWin32_Init(window);
+	#else
+		ImGui_ImplSDL2_InitForSDLRenderer((SDL_Window*)window, nullptr);
+	#endif
+		ImGui_ImplDX9_Init(cdc::deviceManager9->getD3DDevice());
+
+		while (true)
+		{
+		#ifdef _WIN32
+			MSG msg;
+
+			while (PeekMessageA(&msg, nullptr, 0, 0, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+				if (msg.message == WM_DESTROY) {
+					PostQuitMessage(0);
+					goto end2;
+				}
+				if (msg.message == WM_QUIT) {
+					goto end2;
+				}
+
+				//if (msg.message == WM_KEYDOWN) return 0;
+				DispatchMessageA(&msg);
+			}
+		#else
+			SDL_Event event;
+			while (SDL_PollEvent(&event)) {
+				ImGui_ImplSDL2_ProcessEvent(&event);
+
+				switch (event.type) {
+					case SDL_WINDOWEVENT:
+						// if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+						// 	renderDevice11->handleResize(event.window.data1, event.window.data2);
+						break;
+					case SDL_QUIT:
+						goto end2;
+					default:
+						break;
+				}
+			}
+		#endif
+
+			ImGui_ImplDX11_NewFrame();
+		#ifdef _WIN32
+			ImGui_ImplWin32_NewFrame(); // this will reset our pretty cursor
+		#else
+			ImGui_ImplSDL2_NewFrame();
+		#endif
+			ImGui::NewFrame();
+
+			if (ImGui::BeginMainMenuBar())
+			{
+				if (ImGui::BeginMenu("Test")) {
+					ImGui::EndMenu();
+				}
+				ImGui::EndMainMenuBar();
+			}
+
+			renderContext->present(nullptr, nullptr, nullptr);
+		}
+
+	end2:
+		ImGui_ImplDX11_Shutdown();
+	#ifdef _WIN32
+		ImGui_ImplWin32_Shutdown();
+	#else
+		ImGui_ImplSDL2_Shutdown();
+	#endif
+		ImGui::DestroyContext();
+
+		return 0;
+	}
 
 	ID3D11Device *baseDevice = useDX11 ? cdc::deviceManager->getD3DDevice() : nullptr;
 	ID3D11DeviceContext *baseDeviceContext = useDX11 ? cdc::deviceManager->getD3DDeviceContext() : nullptr;

@@ -4,6 +4,8 @@
 #include "PCDeviceManager.h"
 #include "shaders/PCShaderManager.h"
 
+extern HWND hwnd1;
+
 namespace cdc {
 
 PCDeviceManager::PCDeviceManager(
@@ -27,6 +29,16 @@ PCDeviceManager::PCDeviceManager(
 	adapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
 #endif
 */
+
+	// HACK
+	d3d9->CreateDevice(
+		D3DADAPTER_DEFAULT,
+		D3DDEVTYPE_HAL,
+		hwnd1,
+		0,
+		&presentParams,
+		&d3d9Device
+	);
 }
 
 void PCDeviceManager::method_00() {

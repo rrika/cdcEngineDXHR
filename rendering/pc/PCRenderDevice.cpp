@@ -6,6 +6,22 @@ namespace cdc {
 
 PCRenderDevice::PCRenderDevice(HWND hwnd, uint32_t width, uint32_t height) {
 	// TODO
+	renderContext = CreateRenderContext(hwnd, width, height, /*useMultiSapmle=*/ true);
+	// TODO
+}
+
+PCRenderContext	*PCRenderDevice::CreateRenderContext(HWND hwnd, uint32_t width, uint32_t height, bool useMultiSample) {
+
+	class ExternalRenderContext : public PCRenderContext, RenderExternalResource {
+	public:
+		ExternalRenderContext(HWND hwnd, uint32_t width, uint32_t height, bool useMultiSample, PCRenderDevice *renderDevice) :
+			PCRenderContext(hwnd, width, height, useMultiSample, renderDevice),
+			RenderExternalResource()
+		{}
+	};
+
+	auto externalRenderContext = new ExternalRenderContext(hwnd, width, height, useMultiSample, this);
+	return static_cast<PCRenderContext*>(externalRenderContext);
 }
 
 void PCRenderDevice::refCountDec() {
@@ -266,8 +282,13 @@ bool PCRenderDevice::internalCreate() {
 	// TODO
 	return true;
 }
+
 void PCRenderDevice::internalRelease() {
 	// TODO
+}
+
+PCRenderContext *PCRenderDevice::getRenderContext() {
+	return renderContext; // 10C9C
 }
 
 CommonRenderDevice *createPCRenderDevice(HWND hwnd, uint32_t width, uint32_t height, bool unknown) {

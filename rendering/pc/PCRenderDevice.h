@@ -2,6 +2,7 @@
 #include <windows.h>
 #include "rendering/CommonRenderDevice.h"
 #include "rendering/pc/PCInternalResource.h"
+#include "rendering/pc/PCRenderContext.h"
 
 namespace cdc {
 
@@ -9,6 +10,10 @@ class PCRenderDevice :
 	public PCInternalResource,
 	public CommonRenderDevice
 {
+	PCRenderContext *renderContext = nullptr; // 10C9C
+
+	PCRenderContext	*CreateRenderContext(HWND hwnd, uint32_t width, uint32_t height, bool useMultiSample);
+
 public:
 	PCRenderDevice(HWND hwnd, uint32_t width, uint32_t height);
 
@@ -136,6 +141,23 @@ public:
 
 	bool internalCreate() override;
 	void internalRelease() override;
+
+	// virtual void method4() = 0;
+	// virtual void method8() = 0;
+	// virtual void methodC() = 0;
+	// virtual void method10() = 0;
+	// virtual void method14() = 0;
+	// virtual void method18() = 0;
+	virtual PCRenderContext *getRenderContext(); // 1C
+	// virtual void method20() = 0;
+	// virtual void method24() = 0;
+	// virtual void method28() = 0;
+	// virtual void method2C() = 0;
+	// virtual void method30() = 0;
+	// virtual void method34() = 0;
+	// virtual void method38() = 0;
+	// virtual void method3C() = 0;
+	// virtual void method40() = 0;
 
 	static RenderResource *createResource(uint32_t, uint32_t);
 	LinearAllocator *getLinear() { return linear30; }

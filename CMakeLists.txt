@@ -176,6 +176,7 @@ if (ENABLE_IMGUI)
 		3rdParty/imgui/imgui_draw.cpp
 		3rdParty/imgui/imgui_tables.cpp
 		3rdParty/imgui/imgui_widgets.cpp
+		3rdParty/imgui/backends/imgui_impl_dx9.cpp
 		3rdParty/imgui/backends/imgui_impl_dx11.cpp)
 
 	if (NATIVE_BUILD)
