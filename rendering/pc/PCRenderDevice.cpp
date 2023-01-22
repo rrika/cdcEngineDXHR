@@ -1,3 +1,4 @@
+#include "PCMaterial.h"
 #include "PCRenderDevice.h"
 #include "shaders/PCShaderLib.h"
 
@@ -145,8 +146,7 @@ void PCRenderDevice::method_108() {
 }
 
 IMaterial *PCRenderDevice::createMaterial() {
-	// TODO
-	return nullptr;
+	return new PCMaterial(this);
 }
 
 TextureMap *PCRenderDevice::createTexture(uint32_t) {
