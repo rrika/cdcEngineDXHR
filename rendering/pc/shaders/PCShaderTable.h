@@ -19,8 +19,8 @@ public:
 class PCVertexShaderTable : public PCShaderTable {
 public:
 	// uint32_t dword10;
-	PCVertexShader **vertexShaders = nullptr;
-	bool hasOwnership = 0;
+	PCVertexShader **vertexShaders = nullptr; // 14
+	bool hasOwnership = 0; // 18
 	// uint8_t byte19;
 	// uint8_t byte1A;
 	// uint8_t byte1B;
@@ -42,6 +42,15 @@ public:
 					/*isWrapped=*/ true);
 			} else
 				vertexShaders[i] = nullptr;
+
+		// if (!neverPrecreate ...) {
+		//     // TODO
+		// }
+
+		if (takeCopy) {
+			blob = nullptr;
+			offsets = 0;
+		}
 	}
 
 	PCVertexShader *operator[](size_t i) const { return vertexShaders[i]; }
@@ -50,8 +59,8 @@ public:
 class PCPixelShaderTable : public PCShaderTable {
 public:
 	// uint32_t dword10;
-	PCPixelShader **pixelShaders = nullptr;
-	bool hasOwnership = false;
+	PCPixelShader **pixelShaders = nullptr; // 14
+	bool hasOwnership = false; // 18
 	// uint8_t f19[3];
 	// uint32_t dword1C;
 public:
@@ -63,7 +72,7 @@ public:
 		numShaders = blobWords[0] >> 2;
 		pixelShaders = new PCPixelShader*[numShaders];
 		hasOwnership = takeCopy;
-		memset(pixelShaders, 0, sizeof(PCVertexShader*) * numShaders);
+		memset(pixelShaders, 0, sizeof(PCPixelShader*) * numShaders);
 		for (uint32_t i = 0; i < numShaders; i++)
 			if (offsets[i] != ~0u)
 				*(uint32_t*)(blob + offsets[i]) ^= (i&1); // what??
@@ -74,6 +83,15 @@ public:
 					/*blob=*/ blob + offsets[i],
 					/*takeCopy=*/ hasOwnership,
 					/*isWrapped=*/ true);
+
+		// if (!neverPrecreate ...) {
+		//     // TODO
+		// }
+
+		if (takeCopy) {
+			blob = nullptr;
+			offsets = 0;
+		}
 	}
 
 	PCPixelShader *operator[](size_t i) const { return pixelShaders[i]; }
