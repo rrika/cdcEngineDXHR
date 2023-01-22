@@ -18,7 +18,7 @@ using namespace cdc;
 HWND hwnd1;
 HWND hwnd2;
 HWND hwnd3;
-uint32_t useDX11 = 0; // cdc::g_CurrentRenderer
+uint32_t useDX11 = 1; // cdc::g_CurrentRenderer
 
 bool createWindow() {
 	SDL_Window* window = SDL_CreateWindow(

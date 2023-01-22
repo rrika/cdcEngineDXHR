@@ -20,6 +20,7 @@
 using namespace cdc;
 
 extern HWND hwnd1;
+extern uint32_t useDX11;
 
 char buildType[16];
 char pathPrefix[36];
@@ -139,8 +140,5 @@ void MAIN_Init() {
 	getDefaultFileSystem()->processAll();
 
 	// HACK
-	spinnyCube(
-		hwnd1,
-		deviceManager->getD3DDevice(),
-		deviceManager->getD3DDeviceContext());
+	spinnyCube(hwnd1);
 }

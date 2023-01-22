@@ -92,6 +92,8 @@
 #include <SDL2/SDL.h>
 #endif
 
+extern uint32_t useDX11;
+
 class ImGuiDrawable : public cdc::IRenderDrawable {
 public:
 	std::function<void()> lastMinuteAdditions;
@@ -199,12 +201,14 @@ struct DRMExplorer {
 	}
 } drmexplorer;
 
-int spinnyCube(HWND window,
-	ID3D11Device *baseDevice,
-	ID3D11DeviceContext *baseDeviceContext) {
+int spinnyCube(HWND window) {
+
+	ID3D11Device *baseDevice = useDX11 ? cdc::deviceManager->getD3DDevice() : nullptr;
+	ID3D11DeviceContext *baseDeviceContext = useDX11 ? cdc::deviceManager->getD3DDeviceContext() : nullptr;
 
 	std::unique_ptr<cdc::PCMouseKeyboard> mouseKeyboard(cdc::PCMouseKeyboard::create(window));
-	auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
+	auto renderDevice11 = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
+	auto renderDevice = cdc::g_renderDevice;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -218,7 +222,7 @@ int spinnyCube(HWND window,
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
-	cdc::PCDX11RenderContext *renderContext = renderDevice->getRenderContextAny();
+	cdc::PCDX11RenderContext *renderContext = renderDevice11->getRenderContextAny();
 	renderContext->internalCreate();
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -336,7 +340,7 @@ int spinnyCube(HWND window,
 	auto bottleTexture = (cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);
 	bottleTexture->asyncCreate();
-	renderDevice->missingTexture = bottleTexture;
+	renderDevice11->missingTexture = bottleTexture;
 	printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
 
 	// create the other four textures
@@ -450,7 +454,7 @@ int spinnyCube(HWND window,
 	ImGuiDrawable imGuiDrawable;
 
 	cdc::PCDX11FXAADrawable fxaaDrawable(
-		renderDevice,
+		renderDevice11,
 		/*quality*/ 2,
 		/*texture*/ nullptr, // HACK
 		/*renderTarget*/ nullptr, // HACK
@@ -521,7 +525,7 @@ int spinnyCube(HWND window,
 			switch (event.type) {
 				case SDL_WINDOWEVENT:
 					if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-						renderDevice->handleResize(event.window.data1, event.window.data2);
+						renderDevice11->handleResize(event.window.data1, event.window.data2);
 					break;
 				case SDL_QUIT:
 					goto end;
@@ -651,7 +655,7 @@ int spinnyCube(HWND window,
 
 		cdc::Matrix bottleWorldMatrix = bottleTranslate * bottleScale;
 
-		cdc::PCDX11MatrixState lightMatrixState(renderDevice);
+		cdc::PCDX11MatrixState lightMatrixState(renderDevice11);
 		lightMatrixState.resize(1);
 		auto *lightWorldMatrix = reinterpret_cast<cdc::Matrix*>(lightMatrixState.poseData->getMatrix(0));
 		*lightWorldMatrix = lightScaleTranslate;
@@ -776,7 +780,7 @@ int spinnyCube(HWND window,
 		// can't apply to the proper color buffer because it'd be read/written at the same time
 		// renderDevice->recordDrawable(&fxaaDrawable, /*mask=*/ 0x100, 0);
 
-		renderDevice->recordDrawable(&imGuiDrawable, /*mask=*/ 0x100, /*addToParent=*/ 0);
+		renderDevice11->recordDrawable(&imGuiDrawable, /*mask=*/ 0x100, /*addToParent=*/ 0);
 		renderDevice->finishScene();
 		renderDevice->endRenderList();
 
