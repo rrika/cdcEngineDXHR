@@ -13,6 +13,7 @@
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11RenderDevice.h"
 #include "cdcResource/Specialisation.h"
+#include "../../rendering/renderdevice.h"
 
 using namespace cdc;
 
@@ -50,12 +51,10 @@ bool createDeviceManager() {
 	return haveDX9Device || haveDX11Device;
 }
 
-uint32_t useDX11 = 0; // cdc::g_CurrentRenderer
-
 IPCDeviceManager *getDeviceManager() {
-	if (useDX11 == 0)
+	if (g_CurrentRenderer == RENDERER_DX9)
 		return deviceManager9;
-	if (useDX11 == 1)
+	if (g_CurrentRenderer == RENDERER_DX11)
 		return deviceManager;
 	return nullptr;
 }
@@ -202,9 +201,9 @@ void createRenderDevice2(HWND hwnd) {
 	g_width = rect.right;
 	g_height = rect.bottom;
 
-	if (useDX11 == 0)
+	if (g_CurrentRenderer == RENDERER_DX9)
 		createPCRenderDevice(hwnd, g_width, g_height, 0);
-	if (useDX11 == 1)
+	if (g_CurrentRenderer == RENDERER_DX11)
 		createPCDX11RenderDevice(hwnd, g_width, g_height, 0);
 	// TODO: ShaderUsageDX11.bin
 }
@@ -266,7 +265,7 @@ int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
 		FileSystem *fs = getDefaultFileSystem();
 		uint32_t mask = fs->getLanguageMask();
 		mask &= 0x3fffffff;
-		if (useDX11)
+		if (g_CurrentRenderer == RENDERER_DX11)
 			mask |= 0x80000000;
 		else
 			mask |= 0x40000000;

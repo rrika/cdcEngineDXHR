@@ -56,6 +56,7 @@
 #include "rendering/PCDX11StateManager.h"
 #include "rendering/PCDX11StreamDecl.h"
 #include "rendering/Projection.h"
+#include "rendering/renderdevice.h"
 #include "rendering/RenderModelInstance.h"
 #include "rendering/RenderPasses.h"
 #include "rendering/shaders/PCDX11PixelShader.h"
@@ -95,8 +96,6 @@
 #ifdef __linux__
 #include <SDL2/SDL.h>
 #endif
-
-extern uint32_t useDX11;
 
 class ImGuiDrawable : public cdc::IRenderDrawable {
 public:
@@ -206,6 +205,8 @@ struct DRMExplorer {
 } drmexplorer;
 
 int spinnyCube(HWND window) {
+
+	bool useDX11 = cdc::g_CurrentRenderer == cdc::RENDERER_DX11;
 
 	if (!useDX11) {
 		auto renderDevice9 = static_cast<cdc::PCRenderDevice*>(cdc::g_renderDevice);
