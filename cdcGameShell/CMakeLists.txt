@@ -5,5 +5,6 @@ if (NATIVE_BUILD)
 else()
 	target_sources(dxhr PRIVATE
 		win32/MainVM.cpp
+		win32/gamewindow.cpp
 		MainG2.cpp)
 endif()
