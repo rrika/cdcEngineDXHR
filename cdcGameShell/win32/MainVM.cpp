@@ -15,6 +15,7 @@
 #include "rendering/PCDX11RenderDevice.h"
 #include "cdcResource/Specialisation.h"
 #include "../../rendering/renderdevice.h"
+#include "cdcWorld/RenderLayer.h"
 
 using namespace cdc;
 
@@ -79,26 +80,9 @@ bool showSetupIfNecessary(uint32_t unknown, uint32_t showSetupOrConfig) {
 
 DisplayConfig displayConfig;
 
-uint32_t g_width = 640;
-uint32_t g_height = 480;
-
-void createRenderDevice2(HWND hwnd) {
-	// HACK
-	RECT rect;
-	GetClientRect(hwnd, &rect);
-	g_width = rect.right;
-	g_height = rect.bottom;
-
-	if (g_CurrentRenderer == RENDERER_DX9)
-		createPCRenderDevice(hwnd, g_width, g_height, 0);
-	if (g_CurrentRenderer == RENDERER_DX11)
-		createPCDX11RenderDevice(hwnd, g_width, g_height, 0);
-	// TODO: ShaderUsageDX11.bin
-}
-
 bool createRenderDevice() {
 	// TODO: decrease ref count on device manager
-	createRenderDevice2(hwnd1);
+	cdcRenderLayer::Create(hwnd1);
 	// TODO: DX11DeviceCallback
 	return true;
 }
