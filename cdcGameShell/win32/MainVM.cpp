@@ -10,6 +10,7 @@
 #include "../../rendering/IPCDeviceManager.h"
 #include "../../rendering/PCDX11DeviceManager.h"
 #include "../../rendering/PCDX11RenderDevice.h"
+#include "../../rendering/renderdevice.h"
 
 using namespace cdc;
 
@@ -48,12 +49,11 @@ bool createDeviceManager() {
 }
 
 IPCDeviceManager *deviceManager9 = nullptr;
-uint32_t useDX11 = 1;
 
 IPCDeviceManager *getDeviceManager() {
-	if (useDX11 == 0)
+	if (g_CurrentRenderer == RENDERER_DX9)
 		return deviceManager9;
-	if (useDX11 == 1)
+	if (g_CurrentRenderer == RENDERER_DX11)
 		return deviceManager;
 	return nullptr;
 }
@@ -200,9 +200,9 @@ void createRenderDevice2(HWND hwnd) {
 	g_width = rect.right;
 	g_height = rect.bottom;
 
-	if (useDX11 == 0)
+	if (g_CurrentRenderer == RENDERER_DX9)
 		; // createPCRenderDevice(hwnd, g_width, g_height, 0);
-	if (useDX11 == 1)
+	if (g_CurrentRenderer == RENDERER_DX11)
 		createPCDX11RenderDevice(hwnd, g_width, g_height, 0);
 	// TODO: ShaderUsageDX11.bin
 }

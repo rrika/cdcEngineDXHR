@@ -1,11 +1,13 @@
 #include "CommonRenderDevice.h"
 #include "CommonRenderTerrain.h" // for cast in CommonRenderDevice::createResource
 #include "RenderMesh.h" // for cast in CommonRenderDevice::createResource
+#include "renderdevice.h"
 #include "surfaces/TextureMap.h"
 
 namespace cdc {
 
 CommonRenderDevice *g_renderDevice = nullptr;
+PCRendererType g_CurrentRenderer = RENDERER_DX11; // for a lack of better place
 
 CommonRenderDevice::CommonRenderDevice() :
 	linear4(0x20000, false, /*&linearAllocExt,*/ "RenderDevice")
