@@ -4,8 +4,6 @@
 #include "PCDeviceManager.h"
 #include "shaders/PCShaderManager.h"
 
-extern HWND hwnd1;
-
 namespace cdc {
 
 PCDeviceManager::PCDeviceManager(
@@ -29,16 +27,6 @@ PCDeviceManager::PCDeviceManager(
 	adapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
 #endif
 */
-
-	// HACK
-	d3d9->CreateDevice(
-		D3DADAPTER_DEFAULT,
-		D3DDEVTYPE_HAL,
-		hwnd1,
-		0,
-		&presentParams,
-		&d3d9Device
-	);
 }
 
 void PCDeviceManager::method_00() {
@@ -74,13 +62,45 @@ void PCDeviceManager::method_1C() {
 	// TODO
 }
 
-void PCDeviceManager::method_20() {
-	// TODO
+void PCDeviceManager::Init(HWND hwnd, DisplayConfig *displayConfig) {
+	// HACK
+	if (hwnd)
+		this->hwnd = hwnd;
+
+	if (!d3d9Device)
+		CreateDevice(displayConfig);
 }
 
 void PCDeviceManager::method_24() {
 	// TODO
 }
+
+bool PCDeviceManager::InitializePresentParams(DisplayConfig *displayConfig) {
+	// HACK
+
+	presentParams = {0};
+	presentParams.Windowed   = TRUE;
+	presentParams.SwapEffect = D3DSWAPEFFECT_COPY;
+
+	return true;
+}
+
+void PCDeviceManager::CreateDevice(DisplayConfig *displayConfig) {
+	// HACK
+
+	if (!InitializePresentParams(displayConfig))
+		return;
+
+	d3d9->CreateDevice(
+		D3DADAPTER_DEFAULT,
+		D3DDEVTYPE_HAL,
+		hwnd,
+		0,
+		&presentParams,
+		&d3d9Device
+	);
+}
+
 
 PCDeviceManager *deviceManager9 = nullptr;
 

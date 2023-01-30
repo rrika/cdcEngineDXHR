@@ -8,6 +8,7 @@
 #include "rendering/pc/PCRenderDevice.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11RenderDevice.h"
+#include "rendering/renderdevice.h"
 #include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h"
 #include "cdcLocale/localstr.h"
@@ -18,7 +19,6 @@ using namespace cdc;
 HWND hwnd1;
 HWND hwnd2;
 HWND hwnd3;
-uint32_t useDX11 = 0; // cdc::g_CurrentRenderer
 
 bool createWindow() {
 	SDL_Window* window = SDL_CreateWindow(
@@ -51,6 +51,8 @@ int main(int argc, char** argv) {
 	}
 	localstr_reload(); // HACK
 
+	bool useDX11 = g_CurrentRenderer == cdc::RENDERER_DX11;
+
 	auto deviceManager = useDX11
 		? (IPCDeviceManager*)createPCDX11DeviceManager()
 		: (IPCDeviceManager*)createPCDeviceManager();
@@ -67,6 +69,7 @@ int main(int argc, char** argv) {
 	displayConfig->enableTripleBuffer = false;
 	displayConfig->enableVsync = true;
 	displayConfig->lockWindowResolution = false;
+	deviceManager->Init(hwnd1, displayConfig);
 	g_renderDevice = useDX11
 		? createPCDX11RenderDevice(hwnd1, 640, 480, 0)
 		: createPCRenderDevice(hwnd1, 640, 480, 0);

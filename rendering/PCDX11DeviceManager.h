@@ -35,7 +35,7 @@ public:
 	void method_14() override;
 	void method_18() override;
 	void method_1C() override;
-	void method_20() override;
+	void Init(HWND, DisplayConfig*) override;
 	void method_24() override;
 
 	ID3D11Device *getD3DDevice() { return device; }

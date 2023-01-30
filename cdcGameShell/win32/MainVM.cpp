@@ -78,10 +78,16 @@ bool showSetupIfNecessary(uint32_t unknown, uint32_t showSetupOrConfig) {
 	return showSetup(); // TODO
 }
 
-DisplayConfig displayConfig;
-
 bool createRenderDevice() {
-	// TODO: decrease ref count on device manager
+	if (g_CurrentRenderer == RENDERER_DX9) {
+		deviceManager9->Init(hwnd1, &g_displayConfig);
+		// TODO: decrease ref count on deviceManager
+
+	} else if (g_CurrentRenderer == RENDERER_DX11) {
+		deviceManager->Init(hwnd1, &g_displayConfig);
+		// TODO: decrease ref count on deviceManager9
+	}
+
 	cdcRenderLayer::Create(hwnd1);
 	// TODO: DX11DeviceCallback
 	return true;

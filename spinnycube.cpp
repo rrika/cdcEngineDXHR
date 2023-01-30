@@ -211,6 +211,7 @@ int spinnyCube(HWND window) {
 	if (!useDX11) {
 		auto renderDevice9 = static_cast<cdc::PCRenderDevice*>(cdc::g_renderDevice);
 		cdc::PCRenderContext *renderContext = renderDevice9->getRenderContext();
+		auto d3dDevice9 = cdc::deviceManager9->getD3DDevice();
 		renderContext->internalCreate();
 
 		IMGUI_CHECKVERSION();
@@ -222,7 +223,7 @@ int spinnyCube(HWND window) {
 	#else
 		ImGui_ImplSDL2_InitForSDLRenderer((SDL_Window*)window, nullptr);
 	#endif
-		ImGui_ImplDX9_Init(cdc::deviceManager9->getD3DDevice());
+		ImGui_ImplDX9_Init(d3dDevice9);
 
 		while (true)
 		{
@@ -261,7 +262,7 @@ int spinnyCube(HWND window) {
 			}
 		#endif
 
-			ImGui_ImplDX11_NewFrame();
+			ImGui_ImplDX9_NewFrame();
 		#ifdef _WIN32
 			ImGui_ImplWin32_NewFrame(); // this will reset our pretty cursor
 		#else
@@ -277,11 +278,27 @@ int spinnyCube(HWND window) {
 				ImGui::EndMainMenuBar();
 			}
 
-			renderContext->present(nullptr, nullptr, nullptr);
+			bool showDRMWindow = true;
+			drmexplorer.draw(&showDRMWindow);
+
+			d3dDevice9->SetRenderState(D3DRS_ZENABLE, FALSE);
+			d3dDevice9->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+			d3dDevice9->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+			D3DCOLOR clear_col_dx = D3DCOLOR_RGBA(0x80, 0x80, 0x80, 0xff);
+			d3dDevice9->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, clear_col_dx, 1.0f, 0);
+
+			if (d3dDevice9->BeginScene() >= 0) {
+				ImGui::Render();
+				ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+				d3dDevice9->EndScene();
+			}
+
+			// HRESULT result = d3dDevice9->Present(NULL, NULL, NULL, NULL);
+			renderContext->present(nullptr, nullptr, window);
 		}
 
 	end2:
-		ImGui_ImplDX11_Shutdown();
+		ImGui_ImplDX9_Shutdown();
 	#ifdef _WIN32
 		ImGui_ImplWin32_Shutdown();
 	#else

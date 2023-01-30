@@ -68,7 +68,7 @@ void PCDX11DeviceManager::method_1C() {
 	// TODO
 }
 
-void PCDX11DeviceManager::method_20() {
+void PCDX11DeviceManager::Init(HWND hwnd, DisplayConfig *displayConfig) {
 	// TODO
 }
 

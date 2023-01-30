@@ -1,5 +1,10 @@
 #pragma once
 #include <cstdint>
+#if _WIN32
+#include <windows.h> // for HWND
+#else
+#include <windows_base.h> // for HWND, provided by dxvk-native
+#endif
 
 namespace cdc {
 
@@ -76,7 +81,7 @@ public:
 	virtual void method_14() = 0;
 	virtual void method_18() = 0;
 	virtual void method_1C() = 0;
-	virtual void method_20() = 0;
+	virtual void Init(HWND, DisplayConfig*) = 0;
 	virtual void method_24() = 0;
 };
 

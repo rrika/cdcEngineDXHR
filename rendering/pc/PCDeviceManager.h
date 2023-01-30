@@ -11,6 +11,7 @@ class PCShaderManager;
 class PCDeviceManager :
 	public IPCDeviceManager
 {
+	HWND hwnd; // 14
 	HMODULE d3d9lib; // 18
 	IDirect3D9 *d3d9; // 1C
 	IDirect3DDevice9 *d3d9Device = nullptr;
@@ -32,10 +33,11 @@ public:
 	void method_14() override;
 	void method_18() override;
 	void method_1C() override;
-	void method_20() override;
+	void Init(HWND, DisplayConfig*) override;
 	void method_24() override;
 
-	void CreateDevice();
+	bool InitializePresentParams(DisplayConfig*);
+	void CreateDevice(DisplayConfig*);
 
 	IDirect3D9 *getD3D() { return d3d9; }
 	IDirect3DDevice9 *getD3DDevice() { return d3d9Device; }
