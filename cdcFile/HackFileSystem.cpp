@@ -90,6 +90,7 @@ void HackFileSystem::processRequest() {
 	char *buffer = new char[req->size];
 	fseek(req->f->f, req->offset, SEEK_SET);
 	fread(buffer, req->size, 1, req->f->f);
+	req->receiver->requestStarted(req, req->size);
 	req->receiver->process(req, buffer, req->size, 0);
 
 	if (req->completionStatus == 4)

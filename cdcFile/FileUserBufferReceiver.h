@@ -9,6 +9,7 @@ class FileUserBufferReceiver : public FileReceiver {
 public:
 	static FileUserBufferReceiver *create(void *buffer) { return new FileUserBufferReceiver(buffer); }
 	void process(FileRequest*, void *input, uint32_t size, uint32_t offset) override;
+	void requestStarted(FileRequest*, uint32_t size) override;
 	void requestFailed(FileRequest*) override;
 	void requestComplete(FileRequest*) override;
 };

@@ -7,6 +7,10 @@ void FileUserBufferReceiver::process(FileRequest*, void *input, uint32_t size, u
 	memcpy((char*)buffer + offset, input, size);
 }
 
+void FileUserBufferReceiver::requestStarted(FileRequest*, uint32_t size) {
+	// empty
+}
+
 void FileUserBufferReceiver::requestFailed(FileRequest*) {
 	delete this;
 }

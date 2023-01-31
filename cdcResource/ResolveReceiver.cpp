@@ -335,6 +335,10 @@ void ResolveReceiver::process(FileRequest*, void *input, uint32_t size, uint32_t
 	memcpy(buffer.data() + offset, input, size);
 }
 
+void ResolveReceiver::requestStarted(FileRequest*, uint32_t size) {
+	// empty
+}
+
 void ResolveReceiver::requestFailed(FileRequest *req) {
 	// TODO
 }
