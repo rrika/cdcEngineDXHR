@@ -16,6 +16,7 @@ class RingBuffer :
 	public IRingBuffer,
 	public DebugRingBuffer
 {
+	friend class RingBufferChain;
 public:
 	char *getBuffer() { return buffer; }
 	void push(char *src, uint32_t amount) override;
