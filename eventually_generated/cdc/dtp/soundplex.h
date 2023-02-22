@@ -38,6 +38,13 @@ struct SoundPlex {
 		uint32_t m_counter; // 10
 	};
 
+	struct Stream { // compare with dtp::Multiplex
+		const char *m_streamName;
+		int8_t byte4; // TODO
+		int8_t m_priorityStream;
+		// TODO
+	};
+
 	struct Wave {
 		uint32_t m_id;
 		// TODO

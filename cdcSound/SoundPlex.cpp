@@ -257,8 +257,12 @@ void buildUI(dtp::SoundPlex *snd, std::string indent) {
 		break;
 	}
 
-	case dtp::SoundPlex::SoundPlexSelector_Stream: // 4
+	case dtp::SoundPlex::SoundPlexSelector_Stream: { // 4
+		auto *data = (dtp::SoundPlex::Stream *)snd->m_data;
+		ImGui::SameLine();
+		ImGui::Text("%s", data->m_streamName);
 		break;
+	}
 
 	case dtp::SoundPlex::SoundPlexSelector_Assignment: { // 5
 		auto *data = (dtp::SoundPlex::Assignment*)snd->m_data;
