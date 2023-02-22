@@ -63,7 +63,7 @@ struct ObjectBaseData {
 	uint32_t dwordB0;
 	uint32_t dwordB4;
 	uint32_t dwordB8;
-	uint32_t dwordBC; // important for drms storing general purpose data
+	void *TuneDataPtr; // BC, override data in object by this
 	uint32_t dwordC0;
 	cdc::ObjectBlobAnim **animationsC4;
 	uint32_t dwordC8;

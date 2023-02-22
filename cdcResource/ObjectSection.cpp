@@ -57,10 +57,10 @@ void ObjectSection::construct(uint32_t domainId, void *) {
 			printf("  models[0]     = %p\n", objBlob->models[0]);
 
 		// TODO		
-		printf("  dwordBC       = %08x\n", objBlob->dtpData->dwordBC);
-		if (auto dwordBC = objBlob->dtpData->dwordBC) {
-			objBlob->dword58 = dwordBC;
-			objBlob->dword54 = (uint32_t)objBlob->dtpData;
+		printf("  TuneDataPtr   = %p\n", objBlob->dtpData->TuneDataPtr);
+		if (auto TuneDataPtr = objBlob->dtpData->TuneDataPtr) {
+			objBlob->data = TuneDataPtr;
+			objBlob->dtpDataCopy = objBlob->dtpData;
 		}
 	}
 }

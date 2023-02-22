@@ -28,8 +28,8 @@ struct Object {
 	uint32_t dword48;
 	uint32_t dword4C;
 	uint32_t dword50;
-	uint32_t dword54;
-	uint32_t dword58;
+	dtp::ObjectBaseData *dtpDataCopy; // 54
+	void *data; // 58
 	uint32_t name;
 	uint32_t dword60;
 	uint16_t word64;
