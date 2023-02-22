@@ -67,6 +67,7 @@
 #include "cdcResource/ResolveSection.h"
 #include "cdcResource/WaveSection.h"
 #include "cdcScript/ScriptType.h"
+#include "cdcSound/MultiplexStream.h"
 #include "scene/IMFTypes.h"
 #include "scene/IScene.h"
 #include "scene/SceneCellGroup.h" // for SceneCellGroup to ISceneCellGroup cast
@@ -91,6 +92,15 @@
 #ifdef __linux__
 #include <SDL2/SDL.h>
 #endif
+
+cdc::MultiplexStream *neverAskedForThis = nullptr;
+
+void howDoYouHandleAllOfThis() {
+	if (!neverAskedForThis)
+		neverAskedForThis = cdc::MultiplexStream::CreateSoundStream("vo\\eng\\det1\\adam_jensen\\sq02\\det1_sq02_dia_adam_006b", 0);
+
+	((cdc::MultiplexStreamImpl*)neverAskedForThis)->hackSample->Play();
+}
 
 class ImGuiDrawable : public cdc::IRenderDrawable {
 public:
@@ -801,6 +811,7 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Show units")) { showUnitsWindow = true; }
 				if (ImGui::MenuItem("Show loaded units")) { showLoadedUnitsWindow = true; }
 				if (ImGui::MenuItem("Show strings")) { showStringsWindow = true; }
+				if (ImGui::MenuItem("I never asked for this")) { howDoYouHandleAllOfThis(); }
 				ImGui::EndMenu();
 			}
 			if (mouseLook)

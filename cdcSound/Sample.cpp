@@ -56,7 +56,7 @@ uint32_t Sample::Upload(
 	createInfo.suggestedsoundtype = FMOD_SOUND_TYPE_FSB; // = 8
 	FMOD_RESULT result = gFMOD->createSound((const char*) src, mode, &createInfo, &m_soundHandle);
 	if (result != FMOD_OK) {
-		printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+		printf("Upload: FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
 		return 0;
 	}
 
@@ -70,7 +70,7 @@ void Sample::Play() {
 	FMOD::Channel *channel = 0;
 	FMOD_RESULT result = gFMOD->playSound(FMOD_CHANNEL_FREE, m_soundPlay, 0, &channel);
 	if (result != FMOD_OK)
-		printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+		printf("Play: FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
 }
 
 }

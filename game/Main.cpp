@@ -13,6 +13,7 @@
 #include "../spinnycube.h"
 #include "cdcScript/ScriptManager.h"
 #include "cdcSound/Sound.h"
+#include "cdcSound/MultiplexStream.h"
 #include "cdcWorld/SceneLayer.h"
 #include "cdcWorld/stream.h"
 #include "Main.h"
@@ -31,9 +32,14 @@ void *logicActionResourceDatabase;
 void *tutorialDatabase;
 
 void SetupBuildDir(const char *prefix) {
+	char streamdir[256];
+	char cinstreamdir[256];
 	strcpy(buildType, prefix);
 	sprintf(pathPrefix, "%s\\", prefix);
-	// TODO
+	sprintf(streamdir, "%saudio\\streams\\", pathPrefix);
+	sprintf(cinstreamdir, "%sart\\cinematics\\cinstream\\", pathPrefix);
+	MultiplexStream::SetSoundDirectory(streamdir);
+	MultiplexStream::SetCinematicDirectory(cinstreamdir);
 }
 
 void loadDatabases() {
