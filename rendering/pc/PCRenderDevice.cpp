@@ -1,6 +1,7 @@
 #include "PCMaterial.h"
 #include "PCRenderDevice.h"
 #include "shaders/PCShaderLib.h"
+#include "surfaces/PCTexture.h"
 
 namespace cdc {
 
@@ -166,8 +167,7 @@ IMaterial *PCRenderDevice::createMaterial() {
 }
 
 TextureMap *PCRenderDevice::createTexture(uint32_t) {
-	// TODO
-	return nullptr;
+	return new PCTexture(this);
 }
 
 void PCRenderDevice::createProceduralTexture() {

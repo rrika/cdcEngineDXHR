@@ -267,4 +267,8 @@ void CommonRenderDevice::freeTemporarySurfaces() {
 	numTemporarySurfaces = 0;
 }
 
+void CommonRenderDevice::DeferredRelease(RenderExternalResource *resource) {
+	// TODO
+}
+
 }

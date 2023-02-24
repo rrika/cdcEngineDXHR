@@ -13,6 +13,10 @@ target_sources(dxhr PRIVATE
 	shaders/PCDX11ShaderLib.cpp
 	shaders/PCDX11VertexShader.cpp
 
+	pc/surfaces/PCDeviceBaseTexture.cpp
+	pc/surfaces/PCDeviceTexture.cpp
+	pc/surfaces/PCTexture.cpp
+
 	surfaces/PCDX11BitmapTexture.cpp
 	surfaces/PCDX11DefaultRenderTarget.cpp
 	surfaces/PCDX11DepthBuffer.cpp

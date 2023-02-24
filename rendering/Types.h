@@ -2,7 +2,30 @@
 
 namespace cdc {
 
-enum PassIndex {
+enum TextureFilter { // line 59
+	kTextureFilterPoint = 0,
+	kTextureFilterBilinear = 1,
+	kTextureFilterTrilinear = 2,
+	kTextureFilterAnisotropic1X = 3,
+	kTextureFilterAnisotropic2X = 4,
+	kTextureFilterAnisotropic4X = 6,
+	kTextureFilterAnisotropic8X = 10,
+	kTextureFilterAnisotropic16X = 18,
+	kTextureFilterBest = 256,
+	kTextureFilterDefault = 18,
+	kTextureFilterInvalid = 512
+};
+
+enum TextureClass { // line 80
+	kTextureClassUnknown = 0,
+	kTextureClass2D = 1,
+	kTextureClass3D = 2,
+	kTextureClassCube = 3,
+	kTextureClassNormalMap = 4,
+	kTextureClassVertex = 5
+};
+
+enum PassIndex { // line 91
 	kPassIndexDepth = 0,
 	kPassIndexComposite = 1,
 	kPassIndexOpaque = 2,
@@ -21,7 +44,16 @@ enum PassIndex {
 	kMaxRenderPasses = 32
 };
 
-enum RenderFunction {
+enum DrawableTypeID { // line 184
+	kDrawableTypeIDDefault = 0,
+	kDrawableTypeIDModel = 1,
+	kDrawableTypeIDTerrain = 2,
+	kDrawableTypeIDNGAPrimitves = 3,
+	kDrawableTypeFirstCustom = 4,
+	kMaxDrawableTypes = 16,
+};
+
+enum RenderFunctions { // line 210
 	kRenderFunctionDefault = 0,
 	kRenderFunctionDepth = 1,
 	kRenderFunctionShadow = 2,
@@ -37,15 +69,6 @@ enum RenderFunction {
 	kRenderFunctionXRay = 11,
 	kMaxRenderFunctions = 20,
 	kRenderFunctionInvalid = 21
-};
-
-enum DrawableTypeID { // 184
-	kDrawableTypeIDDefault = 0,
-	kDrawableTypeIDModel = 1,
-	kDrawableTypeIDTerrain = 2,
-	kDrawableTypeIDNGAPrimitves = 3,
-	kDrawableTypeFirstCustom = 4,
-	kMaxDrawableTypes = 16,
 };
 
 }
