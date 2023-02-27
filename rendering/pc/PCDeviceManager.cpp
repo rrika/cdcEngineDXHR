@@ -75,7 +75,7 @@ void PCDeviceManager::method_24() {
 	// TODO
 }
 
-bool PCDeviceManager::InitializePresentParams(DisplayConfig *displayConfig) {
+bool PCDeviceManager::InitializePresentParams(DisplayConfig *displayConfig) { // line 396
 	// HACK
 
 	presentParams = {0};
@@ -85,7 +85,7 @@ bool PCDeviceManager::InitializePresentParams(DisplayConfig *displayConfig) {
 	return true;
 }
 
-void PCDeviceManager::CreateDevice(DisplayConfig *displayConfig) {
+void PCDeviceManager::CreateDevice(DisplayConfig *displayConfig) { // line 72
 	// HACK
 
 	if (!InitializePresentParams(displayConfig))
@@ -99,6 +99,40 @@ void PCDeviceManager::CreateDevice(DisplayConfig *displayConfig) {
 		&presentParams,
 		&d3d9Device
 	);
+}
+
+void PCDeviceManager::ReleaseDevice(DeviceStatus status) { // line 743
+	// TODO
+}
+
+bool PCDeviceManager::CheckFormat( // line 937
+	D3DFORMAT format,
+	D3DRESOURCETYPE type,
+	uint32_t usage
+) {
+	if (!d3d9)
+		return false;
+
+	// if (!adapterInfo2CC)
+	// 	return false;
+
+	uint32_t adapter = D3DADAPTER_DEFAULT /*0*/; // TODO
+	D3DDEVTYPE deviceType = D3DDEVTYPE_HAL /*0*/; // TODO
+	D3DFORMAT adapterFormat = D3DFMT_X8R8G8B8 /*0x16*/; // TODO
+	if (d3d9->CheckDeviceFormat(adapter, deviceType, adapterFormat, usage, type, format) < 0)
+		return false;
+
+	// TODO: further checks, try instantiating one of these
+	// IDirect3DCubeTexture9 *pTexture;
+	// IDirect3DVolumeTexture9 *pTexture;
+	// IDirect3DSurface9 *pSurface;
+	// IDirect3DTexture9 *pTexture;
+
+	return true;
+}
+
+void PCDeviceManager::OnCreateResourceFailed() { // line 1610
+	ReleaseDevice(kStatusCreateResourceFailed);
 }
 
 

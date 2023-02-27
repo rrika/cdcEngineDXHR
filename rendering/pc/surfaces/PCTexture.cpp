@@ -65,6 +65,7 @@ void PCTexture::resFill(void *src, uint32_t size, uint32_t offset) {
 					kTextureFilterAnisotropic16X
 				);
 			}
+			printf("  created device texture %p\n", m_deviceTexture);
 		}
 
 		// read pixels

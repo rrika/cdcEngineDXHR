@@ -16,6 +16,7 @@ public:
 		m_class(texClass)
 	{}
 
+	PCDeviceBaseTexture *GetDeviceBaseTexture() { return m_deviceTexture; }
 	virtual bool NeedsUpdate() { return false; }
 	virtual void Update() {}
 };

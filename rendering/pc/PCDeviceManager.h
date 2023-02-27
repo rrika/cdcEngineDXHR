@@ -24,6 +24,13 @@ class PCDeviceManager :
 	friend class PCRenderContext;
 
 public:
+	enum PCCaps { // line 50
+		PC_CAPS_TEXTURE_NONPOW2 = 1,
+		PC_CAPS_TEXTURE_MIPMAPS = 2,
+		PC_CAPS_TEXTURE_DYNAMIC = 4,
+		PC_CAPS_FULLSCREENEFFECTS = 8
+	};
+
 	PCDeviceManager(HMODULE d3d9, IDirect3D9*);
 	void method_00() override;
 	DisplayConfig *getDisplayConfig() override;
@@ -38,11 +45,29 @@ public:
 
 	bool InitializePresentParams(DisplayConfig*);
 	void CreateDevice(DisplayConfig*);
+	void ReleaseDevice(DeviceStatus status);
+	bool CheckFormat(D3DFORMAT format, D3DRESOURCETYPE type, uint32_t usage);
+	void OnCreateResourceFailed();
 
 	IDirect3D9 *getD3D() { return d3d9; }
 	IDirect3DDevice9 *getD3DDevice() { return d3d9Device; }
 	// PCStateManager *getStateManager() { return stateManager; }
 	PCShaderManager *getShaderManager() { return shaderManager; }
+
+	uint32_t GetCaps() {
+		uint32_t caps = // HACK: assume all available
+			PC_CAPS_TEXTURE_NONPOW2 |
+			PC_CAPS_TEXTURE_MIPMAPS |
+			PC_CAPS_TEXTURE_DYNAMIC |
+			PC_CAPS_FULLSCREENEFFECTS;
+
+		DisplayConfig *dc = getDisplayConfig();
+		if (dc->disableNonPow2Textures)
+			caps &= ~PC_CAPS_TEXTURE_NONPOW2;
+		if (dc->disableDynamicTextures)
+			caps &= ~PC_CAPS_TEXTURE_DYNAMIC;
+		return caps;
+	}
 };
 
 extern PCDeviceManager *deviceManager9;

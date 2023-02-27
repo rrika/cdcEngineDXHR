@@ -45,6 +45,8 @@
 #include "rendering/pc/PCDeviceManager.h"
 #include "rendering/pc/PCRenderContext.h"
 #include "rendering/pc/PCRenderDevice.h"
+#include "rendering/pc/surfaces/PCDeviceTexture.h"
+#include "rendering/pc/surfaces/PCTexture.h"
 #include "rendering/PCDX11DeviceManager.h"
 #include "rendering/PCDX11MatrixState.h"
 #include "rendering/PCDX11RenderContext.h"
@@ -162,6 +164,10 @@ struct DRMExplorer {
 								if (auto tex = dynamic_cast<cdc::PCDX11Texture*>(resource)) {
 									ImGui::Image(
 										tex->createShaderResourceView(), ImVec2(256, 256));
+								}
+								if (auto tex = dynamic_cast<cdc::PCTexture*>(resource)) {
+									if (auto *deviceTexture = tex->GetDeviceBaseTexture())
+										ImGui::Image(deviceTexture->GetD3DTexture(), ImVec2(256, 256));
 								}
 							}
 							if (section.type == 6) { // FMOD

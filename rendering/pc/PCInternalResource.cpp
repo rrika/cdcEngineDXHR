@@ -1,4 +1,5 @@
 #include "PCInternalResource.h"
+#include "PCDeviceManager.h"
 
 namespace cdc {
 
@@ -22,6 +23,10 @@ void PCInternalResource::internalOnSettingsChanged() { /* empty */ }
 void PCInternalResource::internalCreateIfDeviceManagerAgrees() {
 	// if (!deviceManager9->dword10 && !deviceManager9->byte158)
 		internalCreate();
+}
+
+void PCInternalResource::OnCreateResourceFailed() {
+	deviceManager9->OnCreateResourceFailed();
 }
 
 }

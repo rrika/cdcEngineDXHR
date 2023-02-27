@@ -6,6 +6,7 @@
 
 namespace cdc {
 
+// cdc::PCDX11BaseTexture::StaticGetLevelSize
 static uint32_t bytesForTextureDim(TextureFormat fmt, uint32_t width, uint32_t height) {
 	switch (fmt) {
 		case TextureFormat::DXT1:
@@ -24,6 +25,7 @@ static uint32_t bytesForTextureDim(TextureFormat fmt, uint32_t width, uint32_t h
 	}
 }
 
+// cdc::PCDX11BaseTexture::StaticGetByteSize
 static uint32_t bytesForTextureDimMips(int width, int height, int depthMinusOne, int mipLevels, TextureFormat textureFormat) {
 	uint32_t total = 0;
 	uint32_t depth = depthMinusOne + 1;

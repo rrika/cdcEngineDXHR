@@ -33,6 +33,9 @@ public:
 		Type type,
 		TextureFilter filter);
 
+	uint32_t GetByteSize();
+	void UpdateD3DTexture(void *data, uint32_t offset, uint32_t length);
+
 	// for PCInternalResource
 	bool internalCreate() override;
 	void internalRelease() override;

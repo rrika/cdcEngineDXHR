@@ -71,8 +71,19 @@ struct MonitorInfo {
 	uint32_t bottom;
 };
 
+
+
 class IPCDeviceManager {
 public:
+	enum DeviceStatus { // line 25
+		kStatusOk = 0,
+		kStatusNotInitialized = -1,
+		kStatusDeviceLost = -2,
+		kStatusInvalidSettings = -3,
+		kStatusCreateResourceFailed = -4,
+		kStatusCreateDeviceFailed = -5
+	};
+
 	virtual void method_00() = 0;
 	virtual DisplayConfig *getDisplayConfig() = 0;
 	virtual void setBrightness(float) = 0;

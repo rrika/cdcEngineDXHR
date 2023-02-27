@@ -15,6 +15,7 @@ public:
 	virtual void internalOnSettingsChanged();
 
 	void internalCreateIfDeviceManagerAgrees();
+	void OnCreateResourceFailed();
 };
 
 }
