@@ -124,6 +124,7 @@ public:
 
 DRMIndex drmIndex;
 
+#if ENABLE_IMGUI
 struct DRMExplorer {
 
 	void draw(bool *showWindow) {
@@ -209,6 +210,7 @@ struct DRMExplorer {
 		ImGui::End();
 	}
 } drmexplorer;
+#endif
 
 int spinnyCube(HWND window) {
 
@@ -599,6 +601,9 @@ int spinnyCube(HWND window) {
 	mainMenuMovieController.movieInstance = &mainMenuInstance;
 
 	mainMenuInstance.init();
+#else
+	mouseLook = true;
+	mouseKeyboard->setCursorGrab(true);
 #endif
 
 	std::unordered_map<cdc::IRenderTerrain*, cdc::CommonRenderTerrainInstance *> renderTerrainInstances;

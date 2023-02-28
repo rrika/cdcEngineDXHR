@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cstring>
 #include "config.h"
 #include "SceneLayer.h" // for StreamingCallback
 #include "stream.h"

@@ -2,7 +2,7 @@
 #include "Sample.h"
 
 #include <cstdio>
-#include "../fmod/fmod_errors.h"
+#include "fmod/fmod_errors.h"
 
 namespace cdc {
 
