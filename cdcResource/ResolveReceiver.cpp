@@ -13,7 +13,7 @@
 #include "cdcFile/FileUserBufferReceiver.h"
 
 extern "C" {
-#include "../miniz/miniz.h"
+#include "miniz/miniz.h"
 }
 
 extern char pathPrefix[36];
