@@ -814,6 +814,17 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("I never asked for this")) { howDoYouHandleAllOfThis(); }
 				ImGui::EndMenu();
 			}
+			if (ImGui::BeginMenu("Language")) {
+				if (ImGui::MenuItem("English"))   { localstr_set_language(language_english,   language_default); }
+				if (ImGui::MenuItem("French"))    { localstr_set_language(language_french,    language_default); }
+				if (ImGui::MenuItem("Italian"))   { localstr_set_language(language_italian,   language_default); }
+				if (ImGui::MenuItem("German"))    { localstr_set_language(language_german,    language_default); }
+				if (ImGui::MenuItem("Spanish"))   { localstr_set_language(language_spanish,   language_default); }
+				if (ImGui::MenuItem("Polish"))    { localstr_set_language(language_polish,    language_default); }
+				if (ImGui::MenuItem("Russian"))   { localstr_set_language(language_russian,   language_default); }
+
+				ImGui::EndMenu();
+			}
 			if (mouseLook)
 				ImGui::Text("Press TAB or ESC to release cursor");
 			else

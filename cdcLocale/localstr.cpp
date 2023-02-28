@@ -1,6 +1,7 @@
 #include <cstdio>
 #include "localstr.h"
 #include "cdcFile/FileHelpers.h"
+#include "cdcResource/Specialisation.h"
 
 struct LocalizationTable {
 	uint32_t languageCode;
@@ -12,6 +13,21 @@ struct LocalizationTable {
 
 LocalizationTable ltable = {0xffffffff, 0xffffffff, false, nullptr, nullptr};
 extern char pathPrefix[36];
+
+void localstr_set_language(language_t voLang, language_t textLang) {
+	// HACK
+	if (voLang == language_default)
+		voLang = language_english;
+
+	if (textLang == language_default)
+		textLang = voLang;
+
+	ltable.languageCode = voLang;
+	ltable.textLanguageCode = textLang;
+	Specialisation::BlockingChange(1<<textLang);
+	if (!ltable.locals_bin)
+		localstr_reload();
+}
 
 void localstr_reload() {
 	if (ltable.loaded)
