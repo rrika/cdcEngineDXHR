@@ -626,7 +626,13 @@ int spinnyCube(HWND window,
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 
-		if (cdc::Level *level = STREAM_GetStreamUnitWithID(0)->level) {
+		for (auto &unit : StreamTracker) {
+			if (!unit.used)
+				continue;
+			cdc::Level *level = unit.level;
+			if (!level)
+				continue;
+
 			cdc::CellGroupData *cellGroupData = level->sub50;
 			uint32_t numCells = cellGroupData->header->numTotalCells;
 			for (uint32_t i=0; i < numCells; i++) {
@@ -671,8 +677,8 @@ int spinnyCube(HWND window,
 		// float lightAccumulation[4] = {0.9f, 0.9f, 0.9f, 1.0f};
 		float lightAccumulation[4] = {0.0f, 0.0f, 0.0f, 1.0f};
 
-		StreamUnit *unit = STREAM_GetStreamUnitWithID(0);
-		cdc::Level *level = unit->level;
+		StreamUnit *unit = &StreamTracker[0];
+		cdc::Level *level = unit ? unit->level : nullptr;
 		uint32_t numIntros = level ? level->admdData->numObjects : 0;
 		dtp::Intro *intros = level ? level->admdData->objects : nullptr;
 		uint32_t numIMFRefs = level ? level->admdData->numIMFRefs : 0;
@@ -758,7 +764,13 @@ int spinnyCube(HWND window,
 		g_scene->Draw();
 
 		// draw cells
-		if (cdc::Level *level = STREAM_GetStreamUnitWithID(0)->level) {
+		for (auto& unit : StreamTracker) {
+			if (!unit.used)
+				continue;
+			cdc::Level *level = unit.level;
+			if (!level)
+				continue;
+
 			cdc::CellGroupData *cellGroupData = level->sub50;
 			uint32_t numCells = cellGroupData->header->numTotalCells;
 			for (uint32_t i=0; i < numCells; i++) {
@@ -881,14 +893,21 @@ int spinnyCube(HWND window,
 		}
 		if (showLoadedUnitsWindow) {
 			ImGui::Begin("Loaded units", &showLoadedUnitsWindow);
-			StreamUnit *unit = STREAM_GetStreamUnitWithID(0);
-			cdc::Level *level = unit->level;
 			ImGui::DragInt2("visible intros", introShowRange);
 			ImGui::DragInt2("visible IMFs", imfShowRange);
-			if (!level) {
-				ImGui::Text("not loaded");
-			} else {
+			bool anyLoaded = false;
+			for (auto &unit : StreamTracker) {
+				if (!unit.used)
+					continue;
+
+				anyLoaded = true;
+
+				cdc::Level *level = unit.level;
 				ImGui::Text("level %p", level);
+				if (!level) {
+					ImGui::Text("not loaded");
+					continue;
+				}
 
 				cdc::CellGroupData *cellGroupData = level->sub50;
 				uint32_t numCells = cellGroupData->header->numTotalCells;
@@ -927,6 +946,8 @@ int spinnyCube(HWND window,
 					ImGui::PopID();
 				}
 			}
+			if (!anyLoaded)
+				ImGui::Text("no units");
 			ImGui::End();
 		}
 		if (showStringsWindow) {

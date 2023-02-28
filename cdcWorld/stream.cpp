@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <iterator>
 #include "config.h"
 #include "SceneLayer.h" // for StreamingCallback
 #include "stream.h"
@@ -77,12 +78,32 @@ void STREAM_Init() { // 582
 }
 
 StreamUnit *STREAM_GetStreamUnitWithID(int32_t id) { // 1170
-	// HACK
-	return &StreamTracker[0];
+	for (auto &unit : StreamTracker)
+		if ((unit.used == 1 || unit.used == 2) && unit.StreamUnitID == id)
+			return &unit;
+	return nullptr;
 }
 
-StreamUnit *STREAM_GetAndInitStreamUnitWithID(int32_t id) { // couldn't confirm real name
-	auto *unit = STREAM_GetStreamUnitWithID(id);
+StreamUnit *STREAM_GetAndInitStreamUnitWithID(const char *name, int32_t id) { // couldn't confirm real name
+	StreamUnit *unit = StreamTracker;
+	while (unit < std::end(StreamTracker) && unit->used)
+		unit++;
+	if (unit == std::end(StreamTracker))
+		return nullptr;
+
+	unit->used = 1;
+	strcpy((char*)unit->name, name);
+	unit->StreamUnitID = id;
+	// unit->wordA = 0;
+	// unit->word240 = 0;
+	// unit->dword4 = 0;
+	// unit->dwordB4 = 0;
+	// unit->byte9 = 0;
+	// unit->dword9C = 0;
+	unit->coreUnit = nullptr;
+	unit->resolveObject_streamGroup = nullptr;
+	// unit->byte94 = 0;
+
 	// TODO
 	return unit;
 }
@@ -117,7 +138,7 @@ void STREAM_LoadLevel(const char *baseAreaName, StreamUnitPortal *streamPortal, 
 		int32_t i = -1;
 		if (streamPortal)
 			i = streamPortal->word84;
-		StreamUnit *unit = STREAM_GetAndInitStreamUnitWithID(i);
+		StreamUnit *unit = STREAM_GetAndInitStreamUnitWithID(baseAreaName, i);
 		if (unit) {
 			char filename[256];
 			GameShell::LOAD_UnitFileName(filename, baseAreaName);

@@ -38,6 +38,8 @@ struct Level { // UnitBlob
 }
 
 struct StreamUnit {
+	uint32_t StreamUnitID; // 0
+	uint8_t used; // 8
 	cdc::Level *level; // C
 	uint8_t name[128]; // 10
 	cdc::ResolveObject *resolveObject_streamGroup; // 90
