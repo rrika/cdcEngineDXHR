@@ -99,6 +99,230 @@
 #include <SDL2/SDL.h>
 #endif
 
+float VertexData[] = // float4 position, float3 normal, float2 texcoord, float3 color
+{
+	-1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	-0.6f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,  2.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	 0.6f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,  8.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	 1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f, 10.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	-0.6f,  0.6f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,  2.0f,  2.0f,  0.973f,  0.480f,  0.002f,
+	 0.6f,  0.6f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,  8.0f,  2.0f,  0.973f,  0.480f,  0.002f,
+	-0.6f, -0.6f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,  2.0f,  8.0f,  0.973f,  0.480f,  0.002f,
+	 0.6f, -0.6f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,  8.0f,  8.0f,  0.973f,  0.480f,  0.002f,
+	-1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f, 10.0f,  0.973f,  0.480f,  0.002f,
+	-0.6f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,  2.0f, 10.0f,  0.973f,  0.480f,  0.002f,
+	 0.6f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,  8.0f, 10.0f,  0.973f,  0.480f,  0.002f,
+	 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f, 10.0f, 10.0f,  0.973f,  0.480f,  0.002f,
+	 1.0f,  1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f,  1.0f, -0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  2.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f,  1.0f,  0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  8.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 10.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f,  0.6f, -0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  2.0f,  2.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f,  0.6f,  0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  8.0f,  2.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f, -0.6f, -0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  2.0f,  8.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f, -0.6f,  0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  8.0f,  8.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f, -1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f, 10.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f, -1.0f, -0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  2.0f, 10.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f, -1.0f,  0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  8.0f, 10.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f, -1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 10.0f, 10.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	 0.6f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  2.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	-0.6f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  8.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	-1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 10.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	 0.6f,  0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  2.0f,  2.0f,  0.612f,  0.000f,  0.069f,
+	-0.6f,  0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  8.0f,  2.0f,  0.612f,  0.000f,  0.069f,
+	 0.6f, -0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  2.0f,  8.0f,  0.612f,  0.000f,  0.069f,
+	-0.6f, -0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  8.0f,  8.0f,  0.612f,  0.000f,  0.069f,
+	 1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f, 10.0f,  0.612f,  0.000f,  0.069f,
+	 0.6f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  2.0f, 10.0f,  0.612f,  0.000f,  0.069f,
+	-0.6f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  8.0f, 10.0f,  0.612f,  0.000f,  0.069f,
+	-1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 10.0f, 10.0f,  0.612f,  0.000f,  0.069f,
+	-1.0f,  1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f,  1.0f,  0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  2.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f,  1.0f, -0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  8.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f,  1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 10.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f,  0.6f,  0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  2.0f,  2.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f,  0.6f, -0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  8.0f,  2.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f, -0.6f,  0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  2.0f,  8.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f, -0.6f, -0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  8.0f,  8.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f, -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f, 10.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f, -1.0f,  0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  2.0f, 10.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f, -1.0f, -0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  8.0f, 10.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f, -1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 10.0f, 10.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	-0.6f,  1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f,  2.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	 0.6f,  1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f,  8.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 10.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	-0.6f,  1.0f,  0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  2.0f,  2.0f,  0.000f,  0.254f,  0.637f,
+	 0.6f,  1.0f,  0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  8.0f,  2.0f,  0.000f,  0.254f,  0.637f,
+	-0.6f,  1.0f, -0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  2.0f,  8.0f,  0.000f,  0.254f,  0.637f,
+	 0.6f,  1.0f, -0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  8.0f,  8.0f,  0.000f,  0.254f,  0.637f,
+	-1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f, 10.0f,  0.000f,  0.254f,  0.637f,
+	-0.6f,  1.0f, -1.0f,  1.0f,  0.0f,  1.0f,  0.0f,  2.0f, 10.0f,  0.000f,  0.254f,  0.637f,
+	 0.6f,  1.0f, -1.0f,  1.0f,  0.0f,  1.0f,  0.0f,  8.0f, 10.0f,  0.000f,  0.254f,  0.637f,
+	 1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 10.0f, 10.0f,  0.000f,  0.254f,  0.637f,
+	-1.0f, -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	-0.6f, -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f,  2.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	 0.6f, -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f,  8.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	 1.0f, -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 10.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	-0.6f, -1.0f, -0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  2.0f,  2.0f,  0.001f,  0.447f,  0.067f,
+	 0.6f, -1.0f, -0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  8.0f,  2.0f,  0.001f,  0.447f,  0.067f,
+	-0.6f, -1.0f,  0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  2.0f,  8.0f,  0.001f,  0.447f,  0.067f,
+	 0.6f, -1.0f,  0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  8.0f,  8.0f,  0.001f,  0.447f,  0.067f,
+	-1.0f, -1.0f,  1.0f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f, 10.0f,  0.001f,  0.447f,  0.067f,
+	-0.6f, -1.0f,  1.0f,  1.0f,  0.0f, -1.0f,  0.0f,  2.0f, 10.0f,  0.001f,  0.447f,  0.067f,
+	 0.6f, -1.0f,  1.0f,  1.0f,  0.0f, -1.0f,  0.0f,  8.0f, 10.0f,  0.001f,  0.447f,  0.067f,
+	 1.0f, -1.0f,  1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 10.0f, 10.0f,  0.001f,  0.447f,  0.067f,
+	-0.6f,  0.6f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	-0.6f,  0.6f, -0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	-0.6f, -0.6f, -0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	-0.6f, -0.6f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	 0.6f,  0.6f, -0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	 0.6f,  0.6f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	 0.6f, -0.6f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	 0.6f, -0.6f, -0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	-0.6f, -0.6f, -1.0f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	-0.6f, -0.6f, -0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	 0.6f, -0.6f, -0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	 0.6f, -0.6f, -1.0f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	-0.6f,  0.6f, -0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	-0.6f,  0.6f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	 0.6f,  0.6f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	 0.6f,  0.6f, -0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.973f,  0.480f,  0.002f,
+	 1.0f,  0.6f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 0.6f,  0.6f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 0.6f, -0.6f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f, -0.6f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 0.6f,  0.6f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f,  0.6f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f, -0.6f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 0.6f, -0.6f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f,  0.6f,  0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 0.6f,  0.6f,  0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 0.6f,  0.6f, -0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f,  0.6f, -0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 0.6f, -0.6f,  0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f, -0.6f,  0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 1.0f, -0.6f, -0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 0.6f, -0.6f, -0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.897f,  0.163f,  0.011f,
+	 0.6f,  0.6f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	 0.6f,  0.6f,  0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	 0.6f, -0.6f,  0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	 0.6f, -0.6f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	-0.6f,  0.6f,  0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	-0.6f,  0.6f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	-0.6f, -0.6f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	-0.6f, -0.6f,  0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	 0.6f, -0.6f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	 0.6f, -0.6f,  0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	-0.6f, -0.6f,  0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	-0.6f, -0.6f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	 0.6f,  0.6f,  0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	 0.6f,  0.6f,  1.0f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	-0.6f,  0.6f,  1.0f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	-0.6f,  0.6f,  0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.612f,  0.000f,  0.069f,
+	-1.0f,  0.6f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-0.6f,  0.6f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-0.6f, -0.6f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f, -0.6f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-0.6f,  0.6f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f,  0.6f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f, -0.6f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-0.6f, -0.6f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f, -0.6f,  0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-0.6f, -0.6f,  0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-0.6f, -0.6f, -0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f, -0.6f, -0.6f,  1.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-0.6f,  0.6f,  0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f,  0.6f,  0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-1.0f,  0.6f, -0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-0.6f,  0.6f, -0.6f,  1.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.127f,  0.116f,  0.408f,
+	-0.6f,  1.0f,  0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	-0.6f,  0.6f,  0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	-0.6f,  0.6f, -0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	-0.6f,  1.0f, -0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	 0.6f,  0.6f,  0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	 0.6f,  1.0f,  0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	 0.6f,  1.0f, -0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	 0.6f,  0.6f, -0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	-0.6f,  1.0f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	-0.6f,  0.6f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	 0.6f,  0.6f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	 0.6f,  1.0f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	-0.6f,  0.6f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	-0.6f,  1.0f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	 0.6f,  1.0f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	 0.6f,  0.6f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.000f,  0.254f,  0.637f,
+	-0.6f, -0.6f,  0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	-0.6f, -1.0f,  0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	-0.6f, -1.0f, -0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	-0.6f, -0.6f, -0.6f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	 0.6f, -1.0f,  0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	 0.6f, -0.6f,  0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	 0.6f, -0.6f, -0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	 0.6f, -1.0f, -0.6f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	-0.6f, -0.6f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	-0.6f, -1.0f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	 0.6f, -1.0f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	 0.6f, -0.6f, -0.6f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	-0.6f, -1.0f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	-0.6f, -0.6f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	 0.6f, -0.6f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+	 0.6f, -1.0f,  0.6f,  1.0f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,  0.001f,  0.447f,  0.067f,
+};
+
+unsigned short IndexData[] =
+{
+	  0,   1,   9,   9,   8,   0,   1,   2,   5,   5,   4,   1,   6,   7,  10,  10,   9,   6,   2,   3,  11,  11,  10,   2,
+	 12,  13,  21,  21,  20,  12,  13,  14,  17,  17,  16,  13,  18,  19,  22,  22,  21,  18,  14,  15,  23,  23,  22,  14,
+	 24,  25,  33,  33,  32,  24,  25,  26,  29,  29,  28,  25,  30,  31,  34,  34,  33,  30,  26,  27,  35,  35,  34,  26,
+	 36,  37,  45,  45,  44,  36,  37,  38,  41,  41,  40,  37,  42,  43,  46,  46,  45,  42,  38,  39,  47,  47,  46,  38,
+	 48,  49,  57,  57,  56,  48,  49,  50,  53,  53,  52,  49,  54,  55,  58,  58,  57,  54,  50,  51,  59,  59,  58,  50,
+	 60,  61,  69,  69,  68,  60,  61,  62,  65,  65,  64,  61,  66,  67,  70,  70,  69,  66,  62,  63,  71,  71,  70,  62,
+	 72,  73,  74,  74,  75,  72,  76,  77,  78,  78,  79,  76,  80,  81,  82,  82,  83,  80,  84,  85,  86,  86,  87,  84,
+	 88,  89,  90,  90,  91,  88,  92,  93,  94,  94,  95,  92,  96,  97,  98,  98,  99,  96, 100, 101, 102, 102, 103, 100,
+	104, 105, 106, 106, 107, 104, 108, 109, 110, 110, 111, 108, 112, 113, 114, 114, 115, 112, 116, 117, 118, 118, 119, 116,
+	120, 121, 122, 122, 123, 120, 124, 125, 126, 126, 127, 124, 128, 129, 130, 130, 131, 128, 132, 133, 134, 134, 135, 132,
+	136, 137, 138, 138, 139, 136, 140, 141, 142, 142, 143, 140, 144, 145, 146, 146, 147, 144, 148, 149, 150, 150, 151, 148,
+	152, 153, 154, 154, 155, 152, 156, 157, 158, 158, 159, 156, 160, 161, 162, 162, 163, 160, 164, 165, 166, 166, 167, 164,
+};
+
+const char shaders9 [] = (
+	"float4x4 WorldViewProject : register(c0);\n"
+	"float4x4 World : register(c4);\n"
+	"struct vs_in { float4 position : POSITION; float3 normal : NORMAL; float2 texcoord : TEXCOORD1; float3 color : COLOR; };\n"
+	"struct vs_out { float4 position : SV_POSITION; float4 color : COLOR; float2 texcoord : TEXCOORD; };\n"
+	"static const float3 lightvector = { 1.0f, -1.0f, 1.0f };\n"
+	"vs_out vs_main(vs_in input) {\n"
+	"    float light = clamp(dot(normalize(mul(World, float4(input.normal, 0.0f)).xyz), normalize(-lightvector)), 0.0f, 1.0f) * 0.8f + 0.2f;\n"
+	"    vs_out output;\n"
+	"    output.position = mul(WorldViewProject, input.position);\n"
+	"    output.texcoord = input.texcoord;\n"
+	"    output.color = float4(input.color * light, 1.0f);\n"
+	"    return output;\n"
+	"}\n"
+	"float4 ps_main(vs_out input) : SV_TARGET { return input.color; }\n"
+);
+
+const char shaders [] = (
+	"cbuffer WorldBuffer : register(b0) { float4x4 WorldViewProject; float4x4 World; float4x4 ViewProject; }\n"
+	"cbuffer SceneBuffer : register(b2) { float4x4 View; }\n"
+	"struct vs_in { float4 position : POSITION; float3 normal : NORMAL; float2 texcoord : TEXCOORD1; float3 color : COLOR; };\n"
+	"struct vs_out { float4 position : SV_POSITION; float4 color : COLOR; float2 texcoord : TEXCOORD; };\n"
+	"Texture2D    mytexture : register(t0);\n"
+	"SamplerState mysampler : register(s0);\n"
+	"static const float3 lightvector = { 1.0f, -1.0f, 1.0f };\n"
+	"vs_out vs_main(vs_in input) {\n"
+	"    float light = clamp(dot(normalize(mul(World, float4(input.normal, 0.0f)).xyz), normalize(-lightvector)), 0.0f, 1.0f) * 0.8f + 0.2f;\n"
+	"    vs_out output;\n"
+	"    output.position = mul(WorldViewProject, input.position);\n"
+	"    output.texcoord = input.texcoord;\n"
+	"    output.color = float4(input.color * light, 1.0f);\n"
+	"    return output;\n"
+	"}\n"
+	"float4 ps_main(vs_out input) : SV_TARGET { return mytexture.Sample(mysampler, input.texcoord) * input.color; }\n"
+);
+
 class ImGuiDrawable : public cdc::IRenderDrawable {
 public:
 	std::function<void()> lastMinuteAdditions;
@@ -222,6 +446,7 @@ int spinnyCube(HWND window) {
 		auto d3dDevice9 = cdc::deviceManager9->getD3DDevice();
 		renderContext->internalCreate();
 
+#if ENABLE_IMGUI
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -232,6 +457,65 @@ int spinnyCube(HWND window) {
 		ImGui_ImplSDL2_InitForSDLRenderer((SDL_Window*)window, nullptr);
 	#endif
 		ImGui_ImplDX9_Init(d3dDevice9);
+#endif
+
+#if ENABLE_D3DCOMPILER
+		IDirect3DVertexBuffer9 *v_buffer = nullptr;
+		d3dDevice9->CreateVertexBuffer(sizeof(VertexData),
+			0,
+			0,
+			D3DPOOL_MANAGED,
+			&v_buffer,
+			nullptr);
+
+		void *pVoid;
+		v_buffer->Lock(0, 0, (void**)&pVoid, 0);
+		memcpy(pVoid, VertexData, sizeof(VertexData));
+		v_buffer->Unlock();
+
+		IDirect3DIndexBuffer9 *i_buffer = nullptr;
+		d3dDevice9->CreateIndexBuffer(sizeof(IndexData),
+			0,
+			D3DFMT_INDEX16,
+			D3DPOOL_MANAGED,
+			&i_buffer,
+			nullptr);
+		i_buffer->Lock(0, 0, (void**)&pVoid, 0);
+		memcpy(pVoid, IndexData, sizeof(IndexData));
+		i_buffer->Unlock();
+
+		ID3DBlob *vsBlob, *psBlob;
+
+		D3DCompile(shaders9, sizeof(shaders9), "shaders.hlsl", nullptr, nullptr, "vs_main", "vs_2_0", 0, 0, &vsBlob, nullptr);
+		D3DCompile(shaders9, sizeof(shaders9), "shaders.hlsl", nullptr, nullptr, "ps_main", "ps_2_0", 0, 0, &psBlob, nullptr);
+
+		IDirect3DVertexShader9 *vertexShader;
+		IDirect3DPixelShader9 *pixelShader;
+
+		d3dDevice9->CreateVertexShader((DWORD*)vsBlob->GetBufferPointer(), &vertexShader);
+		d3dDevice9->CreatePixelShader((DWORD*)psBlob->GetBufferPointer(), &pixelShader);
+
+		IDirect3DVertexDeclaration9 *vertexDecl;
+		D3DVERTEXELEMENT9 elements[] = {
+			{0,  0, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION,  0},
+			{0, 16, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,    0},
+			{0, 28, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD,  0},
+			{0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR,     0},
+			D3DDECL_END()
+		};
+		d3dDevice9->CreateVertexDeclaration(elements, &vertexDecl);
+
+		cdc::Matrix World = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 3, 1 };
+
+		cdc::Matrix Project = cdc::BuildPerspectiveLH(
+			0.925f,
+			4.0f/3.0f,
+			0.01f,
+			100.0f);
+
+		cdc::Matrix WorldViewProject = Project * World;
+
+#endif // ENABLE_D3DCOMPILER
 
 		while (true)
 		{
@@ -255,8 +539,9 @@ int spinnyCube(HWND window) {
 		#else
 			SDL_Event event;
 			while (SDL_PollEvent(&event)) {
+			#if ENABLE_IMGUI
 				ImGui_ImplSDL2_ProcessEvent(&event);
-
+			#endif
 				switch (event.type) {
 					case SDL_WINDOWEVENT:
 						// if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
@@ -270,6 +555,7 @@ int spinnyCube(HWND window) {
 			}
 		#endif
 
+	#if ENABLE_IMGUI
 			ImGui_ImplDX9_NewFrame();
 		#ifdef _WIN32
 			ImGui_ImplWin32_NewFrame(); // this will reset our pretty cursor
@@ -288,16 +574,33 @@ int spinnyCube(HWND window) {
 
 			bool showDRMWindow = true;
 			drmexplorer.draw(&showDRMWindow);
+	#endif
 
-			d3dDevice9->SetRenderState(D3DRS_ZENABLE, FALSE);
+			d3dDevice9->SetRenderState(D3DRS_ZENABLE, TRUE);
+			d3dDevice9->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+			d3dDevice9->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESS);
 			d3dDevice9->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 			d3dDevice9->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 			D3DCOLOR clear_col_dx = D3DCOLOR_RGBA(0x80, 0x80, 0x80, 0xff);
 			d3dDevice9->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, clear_col_dx, 1.0f, 0);
 
 			if (d3dDevice9->BeginScene() >= 0) {
+
+			#if ENABLE_D3DCOMPILER
+				d3dDevice9->SetVertexShader(vertexShader);
+				d3dDevice9->SetPixelShader(pixelShader);
+				d3dDevice9->SetStreamSource(0, v_buffer, 0, 12*sizeof(float));
+				d3dDevice9->SetIndices(i_buffer);
+				d3dDevice9->SetVertexDeclaration(vertexDecl);
+				d3dDevice9->SetVertexShaderConstantF(0, (float*)WorldViewProject.m, 4);
+				d3dDevice9->SetVertexShaderConstantF(4, (float*)World.m, 4);
+				d3dDevice9->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 168, 0, 288 / 3);
+			#endif
+
+			#if ENABLE_IMGUI
 				ImGui::Render();
 				ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+			#endif
 				d3dDevice9->EndScene();
 			}
 
@@ -306,6 +609,7 @@ int spinnyCube(HWND window) {
 		}
 
 	end2:
+#if ENABLE_IMGUI
 		ImGui_ImplDX9_Shutdown();
 	#ifdef _WIN32
 		ImGui_ImplWin32_Shutdown();
@@ -313,7 +617,7 @@ int spinnyCube(HWND window) {
 		ImGui_ImplSDL2_Shutdown();
 	#endif
 		ImGui::DestroyContext();
-
+#endif
 		return 0;
 	}
 

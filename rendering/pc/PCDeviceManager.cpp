@@ -81,6 +81,8 @@ bool PCDeviceManager::InitializePresentParams(DisplayConfig *displayConfig) { //
 	presentParams = {0};
 	presentParams.Windowed   = TRUE;
 	presentParams.SwapEffect = D3DSWAPEFFECT_COPY;
+	presentParams.EnableAutoDepthStencil = 1;
+	presentParams.AutoDepthStencilFormat = D3DFMT_D16;
 
 	return true;
 }

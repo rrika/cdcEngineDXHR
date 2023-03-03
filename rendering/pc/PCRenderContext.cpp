@@ -46,6 +46,8 @@ bool PCRenderContext::internalCreate() {
 		presentParams.Windowed = 1;
 		presentParams.BackBufferFormat = D3DFMT_UNKNOWN; // TODO: populate from adapterInfo
 
+		// d3d9Device->GetSwapChain(0, &swapchain);
+
 		if (d3d9Device->CreateAdditionalSwapChain(&presentParams, &swapchain) >= 0) {
 			swapchain->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &surface);
 			if (surface) {
