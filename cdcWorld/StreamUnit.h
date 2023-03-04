@@ -46,4 +46,7 @@ struct StreamUnit {
 	cdc::ResolveObject *resolveObject; // 98
 	cdc::ISceneCellGroup *sceneCellGroup; // D4
 	StreamUnit *coreUnit; // D8
+
+	int introShowRange[2] = {0, 99999};
+	int imfShowRange[2] = {0, 0};
 };

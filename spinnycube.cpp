@@ -471,8 +471,6 @@ int spinnyCube(HWND window,
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
-	int introShowRange[2] = {0, 99999};
-	int imfShowRange[2] = {0, 0};
 #if ENABLE_IMGUI
 	bool loadedSarifHQ = false;
 	bool showDrawablesWindow = false;
@@ -682,13 +680,6 @@ int spinnyCube(HWND window,
 		// float lightAccumulation[4] = {0.9f, 0.9f, 0.9f, 1.0f};
 		float lightAccumulation[4] = {0.0f, 0.0f, 0.0f, 1.0f};
 
-		StreamUnit *unit = &StreamTracker[0];
-		cdc::Level *level = unit ? unit->level : nullptr;
-		uint32_t numIntros = level ? level->admdData->numObjects : 0;
-		dtp::Intro *intros = level ? level->admdData->objects : nullptr;
-		uint32_t numIMFRefs = level ? level->admdData->numIMFRefs : 0;
-		dtp::IMFRef *imfrefs = level ? level->admdData->imfrefs : nullptr;
-
 		renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
 		renderDevice->clearRenderTarget(2, /*mask=*/ 0x2000, 0.0f, lightAccumulation, 1.0f, 0); // deferred shading buffer
 		static_cast<cdc::PCDX11RenderModelInstance*>(lightRenderModelInstance)->baseMask = 0x2000; // deferred lighting
@@ -716,50 +707,63 @@ int spinnyCube(HWND window,
 		};
 
 		// all the other objects
-		for (uint32_t i=introShowRange[0]; i<numIntros && i<introShowRange[1]; i++) {
-			auto &intro = intros[i];
-			float s = 1.f;
-			cdc::Matrix instanceMatrix = {
-				s*intro.scale[0], 0, 0, 0,
-				0, s*intro.scale[1], 0, 0,
-				0, 0, s*intro.scale[2], 0,
-				intro.position[0], intro.position[1], intro.position[2], 1
-			};
-			if (intro.objectListIndex == 0)
+		for (auto& unit : StreamTracker) {
+			if (!unit.used)
 				continue;
-			cdc::Object *object = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(intro.objectListIndex));
-			if (!object)
+			cdc::Level *level = unit.level;
+			if (!level)
 				continue;
-			if (object->numModels == 0)
-				continue;
-			auto *renderModel = (cdc::PCDX11RenderModel*)object->models[0]->renderMesh;
-			putObject(renderModel, instanceMatrix);
-		}
 
-		for (uint32_t i=imfShowRange[0]; i<numIMFRefs && i<imfShowRange[1]; i++) {
-			dtp::IMFRef &ref = imfrefs[i];
-			if (!ref.m_imfDRMName)
-				continue;
-			if (ref.m_pResolveObject == nullptr) {
-				char path[256];
-				cdc::GameShell::LOAD_IMFFileName(path, ref.m_imfDRMName);
-				ref.m_pResolveObject = cdc::ResolveObject::create(
-					path,
-					nullptr, nullptr, nullptr,
-					nullptr,
-					nullptr,
-					nullptr,
-					0,
-					cdc::FileRequest::NORMAL);
-				cdc::archiveFileSystem_default->processAll();
+			uint32_t numIntros = level->admdData->numObjects;
+			dtp::Intro *intros = level->admdData->objects;
+			uint32_t numIMFRefs = level->admdData->numIMFRefs;
+			dtp::IMFRef *imfrefs = level->admdData->imfrefs;
+
+			for (uint32_t i=unit.introShowRange[0]; i<numIntros && i<unit.introShowRange[1]; i++) {
+				auto &intro = intros[i];
+				float s = 1.f;
+				cdc::Matrix instanceMatrix = {
+					s*intro.scale[0], 0, 0, 0,
+					0, s*intro.scale[1], 0, 0,
+					0, 0, s*intro.scale[2], 0,
+					intro.position[0], intro.position[1], intro.position[2], 1
+				};
+				if (intro.objectListIndex == 0)
+					continue;
+				cdc::Object *object = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(intro.objectListIndex));
+				if (!object)
+					continue;
+				if (object->numModels == 0)
+					continue;
+				auto *renderModel = (cdc::PCDX11RenderModel*)object->models[0]->renderMesh;
+				putObject(renderModel, instanceMatrix);
 			}
-			if (isLoaded(ref.m_pResolveObject)) {
-				//printf("%d %04x %s ", i, ref.dtpID, ref.m_imfDRMName);
-				dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(ref.dtpID);
-				//printf("%p ", im);
-				cdc::RenderMesh *model = im->pRenderModel;
-				//printf("%p\n", model);
-				putObject(static_cast<cdc::PCDX11RenderModel*>(model), ref.m_transform);
+
+			for (uint32_t i=unit.imfShowRange[0]; i<numIMFRefs && i<unit.imfShowRange[1]; i++) {
+				dtp::IMFRef &ref = imfrefs[i];
+				if (!ref.m_imfDRMName)
+					continue;
+				if (ref.m_pResolveObject == nullptr) {
+					char path[256];
+					cdc::GameShell::LOAD_IMFFileName(path, ref.m_imfDRMName);
+					ref.m_pResolveObject = cdc::ResolveObject::create(
+						path,
+						nullptr, nullptr, nullptr,
+						nullptr,
+						nullptr,
+						nullptr,
+						0,
+						cdc::FileRequest::NORMAL);
+					cdc::archiveFileSystem_default->processAll();
+				}
+				if (isLoaded(ref.m_pResolveObject)) {
+					//printf("%d %04x %s ", i, ref.dtpID, ref.m_imfDRMName);
+					dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(ref.dtpID);
+					//printf("%p ", im);
+					cdc::RenderMesh *model = im->pRenderModel;
+					//printf("%p\n", model);
+					putObject(static_cast<cdc::PCDX11RenderModel*>(model), ref.m_transform);
+				}
 			}
 		}
 
@@ -898,8 +902,15 @@ int spinnyCube(HWND window,
 		}
 		if (showLoadedUnitsWindow) {
 			ImGui::Begin("Loaded units", &showLoadedUnitsWindow);
-			ImGui::DragInt2("visible intros", introShowRange);
-			ImGui::DragInt2("visible IMFs", imfShowRange);
+			for (StreamUnit &unit : StreamTracker) {
+				if (!unit.used)
+					continue;
+				ImGui::PushID(unit.name);
+				ImGui::Text("%s", unit.name);
+				ImGui::DragInt2("visible intros", unit.introShowRange);
+				ImGui::DragInt2("visible IMFs", unit.imfShowRange);
+				ImGui::PopID();
+			}
 			bool anyLoaded = false;
 			for (auto &unit : StreamTracker) {
 				if (!unit.used)
@@ -908,7 +919,7 @@ int spinnyCube(HWND window,
 				anyLoaded = true;
 
 				cdc::Level *level = unit.level;
-				ImGui::Text("level %p", level);
+				ImGui::Text("unit %s level %p", unit.name, level);
 				if (!level) {
 					ImGui::Text("not loaded");
 					continue;
