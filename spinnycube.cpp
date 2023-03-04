@@ -47,6 +47,8 @@
 #include "rendering/pc/PCRenderContext.h"
 #include "rendering/pc/PCRenderDevice.h"
 #include "rendering/pc/PCStateManager.h"
+#include "rendering/pc/shaders/PCPixelShader.h"
+#include "rendering/pc/shaders/PCVertexShader.h"
 #include "rendering/pc/surfaces/PCDeviceTexture.h"
 #include "rendering/pc/surfaces/PCTexture.h"
 #include "rendering/PCDX11DeviceManager.h"
@@ -494,11 +496,8 @@ int spinnyCube(HWND window) {
 		D3DCompile(shaders9, sizeof(shaders9), "shaders.hlsl", nullptr, nullptr, "vs_main", "vs_2_0", 0, 0, &vsBlob, nullptr);
 		D3DCompile(shaders9, sizeof(shaders9), "shaders.hlsl", nullptr, nullptr, "ps_main", "ps_2_0", 0, 0, &psBlob, nullptr);
 
-		IDirect3DVertexShader9 *vertexShader;
-		IDirect3DPixelShader9 *pixelShader;
-
-		d3dDevice9->CreateVertexShader((DWORD*)vsBlob->GetBufferPointer(), &vertexShader);
-		d3dDevice9->CreatePixelShader((DWORD*)psBlob->GetBufferPointer(), &pixelShader);
+		cdc::PCVertexShader cdcVertex9((char*)vsBlob->GetBufferPointer(), false, false);
+		cdc::PCPixelShader cdcPixel9((char*)psBlob->GetBufferPointer(), false, false);
 
 		IDirect3DVertexDeclaration9 *vertexDecl;
 		D3DVERTEXELEMENT9 elements[] = {
@@ -592,8 +591,8 @@ int spinnyCube(HWND window) {
 			if (d3dDevice9->BeginScene() >= 0) {
 
 			#if ENABLE_D3DCOMPILER
-				d3dDevice9->SetVertexShader(vertexShader);
-				d3dDevice9->SetPixelShader(pixelShader);
+				stateManager9.setVertexShader(&cdcVertex9);
+				stateManager9.setPixelShader(&cdcPixel9);
 				d3dDevice9->SetStreamSource(0, v_buffer, 0, 12*sizeof(float));
 				stateManager9.setIndexBuffer(&cdcIndexBuffer9);
 				d3dDevice9->SetVertexDeclaration(vertexDecl);
