@@ -42,9 +42,11 @@
 #include "rendering/CommonRenderTerrainInstance.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/IRenderPassCallback.h"
+#include "rendering/pc/buffers/PCIndexBuffer.h"
 #include "rendering/pc/PCDeviceManager.h"
 #include "rendering/pc/PCRenderContext.h"
 #include "rendering/pc/PCRenderDevice.h"
+#include "rendering/pc/PCStateManager.h"
 #include "rendering/pc/surfaces/PCDeviceTexture.h"
 #include "rendering/pc/surfaces/PCTexture.h"
 #include "rendering/PCDX11DeviceManager.h"
@@ -484,6 +486,9 @@ int spinnyCube(HWND window) {
 		memcpy(pVoid, IndexData, sizeof(IndexData));
 		i_buffer->Unlock();
 
+		cdc::PCStateManager stateManager9(d3dDevice9);
+		cdc::HackIndexBuffer9 cdcIndexBuffer9(i_buffer);
+
 		ID3DBlob *vsBlob, *psBlob;
 
 		D3DCompile(shaders9, sizeof(shaders9), "shaders.hlsl", nullptr, nullptr, "vs_main", "vs_2_0", 0, 0, &vsBlob, nullptr);
@@ -590,7 +595,7 @@ int spinnyCube(HWND window) {
 				d3dDevice9->SetVertexShader(vertexShader);
 				d3dDevice9->SetPixelShader(pixelShader);
 				d3dDevice9->SetStreamSource(0, v_buffer, 0, 12*sizeof(float));
-				d3dDevice9->SetIndices(i_buffer);
+				stateManager9.setIndexBuffer(&cdcIndexBuffer9);
 				d3dDevice9->SetVertexDeclaration(vertexDecl);
 				d3dDevice9->SetVertexShaderConstantF(0, (float*)WorldViewProject.m, 4);
 				d3dDevice9->SetVertexShaderConstantF(4, (float*)World.m, 4);

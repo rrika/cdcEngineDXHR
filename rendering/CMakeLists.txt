@@ -35,6 +35,7 @@ target_sources(dxhr PRIVATE
 	pc/PCMaterial.cpp
 	pc/PCRenderContext.cpp
 	pc/PCRenderDevice.cpp
+	pc/PCStateManager.cpp
 
 	PCDX11DeviceManager.cpp
 	PCDX11InternalResource.cpp
