@@ -12,6 +12,7 @@ class SceneCellGroup;
 class SceneEntity : public ISceneEntity {
 public:
 	Scene *scene; // 4
+	uint32_t entityIndex; // 8
 	Matrix matrix; // 20
 	IDrawable *drawable = nullptr; // 6C
 	SceneCellGroup *sceneCellGroup = nullptr; // 70
@@ -19,7 +20,7 @@ public:
 	void UpdateData(bool);
 
 public:
-	SceneEntity(Scene *scene) : scene(scene) {}
+	SceneEntity(Scene *scene);
 
 	// 25 methods
 	void setMatrix(Matrix&) override;

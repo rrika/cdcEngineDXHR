@@ -7,7 +7,7 @@
 
 namespace cdc {
 
-Scene::Scene(CommonRenderDevice *renderDevice) :
+Scene::Scene(CommonRenderDevice *renderDevice) : // line 199
 	renderDevice(renderDevice), sceneCell(nullptr)
 {
 	// TODO
@@ -17,20 +17,20 @@ Scene::Scene(CommonRenderDevice *renderDevice) :
 	sceneCellGroups.back()->allocateCells();
 }
 
-SceneCellGroup *Scene::GetCellGroup(uint32_t index) {
+SceneCellGroup *Scene::GetCellGroup(uint32_t index) { // line 1540
 	return sceneCellGroups[index];
 }
 
-SceneEntity *Scene::CreateEntity() {
+SceneEntity *Scene::CreateEntity() { // line 1570
 	return new SceneEntity(this/*, TODO*/);	
 }
 
-bool Scene::SetupView(/*TODO*/) {
+bool Scene::SetupView(/*TODO*/) { // line 524
 	// TODO
 	return true;
 }
 
-void Scene::TraverseForView(/*TODO*/) {
+void Scene::TraverseForView(/*TODO*/) { // line 648
 	// TODO
 	
 	// HACK: just draw everything
@@ -50,19 +50,19 @@ void Scene::TraverseForView(/*TODO*/) {
 		activeEntities.push_back(ent);
 }
 
-void Scene::TraverseForLights(/*TODO*/) {
+void Scene::TraverseForLights(/*TODO*/) { // line 795
 	// TODO
 }
 
-void Scene::CallCallbacks(/*TODO*/) {
+void Scene::CallCallbacks(/*TODO*/) { // line 1081
 	// TODO
 }
 
-void Scene::DrawTerrain(/*TODO*/) {
+void Scene::DrawTerrain(/*TODO*/) { // line 1160
 	// TODO
 }
 
-void Scene::DrawEntities(/*TODO*/) {
+void Scene::DrawEntities(/*TODO*/) { // line 1207
 	// TODO
 	for (auto entity: activeEntities) {
 		// TODO
@@ -70,7 +70,7 @@ void Scene::DrawEntities(/*TODO*/) {
 	}
 }
 
-void Scene::DoRender() {
+void Scene::DoRender() { // line 467
 	// TODO
 	if (SetupView()) {
 		TraverseForView();
@@ -82,10 +82,24 @@ void Scene::DoRender() {
 	activeEntities.clear();
 }
 
-void Scene::Draw() {
+void Scene::Render() { // line 351
 	// TODO
 	DoRender();
 	// TODO
+}
+
+void Scene::RenderWithoutCellTracing() { // line 1399
+	// TODO
+	for (SceneEntity *entity: m_entities) {
+		// TODO
+		if (entity->drawable)
+			entity->drawable->draw(&entity->matrix, /*TODO*/ 0.0f);
+	}
+}
+
+void Scene::AddEntity(SceneEntity *pEntity) { // line 2541
+	pEntity->entityIndex = m_entities.size();
+	m_entities.push_back(pEntity);
 }
 
 }

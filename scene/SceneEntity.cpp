@@ -1,8 +1,13 @@
+#include "Scene.h"
 #include "SceneCell.h"
 #include "SceneCellGroup.h"
 #include "SceneEntity.h"
 
 namespace cdc {
+
+SceneEntity::SceneEntity(Scene *scene) : scene(scene) {
+	scene->AddEntity(this);
+}
 
 void SceneEntity::setMatrix(Matrix& newMatrix) {
 	matrix = newMatrix;

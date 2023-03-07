@@ -14,7 +14,9 @@ class Scene : public IScene {
 	CommonRenderDevice *renderDevice; // 4
 	std::vector<SceneCellGroup*> sceneCellGroups; // 98
 	SceneCell *sceneCell; // B8
+	std::vector<SceneEntity*> m_entities; // BC
 	std::vector<SceneEntity*> activeEntities; // 2F0
+
 public:
 	Scene(CommonRenderDevice *renderDevice);
 
@@ -27,8 +29,12 @@ public:
 	void DrawEntities(/*TODO*/);
 	void DoRender();
 
+	// called from SceneEntity ctor
+	void AddEntity(SceneEntity *pEntity);
+
 	// 43 methods
-	void Draw() override;
+	void Render() override;
+	void RenderWithoutCellTracing() override;
 	SceneCellGroup *GetCellGroup(uint32_t index) override;
 	SceneEntity *CreateEntity() override;
 };
