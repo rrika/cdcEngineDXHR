@@ -20,8 +20,9 @@ struct RenderViewport {
 	float aspect; // 24
 	float width; // 28
 	float height; // 2C
-	float cameraDirection[4]; // 50
-	float cameraPosition[4]; // 60
+	Matrix viewMatrix; // 30
+		// third row is camera direction
+		// fourth row is camera position
 	uint32_t dwordC0; // C0, for PCDX11DepthPassCallbacks::pre
 	uint32_t mask; // E0
 };
@@ -129,16 +130,16 @@ public:
 	Matrix& getProjectMatrix() override { return projectMatrix; }
 	void sceneC() override {}
 	void getCameraPosition(float *pos) override {
-		pos[0] = viewport.cameraPosition[0];
-		pos[1] = viewport.cameraPosition[1];
-		pos[2] = viewport.cameraPosition[2];
-		pos[3] = viewport.cameraPosition[3];		
+		pos[0] = viewport.viewMatrix.m[3][0];
+		pos[1] = viewport.viewMatrix.m[3][1];
+		pos[2] = viewport.viewMatrix.m[3][2];
+		pos[3] = viewport.viewMatrix.m[3][3];
 	}
 	void getCameraDirection(float *dir) override {
-		dir[0] = viewport.cameraDirection[0];
-		dir[1] = viewport.cameraDirection[1];
-		dir[2] = viewport.cameraDirection[2];
-		dir[3] = viewport.cameraDirection[3];
+		dir[0] = viewport.viewMatrix.m[2][0];
+		dir[1] = viewport.viewMatrix.m[2][1];
+		dir[2] = viewport.viewMatrix.m[2][2];
+		dir[3] = viewport.viewMatrix.m[2][3];
 	}
 	RenderViewport& getViewport() override { return viewport; }
 	IRenderTarget *getRenderTarget() override { return renderTarget; }
