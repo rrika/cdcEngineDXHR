@@ -667,6 +667,7 @@ int spinnyCube(HWND window,
 			renderContext->renderTarget2C,
 			renderContext->depthBuffer);
 		scene->viewMatrix = viewMatrix;
+		cdc::OrthonormalInverse3x4(&renderViewport.viewMatrix, viewMatrix);
 
 		cdc::Matrix bottleWorldMatrix = bottleTranslate * bottleScale;
 

@@ -22,6 +22,7 @@ class Vector4 : public Vector {};
 using VectorArg = Vector const&;
 
 struct Matrix { float m[4][4]; };
+void OrthonormalInverse3x4(Matrix *result, Matrix& m);
 
 Matrix operator*(const Matrix& m1, const Matrix& m2);
 bool operator==(const Matrix& m1, const Matrix& m2);
