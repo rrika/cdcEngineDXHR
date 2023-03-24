@@ -1,7 +1,20 @@
 #include "Math.h"
 #include <cstring>
+#include <cmath>
 
 namespace cdc {
+
+void Vector::SafeNormalize3() {
+    // HACK
+    float d = x*x + y*y + z*z;
+    if (d > 0.0f) {
+        d = sqrt(d);
+        d = 1.0f/d;
+        x *= d;
+        y *= d;
+        z *= d;
+    }
+}
 
 void OrthonormalInverse3x4(Matrix *result, Matrix& m) { // Matrix.cpp:373
     result->m[3][0] = -(m.m[0][0] * m.m[3][0] + m.m[0][1] * m.m[3][1] + m.m[0][2] * m.m[3][2]);
