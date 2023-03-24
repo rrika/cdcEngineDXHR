@@ -771,7 +771,7 @@ int spinnyCube(HWND window,
 		// single bottle at origin
 		// rmiDrawable.draw(&bottleWorldMatrix, 0.0f);
 		sceneCube->setMatrix(bottleWorldMatrix);
-		g_scene->RenderWithoutCellTracing();
+		g_scene->RenderWithoutCellTracing(renderViewport);
 
 		// draw cells
 		for (auto& unit : StreamTracker) {

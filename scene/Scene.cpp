@@ -1,4 +1,5 @@
 #include <unordered_set>
+#include "rendering/Culling/Primitives_inlines.h"
 #include "IDrawable.h"
 #include "Scene.h"
 #include "SceneCell.h"
@@ -88,13 +89,20 @@ void Scene::Render() { // line 351
 	// TODO
 }
 
-void Scene::RenderWithoutCellTracing() { // line 1399
+void Scene::RenderWithoutCellTracing(RenderViewport& viewport) { // line 1399
+
+	m_viewport = viewport;
+	cullingFrustum.Set(viewport);
+
 	// TODO
 	for (SceneEntity *entity: m_entities) {
 		// TODO
-		if (entity->drawable)
+		if (entity->drawable &&
+			Intersects(entity->cullingVolume, cullingFrustum))
 			entity->drawable->draw(&entity->matrix, /*TODO*/ 0.0f);
 	}
+
+	cullingFrustum.Discard();
 }
 
 void Scene::AddEntity(SceneEntity *pEntity) { // line 2541

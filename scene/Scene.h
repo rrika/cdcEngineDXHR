@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include "rendering/CommonScene.h"
+#include "rendering/Culling/Primitives.h"
 #include "IScene.h"
 
 namespace cdc {
@@ -15,6 +17,8 @@ class Scene : public IScene {
 	std::vector<SceneCellGroup*> sceneCellGroups; // 98
 	SceneCell *sceneCell; // B8
 	std::vector<SceneEntity*> m_entities; // BC
+	RenderViewport m_viewport; // E0
+	CullingFrustum cullingFrustum; // 1D0
 	std::vector<SceneEntity*> activeEntities; // 2F0
 
 public:
@@ -34,7 +38,7 @@ public:
 
 	// 43 methods
 	void Render() override;
-	void RenderWithoutCellTracing() override;
+	void RenderWithoutCellTracing(RenderViewport& viewport) override;
 	SceneCellGroup *GetCellGroup(uint32_t index) override;
 	SceneEntity *CreateEntity() override;
 };
