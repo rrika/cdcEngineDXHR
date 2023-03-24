@@ -23,14 +23,14 @@ using VectorArg = Vector const&;
 
 struct Matrix { float m[4][4]; };
 
+Matrix operator*(const Matrix& m1, const Matrix& m2);
+bool operator==(const Matrix& m1, const Matrix& m2);
+inline bool operator!=(const Matrix& m1, const Matrix& m2) { return !(m1 == m2); }
+Matrix transpose(Matrix);
+extern Matrix identity4x4;
+
+Vector& operator+=(Vector& a, VectorArg b);
+Vector operator+(VectorArg a, VectorArg b);
+Vector operator*(VectorArg a, float b);
+
 }
-
-cdc::Matrix operator*(const cdc::Matrix& m1, const cdc::Matrix& m2);
-bool operator==(const cdc::Matrix& m1, const cdc::Matrix& m2);
-inline bool operator!=(const cdc::Matrix& m1, const cdc::Matrix& m2) { return !(m1 == m2); }
-cdc::Matrix transpose(cdc::Matrix);
-extern cdc::Matrix identity4x4;
-
-cdc::Vector& operator+=(cdc::Vector& a, cdc::VectorArg b);
-cdc::Vector operator+(cdc::VectorArg a, cdc::VectorArg b);
-cdc::Vector operator*(cdc::VectorArg a, float b);
