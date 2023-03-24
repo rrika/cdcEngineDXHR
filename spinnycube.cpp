@@ -70,10 +70,10 @@
 #include "cdcResource/WaveSection.h"
 #include "cdcScript/ScriptType.h"
 #include "cdcSound/MultiplexStream.h"
-#include "scene/IMFTypes.h"
-#include "scene/IScene.h"
-#include "scene/SceneCellGroup.h" // for SceneCellGroup to ISceneCellGroup cast
-#include "scene/SceneEntity.h"
+#include "cdcScene/IMFTypes.h"
+#include "cdcScene/IScene.h"
+#include "cdcScene/SceneCellGroup.h" // for SceneCellGroup to ISceneCellGroup cast
+#include "cdcScene/SceneEntity.h"
 #include "cdcSound/SoundPlex.h"
 #include "cdcWorld/RMIDrawableBase.h"
 #include "cdcWorld/stream.h" // for buildUnitsUI

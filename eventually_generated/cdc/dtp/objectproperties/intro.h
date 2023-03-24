@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "../../../../scene/cdcSceneCookdata.h"
+#include "cdcScene/cdcSceneCookdata.h"
 
 namespace dtp {
 

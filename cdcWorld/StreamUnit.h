@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include "cdc/dtp/admd.h"
-#include "../scene/ISceneCellGroup.h"
+#include "cdcScene/ISceneCellGroup.h"
 #include "Terrain.h"
 
 namespace dtp { struct UnitData; }

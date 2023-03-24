@@ -1,5 +1,5 @@
 #pragma once
-#include "../scene/IDrawable.h"
+#include "cdcScene/IDrawable.h"
 
 namespace cdc {
 

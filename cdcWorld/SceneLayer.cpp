@@ -1,6 +1,6 @@
 #include <cstdint>
 #include "SceneLayer.h"
-#include "../scene/SceneManager.h"
+#include "cdcScene/SceneManager.h"
 
 namespace cdc {
 	class CommonRenderDevice;
