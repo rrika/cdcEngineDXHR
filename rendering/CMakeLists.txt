@@ -1,5 +1,6 @@
 target_sources(dxhr PRIVATE
 	Culling/BasicPrimitives.cpp
+	Culling/Primitives.cpp
 
 	drawables/PCDX11ClearDrawable.cpp
 	drawables/PCDX11FastBlurDrawable.cpp
