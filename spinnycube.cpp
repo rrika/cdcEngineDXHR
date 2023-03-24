@@ -38,6 +38,8 @@
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
 #include "rendering/buffers/PCDX11IndexBuffer.h"
 #include "rendering/buffers/PCDX11UberConstantBuffer.h"
+#include "rendering/Culling/Primitives.h"
+#include "rendering/Culling/Primitives_inlines.h"
 #include "rendering/drawables/PCDX11FXAADrawable.h"
 #include "rendering/CommonRenderTerrainInstance.h"
 #include "rendering/IPCDeviceManager.h"
@@ -423,7 +425,7 @@ int spinnyCube(HWND window,
 	float w = viewport.Width / viewport.Height; // width (aspect ratio)
 	float h = 1.0f;                             // height
 	float n = 1.0f;                             // near
-	float f = 10000.0f;                         // far
+	float f = 100000.0f;                        // far
 
 	float scale = 1.f;
 	cdc::Vector modelRotation    = { 0.0f, 0.0f, 0.0f };
@@ -431,6 +433,7 @@ int spinnyCube(HWND window,
 	cdc::Vector modelTranslation = { 50.0f, 0.0f, 0.0f };
 
 	bool mouseLook = false;
+	bool useOcclusionCulling = true;
 	cdc::Vector cameraPos{0, 0, 0};
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -669,6 +672,9 @@ int spinnyCube(HWND window,
 		scene->viewMatrix = viewMatrix;
 		cdc::OrthonormalInverse3x4(&renderViewport.viewMatrix, viewMatrix);
 
+		cdc::CullingFrustum cullingFrustum;
+		cullingFrustum.Set(renderViewport);
+
 		cdc::Matrix bottleWorldMatrix = bottleTranslate * bottleScale;
 
 		cdc::PCDX11MatrixState lightMatrixState(renderDevice);
@@ -693,18 +699,27 @@ int spinnyCube(HWND window,
 		std::vector<std::unique_ptr<RMIDrawableBase>> recycleRMI;
 
 		auto putObject = [&](cdc::PCDX11RenderModel *renderModel, cdc::Matrix& instanceMatrix) {
+			RMIDrawableBase *selectedRmiDrawable = &rmiDrawable;
 			if (renderModel) {
 				// printf("%p %s\n", renderModel, typeid(*(cdc::RenderMesh*)renderModel).name());
 				// printf("%p\n", renderModel->getMesh());
 
 				// printf("%f %f %f\n", instanceMatrix.m[3][0], instanceMatrix.m[3][1], instanceMatrix.m[3][2]);
 
-				auto *instanceRMIDrawable = new RMIDrawableBase(renderModel);
-				recycleRMI.emplace_back(instanceRMIDrawable);
-				instanceRMIDrawable->draw(&instanceMatrix, 0.0f);
-			} else {
-				rmiDrawable.draw(&instanceMatrix, 0.0f);
+				selectedRmiDrawable = new RMIDrawableBase(renderModel);
+				recycleRMI.emplace_back(selectedRmiDrawable);
 			}
+
+			bool visible = true;
+			if (useOcclusionCulling) {
+				cdc::BasicCullingVolume cullingVolume;
+				selectedRmiDrawable->GetBoundingVolume(&cullingVolume);
+				cullingVolume.Transform(instanceMatrix);
+				visible = cdc::Intersects(cullingVolume, cullingFrustum);
+			}
+
+			if (visible)
+				selectedRmiDrawable->draw(&instanceMatrix, 0.0f);
 		};
 
 		// all the other objects
@@ -821,11 +836,6 @@ int spinnyCube(HWND window,
 					Gameloop::InitiateLevelLoad("det_sarifhq_rail_tutorial", nullptr);
 					cdc::getDefaultFileSystem()->processAll();
 				}
-				if (ImGui::MenuItem("Capture frame")) {
-
-					selectedCapture = captures.size();
-					captures.push_back({renderDevice->captureRenderLists(), scene});
-				}
 				if (ImGui::MenuItem("Show drawables")) { showDrawablesWindow = true; }
 				// if (ImGui::MenuItem("Show filesystem")) { showFilesystemWindow = true; }
 				if (ImGui::MenuItem("Show objects")) { showObjectsWindow = true; }
@@ -845,6 +855,14 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Polish"))    { localstr_set_language(language_polish,    language_default); }
 				if (ImGui::MenuItem("Russian"))   { localstr_set_language(language_russian,   language_default); }
 
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Rendering")) {
+				if (useOcclusionCulling) {
+					if (ImGui::MenuItem("Disable Occlusion Culling")) { useOcclusionCulling = false; }
+				} else {
+					if (ImGui::MenuItem("Enable Occlusion Culling")) { useOcclusionCulling = true; }
+				}
 				ImGui::EndMenu();
 			}
 			if (mouseLook)
