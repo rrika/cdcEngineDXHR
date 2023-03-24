@@ -1,6 +1,7 @@
 #pragma once
 #include "ISceneEntity.h"
 #include "cdcMath/Math.h"
+#include "rendering/Culling/BasicPrimitives.h"
 
 namespace cdc {
 
@@ -16,7 +17,10 @@ public:
 	Matrix matrix; // 20
 	IDrawable *drawable = nullptr; // 6C
 	SceneCellGroup *sceneCellGroup = nullptr; // 70
+	BasicCullingVolume cullingVolume; // F0
 
+	void QueryVolumeFromDrawable();
+	void TransformVolumeAndPivot();
 	void UpdateData(bool);
 
 public:

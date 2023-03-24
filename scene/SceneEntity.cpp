@@ -1,3 +1,4 @@
+#include "IDrawable.h"
 #include "Scene.h"
 #include "SceneCell.h"
 #include "SceneCellGroup.h"
@@ -11,6 +12,7 @@ SceneEntity::SceneEntity(Scene *scene) : scene(scene) {
 
 void SceneEntity::setMatrix(Matrix& newMatrix) {
 	matrix = newMatrix;
+	QueryVolumeFromDrawable();
 	// TODO
 }
 
@@ -20,6 +22,7 @@ Matrix& SceneEntity::getMatrix() {
 
 void SceneEntity::setDrawable(IDrawable *newDrawable) {
 	drawable = newDrawable;
+	QueryVolumeFromDrawable();
 	// TODO
 }
 
@@ -36,7 +39,21 @@ void SceneEntity::setCellGroup(ISceneCellGroup *newICellGroup) {
 	}
 }
 
-void SceneEntity::UpdateData(bool reInitCell) {
+void SceneEntity::QueryVolumeFromDrawable() { // line 370
+	if (drawable) {
+		drawable->GetBoundingVolume(&cullingVolume);
+		TransformVolumeAndPivot();
+		// TODO
+	} else {
+		// TODO
+	}
+}
+
+void SceneEntity::TransformVolumeAndPivot() { // line 406
+	cullingVolume.Transform(matrix);
+}
+
+void SceneEntity::UpdateData(bool reInitCell) { // line 464
 	// HACK
 	auto cell = sceneCellGroup->cellByIndex(0);
 	if (reInitCell) {
