@@ -42,7 +42,12 @@ struct SoundPlex {
 		const char *m_streamName;
 		int8_t byte4; // TODO
 		int8_t m_priorityStream;
-		// TODO
+		int8_t byte6;
+		uint32_t dword8;
+		uint32_t dwordC;
+		int8_t byte10;
+		int8_t byte11;
+		uint16_t stringIndex12;
 	};
 
 	struct Wave {

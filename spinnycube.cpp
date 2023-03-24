@@ -96,12 +96,14 @@
 #endif
 
 cdc::MultiplexStream *neverAskedForThis = nullptr;
+uint32_t subtitleIndex = 0;
 
 void howDoYouHandleAllOfThis() {
 	if (!neverAskedForThis)
 		neverAskedForThis = cdc::MultiplexStream::CreateSoundStream("vo\\eng\\det1\\adam_jensen\\sq02\\det1_sq02_dia_adam_006b", 0);
 
 	((cdc::MultiplexStreamImpl*)neverAskedForThis)->hackSample->Play();
+	subtitleIndex = 7497;
 }
 
 class ImGuiDrawable : public cdc::IRenderDrawable {
@@ -870,6 +872,26 @@ int spinnyCube(HWND window,
 			else
 				ImGui::Text("Press TAB to grab cursor");
 			ImGui::EndMainMenuBar();
+		}
+
+		if (subtitleIndex) {
+			ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
+			const float PAD = 30.0f;
+			const ImGuiViewport* viewport = ImGui::GetMainViewport();
+			ImVec2 work_pos = viewport->WorkPos; // Use work area to avoid menu-bar/task-bar, if any!
+			ImVec2 work_size = viewport->WorkSize;
+			ImVec2 window_pos, window_pos_pivot;
+			window_pos.x = work_pos.x + work_size.x*0.5f;
+			window_pos.y = work_pos.y + work_size.y - PAD;
+			window_pos_pivot.x = 0.5f;
+			window_pos_pivot.y = 1.0f;
+			ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+			ImGui::SetNextWindowBgAlpha(0.35f); // Transparent background
+			bool open = true;
+			if (ImGui::Begin("subtitlebox", &open, window_flags)) {
+				ImGui::Text("%s", localstr_get(subtitleIndex));
+			}
+			ImGui::End();
 		}
 
 		imGuiDrawable.lastMinuteAdditions = [&]() {

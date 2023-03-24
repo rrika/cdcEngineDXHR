@@ -2,6 +2,9 @@
 #include "Sample.h"
 #include "SoundPlexStream.h"
 
+// HACK
+extern uint32_t subtitleIndex;
+
 namespace cdc {
 
 SoundPlexStream::SoundPlexStream(
@@ -26,6 +29,8 @@ uint32_t SoundPlexStream::Init() {
 		dtpStream->m_priorityStream
 		// TODO
 	);
+
+	subtitleIndex = dtpStream->stringIndex12;
 
 	// HACK
 	((MultiplexStreamImpl*)multiplexStream)->hackSample->Play();

@@ -270,8 +270,12 @@ void buildUI(dtp::SoundPlex *snd, std::string indent) {
 		break;
 	}
 
-	case dtp::SoundPlex::SoundPlexSelector_Envelope: // 6
+	case dtp::SoundPlex::SoundPlexSelector_Envelope: { // 6
+		auto *data = (dtp::SoundPlex**)snd->m_data;
+		buildUI(*data, indent + "  ");
+		// TODO
 		break;
+	}
 
 	case dtp::SoundPlex::SoundPlexSelector_Selector: // 7
 		break;
