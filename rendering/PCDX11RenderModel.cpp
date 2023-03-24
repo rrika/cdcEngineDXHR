@@ -136,4 +136,20 @@ void PCDX11RenderModel::resConstruct() {
 	}
 }
 
+bool PCDX11RenderModel::getBoundingBox(Vector3& min, Vector3& max) const {
+	if (!mesh)
+		return false;
+
+	min.x = mesh->boundingBoxMin[0];
+	min.y = mesh->boundingBoxMin[1];
+	min.z = mesh->boundingBoxMin[2];
+	min.w = mesh->boundingBoxMin[3];
+
+	max.x = mesh->boundingBoxMax[0];
+	max.y = mesh->boundingBoxMax[1];
+	max.z = mesh->boundingBoxMax[2];
+	max.w = mesh->boundingBoxMax[3];
+	return true;
+}
+
 }

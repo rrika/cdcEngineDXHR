@@ -42,8 +42,8 @@ public:
 	// dtor
 
 	void mesh18() override { /*TODO*/ }
-	void getBoundingSphere(float*, float*) override { /*TODO*/ }
-	// void getBoundingBox(float *, float *) { /*TODO*/ }
+	void getBoundingSphere(float*, float*) const override { /*TODO*/ }
+	bool getBoundingBox(Vector3&, Vector3&) const override;
 	void getLodDistances(float*, float*) override { /*TODO*/ }
 	uint32_t getBoneCount() override { /*TODO*/ return 0; }
 	void mesh2C() override { /*TODO*/ }
