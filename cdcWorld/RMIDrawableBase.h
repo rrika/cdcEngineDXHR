@@ -16,5 +16,7 @@ public:
 public:
 	RMIDrawableBase(cdc::RenderMesh *model);
 	~RMIDrawableBase();
+	
+	void GetBoundingVolume(cdc::BasicCullingVolume*) override;
 	void draw(cdc::Matrix *, float) override;
 };

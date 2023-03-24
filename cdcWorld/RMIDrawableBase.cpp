@@ -1,7 +1,10 @@
 #include "RMIDrawableBase.h"
-#include "../rendering/CommonRenderDevice.h"
-#include "../rendering/RenderModelInstance.h"
-#include "../rendering/PCDX11MatrixState.h"
+#include "rendering/Culling/BasicPrimitives.h"
+#include "rendering/Culling/BasicPrimitives_inlines.h"
+#include "rendering/CommonRenderDevice.h"
+#include "rendering/RenderMesh.h"
+#include "rendering/RenderModelInstance.h"
+#include "rendering/PCDX11MatrixState.h"
 
 RMIDrawableBase::RMIDrawableBase(cdc::RenderMesh *model) {
 	rmi = cdc::g_renderDevice->createRenderModelInstance(model);
@@ -11,6 +14,19 @@ RMIDrawableBase::RMIDrawableBase(cdc::RenderMesh *model) {
 RMIDrawableBase::~RMIDrawableBase() {
 	delete rmi;
 	delete matrixState;
+}
+
+void RMIDrawableBase::GetBoundingVolume(cdc::BasicCullingVolume *volume) {
+
+	cdc::Vector3 min, max;
+	cdc::RenderMesh const *rm = rmi->GetRenderMesh();
+
+	if (rm->getBoundingBox(min, max)) {
+		cdc::CullingBox box;
+		box.SetFromMinMax(min, max);
+		volume->m_data.box = box;
+		volume->m_type = cdc::kVolumeBox;
+	}
 }
 
 void RMIDrawableBase::draw(cdc::Matrix *matrix, float) {
