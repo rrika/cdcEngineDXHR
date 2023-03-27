@@ -22,14 +22,17 @@ void createHigherFileSystems() {
 	const char *bigfilePath = getenv("BIGFILE");
 	if (!bigfilePath) {
 		printf("\nspecify path to BIGFILE.000 through BIGFILE environment variable\n\n");
+		exit(1);
 		return;
 	}
 
 	archiveFileSystem_default = new ArchiveFileSystem(lowerFileSystem);
 	bool indexOk = archiveFileSystem_default->readIndex(bigfilePath, 0);
 	
-	if (!indexOk)
+	if (!indexOk) {
 		FatalError("Unable to open bigfile BIGFILE.DAT!");
+		exit(1);
+	}
 }
 
 void destroyFileSystems() {

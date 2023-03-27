@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <vector>
+#include "cdcSys/Assert.h"
 
 // is it okay to cast pointer to vector::data() to a struct with uint32_t? (generally, yes)
 static_assert(__STDCPP_DEFAULT_NEW_ALIGNMENT__ % 4 == 0);
@@ -88,8 +89,11 @@ void loadBuiltinResources() {
 	if (shaderBlob.empty())
 		shaderBlob = loadWholeFile("../DXHRDC.shad");
 
-	if (shaderBlob.empty())
+	if (shaderBlob.empty()) {
+		cdc::FatalError("Couldn't open DXHRDC.shad");
+		exit(1);
 		return;
+	}
 
 	auto probeShader = [&](uint32_t offset) {
 		auto *data = (uint32_t*)(shaderBlob.data() + offset);
@@ -144,7 +148,7 @@ void loadBuiltinResources() {
 	shader_39 = probeShader(0x3a8a0);
 	shader_40 = probeShader(0x3ab50);
 
-	shader_41 = probeShader(0x3ad80);
+	// made a mistake while counting, there is no shader_41
 	shader_42 = probeShader(0x3ad80);
 	shader_43 = probeShader(0x3ae40);
 	shader_44 = probeShader(0x3af00);

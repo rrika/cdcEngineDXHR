@@ -79,6 +79,8 @@ bool ArchiveFileSystem::readIndex(const char *basePath, int i) {
 	ArchiveHeader header;
 	auto headerReceiver = FileUserBufferReceiver::create((void*)&header);
 	auto headerRequest = wrapped->createRequest(headerReceiver, path, 0);
+	if (!headerRequest)
+		return false;
 	headerRequest->setReadAmount(sizeof(ArchiveHeader));
 	headerRequest->submit(3);
 	headerRequest->decrRefCount();

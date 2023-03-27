@@ -49,6 +49,8 @@ void HackFileRequest::cancel() {
 
 FileRequest *HackFileSystem::createRequest(FileReceiver *receiver, const char *path, uint32_t offset) {
 	FILE *f = fopen(path, "rb");
+	if (!f)
+		return nullptr;
 	HackFile hf(this, std::make_shared<FileWrapper>(f));
 	uint32_t size = hf.getSize();
 	auto *req = hf.createRequest(receiver, path, offset);
