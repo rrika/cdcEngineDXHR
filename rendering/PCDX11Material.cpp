@@ -129,7 +129,8 @@ void PCDX11Material::setupPixelResources(
 	if (doEverything) {
 
 		if (subMat->psBufferSize)
-			stateManager->setPsConstantBuffer(3, constantBuffersPs[subMaterialIndex]);
+			if (constantBuffersPs[subMaterialIndex]) // HACK
+				stateManager->setPsConstantBuffer(3, constantBuffersPs[subMaterialIndex]);
 
 		// assign 0..refIndexEndA from submaterial
 		for (uint32_t i = 0; i < subMat->psRefIndexEndA; i++) {
@@ -382,14 +383,20 @@ PCDX11StreamDecl *PCDX11Material::SetupDepthPass(
 			} else {
 				stateManager->setBlendStateAndBlendFactors(0x6010010, materialBlob->alphaThreshold, 0);
 			}
-			pixelTable = static_cast<PCDX11PixelShaderTable*>(static_cast<PCDX11ShaderLib*>(subMaterial->shaderPixel)->table);
+			auto pixelLib = static_cast<PCDX11ShaderLib*>(subMaterial->shaderPixel);
+			if (!pixelLib)
+				return nullptr; // HACK
+			pixelTable = static_cast<PCDX11PixelShaderTable*>(pixelLib->table);
 		}
 
 		auto pixelShader = (*pixelTable)[pixelIndex];
 		stateManager->setPixelShader(pixelShader);
 
 		// set vertex shader
-		auto vertexTable = static_cast<PCDX11VertexShaderTable*>(static_cast<PCDX11ShaderLib*>(subMaterial->shaderVertex)->table);
+		auto vertexLib = static_cast<PCDX11ShaderLib*>(subMaterial->shaderVertex);
+		if (!vertexLib)
+			return nullptr;
+		auto vertexTable = static_cast<PCDX11VertexShaderTable*>(vertexLib->table);
 		auto vertexShader = (*vertexTable)[vertexIndex];
 		stateManager->setVertexShader(vertexShader);
 
@@ -560,11 +567,17 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 		vertexIndex |= 8;
 	uint32_t pixelIndex = 0;
 
-	auto pixelTable = static_cast<PCDX11PixelShaderTable*>(static_cast<PCDX11ShaderLib*>(subMaterial->shaderPixel)->table);
+	auto pixelLib = static_cast<PCDX11ShaderLib*>(subMaterial->shaderPixel);
+	if (!pixelLib)
+		return nullptr;
+	auto pixelTable = static_cast<PCDX11PixelShaderTable*>(pixelLib->table);
 	auto pixelShader = (*pixelTable)[pixelIndex];
 	stateManager->setPixelShader(pixelShader);
 
-	auto vertexTable = static_cast<PCDX11VertexShaderTable*>(static_cast<PCDX11ShaderLib*>(subMaterial->shaderVertex)->table);
+	auto vertexLib = static_cast<PCDX11ShaderLib*>(subMaterial->shaderVertex);
+	if (!vertexLib)
+		return nullptr;
+	auto vertexTable = static_cast<PCDX11VertexShaderTable*>(vertexLib->table);
 	auto vertexShader = (*vertexTable)[vertexIndex];
 	stateManager->setVertexShader(vertexShader);
 

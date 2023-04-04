@@ -141,6 +141,9 @@ void PCDX11ModelDrawable::drawComposite(uint32_t funcSetIndex, IRenderDrawable *
 	if (!thisModel->isUnlit())
 		thisModel->buildAndAssignLightBuffer(renderDevice, stateManager);
 
+	if (!streamDecl)
+		return; // HACK
+
 	thisModel->draw(renderDevice, stateManager, streamDecl, false);
 }
 
@@ -193,6 +196,9 @@ void PCDX11ModelDrawable::drawNormal(uint32_t funcSetIndex, IRenderDrawable *dra
 		(uint8_t)thisModel->flags34,
 		thisModel->opacity,
 		thisModel->float30);
+
+	if (!streamDecl)
+		return; // HACK
 
 	thisModel->draw(renderDevice, stateManager, streamDecl, false);
 }
