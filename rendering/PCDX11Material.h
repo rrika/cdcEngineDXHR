@@ -21,8 +21,8 @@ class PCDX11Material :
 	// PCDX11BitmapTexture *texture[4]; // 20
 	// PCDX11StaticConstantBuffer *constantBuffersPs[16]; // 30
 	// PCDX11StaticConstantBuffer *constantBuffersVs[16]; // 70
-	PCDX11UberConstantBuffer *constantBuffersPs[16]; // 30
-	PCDX11UberConstantBuffer *constantBuffersVs[16]; // 70
+	PCDX11UberConstantBuffer *constantBuffersPs[16] = {0}; // 30
+	PCDX11UberConstantBuffer *constantBuffersVs[16] = {0}; // 70
 
 	// mg = material globals
 	static uint32_t mg_state; // 00B37BE0
