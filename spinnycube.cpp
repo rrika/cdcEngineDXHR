@@ -759,9 +759,7 @@ int spinnyCube(HWND window,
 
 			for (uint32_t i=unit.imfShowRange[0]; i<numIMFRefs && i<unit.imfShowRange[1]; i++) {
 				dtp::IMFRef &ref = imfrefs[i];
-				if (!ref.m_imfDRMName)
-					continue;
-				if (ref.m_pResolveObject == nullptr) {
+				if (ref.m_imfDRMName && ref.m_pResolveObject == nullptr) {
 					char path[256];
 					cdc::GameShell::LOAD_IMFFileName(path, ref.m_imfDRMName);
 					ref.m_pResolveObject = cdc::ResolveObject::create(
@@ -774,13 +772,15 @@ int spinnyCube(HWND window,
 						cdc::FileRequest::NORMAL);
 					cdc::archiveFileSystem_default->processAll();
 				}
-				if (isLoaded(ref.m_pResolveObject)) {
+				if (isLoaded(ref.m_pResolveObject) || ref.m_imfDRMName == nullptr) {
 					//printf("%d %04x %s ", i, ref.dtpID, ref.m_imfDRMName);
 					dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(ref.dtpID);
-					//printf("%p ", im);
-					cdc::RenderMesh *model = im->pRenderModel;
-					//printf("%p\n", model);
-					putObject(static_cast<cdc::PCDX11RenderModel*>(model), ref.m_transform);
+					if (im) {
+						//printf("%p ", im);
+						cdc::RenderMesh *model = im->pRenderModel;
+						//printf("%p\n", model);
+						putObject(static_cast<cdc::PCDX11RenderModel*>(model), ref.m_transform);
+					}
 				}
 			}
 		}
