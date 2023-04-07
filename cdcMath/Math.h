@@ -29,7 +29,14 @@ using Vector2Arg = Vector2 const&;
 using Vector3Arg = Vector3 const&;
 using Vector4Arg = Vector4 const&;
 
-struct Matrix { float m[4][4]; };
+struct Matrix {
+	float m[4][4];
+	void Build_XYZOrder(float *angles);
+	void RotZ(float sina, float cosa);
+	void RotY(float sina, float cosa);
+	void RotX(float sina, float cosa);
+};
+
 using MatrixArg = Matrix const&;
 
 inline float Abs(float A) { return A < 0 ? -A : A; } // line 2931

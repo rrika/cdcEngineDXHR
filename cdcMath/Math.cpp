@@ -16,6 +16,43 @@ void Vector::SafeNormalize3() {
     }
 }
 
+void Matrix::Build_XYZOrder(float *angles) { // Matrix.cpp:283
+    *this = identity4x4;
+    RotZ(sin(angles[2]), cos(angles[2]));
+    RotY(sin(angles[1]), cos(angles[1]));
+    RotX(sin(angles[0]), cos(angles[0]));
+}
+
+void Matrix::RotX(float sina, float cosa) { // Matrix.cpp:312
+    float t0, t1;
+    for (int i=0; i<4; i++) {
+        t0 = m[i][1];
+        t1 = m[i][2];
+        m[i][1] = t0 * cosa - t1 * sina;
+        m[i][2] = t0 * sina + t1 * cosa;
+    }
+}
+
+void Matrix::RotY(float sina, float cosa) { // Matrix.cpp:333
+    float t0, t1;
+    for (int i=0; i<4; i++) {
+        t0 = m[i][2];
+        t1 = m[i][0];
+        m[i][2] = t0 * cosa - t1 * sina;
+        m[i][0] = t0 * sina + t1 * cosa;
+    }
+}
+
+void Matrix::RotZ(float sina, float cosa) { // Matrix.cpp:353
+    float t0, t1;
+    for (int i=0; i<4; i++) {
+        t0 = m[i][0];
+        t1 = m[i][1];
+        m[i][0] = t0 * cosa - t1 * sina;
+        m[i][1] = t0 * sina + t1 * cosa;
+    }
+}
+
 void OrthonormalInverse3x4(Matrix *result, Matrix& m) { // Matrix.cpp:373
     result->m[3][0] = -(m.m[0][0] * m.m[3][0] + m.m[0][1] * m.m[3][1] + m.m[0][2] * m.m[3][2]);
     result->m[3][1] = -(m.m[1][0] * m.m[3][0] + m.m[1][1] * m.m[3][1] + m.m[1][2] * m.m[3][2]);

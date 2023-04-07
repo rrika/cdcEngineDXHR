@@ -738,7 +738,7 @@ int spinnyCube(HWND window,
 			dtp::IMFRef *imfrefs = level->admdData->imfrefs;
 
 			for (uint32_t i=unit.introShowRange[0]; i<numIntros && i<unit.introShowRange[1]; i++) {
-				auto &intro = intros[i];
+				dtp::Intro &intro = intros[i];
 				float s = 1.f;
 				cdc::Matrix instanceMatrix = {
 					s*intro.scale[0], 0, 0, 0,
@@ -746,6 +746,8 @@ int spinnyCube(HWND window,
 					0, 0, s*intro.scale[2], 0,
 					intro.position[0], intro.position[1], intro.position[2], 1
 				};
+				cdc::Matrix rotationMatrix; rotationMatrix.Build_XYZOrder(intro.rotation);
+				instanceMatrix = instanceMatrix * rotationMatrix;
 				if (intro.objectListIndex == 0)
 					continue;
 				cdc::Object *object = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(intro.objectListIndex));
