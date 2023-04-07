@@ -1,7 +1,8 @@
 #include "BuiltinResources.h"
-#include <cstdio>
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 #include <vector>
 #include "cdcSys/Assert.h"
 
