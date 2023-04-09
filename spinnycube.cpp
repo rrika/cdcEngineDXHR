@@ -647,6 +647,24 @@ int spinnyCube(HWND window,
 			uint32_t numCells = cellGroupData->header->numTotalCells;
 			for (uint32_t i=0; i < numCells; i++) {
 				auto *cell = cellGroupData->cells[i];
+
+				if (cell->sub0) {
+					cdc::CellStreamGroupData *streamgroup = cell->sub0->streamGroup50;
+					if (streamgroup && streamgroup->resolveObject && isLoaded(streamgroup->resolveObject)) {
+						dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(cell->sub0->streamGroupDtp54);
+						if (im && im->m_type == 1) {
+							auto *rt = (cdc::IRenderTerrain *)im->pRenderModel;
+							if (rt) {
+								if (renderTerrainInstances.find(rt) != renderTerrainInstances.end())
+									continue;
+								auto *rti = (cdc::CommonRenderTerrainInstance*)renderDevice->createRenderTerrainInstance(rt);
+								renderTerrainInstances[rt] = rti;
+								printf("created RenderTerrainInstance %p for RenderTerrain %p\n", rti, rt);
+							}
+						}
+					}
+				}
+
 				if (cell->sub4) {
 					cdc::IRenderTerrain *rt = cell->sub4->pTerrain;
 					if (rt) {
@@ -658,6 +676,28 @@ int spinnyCube(HWND window,
 					}
 				}
 			}
+
+			uint32_t numStreamGroups = cellGroupData->header->numStreamGroups;
+			for (uint32_t i=0; i < numStreamGroups; i++) {
+				cdc::CellStreamGroupData *streamgroup = &cellGroupData->streamgroups[i];
+				if (!streamgroup->resolveObject && streamgroup->streamFileName) {
+					char path[256];
+					sprintf(path, "pc-w\\streamgroups\\%s.drm", streamgroup->streamFileName);
+					printf("requesting %s\n", path);
+					streamgroup->resolveObject = cdc::ResolveObject::create(
+						path,
+						nullptr,
+						nullptr,
+						nullptr,
+						nullptr,
+						nullptr,
+						nullptr,
+						0,
+						cdc::FileRequest::NORMAL
+					);
+				}
+			}
+			cdc::archiveFileSystem_default->processAll();
 		}
 
 		///////////////////////////////////////////////////////////////////////////////////////////
@@ -833,7 +873,21 @@ int spinnyCube(HWND window,
 			cdc::CellGroupData *cellGroupData = level->sub50;
 			uint32_t numCells = cellGroupData->header->numTotalCells;
 			for (uint32_t i=0; i < numCells; i++) {
-				auto *cell = cellGroupData->cells[i];
+				cdc::CellData *cell = cellGroupData->cells[i];
+
+				// draw streamgroup meshes
+				if (cell->sub0) {
+					cdc::CellStreamGroupData *streamgroup = cell->sub0->streamGroup50;
+					if (streamgroup && streamgroup->resolveObject && isLoaded(streamgroup->resolveObject)) {
+						dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(cell->sub0->streamGroupDtp54);
+						if (im && im->m_type == 1) {
+							auto *rt = (cdc::IRenderTerrain *)im->pRenderModel;
+							if (auto rtiIt = renderTerrainInstances.find(rt); rtiIt != renderTerrainInstances.end()) {
+								static_cast<cdc::PCDX11RenderTerrain*>(rtiIt->first)->hackDraw(rtiIt->second, &bottleWorldMatrix);
+							}
+						}
+					}
+				}
 
 				// draw renderterrain
 				if (cell->sub4) {

@@ -61,13 +61,15 @@ struct CellDataHeader { // 121
 	uint16_t word46;
 	uint16_t intraSceneCellGroupIndex;
 	uint16_t word4A;
-	uint16_t word5C;
-	uint16_t word5E;
+	uint16_t word4C;
+	uint16_t word4E;
 	CellStreamGroupData *streamGroup50;
-	uint32_t dword54;
+	uint32_t streamGroupDtp54;
 	void *dword58;
 	uint32_t pmatrix_or_imfref_5C;
 };
+
+static_assert(sizeof(CellDataHeader) == 0x60);
 
 struct CellTerrainData {
 	IRenderTerrain *pTerrain;
