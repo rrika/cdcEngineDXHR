@@ -18,6 +18,8 @@ void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 		static_cast<PCDX11DepthBuffer*>(depthBuffer));
 	// TODO
 	updateUniforms();
+	auto& sceneBuffer = stateManager->accessCommonCB(1);
+	sceneBuffer.assignRow(27, globalState.m_aParams, 16);
 	// TODO
 	if (drawableListsAndMasks) {
 		drawableListsAndMasks->renderPasses->sortAndDraw(
@@ -87,28 +89,28 @@ void PCDX11Scene::updateUniforms() {
 	row[0] = 0.1f;
 	row[1] = 0.1f;
 	row[2] = 0.1f;
-	sceneBuffer.assignRow(27, row, 1); // SceneBuffer::GlobalParams[0] (ambient or rim light)
+	memcpy(globalState.m_aParams + 0, row, 16); // SceneBuffer::GlobalParams[0] (ambient or rim light)
 	row[0] = 0.0f;
 	row[1] = 0.0f;
 	row[2] = 0.0f;
-	sceneBuffer.assignRow(28, row, 1); // SceneBuffer::GlobalParams[1] (how much pearl appearance)
+	memcpy(globalState.m_aParams + 4, row, 16); // SceneBuffer::GlobalParams[1] (how much pearl appearance)
 	row[0] = 1.0f;
-	sceneBuffer.assignRow(29, row, 1); // SceneBuffer::GlobalParams[2] (unsure what this does)
+	memcpy(globalState.m_aParams + 8, row, 16); // SceneBuffer::GlobalParams[2] (unsure what this does)
 	row[0] = 0.0f;
-	sceneBuffer.assignRow(33, row, 1); // SceneBuffer::GlobalParams[6] (unsure what this does)
+	memcpy(globalState.m_aParams + 24, row, 16); // SceneBuffer::GlobalParams[6] (unsure what this does)
 
 	// HACK: needed for the normals submaterial to work
 	row[0] = 1.0f;
 	row[1] = 0.0f;
 	row[2] = 0.0f;
 	row[3] = 0.0f;
-	sceneBuffer.assignRow(38, row, 1); // SceneBuffer::GlobalParams[11]
+	memcpy(globalState.m_aParams + 44, row, 16); // SceneBuffer::GlobalParams[11]
 	row[0] = 0.0f;
 	row[1] = 1.0f;
-	sceneBuffer.assignRow(39, row, 1); // SceneBuffer::GlobalParams[12]
+	memcpy(globalState.m_aParams + 48, row, 16); // SceneBuffer::GlobalParams[12]
 	row[1] = 0.0f;
 	row[2] = 1.0f;
-	sceneBuffer.assignRow(40, row, 1); // SceneBuffer::GlobalParams[13]
+	memcpy(globalState.m_aParams + 52, row, 16); // SceneBuffer::GlobalParams[13]
 
 	auto rt = stateManager->m_renderTarget;
 	auto width = rt->getWidth();

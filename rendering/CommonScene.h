@@ -42,6 +42,7 @@ struct RenderGlobalState {
 	// 3C [10] depthRenderTexture
 	// 40 [11]
 	// 44 [12]
+	float m_aParams[64] = {0}; // 48
 };
 
 class CommonScene :
