@@ -37,6 +37,9 @@ option(ENABLE_D3DCOMPILER "Build with d3dcompiler dependency" ${NOT_NATIVE_BUILD
 if (NATIVE_BUILD)
 	add_compile_options(-g)
 
+	#add_compile_options(-g -fsanitize=address)
+	#add_link_options(-g -fsanitize=address)
+
 	add_executable(dxhr
 		spinnycube.cpp)
 

@@ -10,6 +10,39 @@ static void outOfMemory(
 	// lol, lmao
 }
 
+#if DEBUG_ALLOCATIONS
+
+LinearAllocator::LinearAllocator(
+	uint32_t capacity,
+	bool allowExtension,
+	// AllocatorId *id,
+	const char *name)
+:
+	// id(id),
+	name(name)
+{
+	(void)capacity;
+	(void)allowExtension;
+}
+
+LinearAllocator::~LinearAllocator() {
+	rewind();
+}
+
+char *LinearAllocator::alloc(uint32_t size, uint32_t requester, bool reportFailure) {
+	char *ptr = new char[size];
+	allocations.push_back(ptr);
+	return ptr;
+}
+
+void LinearAllocator::rewind() {
+	for (char *allocation : allocations)
+		delete[] allocation;
+	allocations.clear();
+}
+
+#else
+
 LinearAllocator::LinearAllocator(
 	uint32_t capacity,
 	bool allowExtension,
@@ -121,5 +154,7 @@ void LinearAllocator::freeBespoke() {
 		delete[] (char*)s;
 	}
 }
+
+#endif
 
 }

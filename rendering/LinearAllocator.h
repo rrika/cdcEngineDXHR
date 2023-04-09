@@ -1,12 +1,22 @@
 #pragma once
+#define DEBUG_ALLOCATIONS 0
 #include <cstdint>
 #include <cstddef>
+#if DEBUG_ALLOCATIONS
+#include <vector>
+#endif
 
 namespace cdc {
 
 struct AllocatorId;
 
 class LinearAllocator {
+#if DEBUG_ALLOCATIONS
+	std::vector<char*> allocations;
+	AllocatorId *id;
+	const char *name;
+
+#else
 	struct Segment {
 		// for default segments "next" points to newer segments
 		// for bespoke segments "next" points to older segments
@@ -30,6 +40,7 @@ class LinearAllocator {
 	char *allocBespokeSegment(uint32_t size);
 	void allocDefaultSegment();
 	void freeBespoke();
+#endif
 
 public:
 	LinearAllocator(
