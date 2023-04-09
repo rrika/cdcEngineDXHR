@@ -550,8 +550,8 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 	uint32_t vsSelectAndFlags = (vsSelect << 8) | flags;
 
 	//setupStencil(matInstance, true, flags);
-	stateManager->setDepthRange(matInstance->minDepth, matInstance->maxDepth);
-	stateManager->setBlendStateAndBlendFactors(materialBlob->blendState24, 0, 0);
+	//stateManager->setDepthRange(matInstance->minDepth, matInstance->maxDepth);
+	//stateManager->setBlendStateAndBlendFactors(materialBlob->blendState24, 0, 0);
 
 	uint16_t renderTargetWriteMask = materialBlob->renderTargetWriteMask;
 	/* if (renderDevice->scene78->byte25C) {
