@@ -24,7 +24,8 @@ class CommonRenderDevice
 public:
 	LinearAllocator linear4; // 4
 	LinearAllocator *linear30; // 30
-	LinearAllocator *linear34; // 30
+	LinearAllocator *linear34; // 34
+	uint32_t sceneCreationCount; // 54
 public:
 	CommonScene *scene78; // 78
 protected:
@@ -68,13 +69,13 @@ public:
 		RenderViewport *renderViewport,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer);
-	virtual void finishScene() = 0;
+	virtual void finishScene() = 0; // 50
 	virtual void method_54();
-	virtual void method_58();
+	virtual uint32_t getSceneCreationCount(); // frame count, basically
 	virtual CommonScene *getScene();
-	virtual void getSceneRenderTarget() = 0;
+	virtual void getSceneRenderTarget() = 0; // 60
 	virtual void method_64() = 0;
-	virtual void method_68();
+	virtual RenderViewport *getCurViewport();
 	virtual void method_6C() = 0;
 	virtual void method_70() = 0;
 

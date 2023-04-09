@@ -337,6 +337,7 @@ CommonScene *PCDX11RenderDevice::createSubScene(
 	CommonRenderTarget *renderTarget,
 	CommonDepthBuffer *depthBuffer
 ) {
+	sceneCreationCount++;
 	// TODO
 	auto scene = new (linear30, 1, true) PCDX11Scene(
 		this,
