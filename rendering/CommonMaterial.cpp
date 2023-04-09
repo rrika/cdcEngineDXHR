@@ -68,6 +68,8 @@ void CommonMaterial::SetRenderPasses() { // HACK
 	else
 		mask = 0x1002;  // normals & composite
 
+	mask |= 0x2000; // deferred lighting
+
 	m_renderPassesMaskFading = m_renderPassesMask = mask;
 }
 

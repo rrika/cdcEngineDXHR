@@ -22,6 +22,7 @@
 #include "cdcFile/FileSystem.h" // for enum cdc::FileRequest::Priority
 #include "cdcFile/FileUserBufferReceiver.h"
 #include "game/dtp/objecttypes/globaldatabase.h"
+#include "game/DeferredRenderingObject.h"
 #include "game/Gameloop.h"
 #include "game/script/game/NsMainMenuMovieController.h"
 #include "game/ui/FakeScaleform/fakescaleform.h"
@@ -45,6 +46,7 @@
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/IRenderPassCallback.h"
 #include "rendering/PCDX11DeviceManager.h"
+#include "rendering/PCDX11Material.h" // for CommonMaterial to PCDX11Material cast
 #include "rendering/PCDX11MatrixState.h"
 #include "rendering/PCDX11RenderContext.h"
 #include "rendering/PCDX11RenderDevice.h"
@@ -700,7 +702,7 @@ int spinnyCube(HWND window,
 
 		std::vector<std::unique_ptr<RMIDrawableBase>> recycleRMI;
 
-		auto putObject = [&](cdc::PCDX11RenderModel *renderModel, cdc::Matrix& instanceMatrix) {
+		auto putObject = [&](cdc::PCDX11RenderModel *renderModel, cdc::Matrix& instanceMatrix, DeferredRenderingExtraData *extraData) {
 			RMIDrawableBase *selectedRmiDrawable = &rmiDrawable;
 			if (renderModel) {
 				// printf("%p %s\n", renderModel, typeid(*(cdc::RenderMesh*)renderModel).name());
@@ -708,7 +710,20 @@ int spinnyCube(HWND window,
 
 				// printf("%f %f %f\n", instanceMatrix.m[3][0], instanceMatrix.m[3][1], instanceMatrix.m[3][2]);
 
+				if (renderModel && extraData) {
+					// patch all materials (even though this render model is shared between instances)
+					for (uint32_t i = 0; i < renderModel->numPrimGroups; i++)
+						renderModel->tab0Ext128Byte[i].material = static_cast<cdc::PCDX11Material*>(extraData->material);
+				}
+
 				selectedRmiDrawable = new RMIDrawableBase(renderModel);
+				auto *rmi = static_cast<cdc::CommonRenderModelInstance*>(selectedRmiDrawable->rmi);
+				if (extraData) {
+					rmi->baseMask = 0x2000; // deferred lighting
+					hackCalcInstanceParams(extraData, &instanceMatrix, rmi->ext->instanceParams);
+				} else {
+					rmi->baseMask = 0x100A; // normals, composite, translucent. this is further narrowed down by CommonMaterial::SetRenderPasses
+				}
 				recycleRMI.emplace_back(selectedRmiDrawable);
 			}
 
@@ -755,8 +770,23 @@ int spinnyCube(HWND window,
 					continue;
 				if (object->numModels == 0)
 					continue;
+
+				struct ObjProp {
+					uint16_t version;
+					uint16_t family;
+					uint16_t id;
+					uint16_t type;
+				};
+				auto *objProp = (ObjProp*) object->data;
+				uint32_t objFamily = 0;
+				if (objProp && objProp->id == 0xb00b)
+					objFamily = objProp->family;
+				DeferredRenderingExtraData *extraData = nullptr;
+				if (objFamily == 0x50)
+					extraData = (DeferredRenderingExtraData*) intro.field44_extraData1;
+
 				auto *renderModel = (cdc::PCDX11RenderModel*)object->models[0]->renderMesh;
-				putObject(renderModel, instanceMatrix);
+				putObject(renderModel, instanceMatrix, extraData);
 			}
 
 			for (uint32_t i=unit.imfShowRange[0]; i<numIMFRefs && i<unit.imfShowRange[1]; i++) {
@@ -781,7 +811,7 @@ int spinnyCube(HWND window,
 						//printf("%p ", im);
 						cdc::RenderMesh *model = im->pRenderModel;
 						//printf("%p\n", model);
-						putObject(static_cast<cdc::PCDX11RenderModel*>(model), ref.m_transform);
+						putObject(static_cast<cdc::PCDX11RenderModel*>(model), ref.m_transform, nullptr);
 					}
 				}
 			}
