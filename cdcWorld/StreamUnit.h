@@ -23,8 +23,8 @@ struct Level { // UnitBlob
 	uint32_t dword20; // unused?
 	uint32_t dword24; // unused?
 	uint32_t dword28; // unused?
-	dtp::UnitData *unitData;
-	dtp::ADMD *admdData;
+	dtp::UnitData *unitData; // 2C
+	dtp::ADMD *admdData; // 30
 	uint32_t dword34; // unused?
 	uint32_t dword38; // unused?
 	uint32_t dword3C; // unused?

@@ -15,7 +15,7 @@ struct ADMD {
 	uint32_t numLightTable10;
 	uint32_t lightTable10;
 	uint32_t numObjects;
-	Intro *objects;
+	Intro *objects; // 18
 	uint32_t smallerObjects;
 	uint32_t numSmallerObjects;
 	uint32_t dword24;
