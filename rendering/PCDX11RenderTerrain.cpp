@@ -82,7 +82,7 @@ void PCDX11RenderTerrain::BuildDrawables(PCDX11TerrainState *terrainState) {
 		for (uint32_t j=0; j<chunkArray->m_numTerrainChunks; j++) {
 			TerrainChunk *chunk = &chunkArray->m_chunks[j];
 			RenderTerrainGroup *group = &m_pGroups[chunk->m_groupIndex];
-			auto **terrainChunkPtr = new (renderDevice->linear34) TerrainChunk*;
+			auto **terrainChunkPtr = new (renderDevice->linear30) TerrainChunk*;
 			*terrainChunkPtr = chunk;
 			auto *drawable = new (renderDevice, 0) PCDX11TerrainDrawable(
 				group,
