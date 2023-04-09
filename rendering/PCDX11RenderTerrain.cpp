@@ -44,6 +44,7 @@ void PCDX11RenderTerrain::hackDraw(CommonRenderTerrainInstance *instance, Matrix
 	terrainState->m_toWorld = *matrix;
 	terrainState->m_pInstanceData = instance->instanceData;
 	terrainState->nextEntry = nullptr;
+	terrainState->m_pInstanceParams = instance->m_pCurrentInstanceParams;
 
 	// instead of queueing the terrainstate on the renderdevice
 	// build the drawables right now

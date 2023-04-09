@@ -19,7 +19,7 @@ struct PCDX11TerrainState {
 	// PCDX11DeferredLight *m_pLights[128]; // 10
 	Matrix m_toWorld; // 210
 	RenderTerrainInstanceData *m_pInstanceData; // 250
-	// Vector *m_pInstanceParams; // 254
+	Vector4 *m_pInstanceParams; // 254
 	// bool m_shadowOnly; // 258
 	// IRenderTerrainInstance::NodeDrawData **m_ppDrawDatas;
 	PCDX11TerrainState *nextEntry; // 260

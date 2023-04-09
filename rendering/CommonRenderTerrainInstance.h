@@ -5,6 +5,7 @@
 namespace cdc {
 
 class CommonRenderTerrain;
+class Vector4;
 struct RenderTerrainInstanceData;
 
 class CommonRenderTerrainInstance :
@@ -12,9 +13,10 @@ class CommonRenderTerrainInstance :
 	public RenderExternalResource
 {
 public:
-	CommonRenderTerrain *renderTerrain;
-	RenderTerrainInstanceData *instanceData;
-
+	CommonRenderTerrain *renderTerrain; // C
+	RenderTerrainInstanceData *instanceData; // 10
+	Vector4 *m_pCurrentInstanceParams = 0; // 18
+	// Vector4 *m_pInstanceParams = 0; // 1C
 public:
 	CommonRenderTerrainInstance(CommonRenderTerrain *renderTerrain);
 

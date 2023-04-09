@@ -58,6 +58,8 @@ void PCDX11Material::method_18() {
 	// TODO
 }
 
+static char s_dummyModifierParams[16 * 8] = {0};
+
 void PCDX11Material::setupVertexResources(
 	uint32_t subMaterialIndex,
 	MaterialBlobSub* subMat,
@@ -109,6 +111,8 @@ void PCDX11Material::setupVertexResources(
 	}
 
 	if (subMat->vsBufferNumRows) {
+		if (!cbData)
+			cbData = s_dummyModifierParams;
 		PCDX11UberConstantBuffer& cb = stateManager->accessCommonCB(4);
 		auto firstRow = subMat->vsBufferFirstRow;
 		auto numRows = subMat->vsBufferNumRows;
@@ -171,6 +175,8 @@ void PCDX11Material::setupPixelResources(
 	}
 
 	if (subMat->psBufferNumRows) {
+		if (!cbData)
+			cbData = s_dummyModifierParams;
 		PCDX11UberConstantBuffer& cb = stateManager->accessCommonCB(4);
 		auto firstRow = subMat->psBufferFirstRow;
 		auto numRows = subMat->psBufferNumRows;

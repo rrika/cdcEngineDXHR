@@ -30,6 +30,7 @@ PCDX11TerrainDrawable::PCDX11TerrainDrawable(
 	m_numGeoms = numGeoms;
 	m_flags = flags;
 	m_pLocalToWorld = &pState->m_toWorld;
+	m_pInstanceParams = pState->m_pInstanceParams;
 }
 
 void PCDX11TerrainDrawable::draw1(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
