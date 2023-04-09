@@ -168,7 +168,7 @@ void DrawableList::draw(RenderFunctionSet *funcSet, uint32_t funcSetIndex) {
 		bool matchPrev = prev &&
 			prev->typeID == drawable->typeID &&
 			prev->getVtable() == drawable->getVtable();
-		funcSet->func[drawable->typeID](funcSetIndex, drawable, prev);
+		funcSet->func[drawable->typeID](funcSetIndex, drawable, matchPrev ? prev : nullptr);
 		item = item->next;
 	}
 }
