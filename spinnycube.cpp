@@ -41,6 +41,7 @@
 #include "rendering/buffers/PCDX11UberConstantBuffer.h"
 #include "rendering/Culling/Primitives.h"
 #include "rendering/Culling/Primitives_inlines.h"
+#include "rendering/Culling/BasicPrimitives_inlines.h"
 #include "rendering/drawables/PCDX11FXAADrawable.h"
 #include "rendering/CommonRenderTerrainInstance.h"
 #include "rendering/IPCDeviceManager.h"
@@ -862,6 +863,34 @@ int spinnyCube(HWND window,
 		sceneCube->setMatrix(bottleWorldMatrix);
 		g_scene->RenderWithoutCellTracing(renderViewport);
 
+		auto putTerrain = [&](cdc::IRenderTerrain *renderTerrain, cdc::Matrix& instanceMatrix) {
+
+			auto rtiIt = renderTerrainInstances.find(renderTerrain);
+			if (rtiIt == renderTerrainInstances.end())
+				return;
+			cdc::CommonRenderTerrainInstance *rti = rtiIt->second;
+
+			bool visible = true;
+			if (useOcclusionCulling) {
+				cdc::IRenderTerrain::Node *nodes = renderTerrain->GetNodes();
+				cdc::Vector3 center{nodes->center[0], nodes->center[1], nodes->center[2]};
+				cdc::Vector3 extents{nodes->extents[0], nodes->extents[1], nodes->extents[2]};
+
+				cdc::CullingBox box;
+				box.SetFromCenterAndExtents(center, extents);
+
+				cdc::BasicCullingVolume cullingVolume;
+				cullingVolume.m_data.box = box;
+				cullingVolume.m_type = cdc::kVolumeBox;
+
+				cullingVolume.Transform(instanceMatrix);
+				visible = cdc::Intersects(cullingVolume, cullingFrustum);
+			}
+
+			if (visible)
+				static_cast<cdc::PCDX11RenderTerrain*>(renderTerrain)->hackDraw(rti, &instanceMatrix);
+		};
+
 		// draw cells
 		for (auto& unit : StreamTracker) {
 			if (!unit.used)
@@ -882,9 +911,7 @@ int spinnyCube(HWND window,
 						dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(cell->sub0->streamGroupDtp54);
 						if (im && im->m_type == 1) {
 							auto *rt = (cdc::IRenderTerrain *)im->pRenderModel;
-							if (auto rtiIt = renderTerrainInstances.find(rt); rtiIt != renderTerrainInstances.end()) {
-								static_cast<cdc::PCDX11RenderTerrain*>(rtiIt->first)->hackDraw(rtiIt->second, &bottleWorldMatrix);
-							}
+							putTerrain(rt, bottleWorldMatrix);
 						}
 					}
 				}
@@ -892,9 +919,7 @@ int spinnyCube(HWND window,
 				// draw renderterrain
 				if (cell->sub4) {
 					cdc::IRenderTerrain *rt = cell->sub4->pTerrain;
-					if (auto rtiIt = renderTerrainInstances.find(rt); rtiIt != renderTerrainInstances.end()) {
-						static_cast<cdc::PCDX11RenderTerrain*>(rtiIt->first)->hackDraw(rtiIt->second, &bottleWorldMatrix);
-					}
+					putTerrain(rt, bottleWorldMatrix);
 				}
 
 				// draw rendermesh (these are for occlusion culling only, presumably)

@@ -33,6 +33,15 @@ inline void CullingSphere::Transform(Matrix const& m) { // line 225
 	// TODO
 }
 
+inline void CullingBox::SetFromCenterAndExtents(Vector3Arg center, Vector3Arg extents) { // line 497
+	m_exX = {extents.x, 0.0f, 0.0f};
+	m_exY = {0.0f, extents.y, 0.0f};
+	m_exZ = {0.0f, 0.0f, extents.z};
+	m_center = {center};
+	// like in SetFromMinMax
+	m_center.w = 1.f;
+}
+
 inline void CullingBox::SetFromMinMax(Vector3Arg min, Vector3Arg max) { // 515
 	Vector3Arg across = max-min;
 	Vector3Arg center = (max+min) * 0.5;
@@ -41,8 +50,12 @@ inline void CullingBox::SetFromMinMax(Vector3Arg min, Vector3Arg max) { // 515
 	m_exY = {0.f, across.y, 0.f, 0.f};
 	m_exZ = {0.f, 0.f, across.z, 0.f};
 	m_center = {center};
-	// HACK:
+	// HACK (forgot why though)
 	m_center.w = 1.f;
+}
+
+inline void CullingBox::Translate(Vector3Arg t) { // line 533
+	m_center += t;
 }
 
 inline void CullingBox::Transform(Matrix const& m) { // line 538

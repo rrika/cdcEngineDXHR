@@ -27,8 +27,10 @@ struct CullingSphere { // line 122
 };
 
 struct CullingBox { // line 296
+	inline void SetFromCenterAndExtents(Vector3Arg center, Vector3Arg extents);
 	inline void SetFromMinMax(Vector3Arg min, Vector3Arg max);
 	inline CullingMinMax GetProjectedMinMax(Vector3Arg e) const;
+	inline void Translate(Vector3Arg t);
 	inline void Transform(Matrix const& m);
 
 	Vector4 m_exX;

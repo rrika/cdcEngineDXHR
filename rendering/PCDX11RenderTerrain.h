@@ -63,8 +63,8 @@ public:
 	// void resMethod10(); // inherited
 
 	// from IRenderTerrain
-	// void method_18() override;
-	// void method_1C() override;
+	Node *GetNodes() override { return m_pNodes; }
+	uint32_t NumNodes() override { return m_pHeader->numNodes; }
 	// void Render(/*TODO*/) override;
 	// void method_24() override;
 };
