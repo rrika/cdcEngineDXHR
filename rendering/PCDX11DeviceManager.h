@@ -14,16 +14,16 @@ class PCDX11StateManager;
 class PCDX11DeviceManager :
 	public IPCDeviceManager
 {
-	HMODULE d3d11;
-	HMODULE dxgi;
-	ID3D11Device *device;
-	IDXGIFactory *dxgiFactory;
-	ID3D11DeviceContext *deviceContext;
-	DisplayConfig config1;
-	DisplayConfig config2;
-	PCDX11ShaderManager shaderManager; // actually a pointer
+	HMODULE d3d11; // 1C
+	HMODULE dxgi; // 20
+	ID3D11Device *device; // 24
+	IDXGIFactory *dxgiFactory; // 28
+	ID3D11DeviceContext *deviceContext; // 2C
+	DisplayConfig config1; // 34
+	DisplayConfig config2; // BC
+	PCDX11ShaderManager shaderManager; // 14C, actually a pointer
 public:
-	PCDX11StateManager *stateManager;
+	PCDX11StateManager *stateManager; // 150
 
 	PCDX11DeviceManager(HMODULE d3d11, HMODULE dxgi);
 	PCDX11DeviceManager(HMODULE d3d11, HMODULE dxgi, ID3D11Device*, ID3D11DeviceContext*);
