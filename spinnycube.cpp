@@ -438,7 +438,8 @@ int spinnyCube(HWND window,
 	cdc::Vector modelTranslation = { 50.0f, 0.0f, 0.0f };
 
 	bool mouseLook = false;
-	bool useOcclusionCulling = true;
+	bool useFrustumCulling = true;
+	bool drawCellBoxes = false;
 	cdc::Vector cameraPos{0, 0, 0};
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -769,7 +770,7 @@ int spinnyCube(HWND window,
 			}
 
 			bool visible = true;
-			if (useOcclusionCulling) {
+			if (useFrustumCulling) {
 				cdc::BasicCullingVolume cullingVolume;
 				selectedRmiDrawable->GetBoundingVolume(&cullingVolume);
 				cullingVolume.Transform(instanceMatrix);
@@ -871,7 +872,7 @@ int spinnyCube(HWND window,
 			cdc::CommonRenderTerrainInstance *rti = rtiIt->second;
 
 			bool visible = true;
-			if (useOcclusionCulling) {
+			if (useFrustumCulling) {
 				cdc::IRenderTerrain::Node *nodes = renderTerrain->GetNodes();
 				cdc::Vector3 center{nodes->center[0], nodes->center[1], nodes->center[2]};
 				cdc::Vector3 extents{nodes->extents[0], nodes->extents[1], nodes->extents[2]};
@@ -911,7 +912,7 @@ int spinnyCube(HWND window,
 						dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(cell->sub0->streamGroupDtp54);
 						if (im && im->m_type == 1) {
 							auto *rt = (cdc::IRenderTerrain *)im->pRenderModel;
-							putTerrain(rt, bottleWorldMatrix);
+							putTerrain(rt, cdc::identity4x4);
 						}
 					}
 				}
@@ -919,15 +920,15 @@ int spinnyCube(HWND window,
 				// draw renderterrain
 				if (cell->sub4) {
 					cdc::IRenderTerrain *rt = cell->sub4->pTerrain;
-					putTerrain(rt, bottleWorldMatrix);
+					putTerrain(rt, cdc::identity4x4);
 				}
 
 				// draw rendermesh (these are for occlusion culling only, presumably)
-				if (cell->renderMesh && false) {
+				if (cell->renderMesh && drawCellBoxes) {
 					auto *cellRMIDrawable = new RMIDrawableBase(cell->renderMesh);
 					recycleRMI.emplace_back(cellRMIDrawable);
-					static_cast<cdc::PCDX11RenderModelInstance*>(cellRMIDrawable->rmi)->baseMask = 0x0002; // normals & composite
-					cellRMIDrawable->draw(&bottleWorldMatrix, 0.0f);
+					static_cast<cdc::PCDX11RenderModelInstance*>(cellRMIDrawable->rmi)->baseMask = 0x1002; // normals & composite
+					cellRMIDrawable->draw(&cdc::identity4x4, 0.0f);
 				}
 			}
 		}
@@ -971,10 +972,15 @@ int spinnyCube(HWND window,
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Rendering")) {
-				if (useOcclusionCulling) {
-					if (ImGui::MenuItem("Disable Occlusion Culling")) { useOcclusionCulling = false; }
+				if (useFrustumCulling) {
+					if (ImGui::MenuItem("Disable Frustum Culling")) { useFrustumCulling = false; }
 				} else {
-					if (ImGui::MenuItem("Enable Occlusion Culling")) { useOcclusionCulling = true; }
+					if (ImGui::MenuItem("Enable Frustum Culling")) { useFrustumCulling = true; }
+				}
+				if (drawCellBoxes) {
+					if (ImGui::MenuItem("Hide Cell Boxes")) { drawCellBoxes = false; }
+				} else {
+					if (ImGui::MenuItem("Show Cell Boxes")) { drawCellBoxes = true; }
 				}
 				ImGui::EndMenu();
 			}
