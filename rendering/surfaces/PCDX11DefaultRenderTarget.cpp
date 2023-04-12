@@ -44,6 +44,8 @@ ID3D11RenderTargetView *PCDX11DefaultRenderTarget::getRenderTargetView() {
 }
 
 void PCDX11DefaultRenderTarget::copyFromTexture(PCDX11RenderTarget *sourceRT) {
+	// used from PCDX11Scene::draw when it has been constructed with sourceColor != nullptr
+
 	if (sourceRT->method_3C())
 		sourceRT->method_40();
 

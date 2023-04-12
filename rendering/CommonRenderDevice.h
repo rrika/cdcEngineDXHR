@@ -64,12 +64,16 @@ public:
 	virtual CommonScene *createSubScene(
 		RenderViewport *renderViewport,
 		CommonRenderTarget *renderTarget,
-		CommonDepthBuffer *depthBuffer) = 0;
-	virtual void createSiblingScene(
+		CommonDepthBuffer *depthBuffer,
+		CommonRenderTarget *sourceColor,
+		CommonDepthBuffer *sourceDepth) = 0;
+	virtual void createSiblingScene( // CreatePartition
 		RenderViewport *renderViewport,
 		CommonRenderTarget *renderTarget,
-		CommonDepthBuffer *depthBuffer);
-	virtual void finishScene() = 0; // 50
+		CommonDepthBuffer *depthBuffer,
+		CommonRenderTarget *sourceColor,
+		CommonDepthBuffer *sourceDepth);
+	virtual void finishScene() = 0; // 50, EndScene
 	virtual void method_54();
 	virtual uint32_t getSceneCreationCount(); // frame count, basically
 	virtual CommonScene *getScene();

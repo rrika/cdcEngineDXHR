@@ -70,8 +70,8 @@ public:
 	CommonRenderTarget *renderTarget; //3F0
 	CommonDepthBuffer *depthBuffer; // 3F4
 	// uint32_t dword3F8;
-	// uint32_t dword3FC;
-	// uint32_t dword400;
+	CommonRenderTarget *sourceColor; //3FC
+	CommonDepthBuffer *sourceDepth; // 400
 	CommonScene *parentScene; // 404
 	CommonScene *nextScene; // 408
 	CommonScene *prevScene; // 40C
@@ -122,6 +122,8 @@ public:
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer,
 		/* ... */
+		CommonRenderTarget *sourceColor,
+		CommonDepthBuffer *sourceDepth,
 		RenderGlobalState *globalState,
 		/* ... */
 		RenderPasses *renderPasses);

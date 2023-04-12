@@ -50,10 +50,12 @@ void CommonRenderDevice::method_44() {
 void CommonRenderDevice::createSiblingScene(
 	RenderViewport *viewport,
 	CommonRenderTarget *renderTarget,
-	CommonDepthBuffer *depthBuffer)
+	CommonDepthBuffer *depthBuffer,
+	CommonRenderTarget *sourceColor,
+	CommonDepthBuffer *sourceDepth)
 {
 	// TODO
-	createSubScene(viewport, renderTarget, depthBuffer);
+	createSubScene(viewport, renderTarget, depthBuffer, sourceColor, sourceDepth);
 	// TODO
 }
 

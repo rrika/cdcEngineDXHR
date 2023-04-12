@@ -126,7 +126,9 @@ public:
 	CommonScene *createSubScene(
 		RenderViewport *renderViewport,
 		CommonRenderTarget *renderTarget,
-		CommonDepthBuffer *depthBuffer) override;
+		CommonDepthBuffer *depthBuffer,
+		CommonRenderTarget *sourceColor,
+		CommonDepthBuffer *sourceDepth) override;
 	void finishScene() override;
 	void getSceneRenderTarget() override;
 	void method_64() override;

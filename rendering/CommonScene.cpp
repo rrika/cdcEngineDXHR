@@ -11,15 +11,19 @@ CommonScene::CommonScene(
 	CommonRenderTarget *renderTarget,
 	CommonDepthBuffer *depthBuffer,
 	/* ... */
+	CommonRenderTarget *sourceColor,
+	CommonDepthBuffer *sourceDepth,
 	RenderGlobalState *globalState,
 	/* ... */
 	RenderPasses *renderPasses)
 :
 	renderTarget(renderTarget),
+	depthBuffer(depthBuffer),
+	sourceColor(sourceColor),
+	sourceDepth(sourceDepth),
 	parentScene(parentScene),
 	nextScene(nullptr),
 	prevScene(nullptr),
-	depthBuffer(depthBuffer),
 	numSubScenes(0)
 {
 	this->viewport = *viewport;

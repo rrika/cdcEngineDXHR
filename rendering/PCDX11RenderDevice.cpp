@@ -139,16 +139,19 @@ void PCDX11RenderDevice::createDefaultVertexAttribLayouts() {
 	attrs.push_back({VertexAttributeA::kTexcoord1, 0xffff, 1, 0});
 	attrs.push_back({VertexAttributeA::kTexcoord2, 0xffff, 1, 0});
 	drawVertexDecls[0] = VertexDecl::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
+	drawVertexDecls[0]->hash0 |= 1; // HACK
 
 	attrs.clear();
 	attrs.push_back({VertexAttributeA::kPosition,  0xffff, 2, 0});
 	attrs.push_back({VertexAttributeA::kColor1,    0xffff, 4, 0});
 	attrs.push_back({VertexAttributeA::kTexcoord0, 0xffff, 1, 0}); // HACK
 	drawVertexDecls[5] = VertexDecl::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
+	drawVertexDecls[5]->hash0 |= 5; // HACK
 
 	attrs.clear();
 	attrs.push_back({VertexAttributeA::kPosition,  0xffff, 2, 0});
 	drawVertexDecls[6] = VertexDecl::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
+	drawVertexDecls[6]->hash0 |= 6; // HACK
 
 	PCDX11VertexShader *vs;
 
@@ -339,10 +342,12 @@ void PCDX11RenderDevice::method_30() {
 	// TODO
 }
 
-CommonScene *PCDX11RenderDevice::createSubScene(
+CommonScene *PCDX11RenderDevice::createSubScene( // 48
 	RenderViewport *viewport,
 	CommonRenderTarget *renderTarget,
-	CommonDepthBuffer *depthBuffer
+	CommonDepthBuffer *depthBuffer,
+	CommonRenderTarget *sourceColor,
+	CommonDepthBuffer *sourceDepth
 ) {
 	sceneCreationCount++;
 	// TODO
@@ -352,6 +357,8 @@ CommonScene *PCDX11RenderDevice::createSubScene(
 		viewport,
 		renderTarget,
 		depthBuffer,
+		sourceColor,
+		sourceDepth,
 		getGlobalState(),
 		&renderPasses);
 	scene7C = scene;

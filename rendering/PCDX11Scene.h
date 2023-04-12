@@ -15,11 +15,13 @@ public:
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer,
 		/* ... */
+		CommonRenderTarget *sourceColor,
+		CommonDepthBuffer *sourceDepth,
 		RenderGlobalState *globalState,
 		/* ... */
 		RenderPasses *renderPasses)
 	:
-		CommonScene(renderDevice, parentScene, viewport, renderTarget, depthBuffer, globalState, renderPasses),
+		CommonScene(renderDevice, parentScene, viewport, renderTarget, depthBuffer, sourceColor, sourceDepth, globalState, renderPasses),
 		renderDevice(static_cast<PCDX11RenderDevice*>(renderDevice))
 	{
 		// TODO

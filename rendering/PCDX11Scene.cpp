@@ -21,6 +21,12 @@ void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 	auto& sceneBuffer = stateManager->accessCommonCB(1);
 	sceneBuffer.assignRow(27, globalState.m_aParams, 16);
 	// TODO
+
+	if (sourceColor)
+		stateManager->m_renderTarget->copyFromTexture(static_cast<PCDX11RenderTarget*>(sourceColor));
+	if (sourceDepth)
+		stateManager->m_depthBuffer->copyFromTexture(static_cast<PCDX11DepthBuffer*>(sourceDepth)); // not implemented in original binary
+
 	if (drawableListsAndMasks) {
 		drawableListsAndMasks->renderPasses->sortAndDraw(
 			drawableListsAndMasks->passType,
