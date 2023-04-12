@@ -98,8 +98,13 @@ void PCDX11RenderTexture::ensureRenderTargetView() {
 	auto *device = deviceManager->getD3DDevice();
 	if (!view) {
 		if (isDepthBuffer == false) {
+			D3D11_RENDER_TARGET_VIEW_DESC desc = {};
+			desc.Format = (DXGI_FORMAT)textureFormat;
+			desc.ViewDimension = sampleCount > 1
+				? D3D11_RTV_DIMENSION_TEXTURE2DMS
+				: D3D11_RTV_DIMENSION_TEXTURE2D;
 			ID3D11RenderTargetView* frameBufferView;
-			device->CreateRenderTargetView(resource, /*TODO*/ nullptr, &frameBufferView);
+			device->CreateRenderTargetView(resource, &desc, &frameBufferView);
 			view = frameBufferView;
 		} else {
 			D3D11_DEPTH_STENCIL_VIEW_DESC desc = {};
