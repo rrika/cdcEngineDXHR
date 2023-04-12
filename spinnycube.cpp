@@ -440,8 +440,8 @@ int spinnyCube(HWND window,
 	bool mouseLook = false;
 	bool useFrustumCulling = true;
 	bool drawCellBoxes = false;
-	bool applyFXAA = true;
-	bool pointlessCopy = true;
+	bool applyFXAA = false;
+	bool pointlessCopy = false;
 	cdc::Vector cameraPos{0, 0, 0};
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
