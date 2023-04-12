@@ -13,7 +13,7 @@ void PCDX11RenderContext::fillModeDesc(DXGI_MODE_DESC& modeDesc) {
 	modeDesc.Height = 0;
 	modeDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	modeDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	modeDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB; // TODO
+	modeDesc.Format = deviceManager->currentAdapter->backBufferFormat;
 	modeDesc.RefreshRate.Numerator = displayConfig->fullscreenRefreshRate;
 	modeDesc.RefreshRate.Denominator = 1;
 	if (displayConfig->fullscreen) {
@@ -35,11 +35,11 @@ bool PCDX11RenderContext::createRenderTargets() {
 	// TODO
 	uint32_t width = this->width; // TODO
 	uint32_t height = this->height; // TODO
-	uint32_t format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB; // TODO
+	uint32_t format = deviceManager->currentAdapter->backBufferFormat; // TODO
 	renderTarget2C = new PCDX11DefaultRenderTarget(
 		width, height, /*flags=*/ 4 /*HACK*/ | 1, format, renderDevice, frameBuffer, 0);
 	// TODO
-	uint32_t depthFormat = DXGI_FORMAT_R24G8_TYPELESS; // as initialized in PCDX11DeviceManager::EnumAdapters
+	uint32_t depthFormat = deviceManager->currentAdapter->depthTextureFormat;
 	depthBuffer = new PCDX11DepthBuffer(
 		width, height, /*flags=*/ 4 /*HACK*/ |1, depthFormat, renderDevice);
 	return true;

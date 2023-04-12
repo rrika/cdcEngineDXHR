@@ -7,7 +7,8 @@ namespace cdc {
 
 PCDX11DeviceManager::PCDX11DeviceManager(HMODULE d3d11, HMODULE dxgi) :
 	d3d11(d3d11),
-	dxgi(dxgi)
+	dxgi(dxgi),
+	currentAdapter(nullptr)
 {
 
 }
@@ -33,6 +34,13 @@ PCDX11DeviceManager::PCDX11DeviceManager(
 	dxgiDevice->GetAdapter(&adapter);
 	adapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
 #endif
+
+	// HACK
+	adapters.push_back(AdapterInfo {
+		/*backBufferFormat=*/ DXGI_FORMAT_B8G8R8A8_UNORM_SRGB,
+		/*depthTextureFormat=*/ DXGI_FORMAT_R24G8_TYPELESS
+	});
+	currentAdapter = &adapters[0];
 }
 
 void PCDX11DeviceManager::method_00() {
