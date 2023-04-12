@@ -802,20 +802,6 @@ void PCDX11RenderDevice::doFXAA(
 	PCDX11BaseTexture *texture,
 	PCDX11RenderTarget *renderTarget)
 {
-	if (!scene78) {
-		printf("scene78 = nullptr\n");
-		return;
-	}
-	if (!scene78->globalState.tex14[5+6]) {
-		printf("scene78->globalState.tex14[5+6] = nullptr\n");
-		return;
-	}
-
-	// HACK
-	texture = static_cast<PCDX11Texture*>(scene78->globalState.tex14[5+6]);
-	renderTarget = static_cast<PCDX11RenderTarget*>(scene78->renderTarget);
-	// END HACK
-
 	PCDX11StateManager *stateManager = deviceManager->getStateManager();
 	stateManager->pushRenderTargets(renderTarget, nullptr);
 	if (quality > 2) quality = 2; // allow 0, 1 and 2

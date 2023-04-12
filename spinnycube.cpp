@@ -440,6 +440,7 @@ int spinnyCube(HWND window,
 	bool mouseLook = false;
 	bool useFrustumCulling = true;
 	bool drawCellBoxes = false;
+	bool applyFXAA = false;
 	cdc::Vector cameraPos{0, 0, 0};
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -469,14 +470,6 @@ int spinnyCube(HWND window,
 	renderDevice->setPassCallback(0, &cubePass);
 
 	ImGuiDrawable imGuiDrawable;
-
-	cdc::PCDX11FXAADrawable fxaaDrawable(
-		renderDevice,
-		/*quality*/ 2,
-		/*texture*/ nullptr, // HACK
-		/*renderTarget*/ nullptr, // HACK
-		/*flags*/ 0,
-		/*sortZ*/ 0.0f);
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -709,11 +702,17 @@ int spinnyCube(HWND window,
 		cameraManager.update();
 		viewMatrix = *cameraManager.getMatrix(); // wow, it's nothing
 
+		cdc::PCDX11RenderTarget *tempRenderTarget = nullptr;
+
+		if (applyFXAA)
+			tempRenderTarget = static_cast<cdc::PCDX11RenderTarget*>(renderDevice->dx11_createRenderTarget(
+				100, 100, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, 0x18, 0));
+
 		renderDevice->resetRenderLists();
 		renderDevice->beginRenderList(nullptr);
 		auto *scene = renderDevice->createSubScene(
 			&renderViewport,
-			renderContext->renderTarget2C,
+			applyFXAA ? tempRenderTarget : renderContext->renderTarget2C,
 			renderContext->depthBuffer);
 		scene->viewMatrix = viewMatrix;
 		cdc::OrthonormalInverse3x4(&renderViewport.viewMatrix, viewMatrix);
@@ -933,12 +932,29 @@ int spinnyCube(HWND window,
 			}
 		}
 
-		// uncomment to apply FXAA to the normal map
-		// can't apply to the proper color buffer because it'd be read/written at the same time
-		// renderDevice->recordDrawable(&fxaaDrawable, /*mask=*/ 0x100, 0);
+		if (applyFXAA) {
+			renderDevice->finishScene();
+			tempRenderTarget->getRenderTexture11()->createRenderTargetView();
+
+			auto *fxaaDrawable = new (renderDevice, 0) cdc::PCDX11FXAADrawable(
+				renderDevice,
+				/*quality*/ 0,
+				/*texture*/ tempRenderTarget->getRenderTexture(),
+				/*renderTarget*/ renderContext->renderTarget2C,
+				/*flags*/ 0,
+				/*sortZ*/ 0.0f);
+			
+			// now draw to the real buffer
+			renderDevice->createSubScene(
+				&renderViewport,
+				renderContext->renderTarget2C,
+				renderContext->depthBuffer);
+			renderDevice->recordDrawable(fxaaDrawable, /*mask=*/ 0x100, 0);
+		}
 
 		renderDevice->recordDrawable(&imGuiDrawable, /*mask=*/ 0x100, /*addToParent=*/ 0);
 		renderDevice->finishScene();
+
 		renderDevice->endRenderList();
 
 #if ENABLE_IMGUI
@@ -981,6 +997,11 @@ int spinnyCube(HWND window,
 					if (ImGui::MenuItem("Hide Cell Boxes")) { drawCellBoxes = false; }
 				} else {
 					if (ImGui::MenuItem("Show Cell Boxes")) { drawCellBoxes = true; }
+				}
+				if (applyFXAA) {
+					if (ImGui::MenuItem("Disable FXAA")) { applyFXAA = false; }
+				} else {
+					if (ImGui::MenuItem("Enable FXAA")) { applyFXAA = true; }
 				}
 				ImGui::EndMenu();
 			}
