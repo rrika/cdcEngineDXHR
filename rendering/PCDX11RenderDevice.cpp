@@ -19,11 +19,13 @@
 #include "RenderPasses.h"
 #include "Types.h"
 #include "buffers/PCDX11SimpleDynamicVertexBuffer.h"
+#include "buffers/PCDX11SimpleStaticVertexBuffer.h"
 #include "shaders/PCDX11ShaderLib.h"
 #include "surfaces/PCDX11DefaultRenderTarget.h"
 #include "surfaces/PCDX11DepthBuffer.h"
 // #include "surfaces/PCDX11HeapRenderTarget.h"
 #include "surfaces/PCDX11RenderTarget.h"
+#include "surfaces/PCDX11RenderTexture.h"
 #include "surfaces/PCDX11SubFrameRenderTarget.h"
 #include "surfaces/PCDX11Texture.h"
 
@@ -148,8 +150,13 @@ void PCDX11RenderDevice::createDefaultVertexAttribLayouts() {
 	attrs.push_back({VertexAttributeA::kPosition,  0xffff, 2, 0});
 	drawVertexDecls[6] = VertexDecl::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
 
-	auto *vs = static_cast<PCDX11VertexShaderTable*>(shlib_21->table)->vertexShaders[0];
+	PCDX11VertexShader *vs;
+
+	vs = static_cast<PCDX11VertexShaderTable*>(shlib_21->table)->vertexShaders[0];
 	vertex2DStreamDecl = streamDeclCache.buildStreamDecl(drawVertexDecls[5], &vs->m_sub);
+
+	vs = static_cast<PCDX11VertexShaderTable*>(shlib_18->table)->vertexShaders[0];
+	position3DStreamDecl = streamDeclCache.buildStreamDecl(drawVertexDecls[6], &vs->m_sub);
 }
 
 void PCDX11RenderDevice::setupPassCallbacks() {
@@ -580,7 +587,13 @@ void PCDX11RenderDevice::freeRenderLists(void *capture) {
 bool PCDX11RenderDevice::internalCreate() {
 	deviceContext = deviceManager->getD3DDeviceContext();
 	// TODO
-	// fullScreenQuadVB = new PCDX11SimpleStaticVertexBuffer(/*stride=*/ 12, /*count=*/ 4, data);
+	float data[] = {
+		 1.0, -1.0, 0.0001,
+		-1.0, -1.0, 0.0001,
+		 1.0,  1.0, 0.0001,
+		-1.0,  1.0, 0.0001
+	};
+	fullScreenQuadVB = new PCDX11SimpleStaticVertexBuffer(/*stride=*/ 12, /*count=*/ 4, data);
 	quadVB = new PCDX11SimpleDynamicVertexBuffer(/*stride=*/ 32, /*count=*/ 4);
 	setupShadowBuffer();
 	return true;
@@ -795,6 +808,27 @@ void PCDX11RenderDevice::drawQuad(
 	stateManager->updateViewport();
 	stateManager->updateRenderState();
 	drawQuadInternal(x0, y0, x1, y1, u0, v0, u1, v1, color);
+}
+
+void PCDX11RenderDevice::copySurface(
+	PCDX11RenderTexture *texture, bool writeDepth, uint8_t rtMask)
+{
+	PCDX11StateManager *stateManager = deviceManager->getStateManager();
+	stateManager->setTextureAndSampler(0, texture, 256, 0.0f);
+	stateManager->setDepthState(D3D11_COMPARISON_ALWAYS, writeDepth);
+	stateManager->setRenderTargetWriteMask(rtMask);
+	stateManager->setBlendStateAndBlendFactors(0x7010010, 1, 0);
+	stateManager->setVertexShader((*static_cast<PCDX11VertexShaderTable*>(shlib_18->table))[0]);
+	stateManager->setPixelShader((*static_cast<PCDX11PixelShaderTable*>(shlib_17->table))[writeDepth]);
+	// stateManager->setHullShader(nullptr);
+	// stateManager->setDomainShader(nullptr);
+	stateManager->setStreamDecl(position3DStreamDecl);
+	stateManager->setPrimitiveTopology(5);
+	stateManager->setCullMode(CullMode::none, false);
+	stateManager->updateViewport();
+	stateManager->updateRenderState();
+	stateManager->setVertexBuffer(fullScreenQuadVB);
+	deviceContext->Draw(4, 0);
 }
 
 void PCDX11RenderDevice::doFXAA(

@@ -15,9 +15,10 @@ class PCDX11LightManager;
 class PCDX11Pool;
 class PCDX11RenderContext;
 class PCDX11RenderTarget;
+class PCDX11RenderTexture;
 class PCDX11StaticPool;
 class PCDX11SimpleDynamicVertexBuffer;
-// class PCDX11SimpleStaticVertexBuffer;
+class PCDX11SimpleStaticVertexBuffer;
 class PCDX11Texture;
 struct LightManagerSubB;
 
@@ -58,13 +59,14 @@ public:
 
 	VertexDecl *drawVertexDecls[7] = {}; // 10BBC
 
-	PCDX11StreamDecl *vertex2DStreamDecl; // 10BDC
+	PCDX11StreamDecl *vertex2DStreamDecl; // 10BDC, assigned in createDefaultVertexAttribLayouts
+	PCDX11StreamDecl *position3DStreamDecl;  // 10BE0, assigned in createDefaultVertexAttribLayouts
 
 	PCDX11ShaderLib *shlib_22; // 10BE4, ps
 	PCDX11ShaderLib *shlib_21; // 10BE8, vs
 	PCDX11ShaderLib *shlib_20; // 10BEC, vs
 	PCDX11ShaderLib *shlib_19; // 10BF0, vs
-	PCDX11ShaderLib *shlib_18; // 10BF4, vs
+	PCDX11ShaderLib *shlib_18; // 10BF4, vs (copy surface)
 	PCDX11ShaderLib *shlib_17; // 10BF8, ps
 	PCDX11ShaderLib *shlib_16; // 10BFC, ps
 	PCDX11ShaderLib *shlib_14; // 10C00, vs
@@ -95,7 +97,7 @@ public:
 	PCDX11StreamDeclCache streamDeclCache; // 1112D4
 	PCDX11Texture *missingTexture; // 1112F0
 
-	// PCDX11SimpleStaticVertexBuffer *fullScreenQuadVB; // 11156C
+	PCDX11SimpleStaticVertexBuffer *fullScreenQuadVB; // 11156C
 	PCDX11SimpleDynamicVertexBuffer *quadVB; // 111570
 
 	ID3D11DeviceContext *deviceContext; // 111580
@@ -218,6 +220,7 @@ public:
 		float x0, float y0, float x1, float y1,
 		float u0, float v0, float u1, float v1,
 		uint32_t color, uint32_t flags, uint32_t blendMode, bool writeDepth);
+	void copySurface(PCDX11RenderTexture *texture, bool writeDepth, uint8_t rtMask);
 	void doFXAA(uint32_t quality, PCDX11BaseTexture *texture, PCDX11RenderTarget *renderTarget);
 };
 
