@@ -799,7 +799,7 @@ void PCDX11RenderDevice::drawQuad(
 
 void PCDX11RenderDevice::doFXAA(
 	uint32_t quality,
-	PCDX11Texture *texture,
+	PCDX11BaseTexture *texture,
 	PCDX11RenderTarget *renderTarget)
 {
 	if (!scene78) {

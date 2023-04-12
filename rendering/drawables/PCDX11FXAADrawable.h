@@ -5,7 +5,7 @@ namespace cdc {
 
 class PCDX11RenderDevice;
 class PCDX11RenderTarget;
-class PCDX11Texture;
+class PCDX11BaseTexture;
 
 class PCDX11FXAADrawable :
 	public IRenderDrawable
@@ -14,13 +14,13 @@ class PCDX11FXAADrawable :
 	PCDX11RenderDevice *renderDevice;
 	uint32_t quality;
 	PCDX11RenderTarget *renderTarget;
-	PCDX11Texture *texture;
+	PCDX11BaseTexture *texture;
 
 public:
 	PCDX11FXAADrawable(
 		PCDX11RenderDevice *renderDevice,
 		uint32_t quality,
-		PCDX11Texture *texture,
+		PCDX11BaseTexture *texture,
 		PCDX11RenderTarget *renderTarget,
 		uint32_t flags,
 		float sortZ

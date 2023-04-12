@@ -218,7 +218,7 @@ public:
 		float x0, float y0, float x1, float y1,
 		float u0, float v0, float u1, float v1,
 		uint32_t color, uint32_t flags, uint32_t blendMode, bool writeDepth);
-	void doFXAA(uint32_t quality, PCDX11Texture *texture, PCDX11RenderTarget *renderTarget);
+	void doFXAA(uint32_t quality, PCDX11BaseTexture *texture, PCDX11RenderTarget *renderTarget);
 };
 
 CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t height, bool unknown);
