@@ -41,7 +41,7 @@ public:
 	uint32_t method_2C() override { return heightC; }
 	ID3D11Resource *getTextureResource() override { return renderTarget->getTextureResource(); }
 	ID3D11RenderTargetView *getRenderTargetView() override { return renderTarget->getRenderTargetView(); }
-	void copyFromTexture(void *ptr) override { return renderTarget->copyFromTexture(ptr); }
+	void copyFromTexture(PCDX11RenderTarget *ptr) override { return renderTarget->copyFromTexture(ptr); }
 	bool method_3C() override { return renderTarget->method_3C(); }
 	void method_40() override { renderTarget->method_40(); }
 };

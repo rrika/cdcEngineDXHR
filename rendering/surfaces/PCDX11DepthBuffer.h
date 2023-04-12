@@ -28,6 +28,8 @@ public:
 	void registerAtScene(void *ptr) override { /*TODO*/ };
 	void method_14() override { /*TODO*/ };
 
+	void copyFromTexture(IDepthBuffer*) { /* empty, see call from PCDX11Scene::draw */ }
+
 	ID3D11DepthStencilView *getRWDepthStencilView() {
 		return static_cast<ID3D11DepthStencilView*>(renderTexture.getView());
 	}

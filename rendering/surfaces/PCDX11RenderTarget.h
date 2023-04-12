@@ -13,7 +13,7 @@ public:
 	virtual uint32_t method_2C() = 0;
 	virtual ID3D11Resource *getTextureResource() = 0;
 	virtual ID3D11RenderTargetView *getRenderTargetView() = 0;
-	virtual void copyFromTexture(void*) = 0;
+	virtual void copyFromTexture(PCDX11RenderTarget*) = 0;
 	virtual bool method_3C() = 0;
 	virtual void method_40() = 0;
 

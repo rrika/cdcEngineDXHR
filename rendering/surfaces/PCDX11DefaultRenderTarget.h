@@ -15,6 +15,7 @@ public:
 		uint32_t, uint32_t,
 		PCDX11RenderDevice*, ID3D11Texture2D*, uint32_t);
 
+	PCDX11RenderDevice *renderDevice; // 4, used for copy, renderTexture also has a renderDevice member
 	uint32_t flags14;
 	PCDX11RenderTexture renderTexture; // 1C
 
@@ -33,7 +34,7 @@ public:
 	uint32_t method_2C() override;
 	ID3D11Resource *getTextureResource() override;
 	ID3D11RenderTargetView *getRenderTargetView() override;
-	void copyFromTexture(void *) override;
+	void copyFromTexture(PCDX11RenderTarget *) override;
 	bool method_3C() override;
 	void method_40() override;
 };
