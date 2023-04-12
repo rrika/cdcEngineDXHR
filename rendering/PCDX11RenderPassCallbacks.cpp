@@ -29,6 +29,9 @@ bool PCDX11NormalPassCallbacks::pre(
 	uint32_t drawableCount,
 	uint32_t priorPassesBitfield)
 {
+	if (drawableCount == 0)
+		return false;
+
 	// TODO
 	CommonScene *scene = commonRenderDevice->scene78;
 	auto *renderDevice = static_cast<PCDX11RenderDevice*>(commonRenderDevice);

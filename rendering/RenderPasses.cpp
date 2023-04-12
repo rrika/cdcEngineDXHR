@@ -123,9 +123,9 @@ void RenderPasses::sortAndDraw(
 						sort(list, passId);
 						draw(list, passId);
 					}
+					if (callbacks)
+						callbacks->post(renderDevice, passId);
 				}
-				if (callbacks)
-					callbacks->post(renderDevice, passId);
 			}
 		}
 		// renderDevice->sub_51EB20(passId);
