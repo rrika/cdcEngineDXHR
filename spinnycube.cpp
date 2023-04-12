@@ -37,7 +37,7 @@
 #include "cdcMath/Math.h" // for cdc::Matrix
 #include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h" // for buildObjectsUI
-#include "postprocessing/PPBuiltins.h"
+#include "postprocessing/PPManager.h"
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
 #include "rendering/buffers/PCDX11IndexBuffer.h"
 #include "rendering/buffers/PCDX11UberConstantBuffer.h"
@@ -943,42 +943,14 @@ int spinnyCube(HWND window,
 		static_cast<cdc::PCDX11Scene*>(scene)->debugShowTempBuffer = showTempBuffer;
 
 		if (applyFXAA) {
-			if (pointlessCopy) {
-				tempRenderTarget = static_cast<cdc::PCDX11RenderTarget*>(renderDevice->dx11_createRenderTarget(
-					100, 100, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, 0x18, cdc::kTextureClass2D));
-				tempRenderTarget->getRenderTexture11()->createRenderTargetView();
+			PPManager::s_instance->createScene(
+				scene->renderTarget, // renderDevice->getSceneRenderTarget(),
+				nullptr, // particle RT
+				renderContext->renderTarget2C,
+				scene->depthBuffer, // renderDevice->getSceneDepthBuffer(),
+				&renderViewport
+			);
 
-				PPAntiAlias(
-					/*src*/ renderContext->renderTarget2C->getRenderTexture(),
-					/*dst*/ tempRenderTarget,
-					/*mask*/ 0x100);
-
-				renderDevice->finishScene();
-				
-				// restart the scene to cause a (pointless) copy
-				renderDevice->createSubScene(
-					&renderViewport,
-					renderContext->renderTarget2C,
-					renderContext->depthBuffer,
-					tempRenderTarget,
-					nullptr);
-			} else {
-				renderDevice->finishScene();
-				tempRenderTarget->getRenderTexture11()->createRenderTargetView();
-
-				// now draw to the real buffer
-				renderDevice->createSubScene(
-					&renderViewport,
-					renderContext->renderTarget2C,
-					renderContext->depthBuffer,
-					nullptr,
-					nullptr);
-
-				PPAntiAlias(
-					/*src*/ tempRenderTarget->getRenderTexture(),
-					/*dst*/ renderContext->renderTarget2C,
-					/*mask*/ 0x100);
-			}
 		} else if (showTempBuffer != -1) {
 			// restart the scene so that the showTempBuffer feature doesn't draw over the UI
 			renderDevice->finishScene();

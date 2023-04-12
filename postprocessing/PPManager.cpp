@@ -1,5 +1,10 @@
+#include "PPBuiltins.h"
 #include "PPManager.h"
 #include "PPPass.h"
+#include "rendering/PCDX11RenderDevice.h"
+#include "rendering/surfaces/PCDX11RenderTarget.h"
+
+PPManager *PPManager::s_instance = nullptr;
 
 PPManager::PPManager() {
 	activeSets.reserve(16);
@@ -14,13 +19,60 @@ bool PPManager::prepare() {
 }
 
 bool PPManager::createScene(
-	cdc::CommonRenderTarget*,
-	cdc::CommonRenderTarget*,
-	cdc::CommonDepthBuffer*,
-	cdc::RenderViewport*)
-{
+	cdc::CommonRenderTarget *rt,
+	cdc::CommonRenderTarget *rtParticle,
+	cdc::CommonRenderTarget *rtDest, // HACK: allow specifying a different target
+	cdc::CommonDepthBuffer *depth,
+	cdc::RenderViewport *viewport
+) {
+	if (!rtDest)
+		rtDest = rt;
+
 	if (!prepare())
 		return false;
+
+	if (true) { // HACK
+
+		auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
+		cdc::CommonRenderTarget *aaDst;
+
+		if (rt == rtDest) {
+			auto *tempRenderTarget = renderDevice->dx11_createRenderTarget(
+				100, 100, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, 0x18, cdc::kTextureClass2D);
+			tempRenderTarget->getRenderTexture11()->createRenderTargetView();
+			aaDst = tempRenderTarget;
+
+		} else {
+			static_cast<cdc::PCDX11RenderTarget*>(rt)->getRenderTexture11()->createRenderTargetView();
+			aaDst = rtDest;
+
+			renderDevice->finishScene();
+			renderDevice->createSubScene(
+				viewport,
+				rtDest,
+				depth,
+				nullptr,
+				nullptr);
+		}
+
+		PPAntiAlias(
+			/*src=*/ rt->getRenderTexture(),
+			/*dst=*/ aaDst,
+			/*passMask=*/ 0x100);
+		rt = aaDst;
+
+		if (rt != rtDest) {
+			renderDevice->finishScene();
+			renderDevice->createSubScene(
+				viewport,
+				rtDest,
+				nullptr,
+				rt,
+				nullptr);
+		}
+
+		return true;
+	}
 
 	dtp::PPVarPassTexBlobs *vpt = activeSets[0]->varPassTex;
 	dtp::PPPassBlob *passBlobs = vpt->passes;

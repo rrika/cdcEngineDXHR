@@ -7,6 +7,7 @@
 #include "cdcGameShell/cdcGameShell.h"
 #include "cdcObjects/ObjectManager.h"
 #include "../rendering/PCDX11DeviceManager.h"
+#include "postprocessing/PPManager.h"
 #include "cdcResource/Resolve.h"
 #include "cdcResource/ResolveObject.h"
 #include "cdcResource/ResolveSection.h"
@@ -140,6 +141,8 @@ void MAIN_Init() {
 	// TODO
 	MAIN_DoMainInit();
 	// TODO
+
+	PPManager::s_instance = new PPManager();
 
 	// Gameloop::InitiateLevelLoad("det_sarifhq_rail_tutorial", nullptr);
 	getDefaultFileSystem()->processAll();

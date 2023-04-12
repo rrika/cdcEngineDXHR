@@ -30,6 +30,8 @@ struct PPUnknown2 {
 
 class PPManager {
 public:
+	static PPManager *s_instance;
+
 	cdc::Array<dtp::PPActiveSet*> activeSets; // 4
 	cdc::Array<PPTexture> textures; // 10
 	cdc::Array<PPVariable> variables; // 1C
@@ -46,9 +48,10 @@ public:
 
 	bool prepare();
 	bool createScene(
-		cdc::CommonRenderTarget*,
-		cdc::CommonRenderTarget*,
-		cdc::CommonDepthBuffer*,
-		cdc::RenderViewport*);
+		cdc::CommonRenderTarget *rt,
+		cdc::CommonRenderTarget *rtParticle,
+		cdc::CommonRenderTarget *rtDest, // HACK
+		cdc::CommonDepthBuffer *depth,
+		cdc::RenderViewport *viewport);
 	void addActiveSet(dtp::PPActiveSet *unk1, float f);
 };
