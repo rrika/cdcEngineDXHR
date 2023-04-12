@@ -18,7 +18,7 @@ public:
 	uint32_t flags14;
 	PCDX11RenderTexture renderTexture; // 1C
 
-	TextureMap *getRenderTexture() override { return &renderTexture; }
+	PCDX11RenderTexture *getRenderTexture() override { return &renderTexture; }
 	uint32_t getWidth() override { return renderTexture.getWidth(); }
 	uint32_t getHeight() override { return renderTexture.getHeight(); }
 	void freeResource() override {

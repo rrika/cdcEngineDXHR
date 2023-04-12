@@ -27,7 +27,7 @@ public:
 		renderTarget(renderTarget)
 	{}
 
-	TextureMap *getRenderTexture() override { return renderTarget->getRenderTexture(); }
+	PCDX11RenderTexture *getRenderTexture() override { return renderTarget->getRenderTexture(); }
 	uint32_t getWidth() override { return width10; }
 	uint32_t getHeight() override { return height14; }
 	void freeResource() override { /*empty*/ }

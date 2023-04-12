@@ -6,6 +6,8 @@ namespace cdc {
 
 class PCDX11RenderTarget : public CommonRenderTarget {
 public:
+	PCDX11RenderTexture *getRenderTexture() override = 0; // covariant return value
+
 	virtual uint32_t method_24(uint32_t, uint32_t) = 0;
 	virtual uint32_t method_28() = 0;
 	virtual uint32_t method_2C() = 0;
