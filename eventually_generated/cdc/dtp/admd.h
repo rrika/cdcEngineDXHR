@@ -7,6 +7,7 @@ class UnitBlobSignal;
 namespace dtp {
 
 struct IMFRef;
+struct sfxmarker;
 
 struct ADMD {
 	uint32_t numLightTable4;
@@ -31,9 +32,9 @@ struct ADMD {
 	UnitBlobSignal *signals;
 	uint32_t dword50;
 	uint32_t dword54;
-	uint32_t dword58;
-	uint32_t dword5C;
-	uint32_t dword60;
+	uint32_t m_SfxMarkerCount; // 58
+	sfxmarker **m_ppSfxMarkers; // 5C
+	sfxmarker *SfxMarkers; // 60
 	uint32_t dword64;
 	uint32_t dword68;
 	uint32_t dword6C;

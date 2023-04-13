@@ -16,6 +16,7 @@
 #include "camera/GenericCamera.h"
 #include "cdc/dtp/objectproperties/imfref.h"
 #include "cdc/dtp/objectproperties/intermediatemesh.h"
+#include "cdc/dtp/objectproperties/sfxmarker.h"
 #include "cdc/dtp/soundplex.h"
 #include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h" // for archiveFileSystem_default
@@ -1158,6 +1159,28 @@ int spinnyCube(HWND window,
 				ImGui::PopID();
 
 				auto *admd = level->admdData;
+
+				ImGui::PushID("sfxmarkers");
+				for (uint32_t i=0; i < admd->m_SfxMarkerCount; i++) {
+					dtp::sfxmarker *marker = admd->m_ppSfxMarkers[i];
+					ImGui::Text("  [%3d] sfxmarker %f %f %f (%d %s)",
+						i, marker->position.x, marker->position.y, marker->position.z,
+						marker->numSounds, marker->numSounds==1 ? "sound" : "sounds");
+					ImGui::SameLine();
+					ImGui::PushID(i);
+					if (ImGui::SmallButton("Teleport to")) {
+						cameraPos.x = marker->position.x;
+						cameraPos.y = marker->position.y;
+						cameraPos.z = marker->position.z;
+					}
+					ImGui::PopID();
+					if (false)
+						for (uint32_t j=0; j < marker->numSounds; j++) {
+							dtp::SoundPlex *plex = marker->soundData[j];
+							buildUI(plex, /*indent=*/ "    ");
+						}
+				}
+				ImGui::PopID();
 
 				ImGui::PushID("intros");
 				for (uint32_t i=0; i < admd->numObjects; i++) {
