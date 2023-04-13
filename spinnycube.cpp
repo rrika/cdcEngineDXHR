@@ -649,7 +649,7 @@ int spinnyCube(HWND window,
 					cdc::CellStreamGroupData *streamgroup = cell->pHeader->streamGroup50;
 					if (streamgroup && streamgroup->resolveObject && isLoaded(streamgroup->resolveObject)) {
 						dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(cell->pHeader->streamGroupDtp54);
-						if (im && im->m_type == 1) {
+						if (im && im->m_type == cdc::IMFType_TerrainInstance) {
 							auto *rt = (cdc::IRenderTerrain *)im->pRenderModel;
 							if (rt) {
 								if (renderTerrainInstances.find(rt) != renderTerrainInstances.end())
@@ -913,7 +913,7 @@ int spinnyCube(HWND window,
 					cdc::CellStreamGroupData *streamgroup = cell->pHeader->streamGroup50;
 					if (streamgroup && streamgroup->resolveObject && isLoaded(streamgroup->resolveObject)) {
 						dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(cell->pHeader->streamGroupDtp54);
-						if (im && im->m_type == 1) {
+						if (im && im->m_type == cdc::IMFType_TerrainInstance) {
 							auto *rt = (cdc::IRenderTerrain *)im->pRenderModel;
 							putTerrain(rt, cdc::identity4x4);
 						}
