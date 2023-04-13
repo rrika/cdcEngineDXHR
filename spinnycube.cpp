@@ -645,10 +645,10 @@ int spinnyCube(HWND window,
 			for (uint32_t i=0; i < numCells; i++) {
 				auto *cell = cellGroupData->cells[i];
 
-				if (cell->sub0) {
-					cdc::CellStreamGroupData *streamgroup = cell->sub0->streamGroup50;
+				if (cell->pHeader) {
+					cdc::CellStreamGroupData *streamgroup = cell->pHeader->streamGroup50;
 					if (streamgroup && streamgroup->resolveObject && isLoaded(streamgroup->resolveObject)) {
-						dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(cell->sub0->streamGroupDtp54);
+						dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(cell->pHeader->streamGroupDtp54);
 						if (im && im->m_type == 1) {
 							auto *rt = (cdc::IRenderTerrain *)im->pRenderModel;
 							if (rt) {
@@ -662,8 +662,8 @@ int spinnyCube(HWND window,
 					}
 				}
 
-				if (cell->sub4) {
-					cdc::IRenderTerrain *rt = cell->sub4->pTerrain;
+				if (cell->pTerrainData) {
+					cdc::IRenderTerrain *rt = cell->pTerrainData->pTerrain;
 					if (rt) {
 						if (renderTerrainInstances.find(rt) != renderTerrainInstances.end())
 							continue;
@@ -909,10 +909,10 @@ int spinnyCube(HWND window,
 				cdc::CellData *cell = cellGroupData->cells[i];
 
 				// draw streamgroup meshes
-				if (cell->sub0) {
-					cdc::CellStreamGroupData *streamgroup = cell->sub0->streamGroup50;
+				if (cell->pHeader) {
+					cdc::CellStreamGroupData *streamgroup = cell->pHeader->streamGroup50;
 					if (streamgroup && streamgroup->resolveObject && isLoaded(streamgroup->resolveObject)) {
-						dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(cell->sub0->streamGroupDtp54);
+						dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(cell->pHeader->streamGroupDtp54);
 						if (im && im->m_type == 1) {
 							auto *rt = (cdc::IRenderTerrain *)im->pRenderModel;
 							putTerrain(rt, cdc::identity4x4);
@@ -921,8 +921,8 @@ int spinnyCube(HWND window,
 				}
 
 				// draw renderterrain
-				if (cell->sub4) {
-					cdc::IRenderTerrain *rt = cell->sub4->pTerrain;
+				if (cell->pTerrainData) {
+					cdc::IRenderTerrain *rt = cell->pTerrainData->pTerrain;
 					putTerrain(rt, cdc::identity4x4);
 				}
 
@@ -1142,14 +1142,14 @@ int spinnyCube(HWND window,
 				uint32_t numCells = cellGroupData->header->numTotalCells;
 				for (uint32_t i=0; i < numCells; i++) {
 					cdc::CellData *cell = cellGroupData->cells[i];
-					ImGui::Text("cell %i: %s", i, cell->sub0->name);
-					// RenderTerrain at cell->sub4->pTerrain
+					ImGui::Text("cell %i: %s", i, cell->pHeader->name);
+					// RenderTerrain at cell->pTerrainData->pTerrain
 					// RenderMesh at cell->renderMesh (for visibility)
 					ImGui::SameLine();
 					ImGui::PushID(i);
 					if (ImGui::SmallButton("Teleport to")) {
-						float *mins = cell->sub0->vec10;
-						float *maxs = cell->sub0->vec20;
+						float *mins = cell->pHeader->vec10;
+						float *maxs = cell->pHeader->vec20;
 						cameraPos.x = (mins[0] + maxs[0]) / 2.0f;
 						cameraPos.y = (mins[1] + maxs[1]) / 2.0f;
 						cameraPos.z = (mins[2] + maxs[2]) / 2.0f;

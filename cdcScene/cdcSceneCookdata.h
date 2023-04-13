@@ -42,7 +42,7 @@ struct CellStreamGroupData { // 79
 	ResolveObject *resolveObject;
 };
 
-struct CellDataHeader { // 121
+struct CellDataHeader { // line 121
 	char *name;
 	uint32_t dword4;
 	uint32_t dword8;
@@ -78,9 +78,9 @@ struct CellTerrainData {
 	void *pUserData;
 };
 
-struct CellData { // 157
-	CellDataHeader *sub0;
-	CellTerrainData *sub4;
+struct CellData { // line 157
+	CellDataHeader *pHeader;
+	CellTerrainData *pTerrainData;
 	uint32_t dword8;
 	uint32_t dwordC;
 	uint32_t dword10;
