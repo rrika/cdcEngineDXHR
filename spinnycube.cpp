@@ -1134,6 +1134,9 @@ int spinnyCube(HWND window,
 					continue;
 				}
 
+				ImGui::PushID(unit.name);
+
+				ImGui::PushID("cells");
 				cdc::CellGroupData *cellGroupData = level->sub50;
 				uint32_t numCells = cellGroupData->header->numTotalCells;
 				for (uint32_t i=0; i < numCells; i++) {
@@ -1142,7 +1145,7 @@ int spinnyCube(HWND window,
 					// RenderTerrain at cell->sub4->pTerrain
 					// RenderMesh at cell->renderMesh (for visibility)
 					ImGui::SameLine();
-  					ImGui::PushID(i);
+					ImGui::PushID(i);
 					if (ImGui::SmallButton("Teleport to")) {
 						float *mins = cell->sub0->vec10;
 						float *maxs = cell->sub0->vec20;
@@ -1152,8 +1155,11 @@ int spinnyCube(HWND window,
 					}
 					ImGui::PopID();
 				}
+				ImGui::PopID();
 
 				auto *admd = level->admdData;
+
+				ImGui::PushID("intros");
 				for (uint32_t i=0; i < admd->numObjects; i++) {
 					auto &intro = admd->objects[i];
 					auto oid = intro.objectListIndex;
@@ -1162,7 +1168,7 @@ int spinnyCube(HWND window,
 					ImGui::Text("  [%3d] intro %s (%d) %f",
 						i, name, oid, intro.scale[0]);
 					ImGui::SameLine();
-  					ImGui::PushID(i);
+					ImGui::PushID(i);
 					if (ImGui::SmallButton("Teleport to")) {
 						cameraPos.x = intro.position[0];
 						cameraPos.y = intro.position[1];
@@ -1170,6 +1176,9 @@ int spinnyCube(HWND window,
 					}
 					ImGui::PopID();
 				}
+				ImGui::PopID();
+
+				ImGui::PopID();
 			}
 			if (!anyLoaded)
 				ImGui::Text("no units");
