@@ -7,6 +7,9 @@ namespace cdc {
 class PCDX11Scene : public CommonScene {
 	PCDX11RenderDevice *renderDevice; // 7A8
 public:
+
+	int debugShowTempBuffer = -1;
+
 	PCDX11Scene(
 		CommonRenderDevice *renderDevice,
 		/* ... */

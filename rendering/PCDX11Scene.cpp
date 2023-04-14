@@ -34,6 +34,15 @@ void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 			renderDevice,
 			drawableListsAndMasks->passMask8);
 	}
+
+
+	// HACK
+	if (debugShowTempBuffer != -1) {
+		if (TextureMap *temp = globalState.tex14[debugShowTempBuffer]) {
+			renderDevice->copySurface(static_cast<PCDX11RenderTexture*>(temp), false, 15);
+		}
+	}
+
 	// TODO
 	stateManager->popRenderTargets();
 	if (prevScene)

@@ -443,6 +443,7 @@ int spinnyCube(HWND window,
 	bool drawCellBoxes = false;
 	bool applyFXAA = false;
 	bool pointlessCopy = false;
+	int showTempBuffer = -1;
 	cdc::Vector cameraPos{0, 0, 0};
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -936,6 +937,8 @@ int spinnyCube(HWND window,
 			}
 		}
 
+		static_cast<cdc::PCDX11Scene*>(scene)->debugShowTempBuffer = showTempBuffer;
+
 		if (applyFXAA) {
 			if (pointlessCopy) {
 				tempRenderTarget = static_cast<cdc::PCDX11RenderTarget*>(renderDevice->dx11_createRenderTarget(
@@ -981,6 +984,15 @@ int spinnyCube(HWND window,
 					nullptr);
 				renderDevice->recordDrawable(fxaaDrawable, /*mask=*/ 0x100, 0);
 			}
+		} else if (showTempBuffer != -1) {
+			// restart the scene so that the showTempBuffer feature doesn't draw over the UI
+			renderDevice->finishScene();
+			renderDevice->createSubScene(
+				&renderViewport,
+				renderContext->renderTarget2C,
+				renderContext->depthBuffer,
+				nullptr,
+				nullptr);
 		}
 
 		renderDevice->recordDrawable(&imGuiDrawable, /*mask=*/ 0x100, /*addToParent=*/ 0);
@@ -1034,6 +1046,9 @@ int spinnyCube(HWND window,
 				} else {
 					if (ImGui::MenuItem("Enable FXAA")) { applyFXAA = true; }
 				}
+				if (ImGui::MenuItem("Normal Buffer", nullptr, showTempBuffer == 11)) { showTempBuffer = 11; }
+				if (ImGui::MenuItem("Light Buffer", nullptr, showTempBuffer == 12)) { showTempBuffer = 12; }
+				if (ImGui::MenuItem("Final Buffer", nullptr, showTempBuffer == -1)) { showTempBuffer = -1; }
 				ImGui::EndMenu();
 			}
 			if (mouseLook)
