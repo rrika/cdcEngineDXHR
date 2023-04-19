@@ -54,6 +54,7 @@ char *FSHelper_ReadFile(const char *path) {
 	req->submit(1);
 	fs->processUntil(req);
 	req->decrRefCount();
+	buffer[size] = '\0';
 	// req is owned by fs which takes care of it in processAll()
 
 	return buffer;
