@@ -709,7 +709,7 @@ int spinnyCube(HWND window,
 
 		if (applyFXAA && !pointlessCopy)
 			tempRenderTarget = static_cast<cdc::PCDX11RenderTarget*>(renderDevice->dx11_createRenderTarget(
-				100, 100, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, 0x18, 0));
+				100, 100, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, 0x18, cdc::kTextureClass2D));
 
 		renderDevice->resetRenderLists();
 		renderDevice->beginRenderList(nullptr);
@@ -942,7 +942,7 @@ int spinnyCube(HWND window,
 		if (applyFXAA) {
 			if (pointlessCopy) {
 				tempRenderTarget = static_cast<cdc::PCDX11RenderTarget*>(renderDevice->dx11_createRenderTarget(
-					100, 100, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, 0x18, 0));
+					100, 100, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, 0x18, cdc::kTextureClass2D));
 				tempRenderTarget->getRenderTexture11()->createRenderTargetView();
 
 				auto *fxaaDrawable = new (renderDevice, 0) cdc::PCDX11FXAADrawable(

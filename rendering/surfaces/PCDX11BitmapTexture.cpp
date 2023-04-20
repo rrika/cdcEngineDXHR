@@ -17,15 +17,15 @@ ID3D11ShaderResourceView *PCDX11BitmapTexture::createShaderResourceView() {
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC desc {};
 
-	if (shape == 2) {
+	if (shape == kTextureClass3D) {
 		desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE3D;
 		desc.Texture2D.MostDetailedMip = 0;
 		desc.Texture2D.MipLevels = -1;
-	} else if (shape == 3) {
+	} else if (shape == kTextureClassCube) {
 		desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
 		desc.TextureCube.MostDetailedMip = 0;
 		desc.TextureCube.MipLevels = -1;
-	} else {
+	} else { // kTextureClassUnknown, kTextureClass2D, kTextureClassNormalMap
 		desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		desc.Texture3D.MostDetailedMip = 0;
 		desc.Texture3D.MipLevels = -1;

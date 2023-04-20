@@ -9,9 +9,9 @@ namespace cdc {
 PCDX11RenderTexture::PCDX11RenderTexture(
 	uint16_t width, uint16_t height,
 	uint32_t flags, uint32_t isDepthBuffer,
-	PCDX11RenderDevice *renderDevice, uint32_t unknown2)
+	PCDX11RenderDevice *renderDevice, TextureClass shape)
 :
-	PCDX11BaseTexture(width, height, 0),
+	PCDX11BaseTexture(width, height, 0 /* TODO: pass shape*/),
 	renderDevice(renderDevice),
 	flags(flags),
 	shortWidth(width),

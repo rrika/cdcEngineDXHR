@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <d3d11.h>
+#include "rendering/Types.h"
 
 namespace cdc {
 
@@ -12,14 +13,14 @@ protected:
 	friend class PCDX11StateManager;
 	uint16_t repeatmode : 3;
 	uint16_t unknownflags : 13;
-	uint32_t shape;
-	uint32_t maxFilter;
-	uint32_t textureFormat;
-	uint32_t width;
-	uint32_t height;
-	uint32_t bpp;
-	PCDX11RenderDevice *renderDevice;
-	uint16_t mipLevels;
+	TextureClass shape; // 8
+	uint32_t maxFilter; // C
+	uint32_t textureFormat; // 10
+	uint32_t width; // 14
+	uint32_t height; // 18
+	uint32_t bpp; // 1C
+	PCDX11RenderDevice *renderDevice; // 20
+	uint16_t mipLevels; // 24
 public:
 	PCDX11BaseTexture(uint32_t width, uint32_t height, uint32_t dxgiFormat) :
 		width(width),

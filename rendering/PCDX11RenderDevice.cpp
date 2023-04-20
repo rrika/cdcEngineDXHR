@@ -535,12 +535,12 @@ IRenderTarget *PCDX11RenderDevice::createRenderTarget(
 	uint32_t flags,
 	uint32_t cdcFormat,
 	uint32_t ignored6,
-	uint32_t arg7
+	TextureClass textureClass
 ) {
 	uint32_t dxgiFormat = decodeFormat(cdcFormat);
 	if (dxgiFormat == 0)
 		dxgiFormat = 0x1C; // DXGI_FORMAT_R8G8B8A8_UNORM
-	return dx11_createRenderTarget(width, height, dxgiFormat, flags, arg7);
+	return dx11_createRenderTarget(width, height, dxgiFormat, flags, textureClass);
 }
 
 IDepthBuffer *PCDX11RenderDevice::createDepthBuffer() {
@@ -670,7 +670,7 @@ PCDX11RenderTarget *PCDX11RenderDevice::dx11_createRenderTarget(
 	uint32_t height,
 	uint32_t dxgiFormat,
 	uint32_t flags,
-	uint32_t textureClass)
+	TextureClass textureClass)
 {
 	if (flags & 0x10) {
 		auto *linear = useAlternateLinearAlloc() ? linear34 : linear30;

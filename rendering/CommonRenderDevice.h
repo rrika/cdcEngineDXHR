@@ -3,6 +3,7 @@
 #include "CommonScene.h"
 #include "LinearAllocator.h"
 #include "RenderPasses.h"
+#include "Types.h"
 
 namespace cdc {
 
@@ -153,7 +154,7 @@ public:
 	virtual IMatrixState *createMatrixState() = 0;
 	virtual void createVertexBuffer() = 0;
 	virtual void createIndexBuffer() = 0;
-	virtual IRenderTarget *createRenderTarget(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t) = 0;
+	virtual IRenderTarget *createRenderTarget(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, TextureClass) = 0;
 	virtual IDepthBuffer *createDepthBuffer() = 0;
 	virtual void method_174() = 0;
 	virtual void getWindowSize(uint32_t *width, uint32_t *height) = 0;

@@ -1,4 +1,5 @@
 #pragma once
+#include "../Types.h"
 #include "PCDX11RenderTarget.h"
 #include "PCDX11RenderTexture.h"
 #include "PCDX11TextureUpdateCallback.h"
@@ -13,7 +14,7 @@ public:
 	PCDX11DefaultRenderTarget(
 		uint32_t width, uint32_t height,
 		uint32_t, uint32_t,
-		PCDX11RenderDevice*, ID3D11Texture2D*, uint32_t);
+		PCDX11RenderDevice*, ID3D11Texture2D*, TextureClass);
 
 	PCDX11RenderDevice *renderDevice; // 4, used for copy, renderTexture also has a renderDevice member
 	uint32_t flags14;

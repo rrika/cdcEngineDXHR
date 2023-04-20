@@ -7,7 +7,7 @@ PCDX11DepthBuffer::PCDX11DepthBuffer(
 	uint32_t unknown, uint32_t format,
 	PCDX11RenderDevice *renderDevice)
 :
-	renderTexture(width, height, unknown, /*isDepthBuffer=*/ true, renderDevice, /*unknown2=*/1)
+	renderTexture(width, height, unknown, /*isDepthBuffer=*/ true, renderDevice, kTextureClass2D)
 {
 	renderTexture.initForRenderTarget(this, format, nullptr);
 }

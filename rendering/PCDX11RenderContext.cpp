@@ -37,7 +37,7 @@ bool PCDX11RenderContext::createRenderTargets() {
 	uint32_t height = this->height; // TODO
 	uint32_t format = deviceManager->currentAdapter->backBufferFormat; // TODO
 	renderTarget2C = new PCDX11DefaultRenderTarget(
-		width, height, /*flags=*/ 4 /*HACK*/ | 1, format, renderDevice, frameBuffer, 0);
+		width, height, /*flags=*/ 4 /*HACK*/ | 1, format, renderDevice, frameBuffer, kTextureClassUnknown);
 	// TODO
 	uint32_t depthFormat = deviceManager->currentAdapter->depthTextureFormat;
 	depthBuffer = new PCDX11DepthBuffer(

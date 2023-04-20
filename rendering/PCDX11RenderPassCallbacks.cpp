@@ -44,7 +44,7 @@ bool PCDX11NormalPassCallbacks::pre(
 	rt = renderDevice->createRenderTarget(
 		rt->getWidth(),
 		rt->getHeight(),
-		0x11 /*TODO*/, 0, 0, 4);
+		0x11 /*TODO*/, 0, 0, kTextureClassNormalMap);
 	static_cast<PCDX11RenderTarget*>(rt)->getRenderTexture11()->createRenderTargetView(); // HACK
 	static_cast<PCDX11DepthBuffer*>(db)->isLocked = false;
 
@@ -97,7 +97,7 @@ bool PCDX11DeferredShadingPassCallbacks::pre(
 		rt->getHeight(),
 		0x18,
 		0x11 /*TODO*/,
-		1);
+		kTextureClass2D);
 	static_cast<PCDX11RenderTarget*>(rt)->getRenderTexture11()->createRenderTargetView(); // HACK
 
 	stateManager->pushRenderTargets(

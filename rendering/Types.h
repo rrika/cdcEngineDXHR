@@ -2,6 +2,14 @@
 
 namespace cdc {
 
+enum TextureClass {
+	kTextureClassUnknown = 0,
+	kTextureClass2D = 1,
+	kTextureClass3D = 2,
+	kTextureClassCube = 3,
+	kTextureClassNormalMap = 4
+};
+
 enum PassIndex {
 	kPassIndexDepth = 0,
 	kPassIndexComposite = 1,

@@ -1,4 +1,5 @@
 #pragma once
+#include "../Types.h"
 #include "PCDX11BaseTexture.h"
 #include "TextureMap.h"
 
@@ -34,7 +35,7 @@ public:
 	PCDX11RenderTexture(
 		uint16_t width, uint16_t height,
 		uint32_t unknown1, uint32_t isDepthBuffer,
-		PCDX11RenderDevice *renderDevice, uint32_t unknown2);
+		PCDX11RenderDevice *renderDevice, TextureClass shape);
 
 	void UpdateAbsoluteSize();
 	void ensureResource();
