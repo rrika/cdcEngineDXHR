@@ -37,6 +37,7 @@
 #include "cdcMath/Math.h" // for cdc::Matrix
 #include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h" // for buildObjectsUI
+#include "postprocessing/PPBuiltins.h"
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
 #include "rendering/buffers/PCDX11IndexBuffer.h"
 #include "rendering/buffers/PCDX11UberConstantBuffer.h"
@@ -947,15 +948,11 @@ int spinnyCube(HWND window,
 					100, 100, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, 0x18, cdc::kTextureClass2D));
 				tempRenderTarget->getRenderTexture11()->createRenderTargetView();
 
-				auto *fxaaDrawable = new (renderDevice, 0) cdc::PCDX11FXAADrawable(
-					renderDevice,
-					/*quality*/ 0,
-					/*texture*/ renderContext->renderTarget2C->getRenderTexture(),
-					/*renderTarget*/ tempRenderTarget,
-					/*flags*/ 0,
-					/*sortZ*/ 0.0f);
+				PPAntiAlias(
+					/*src*/ renderContext->renderTarget2C->getRenderTexture(),
+					/*dst*/ tempRenderTarget,
+					/*mask*/ 0x100);
 
-				renderDevice->recordDrawable(fxaaDrawable, /*mask=*/ 0x100, 0);
 				renderDevice->finishScene();
 				
 				// restart the scene to cause a (pointless) copy
@@ -969,14 +966,6 @@ int spinnyCube(HWND window,
 				renderDevice->finishScene();
 				tempRenderTarget->getRenderTexture11()->createRenderTargetView();
 
-				auto *fxaaDrawable = new (renderDevice, 0) cdc::PCDX11FXAADrawable(
-					renderDevice,
-					/*quality*/ 0,
-					/*texture*/ tempRenderTarget->getRenderTexture(),
-					/*renderTarget*/ renderContext->renderTarget2C,
-					/*flags*/ 0,
-					/*sortZ*/ 0.0f);
-				
 				// now draw to the real buffer
 				renderDevice->createSubScene(
 					&renderViewport,
@@ -984,7 +973,11 @@ int spinnyCube(HWND window,
 					renderContext->depthBuffer,
 					nullptr,
 					nullptr);
-				renderDevice->recordDrawable(fxaaDrawable, /*mask=*/ 0x100, 0);
+
+				PPAntiAlias(
+					/*src*/ tempRenderTarget->getRenderTexture(),
+					/*dst*/ renderContext->renderTarget2C,
+					/*mask*/ 0x100);
 			}
 		} else if (showTempBuffer != -1) {
 			// restart the scene so that the showTempBuffer feature doesn't draw over the UI
