@@ -18,10 +18,10 @@ public:
 		PCDX11RenderDevice *renderDevice,
 		uint32_t format, uint32_t b, uint32_t c, uint32_t d)
 	:
-		PCDX11BaseTexture(0, 0, format),
+		PCDX11BaseTexture(renderDevice, format, 0, 0, /*maxFilter=*/ 256, /*wrapMode=*/ 7, kTextureClassUnknown),
 		PCDX11AsyncCreateResource()
 	{
-		repeatmode = 7; // wrap in all axes (rather than clamp)
+		// wrapMode = 7; // wrap in all axes (rather than clamp)
 	}
 
 	ID3D11Resource *getTextureResource() override;

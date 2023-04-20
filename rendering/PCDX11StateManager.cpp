@@ -351,7 +351,7 @@ void PCDX11StateManager::setSamplerState(
 	//   260 => 19
 	if (slot >= 0x10) slot -= 0xF1;
 
-	uint32_t repeat = tex->repeatmode;
+	uint32_t repeat = tex->wrapMode & 7;
 
 	if (repeat != m_samplerRepeat[slot] || filter != m_samplerFilter[slot]) {
 		m_samplerRepeat[slot] = repeat;

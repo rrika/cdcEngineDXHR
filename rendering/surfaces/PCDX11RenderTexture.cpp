@@ -11,7 +11,7 @@ PCDX11RenderTexture::PCDX11RenderTexture(
 	uint32_t flags, uint32_t isDepthBuffer,
 	PCDX11RenderDevice *renderDevice, TextureClass shape)
 :
-	PCDX11BaseTexture(width, height, 0 /* TODO: pass shape*/),
+	PCDX11BaseTexture(renderDevice, 0, width, height, /*maxFilter=*/ 1, /*wrapMode=*/ 0, shape),
 	renderDevice(renderDevice),
 	flags(flags),
 	shortWidth(width),

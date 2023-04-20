@@ -11,8 +11,7 @@ class PCDX11StateManager;
 class PCDX11BaseTexture {
 protected:
 	friend class PCDX11StateManager;
-	uint16_t repeatmode : 3;
-	uint16_t unknownflags : 13;
+	uint16_t wrapMode;
 	TextureClass shape; // 8
 	uint32_t maxFilter; // C
 	uint32_t textureFormat; // 10
@@ -22,10 +21,14 @@ protected:
 	PCDX11RenderDevice *renderDevice; // 20
 	uint16_t mipLevels; // 24
 public:
-	PCDX11BaseTexture(uint32_t width, uint32_t height, uint32_t dxgiFormat) :
+	PCDX11BaseTexture(PCDX11RenderDevice *renderDevice, uint32_t dxgiFormat, uint16_t width, uint16_t height, /*...,*/ uint32_t maxFilter, uint16_t wrapMode, TextureClass shape) :
+		wrapMode(wrapMode),
+		shape(shape),
+		maxFilter(maxFilter),
+		textureFormat(dxgiFormat),
 		width(width),
 		height(height),
-		textureFormat(dxgiFormat)
+		renderDevice(renderDevice)
 	{} // TODO: incomplete
 
 	virtual ID3D11Resource *getTextureResource() = 0;
