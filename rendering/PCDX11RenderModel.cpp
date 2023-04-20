@@ -37,7 +37,7 @@ void PCDX11RenderModel::resConstruct() {
 		printf("OK\n");
 	else
 		printf("NG\n");
-	if (vsSelect == -1)
+	if (mesh->vsSelect == -1)
 		return;
 
 	printf(" header.mesh      = %p\n", meshHeader->mesh);

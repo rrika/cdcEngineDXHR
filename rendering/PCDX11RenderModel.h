@@ -29,7 +29,6 @@ public:
 	PCDX11StaticIndexBuffer *indexBuffer; // 38
 	NonPersistentPGData *tab0Ext16Byte = nullptr; // one per primgroup
 	PersistentPGData *tab0Ext128Byte = nullptr; // one per primgroup
-	uint32_t vsSelect; // 4C
 
 public:
 	PCDX11RenderModel(PCDX11RenderDevice *renderDevice, uint32_t size);

@@ -56,7 +56,7 @@ struct Mesh { // = cdc::ModelData
 	float boundingSphereRadius;
 	float dword44;
 	float dword48;
-	uint32_t vsSelect4C;
+	uint32_t vsSelect; // 4C
 	uint32_t matTableMaybe; // 50
 	PrimGroup *primGroups; // 54
 	ModelBatch *meshTable; // 58

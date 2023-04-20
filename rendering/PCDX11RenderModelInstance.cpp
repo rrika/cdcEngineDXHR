@@ -19,7 +19,7 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 	// 	return; // HACK
 	// if (!mesh->meshTable)
 	// 	return; // HACK
-	if (getRenderModel()->vsSelect == -1)
+	if (mesh->vsSelect == -1)
 		return; // HACK
 	uint32_t tab0index = 0;
 	PoseData *poseData = static_cast<PCDX11MatrixState*>(matrixState)->poseData;

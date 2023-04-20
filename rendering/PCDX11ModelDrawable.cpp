@@ -58,7 +58,7 @@ void PCDX11ModelDrawable::drawDepth(uint32_t funcSetIndex, IRenderDrawable *draw
 	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupDepthPass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
-		mesh->vsSelect4C,
+		mesh->vsSelect,
 		false,
 		(VertexDecl*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
@@ -84,7 +84,7 @@ void PCDX11ModelDrawable::drawShadow(uint32_t funcSetIndex, IRenderDrawable *dra
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		(*(char**)lightManager->ptr434)[276],
-		mesh->vsSelect4C,
+		mesh->vsSelect,
 		(VertexDecl*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		thisModel->opacity,
@@ -108,7 +108,7 @@ void PCDX11ModelDrawable::drawAlphaBloom(uint32_t funcSetIndex, IRenderDrawable 
 	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupBloomPass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
-		mesh->vsSelect4C,
+		mesh->vsSelect,
 		(VertexDecl*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		0.0f);
@@ -132,7 +132,7 @@ void PCDX11ModelDrawable::drawComposite(uint32_t funcSetIndex, IRenderDrawable *
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		thisModel->lightConstantBufferData,
-		mesh->vsSelect4C,
+		mesh->vsSelect,
 		(VertexDecl*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		0,
@@ -164,7 +164,7 @@ void PCDX11ModelDrawable::drawTranslucent(uint32_t funcSetIndex, IRenderDrawable
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		thisModel->lightConstantBufferData,
-		mesh->vsSelect4C,
+		mesh->vsSelect,
 		(VertexDecl*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		1,
@@ -192,7 +192,7 @@ void PCDX11ModelDrawable::drawNormal(uint32_t funcSetIndex, IRenderDrawable *dra
 	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupNormalMapPass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
-		mesh->vsSelect4C,
+		mesh->vsSelect,
 		(VertexDecl*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,
 		thisModel->opacity,
