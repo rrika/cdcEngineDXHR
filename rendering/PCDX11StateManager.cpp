@@ -76,6 +76,13 @@ PCDX11StateManager::PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D1
 	memset(m_textureViews, 0, 20 * 4);
 	memset(m_textureResources, 0, 20 * 4);
 
+	m_stencilParams.m_frontParams = 0xFF00000E;
+	m_stencilParams.m_backParams = 0xFF00000E;
+	m_stencilParams.m_writeMasks = 0;
+	m_stencilParams.m_hiStencil = 0xFFFF;
+	m_blendState = 0;
+	m_cullMode = ~0u;
+
 	m_projectMatrix = identity4x4;
 	m_viewMatrix = identity4x4;
 	m_viewProjectMatrix = identity4x4;
@@ -129,6 +136,14 @@ void PCDX11StateManager::reset() {
 
 	m_alphaThreshold = 1.0f;
 	m_materialOpacity = 0.0f;
+
+	m_fogColor[0] = 0.0f;
+	m_fogColor[1] = 0.0f;
+	m_fogColor[2] = 0.0f;
+	m_fogColor[3] = 0.0f;
+
+	m_blendState = 0;
+	m_cullMode = ~0u;
 
 	// TODO
 }
