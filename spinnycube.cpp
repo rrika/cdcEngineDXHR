@@ -223,6 +223,8 @@ int spinnyCube(HWND window,
 	ID3D11Device *baseDevice,
 	ID3D11DeviceContext *baseDeviceContext) {
 
+	localstr_set_language(language_english, language_default);
+
 	std::unique_ptr<cdc::PCMouseKeyboard> mouseKeyboard(cdc::PCMouseKeyboard::create(window));
 	auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
 
@@ -1020,32 +1022,22 @@ int spinnyCube(HWND window,
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Language")) {
-				if (ImGui::MenuItem("English"))   { localstr_set_language(language_english,   language_default); }
-				if (ImGui::MenuItem("French"))    { localstr_set_language(language_french,    language_default); }
-				if (ImGui::MenuItem("Italian"))   { localstr_set_language(language_italian,   language_default); }
-				if (ImGui::MenuItem("German"))    { localstr_set_language(language_german,    language_default); }
-				if (ImGui::MenuItem("Spanish"))   { localstr_set_language(language_spanish,   language_default); }
-				if (ImGui::MenuItem("Polish"))    { localstr_set_language(language_polish,    language_default); }
-				if (ImGui::MenuItem("Russian"))   { localstr_set_language(language_russian,   language_default); }
+				language_t vo = localstr_get_voice_language();
+				if (ImGui::MenuItem("English", nullptr, vo == language_english))  { localstr_set_language(language_english,   language_default); }
+				if (ImGui::MenuItem("French",  nullptr, vo == language_french))   { localstr_set_language(language_french,    language_default); }
+				if (ImGui::MenuItem("Italian", nullptr, vo == language_italian))  { localstr_set_language(language_italian,   language_default); }
+				if (ImGui::MenuItem("German",  nullptr, vo == language_german))   { localstr_set_language(language_german,    language_default); }
+				if (ImGui::MenuItem("Spanish", nullptr, vo == language_spanish))  { localstr_set_language(language_spanish,   language_default); }
+				if (ImGui::MenuItem("Polish",  nullptr, vo == language_polish))   { localstr_set_language(language_polish,    language_default); }
+				if (ImGui::MenuItem("Russian", nullptr, vo == language_russian))  { localstr_set_language(language_russian,   language_default); }
 
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Rendering")) {
-				if (useFrustumCulling) {
-					if (ImGui::MenuItem("Disable Frustum Culling")) { useFrustumCulling = false; }
-				} else {
-					if (ImGui::MenuItem("Enable Frustum Culling")) { useFrustumCulling = true; }
-				}
-				if (drawCellBoxes) {
-					if (ImGui::MenuItem("Hide Cell Boxes")) { drawCellBoxes = false; }
-				} else {
-					if (ImGui::MenuItem("Show Cell Boxes")) { drawCellBoxes = true; }
-				}
-				if (applyFXAA) {
-					if (ImGui::MenuItem("Disable FXAA")) { applyFXAA = false; }
-				} else {
-					if (ImGui::MenuItem("Enable FXAA")) { applyFXAA = true; }
-				}
+				if (ImGui::MenuItem("Frustum Culling", nullptr, useFrustumCulling)) { useFrustumCulling = !useFrustumCulling; }
+				if (ImGui::MenuItem("Cell Boxes", nullptr, drawCellBoxes)) { drawCellBoxes = !drawCellBoxes; }
+				if (ImGui::MenuItem("FXAA", nullptr, applyFXAA)) { applyFXAA = !applyFXAA; }
+				ImGui::Separator();
 				if (ImGui::MenuItem("Normal Buffer", nullptr, showTempBuffer == 11)) { showTempBuffer = 11; }
 				if (ImGui::MenuItem("Light Buffer", nullptr, showTempBuffer == 12)) { showTempBuffer = 12; }
 				if (ImGui::MenuItem("Final Buffer", nullptr, showTempBuffer == -1)) { showTempBuffer = -1; }

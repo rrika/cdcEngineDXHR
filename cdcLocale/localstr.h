@@ -19,6 +19,8 @@ enum language_t {
 	language_num_states = 13
 };
 
+language_t localstr_get_text_language();
+language_t localstr_get_voice_language();
 void localstr_set_language(language_t, language_t);
 void localstr_reload();
 const char *localstr_get(uint32_t);

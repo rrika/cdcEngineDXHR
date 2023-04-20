@@ -14,6 +14,16 @@ struct LocalizationTable {
 LocalizationTable ltable = {0xffffffff, 0xffffffff, false, nullptr, nullptr};
 extern char pathPrefix[36];
 
+language_t localstr_get_text_language() {
+	// unconfirmed
+	return (language_t)ltable.textLanguageCode;
+}
+
+language_t localstr_get_voice_language() {
+	// unconfirmed
+	return (language_t)ltable.languageCode;
+}
+
 void localstr_set_language(language_t voLang, language_t textLang) {
 	// HACK
 	if (voLang == language_default)
