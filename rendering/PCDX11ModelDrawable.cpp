@@ -41,6 +41,7 @@ PCDX11ModelDrawable::PCDX11ModelDrawable(
 
 	auto lightManager = static_cast<PCDX11LightManager*>(renderModel->renderDevice->lightManager);
 	lightReceiverData = lightManager->makeReceiver(/*TODO*/);
+	lightConstantBufferData = nullptr;
 }
 
 // for funcset 1: renderpasses 0 and 14 (depth)
