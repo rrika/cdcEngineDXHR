@@ -52,7 +52,8 @@ void buildUI(RenderPasses *renderPasses, DrawableListsAndMasks *lists) {
 			IRenderPassCallback *callbacks = pass->callbacks;
 			DrawableList *list = &activeLists->drawableLists[activeLists->compactIndices[passId]];
 			ImGui::PushID(passId);
-			if (ImGui::TreeNode("pass", "pass %d: list %p", passId, list)) {
+			if (ImGui::TreeNode("pass", "%s (%d)", pass->name, passId)) {
+			// if (ImGui::TreeNode("pass", "pass %d (%s): list %p", passId, pass->name, list)) {
 				buildUI(list);
 				ImGui::TreePop();
 			}

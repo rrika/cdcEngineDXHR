@@ -1,3 +1,4 @@
+#include <cstring>
 #include "IRenderDrawable.h"
 #include "LinearAllocator.h"
 #include "RenderPasses.h"
@@ -58,6 +59,10 @@ uint32_t RenderPasses::addRenderPass(RenderPassType passType, uint32_t order, ui
 		depthSortedPasses |= 1 << passId;
 
 	return passId;
+}
+
+void RenderPasses::setRenderPassDebugName(uint32_t passId, const char *name) {
+	strncpy(passes[passId].name, name, 64);
 }
 
 uint32_t RenderPasses::allocFuncIndex(const char *name) {

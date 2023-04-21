@@ -32,6 +32,7 @@ struct RenderPass { // = cdc::RenderPassData::RenderPass
 	RenderPassType passType;
 	uint32_t funcSetIndex;
 	IRenderPassCallback *callbacks;
+	char name[64] = {0}; // debug build only
 };
 
 struct RenderPasses { // = cdc::RenderPassData
@@ -46,6 +47,7 @@ struct RenderPasses { // = cdc::RenderPassData
 
 	RenderPasses();
 	uint32_t addRenderPass(RenderPassType passType, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex, uint32_t firstPassId);
+	void setRenderPassDebugName(uint32_t passId, const char *name);
 	uint32_t allocFuncIndex(const char *name);
 	void sort(DrawableList *list, int passId);
 	void draw(DrawableList *list, int passId);

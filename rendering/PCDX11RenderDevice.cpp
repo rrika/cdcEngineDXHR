@@ -100,6 +100,20 @@ PCDX11RenderDevice::PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t heigh
 	registerComparatorsAndDrawersModel();
 	registerComparatorsAndDrawersTerrain();
 	registerComparatorsAndDrawersNGAPrim();
+	renderPasses.setRenderPassDebugName(kPassIndexDepth,           "Depth");
+	renderPasses.setRenderPassDebugName(kPassIndexComposite,       "Composite");
+	renderPasses.setRenderPassDebugName(kPassIndexOpaque,          "Opaque"); // guessed
+	renderPasses.setRenderPassDebugName(kPassIndexTranslucent,     "Translucent");
+	renderPasses.setRenderPassDebugName(kPassIndexFullScreenFX,    "FullScreenFX"); // guessed
+	renderPasses.setRenderPassDebugName(kPassIndexPostFSX,         "PostFSX"); // guessed
+	renderPasses.setRenderPassDebugName(kPassIndexAlphaBloomFSX,   "AlphaBloom");
+	renderPasses.setRenderPassDebugName(kPassIndexPredator,        "Predator");
+	renderPasses.setRenderPassDebugName(kPassIndex8,               "8"); // guessed
+	renderPasses.setRenderPassDebugName(kPassIndexShadow,          "Shadow");
+	renderPasses.setRenderPassDebugName(kPassIndexDepthDependent,  "DepthDependent"); // guessed
+	renderPasses.setRenderPassDebugName(kPassIndexNormal,          "Normal");
+	renderPasses.setRenderPassDebugName(kPassIndexDeferredShading, "Def. Shad");
+	renderPasses.setRenderPassDebugName(kPassIndexNonNormalDepth,  "NonNormalDepth"); // guessed
 	internalCreateIfDeviceManagerAgrees();
 }
 
