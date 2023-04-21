@@ -5,9 +5,9 @@
 
 bool PPPass::init(dtp::PPPassBlob *blob, PPTexture *textures, uint32_t numTextures, PPVariable *variables, uint32_t numVariables) {
 	uint32_t variableIndices[24];
-	uint32_t texturesIndices[8];
+	uint32_t textureIndices[8];
 	memcpy(variableIndices, blob->variableIndices, sizeof(variableIndices));
-	memcpy(texturesIndices, blob->texturesIndices, sizeof(texturesIndices));
+	memcpy(textureIndices, blob->textureIndices, sizeof(textureIndices));
 
 	bool success = true;
 	if (blob->material == nullptr && blob->scaleform == false && blob->builtinShaderType == 0)
@@ -20,14 +20,14 @@ bool PPPass::init(dtp::PPPassBlob *blob, PPTexture *textures, uint32_t numTextur
 
 	// ensure texture indices are in range
 	for (uint32_t i=0; i<8; i++)
-		if (auto ti = texturesIndices[i]; ti != ~0u && ti >= numTextures) {
+		if (auto ti = textureIndices[i]; ti != ~0u && ti >= numTextures) {
 			success = false;
 			break;
 		}
 
 	// ensure variable indices are in range
 	for (uint32_t i=0; i<24; i++)
-		if (auto vi = texturesIndices[i]; vi != ~0u && vi >= numVariables) {
+		if (auto vi = textureIndices[i]; vi != ~0u && vi >= numVariables) {
 			success = false;
 			break;
 		}
@@ -40,8 +40,8 @@ bool PPPass::init(dtp::PPPassBlob *blob, PPTexture *textures, uint32_t numTextur
 	this->byte18 = 0; // does any texture have dword24 == 1
 
 	for (uint32_t i=0; i<8; i++)
-		if (texturesIndices[i] == ~0u)
-			if (textures[texturesIndices[i]].dword24 == 1)
+		if (textureIndices[i] == ~0u)
+			if (textures[textureIndices[i]].dword24 == 1)
 				byte18 = 1;
 
 	return success;

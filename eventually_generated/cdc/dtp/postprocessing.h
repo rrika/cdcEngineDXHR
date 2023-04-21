@@ -49,7 +49,7 @@ struct PPPassBlob {
 	uint8_t byteF;
 	uint32_t dword10;
 	uint32_t variableIndices[24]; // 14
-	uint32_t texturesIndices[8]; // 74
+	uint32_t textureIndices[8]; // 74
 	cdc::IMaterial *material; // 94
 	uint8_t scaleform; // 98
 	uint8_t canBeDisabledThroughSettings; // 99
