@@ -28,6 +28,13 @@ struct PPUnknown2 {
 	uint32_t dword2C;
 };
 
+struct PPRTs {
+	cdc::CommonRenderTarget *rt0 = nullptr;
+	cdc::CommonDepthBuffer *db = nullptr;
+	cdc::CommonRenderTarget *rt8 = nullptr;
+	cdc::CommonRenderTarget *rtC = nullptr;
+};
+
 class PPManager {
 public:
 	static PPManager *s_instance;

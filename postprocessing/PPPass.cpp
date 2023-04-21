@@ -47,6 +47,6 @@ bool PPPass::init(dtp::PPPassBlob *blob, PPTexture *textures, uint32_t numTextur
 	return success;
 }
 
-void PPPass::createScene(cdc::CommonRenderTarget*, RTs *rts, cdc::RenderViewport *a4, uint32_t pppassMask, bool, uint32_t texturesMask) {
+void PPPass::createScene(cdc::CommonRenderTarget*, PPRTs *rts, cdc::RenderViewport *a4, uint32_t pppassMask, bool, uint32_t texturesMask) {
 	// TODO
 }

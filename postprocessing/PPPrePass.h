@@ -23,5 +23,5 @@ public:
 	virtual ~PPPrePass() = default;
 
 	void init(dtp::PPPrePassBlob *blob, PPTexture *textures, uint32_t numTextures, PPVariable *variables, uint32_t numVariables);
-	void createScene(RTs *rts, cdc::RenderViewport *viewport, cdc::CommonRenderTarget *rt);
+	void createScene(PPRTs *rts, cdc::RenderViewport *viewport, cdc::CommonRenderTarget *rt);
 };

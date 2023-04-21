@@ -4,7 +4,6 @@
 
 namespace cdc {
 
-class CommonDepthBuffer;
 class CommonRenderTarget;
 struct RenderViewport;
 
@@ -12,13 +11,7 @@ struct RenderViewport;
 
 class PPTexture;
 class PPVariable;
-
-struct RTs {
-	cdc::CommonRenderTarget *rt0;
-	cdc::CommonDepthBuffer *db;
-	cdc::CommonRenderTarget *rt8;
-	cdc::CommonRenderTarget *rtC;
-};
+struct PPRTs;
 
 class PPPass {
 public:
@@ -32,5 +25,5 @@ public:
 	virtual ~PPPass() = default;
 
 	bool init(dtp::PPPassBlob *a2, PPTexture *textures, uint32_t numTextures, PPVariable *variables, uint32_t numVariables);
-	void createScene(cdc::CommonRenderTarget*, RTs *rts, cdc::RenderViewport *a4, uint32_t pppassMask, bool, uint32_t texturesMask);
+	void createScene(cdc::CommonRenderTarget*, PPRTs *rts, cdc::RenderViewport *a4, uint32_t pppassMask, bool, uint32_t texturesMask);
 };

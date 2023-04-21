@@ -4,7 +4,7 @@ void PPPrePass::init(dtp::PPPrePassBlob *blob, PPTexture *textures, uint32_t num
 	// TODO
 }
 
-void PPPrePass::createScene(RTs *rts, cdc::RenderViewport *viewport, cdc::CommonRenderTarget *rt) {
+void PPPrePass::createScene(PPRTs *rts, cdc::RenderViewport *viewport, cdc::CommonRenderTarget *rt) {
 	// TODO
 }
 
