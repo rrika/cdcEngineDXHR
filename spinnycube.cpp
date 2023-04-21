@@ -444,7 +444,6 @@ int spinnyCube(HWND window,
 	bool mouseLook = false;
 	bool useFrustumCulling = true;
 	bool drawCellBoxes = false;
-	bool applyFXAA = false;
 	bool pointlessCopy = false;
 	int showTempBuffer = -1;
 	cdc::Vector cameraPos{0, 0, 0};
@@ -478,6 +477,8 @@ int spinnyCube(HWND window,
 	ImGuiDrawable imGuiDrawable;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	auto *dc = cdc::deviceManager->getDisplayConfig();
 
 #if ENABLE_IMGUI
 	bool loadedSarifHQ = false;
@@ -714,7 +715,7 @@ int spinnyCube(HWND window,
 
 		cdc::PCDX11RenderTarget *tempRenderTarget = nullptr;
 
-		if (applyFXAA && !pointlessCopy)
+		if (dc->antiAliasing > 0 && !pointlessCopy)
 			tempRenderTarget = static_cast<cdc::PCDX11RenderTarget*>(renderDevice->dx11_createRenderTarget(
 				100, 100, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, 0x18, cdc::kTextureClass2D));
 
@@ -946,7 +947,7 @@ int spinnyCube(HWND window,
 
 		static_cast<cdc::PCDX11Scene*>(scene)->debugShowTempBuffer = showTempBuffer;
 
-		if (applyFXAA) {
+		if (dc->antiAliasing > 0) {
 			PPManager::s_instance->createScene(
 				scene->renderTarget, // renderDevice->getSceneRenderTarget(),
 				nullptr, // particle RT
@@ -1005,7 +1006,12 @@ int spinnyCube(HWND window,
 			if (ImGui::BeginMenu("Rendering")) {
 				if (ImGui::MenuItem("Frustum Culling", nullptr, useFrustumCulling)) { useFrustumCulling = !useFrustumCulling; }
 				if (ImGui::MenuItem("Cell Boxes", nullptr, drawCellBoxes)) { drawCellBoxes = !drawCellBoxes; }
-				if (ImGui::MenuItem("FXAA", nullptr, applyFXAA)) { applyFXAA = !applyFXAA; }
+				ImGui::Separator();
+				if (ImGui::MenuItem("Off",         nullptr, dc->antiAliasing == 0)) { dc->antiAliasing = 0; }
+				if (ImGui::MenuItem("FXAA Low",    nullptr, dc->antiAliasing == 2)) { dc->antiAliasing = 2; }
+				if (ImGui::MenuItem("FXAA Medium", nullptr, dc->antiAliasing == 3)) { dc->antiAliasing = 3; }
+				if (ImGui::MenuItem("FXAA High",   nullptr, dc->antiAliasing == 4)) { dc->antiAliasing = 4; }
+				// if (ImGui::MenuItem("MLAA",        nullptr, dc->antiAliasing == 5)) { dc->antiAliasing = 5; }
 				ImGui::Separator();
 				if (ImGui::MenuItem("Normal Buffer", nullptr, showTempBuffer == 11)) { showTempBuffer = 11; }
 				if (ImGui::MenuItem("Light Buffer", nullptr, showTempBuffer == 12)) { showTempBuffer = 12; }

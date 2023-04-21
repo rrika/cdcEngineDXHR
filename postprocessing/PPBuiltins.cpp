@@ -1,5 +1,5 @@
 #include "PPBuiltins.h"
-// #include "rendering/PCDX11DeviceManager.h"
+#include "rendering/PCDX11DeviceManager.h"
 #include "rendering/drawables/PCDX11FXAADrawable.h"
 #include "rendering/surfaces/PCDX11RenderTarget.h"
 #include "rendering/surfaces/PCDX11RenderTexture.h"
@@ -16,13 +16,13 @@ void PPAntiAlias(TextureMap *src, CommonRenderTarget *dst, uint32_t passMask) {
 	if (g_CurrentRenderer == RENDERER_DX9) {
 		// TODO
 	} else if (g_CurrentRenderer == RENDERER_DX11) {
-		// DisplayConfig *dc = deviceManager->getDisplayConfig();
+		DisplayConfig *dc = deviceManager->getDisplayConfig();
 		// TODO
 
 		auto *renderDevice = static_cast<PCDX11RenderDevice*>(g_renderDevice);
 		auto *fxaaDrawable = new (renderDevice, 0) PCDX11FXAADrawable(
 			renderDevice,
-			/*quality*/ 0,
+			/*quality*/ dc->antiAliasing - 2,
 			/*texture*/ static_cast<PCDX11RenderTexture*>(src),
 			/*renderTarget*/ static_cast<PCDX11RenderTarget*>(dst),
 			/*flags*/ 0,
