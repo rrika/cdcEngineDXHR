@@ -6,6 +6,8 @@
 #include "VertexDeclaration.h"
 #include "shaders/PCDX11ShaderLib.h"
 #include "shaders/PCDX11ShaderTable.h" // for PixelShaderTable and VertexShaderTable
+#include "surfaces/PCDX11DepthBuffer.h" // for covariant return type
+#include "surfaces/PCDX11RenderTarget.h" // for covariant return type
 
 namespace cdc {
 
@@ -14,7 +16,6 @@ class PCDX11BaseTexture;
 class PCDX11LightManager;
 class PCDX11Pool;
 class PCDX11RenderContext;
-class PCDX11RenderTarget;
 class PCDX11RenderTexture;
 class PCDX11StaticPool;
 class PCDX11SimpleDynamicVertexBuffer;
@@ -130,10 +131,10 @@ public:
 		CommonRenderTarget *sourceColor,
 		CommonDepthBuffer *sourceDepth) override;
 	void finishScene() override;
-	void getSceneRenderTarget() override;
-	void method_64() override;
-	void method_6C() override;
-	void method_70() override;
+	PCDX11RenderTarget *getSceneRenderTarget() override; // covariant
+	PCDX11DepthBuffer *getSceneDepthBuffer() override; // covariant
+	uint32_t getContextWidth() override;
+	uint32_t getContextHeight() override;
 	void method_A8() override;
 	void clearRenderTarget(
 		uint32_t flags,

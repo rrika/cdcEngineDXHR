@@ -51,18 +51,18 @@ public:
 	virtual void drawRenderLists() = 0; // 10
 	virtual void method_14();
 	virtual void method_18();
-	virtual bool beginRenderList(float*) = 0;
-	virtual bool endRenderList() = 0; // 20
-	virtual bool hasRenderList() = 0;
-	virtual uint32_t getSubFrameWidth() = 0;
-	virtual uint32_t getSubFrameHeight() = 0;
+	virtual bool beginRenderList(float*) = 0; // 1C, BeginSubFrame
+	virtual bool endRenderList() = 0; // 20, EndSubFrame
+	virtual bool hasRenderList() = 0; // 24, IsInSubFrame
+	virtual uint32_t getSubFrameWidth() = 0; // 28
+	virtual uint32_t getSubFrameHeight() = 0; // 2C
 	virtual void method_30() = 0;
 	virtual void method_34();
 	virtual void method_38();
 	virtual void method_3C();
 	virtual void method_40();
 	virtual void method_44();
-	virtual CommonScene *createSubScene(
+	virtual CommonScene *createSubScene( // BeginScene
 		RenderViewport *renderViewport,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer,
@@ -78,11 +78,11 @@ public:
 	virtual void method_54();
 	virtual uint32_t getSceneCreationCount(); // frame count, basically
 	virtual CommonScene *getScene();
-	virtual void getSceneRenderTarget() = 0; // 60
-	virtual void method_64() = 0;
+	virtual CommonRenderTarget *getSceneRenderTarget() = 0; // 60
+	virtual CommonDepthBuffer *getSceneDepthBuffer() = 0;
 	virtual RenderViewport *getCurViewport();
-	virtual void method_6C() = 0;
-	virtual void method_70() = 0;
+	virtual uint32_t getContextWidth() = 0;
+	virtual uint32_t getContextHeight() = 0;
 
 	virtual void addPass(RenderPassType passType, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex);
 	virtual void method_78();

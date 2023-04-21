@@ -383,20 +383,24 @@ void PCDX11RenderDevice::finishScene() {
 	scene7C = scene7C->parentScene;
 }
 
-void PCDX11RenderDevice::getSceneRenderTarget() {
-	// TODO
+PCDX11RenderTarget *PCDX11RenderDevice::getSceneRenderTarget() {
+	if (scene7C)
+		return static_cast<PCDX11RenderTarget*>(scene7C->getRenderTarget());
+	return nullptr;
 }
 
-void PCDX11RenderDevice::method_64() {
-	// TODO
+PCDX11DepthBuffer *PCDX11RenderDevice::getSceneDepthBuffer() {
+	if (scene7C)
+		return static_cast<PCDX11DepthBuffer*>(scene7C->getDepthBuffer());
+	return nullptr;
 }
 
-void PCDX11RenderDevice::method_6C() {
-	// TODO
+uint32_t PCDX11RenderDevice::getContextWidth() {
+	return getRenderContextAny()->width;
 }
 
-void PCDX11RenderDevice::method_70() {
-	// TODO
+uint32_t PCDX11RenderDevice::getContextHeight() {
+	return getRenderContextAny()->height;
 }
 
 void PCDX11RenderDevice::method_A8() {
