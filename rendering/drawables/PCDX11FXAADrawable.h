@@ -10,11 +10,11 @@ class PCDX11BaseTexture;
 class PCDX11FXAADrawable :
 	public IRenderDrawable
 {
-	uint32_t flags;
-	PCDX11RenderDevice *renderDevice;
-	uint32_t quality;
-	PCDX11RenderTarget *renderTarget;
-	PCDX11BaseTexture *texture;
+	uint32_t flags; // C
+	PCDX11RenderDevice *renderDevice; // 10
+	uint32_t quality; // 14
+	PCDX11RenderTarget *renderTarget; // 18
+	PCDX11BaseTexture *texture; // 1C
 
 public:
 	PCDX11FXAADrawable(

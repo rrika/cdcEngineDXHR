@@ -15,8 +15,10 @@ protected:
 	TextureClass shape; // 8
 	uint32_t maxFilter; // C
 	uint32_t textureFormat; // 10
+public:
 	uint32_t width; // 14
 	uint32_t height; // 18
+private:
 	uint32_t bpp; // 1C
 	PCDX11RenderDevice *renderDevice; // 20
 	uint16_t mipLevels; // 24

@@ -72,10 +72,10 @@ public:
 	PCDX11ShaderLib *shlib_16; // 10BFC, ps
 	PCDX11ShaderLib *shlib_14; // 10C00, vs
 	PCDX11ShaderLib *shlib_15; // 10C04, vs
-	PCDX11ShaderLib *shlib_13; // 10C08, ps
-	PCDX11ShaderLib *shlib_11; // 10C0C, ps
-	PCDX11ShaderLib *shlib_10; // 10C10, ps
-	PCDX11ShaderLib *shlib_12; // 10C14, ps
+	PCDX11ShaderLib *shlib_13; // 10C08, ps (mlaa step 1)
+	PCDX11ShaderLib *shlib_11; // 10C0C, ps (mlaa step 2)
+	PCDX11ShaderLib *shlib_10; // 10C10, ps (mlaa step 3)
+	PCDX11ShaderLib *shlib_12; // 10C14, ps (fxaa, all qualities)
 	PCDX11ShaderLib *shlib_9;
 	PCDX11ShaderLib *shlib_8;
 	PCDX11ShaderLib *shlib_7;
@@ -224,7 +224,8 @@ public:
 		float u0, float v0, float u1, float v1,
 		uint32_t color, uint32_t flags, uint32_t blendMode, bool writeDepth);
 	void copySurface(PCDX11RenderTexture *texture, bool writeDepth, uint8_t rtMask);
-	void doFXAA(uint32_t quality, PCDX11BaseTexture *texture, PCDX11RenderTarget *renderTarget);
+	void ApplyFXAA(uint32_t quality, PCDX11BaseTexture *texture, PCDX11RenderTarget *renderTarget);
+	void ApplyMLAA(PCDX11BaseTexture *texture, PCDX11RenderTarget *renderTarget);
 };
 
 CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t height, bool unknown);

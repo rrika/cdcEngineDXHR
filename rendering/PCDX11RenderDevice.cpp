@@ -856,7 +856,7 @@ void PCDX11RenderDevice::copySurface(
 	deviceContext->Draw(4, 0);
 }
 
-void PCDX11RenderDevice::doFXAA(
+void PCDX11RenderDevice::ApplyFXAA(
 	uint32_t quality,
 	PCDX11BaseTexture *texture,
 	PCDX11RenderTarget *renderTarget)
@@ -880,6 +880,97 @@ void PCDX11RenderDevice::doFXAA(
 		/*blendMode=*/  0x7010010,
 		/*writeDepth=*/ false
 	);
+	stateManager->popRenderTargets();
+}
+
+void PCDX11RenderDevice::ApplyMLAA(
+	PCDX11BaseTexture *tex0,
+	PCDX11RenderTarget *renderTarget)
+{
+	PCDX11StateManager *stateManager = deviceManager->getStateManager();
+
+	ID3D11Buffer *backupPixelCB[1];
+	d3dDeviceContext111580->PSGetConstantBuffers(0, 1, backupPixelCB);
+
+	PCDX11RenderTarget *tmp1 = dx11_createRenderTarget(100, 100, DXGI_FORMAT_R8_UINT,   /*flags=*/0x19, kTextureClass2D);
+	PCDX11RenderTarget *tmp2 = dx11_createRenderTarget(100, 100, DXGI_FORMAT_R8G8_UINT, /*flags=*/0x19, kTextureClass2D);
+
+	tmp1->getRenderTexture11()->createRenderTargetView(); // HACK
+	tmp2->getRenderTexture11()->createRenderTargetView(); // HACK
+
+	// auto *cb = new (linear34, 0) PCDX11DynamicConstantBuffer(nullptr, 1);
+	auto *cb = new (linear34, 0) PCDX11UberConstantBuffer(1); // HACK
+	float row[4] = {0, float(tex0->width-1), float(tex0->height-1), 0}; // game doesn't actually initialize .x and .w
+	cb->assignRow(0, row, 1);
+	cb->syncBuffer(d3dDeviceContext111580);
+
+	ID3D11Buffer *buf = cb->getBuffer();
+	d3dDeviceContext111580->PSSetConstantBuffers(0, 1, &buf);
+
+	auto *vs = static_cast<PCDX11VertexShaderTable*>(shlib_19->table)->vertexShaders[0];
+	stateManager->setVertexShader(vs);
+
+	auto *ps1 = static_cast<PCDX11PixelShaderTable*>(shlib_13->table)->pixelShaders[0];
+	auto *ps2 = static_cast<PCDX11PixelShaderTable*>(shlib_11->table)->pixelShaders[0];
+	auto *ps3 = static_cast<PCDX11PixelShaderTable*>(shlib_10->table)->pixelShaders[0];
+
+	// 1
+	stateManager->setPrimitiveTopology(5);
+	stateManager->setPixelShader(ps1);
+	stateManager->setTextureAndSampler(0, tex0, 0, 0.0f);
+	stateManager->pushRenderTargets(tmp1, nullptr);
+	stateManager->updateViewport();
+	stateManager->updateRenderState();
+	drawQuad(
+		-1.0f, -1.0f, 1.0f, 1.0f,
+		 0.0f,  0.0f, 1.0f, 1.0f,
+		/*color=*/      0xffffffff,
+		/*flags=*/      0,
+		/*blendMode=*/  0x7010010,
+		/*writeDepth=*/ false
+	);
+
+	// 2
+	stateManager->setPixelShader(ps2);
+	stateManager->setTextureAndSampler(1, tmp1->getRenderTexture(), 0, 0.0f);
+	stateManager->updateRenderTargets(tmp2, nullptr);
+	stateManager->updateViewport();
+	stateManager->updateRenderState();
+	drawQuad(
+		-1.0f, -1.0f, 1.0f, 1.0f,
+		 0.0f,  0.0f, 1.0f, 1.0f,
+		/*color=*/      0xffffffff,
+		/*flags=*/      0,
+		/*blendMode=*/  0x7010010,
+		/*writeDepth=*/ false
+	);
+
+	// 3
+	stateManager->setTextureAndSampler(0, tex0, 0, 0.0f);
+	stateManager->setTextureAndSampler(1, nullptr, 0, 0.0f);
+	stateManager->setTextureAndSampler(2, tmp2->getRenderTexture(), 0, 0.0f);
+	stateManager->setPixelShader(ps3);
+	stateManager->updateRenderTargets(renderTarget, nullptr);
+	StencilParams stencilParams {
+		0xFF000105,
+		0xFF00000E,
+		0x0000FFFF,
+		0x00000000
+	};
+	stateManager->setStencil(&stencilParams);
+	stateManager->updateViewport();
+	stateManager->updateRenderState();
+	drawQuad(
+		-1.0f, -1.0f, 1.0f, 1.0f,
+		 0.0f,  0.0f, 1.0f, 1.0f,
+		/*color=*/      0xffffffff,
+		/*flags=*/      0,
+		/*blendMode=*/  0x7010010,
+		/*writeDepth=*/ false
+	);
+
+	d3dDeviceContext111580->PSSetConstantBuffers(0, 1, backupPixelCB);
+
 	stateManager->popRenderTargets();
 }
 

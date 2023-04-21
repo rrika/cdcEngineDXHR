@@ -1,6 +1,8 @@
 #include "PPBuiltins.h"
 #include "rendering/PCDX11DeviceManager.h"
+#include "rendering/IRenderDrawable.h"
 #include "rendering/drawables/PCDX11FXAADrawable.h"
+#include "rendering/drawables/PCDX11MLAADrawable.h"
 #include "rendering/surfaces/PCDX11RenderTarget.h"
 #include "rendering/surfaces/PCDX11RenderTexture.h"
 #include "rendering/PCDX11RenderDevice.h"
@@ -20,14 +22,24 @@ void PPAntiAlias(TextureMap *src, CommonRenderTarget *dst, uint32_t passMask) {
 		// TODO
 
 		auto *renderDevice = static_cast<PCDX11RenderDevice*>(g_renderDevice);
-		auto *fxaaDrawable = new (renderDevice, 0) PCDX11FXAADrawable(
-			renderDevice,
-			/*quality*/ dc->antiAliasing - 2,
-			/*texture*/ static_cast<PCDX11RenderTexture*>(src),
-			/*renderTarget*/ static_cast<PCDX11RenderTarget*>(dst),
-			/*flags*/ 0,
-			/*sortZ*/ 0.0f);
+		IRenderDrawable *drawable;
+		if (dc->antiAliasing == 5) {
+			drawable = new (renderDevice, 0) PCDX11MLAADrawable(
+				renderDevice,
+				/*texture*/ static_cast<PCDX11RenderTexture*>(src),
+				/*renderTarget*/ static_cast<PCDX11RenderTarget*>(dst),
+				/*flags*/ 0,
+				/*sortZ*/ 0.0f);
+		} else {
+			drawable = new (renderDevice, 0) PCDX11FXAADrawable(
+				renderDevice,
+				/*quality*/ dc->antiAliasing - 2,
+				/*texture*/ static_cast<PCDX11RenderTexture*>(src),
+				/*renderTarget*/ static_cast<PCDX11RenderTarget*>(dst),
+				/*flags*/ 0,
+				/*sortZ*/ 0.0f);
+		}
 
-		renderDevice->recordDrawable(fxaaDrawable, passMask, 0);
+		renderDevice->recordDrawable(drawable, passMask, 0);
 	}
 }

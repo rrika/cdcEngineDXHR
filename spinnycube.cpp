@@ -1011,7 +1011,7 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("FXAA Low",    nullptr, dc->antiAliasing == 2)) { dc->antiAliasing = 2; }
 				if (ImGui::MenuItem("FXAA Medium", nullptr, dc->antiAliasing == 3)) { dc->antiAliasing = 3; }
 				if (ImGui::MenuItem("FXAA High",   nullptr, dc->antiAliasing == 4)) { dc->antiAliasing = 4; }
-				// if (ImGui::MenuItem("MLAA",        nullptr, dc->antiAliasing == 5)) { dc->antiAliasing = 5; }
+				if (ImGui::MenuItem("MLAA",        nullptr, dc->antiAliasing == 5)) { dc->antiAliasing = 5; }
 				ImGui::Separator();
 				if (ImGui::MenuItem("Normal Buffer", nullptr, showTempBuffer == 11)) { showTempBuffer = 11; }
 				if (ImGui::MenuItem("Light Buffer", nullptr, showTempBuffer == 12)) { showTempBuffer = 12; }
