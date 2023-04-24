@@ -4,6 +4,7 @@
 
 namespace cdc {
 
+class RenderMesh;
 class ResolveObject;
 struct Object;
 
@@ -62,6 +63,6 @@ uint32_t objectIdByName(const char *name);
 void requestObjectHigh(uint32_t id);
 void requestObjectNormal(uint32_t id);
 
-void buildObjectsUI();
+void buildObjectsUI(cdc::RenderMesh *&selectedMesh);
 
 }

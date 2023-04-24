@@ -484,6 +484,10 @@ int spinnyCube(HWND window,
 	bool showDrawablesWindow = false;
 	bool showFilesystemWindow = false;
 	bool showObjectsWindow = false;
+	bool showModelWindow = false;
+	cdc::RenderMesh *selectedModel = nullptr;
+	cdc::IMaterial *selectedMaterial = nullptr;
+	cdc::MaterialBlobSub *selectedSubMaterial = nullptr;
 	bool showDRMWindow = false;
 	bool showUnitsWindow = false;
 	bool showLoadedUnitsWindow = false;
@@ -1071,9 +1075,73 @@ int spinnyCube(HWND window,
 		}
 		if (showObjectsWindow) {
 			ImGui::Begin("Objects", &showObjectsWindow);
-			cdc::buildObjectsUI();
+			cdc::buildObjectsUI(selectedModel);
+			if (selectedModel)
+				showModelWindow = true;
 			ImGui::End();
 		}
+		if (showModelWindow) {
+			ImGui::Begin("Model", &showModelWindow);
+			auto *model = static_cast<cdc::PCDX11RenderModel*>(selectedModel);
+			ImGui::Text("# model batches = %d", model->numModelBatches);
+			ImGui::Text("# prim groups = %d", model->numPrimGroups);
+			uint32_t pg = 0;
+			ImGui::PushID("model");
+			for (uint32_t i = 0; i < model->numModelBatches; i++) {
+				cdc::ModelBatch *batch = &model->modelBatches[i];
+				ImGui::Text("batch %d", i);
+				for (uint32_t j = 0; j < batch->tab0EntryCount_30; j++, pg++) {
+					ImGui::PushID(pg);
+					ImGui::Text("  group %d", pg);
+					cdc::PrimGroup *group = &model->primGroups[pg];
+					ImGui::SameLine();
+					ImGui::Text(": %d tris", group->triangleCount);
+					ImGui::SameLine();
+					ImGui::PopID();
+					if (ImGui::SmallButton("material"))
+						selectedMaterial = group->material;
+				}
+			}
+			ImGui::PopID();
+			if (selectedMaterial) {
+				ImGui::Separator();
+				ImGui::PushID("material");
+				// auto *material = static_cast<cdc::PCDX11Material*>(selectedMaterial);
+				auto *material = selectedMaterial;
+				ImGui::Text("material %p", material);
+				for (uint32_t i = 0; i < 16; i++) {
+					ImGui::PushID(i);
+					auto *submat = material->GetMaterialData()->subMat4C[i];
+					if (submat) {
+						ImGui::Text("submaterial %d: %p", i, submat);
+						ImGui::SameLine();
+						// if (ImGui::SmallButton("show"))
+						// 	selectedSubMaterial = submat;
+						ImGui::SameLine();
+						if (submat->shaderVertex)
+							ImGui::Text(" VS");
+						else
+							ImGui::TextDisabled(" VS");
+						ImGui::SameLine();
+						if (submat->shaderPixel)
+							ImGui::Text(" PS");
+						else
+							ImGui::TextDisabled(" PS");
+					}
+					ImGui::PopID();
+				}
+				ImGui::PopID();
+			}
+			if (selectedSubMaterial) {
+				ImGui::Separator();
+				ImGui::PushID("submaterial");
+				cdc::MaterialBlobSub *submat = selectedSubMaterial;
+				ImGui::Text("submaterial %p", submat);
+				ImGui::PopID();
+			}
+			ImGui::End();
+		} else
+			selectedModel = nullptr;
 		if (showDRMWindow) {
 			drmexplorer.draw(&showDRMWindow);
 		}

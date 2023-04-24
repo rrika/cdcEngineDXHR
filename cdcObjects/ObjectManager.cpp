@@ -9,6 +9,7 @@
 
 #if ENABLE_IMGUI
 #include "../imgui/imgui.h"
+#include "cdcObjects/Object.h"
 #endif
 
 #ifndef _WIN32
@@ -211,7 +212,7 @@ void requestObjectNormal(uint32_t id) {
 	requestObject(id, cdc::FileRequest::NORMAL);
 }
 
-void buildObjectsUI() {
+void buildObjectsUI(cdc::RenderMesh *&selectedMesh) {
 #if ENABLE_IMGUI
 	static bool onlyLoaded = true;
 	ImGui::Checkbox("Only show loaded objects", &onlyLoaded);
@@ -222,15 +223,31 @@ void buildObjectsUI() {
 		if (e->entries[i].name && (isLoaded || !onlyLoaded)) {
 			ImGui::Text("%4d %s %d",
 				i+1, e->entries[i].name, e->entries[i].slot);
+			ImGui::PushID(i);
 			if (!isLoaded) {
-				ImGui::PushID(i);
 				ImGui::SameLine();
 				if (ImGui::SmallButton("Load")) {
 					requestObjectNormal(i+1);
 					getDefaultFileSystem()->processAll();
 				}
-				ImGui::PopID();
+			} else {
+				uint32_t slot = e->entries[i].slot;
+				Object *obj = objects[slot].objBlob;
+				for (uint32_t j = 0; j < obj->numModels; j++) {
+					auto *mesh = obj->models[j]->renderMesh;
+					if (!mesh)
+						continue;
+
+					ImGui::PushID(j);
+					char label[18];
+					snprintf(label, 18, "Model %d", j);
+					ImGui::SameLine();
+					if (ImGui::SmallButton(label))
+						selectedMesh = mesh;
+					ImGui::PopID();
+				}
 			}
+			ImGui::PopID();
 		}
 	}
 #endif
