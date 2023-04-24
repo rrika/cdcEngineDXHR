@@ -487,6 +487,7 @@ int spinnyCube(HWND window,
 	bool showObjectsWindow = false;
 	bool showModelWindow = false;
 	cdc::RenderMesh *selectedModel = nullptr;
+	cdc::ModelBatch *selectedBatch = nullptr;
 	cdc::IMaterial *selectedMaterial = nullptr;
 	cdc::MaterialBlobSub *selectedSubMaterial = nullptr;
 	bool showDRMWindow = false;
@@ -1104,8 +1105,10 @@ int spinnyCube(HWND window,
 					ImGui::Text(": %d tris", group->triangleCount);
 					ImGui::SameLine();
 					ImGui::PopID();
-					if (ImGui::SmallButton("material"))
+					if (ImGui::SmallButton("batch/material")) {
+						selectedBatch = batch;
 						selectedMaterial = group->material;
+					}
 				}
 			}
 			ImGui::PopID();
@@ -1121,8 +1124,8 @@ int spinnyCube(HWND window,
 					if (submat) {
 						ImGui::Text("submaterial %d: %p", i, submat);
 						ImGui::SameLine();
-						// if (ImGui::SmallButton("show"))
-						// 	selectedSubMaterial = submat;
+						if (ImGui::SmallButton("show"))
+							selectedSubMaterial = submat;
 						ImGui::SameLine();
 						if (submat->shaderVertex)
 							ImGui::Text(" VS");
@@ -1133,6 +1136,9 @@ int spinnyCube(HWND window,
 							ImGui::Text(" PS");
 						else
 							ImGui::TextDisabled(" PS");
+						if (i == 3) { ImGui::SameLine(); ImGui::Text("opaque"); }
+						if (i == 7) { ImGui::SameLine(); ImGui::Text("normals"); }
+						if (i == 8) { ImGui::SameLine(); ImGui::Text("translucent/deferred light"); }
 					}
 					ImGui::PopID();
 				}
@@ -1143,6 +1149,33 @@ int spinnyCube(HWND window,
 				ImGui::PushID("submaterial");
 				cdc::MaterialBlobSub *submat = selectedSubMaterial;
 				ImGui::Text("submaterial %p", submat);
+				if (ImGui::BeginTable("attribs", 2)) {
+					ImGui::TableSetupColumn("VB");
+					ImGui::TableSetupColumn("VS");
+					ImGui::TableHeadersRow();
+					ImGui::TableNextRow();
+					ImGui::TableSetColumnIndex(0);
+					if (selectedBatch) {
+						auto *vertexDecl = (cdc::VertexDecl*)selectedBatch->format;
+						D3D11_INPUT_ELEMENT_DESC elems[vertexDecl->numAttr];
+						decodeVertexAttribA(elems, vertexDecl->attrib, vertexDecl->numAttr, false);
+						for (uint32_t i = 0; i < vertexDecl->numAttr; i++)
+							ImGui::Text("%08x %s %d",
+								vertexDecl->attrib[i].attribKind,
+								elems[i].SemanticName,
+								elems[i].SemanticIndex);
+					} else
+						ImGui::Text("no batch");
+					ImGui::TableSetColumnIndex(1);
+					if (cdc::ShaderInputSpec *inputSpec = submat->vsLayout[0]) { // other indices?
+						for (uint32_t i = 0; i < inputSpec->numAttribs; i++)
+							ImGui::Text("%08x", inputSpec->attr[i].attribKindA);
+						// TODO: extract logic from PCDX11StreamDeclCache::buildStreamDecl to
+						//       determine which VertexDecl attrib this connects to
+					} else
+						ImGui::Text("no VS");
+					ImGui::EndTable();
+				}
 				ImGui::PopID();
 			}
 			ImGui::End();
