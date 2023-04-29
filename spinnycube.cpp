@@ -90,6 +90,7 @@
 #include "imgui/backends/imgui_impl_dx11.h"
 #ifdef _WIN32
 #include "imgui/backends/imgui_impl_win32.h"
+extern HCURSOR ImGui_ImplWin32_Arrow;
 #else
 #include "imgui/backends/imgui_impl_sdl.h"
 #endif
@@ -497,6 +498,10 @@ int spinnyCube(HWND window,
 	std::vector<std::pair<void*, cdc::CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
 
+#ifdef _WIN32
+	ImGui_ImplWin32_Arrow = (HCURSOR)yellowCursor;
+#endif
+
 	cdc::ScriptType *mainMenuScriptType =
 		(cdc::ScriptType*)cdc::g_resolveSections[8]->getWrapped(0x154a7); // pc-w/globaloutershell.drm section 0xb7
 	ScaleformMovieInstance mainMenuInstance(&mainMenuMovie);
@@ -594,12 +599,10 @@ int spinnyCube(HWND window,
 
 #ifdef _WIN32
 		if (mouseLook) {
-			// ImGui::SetMouseCursor(ImGuiMouseCursor_None);
-			SetCursor((HCURSOR)0);
+			ImGui::SetMouseCursor(ImGuiMouseCursor_None);
 			io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 		} else {
-			// ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
-			SetCursor((HCURSOR)yellowCursor); // ahh, much better
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
 			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 		}
 #endif
