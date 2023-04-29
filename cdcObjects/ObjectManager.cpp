@@ -149,6 +149,7 @@ ObjectTracker *allocObjectSlot(int32_t id, uint16_t state) {
 	obj->name = nullptr;
 	obj->refCount = 1;
 	obj->resolveObject = nullptr;
+	obj->debugHide = false;
 
 	g_objectManager->objectList->entries[id-1].slot = i;
 
@@ -232,6 +233,15 @@ void buildObjectsUI(cdc::RenderMesh *&selectedMesh) {
 				}
 			} else {
 				uint32_t slot = e->entries[i].slot;
+
+				bool& hide = objects[slot].debugHide;
+				ImGui::SameLine();
+				if (hide) {
+					if (ImGui::SmallButton("Show")) hide = false;
+				} else {
+					if (ImGui::SmallButton("Hide")) hide = true;
+				}
+
 				Object *obj = objects[slot].objBlob;
 				for (uint32_t j = 0; j < obj->numModels; j++) {
 					auto *mesh = obj->models[j]->renderMesh;

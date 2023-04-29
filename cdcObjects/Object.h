@@ -40,7 +40,7 @@ struct Object {
 	uint32_t dword70_lod2_distance_maybe;
 	uint8_t byte74_lod1_model_selector_maybe;
 	uint8_t byte75_lod2_model_selector_maybe;
-	uint16_t word76;
+	uint16_t trackerID;
 	uint32_t dword78;
 	uint32_t dword7C;
 	uint32_t dword80;

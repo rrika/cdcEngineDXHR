@@ -19,6 +19,8 @@ struct ObjectTracker {
 		// 2 - valid and allocated
 	uint32_t refCount; // 14
 
+	bool debugHide; // HACK
+
 	void increaseCountOnResolveObject() {
 		// if (resolveObject)
 		// 	resolveObject->dword14++;

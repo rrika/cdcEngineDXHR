@@ -46,6 +46,7 @@ void ObjectSection::construct(uint32_t domainId, void *) {
 	printf("  objectTracker = %p\n", objectTracker);
 	printf("  objBlob       = %p\n", objBlob);
 	printf("  dtpData       = %p\n", objBlob->dtpData);
+	objBlob->trackerID = domainId;
 	if (objBlob->dtpData) {
 		// TODO
 		printf("  numModels     = %d\n", objBlob->dtpData->numModels);

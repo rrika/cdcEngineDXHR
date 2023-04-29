@@ -828,6 +828,8 @@ int spinnyCube(HWND window,
 					continue;
 				if (object->numModels == 0)
 					continue;
+				if (cdc::objects[object->trackerID].debugHide)
+					continue;
 
 				struct ObjProp {
 					uint16_t version;
