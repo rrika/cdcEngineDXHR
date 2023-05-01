@@ -20,15 +20,15 @@ enum class ContentType : uint8_t {
 	AnyType = 15
 };
 
-struct DRMReadDet { // a mini section header
-	uint32_t domainID;
-	uint16_t contentType;
-	uint32_t sectionID;
-};
+struct SectionRecord {
+	struct Entry { // a mini section header
+		uint32_t domainID;
+		uint16_t contentType;
+		uint32_t sectionID;
+	};
 
-struct DRMReadDets {
-	DRMReadDet *dets;
-	uint32_t numDets;
+	Entry *m_pEntry;
+	uint32_t m_numEntries;
 };
 
 struct DRMSectionHeader {

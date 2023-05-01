@@ -55,7 +55,7 @@ ResolveObject *ResolveObject::create(
 	if (auto it = cachedObjects.find(pathCrc); it != cachedObjects.end()) {
 		auto *resolveObject = it->second;
 
-		if (outPtrWrapped && resolveObject->drmReadDets && resolveObject->drmReadDets->numDets)
+		if (outPtrWrapped && resolveObject->m_pRecord && resolveObject->m_pRecord->m_numEntries)
 			*outPtrWrapped = resolveObject->getRootWrapped();
 
 		if (unloadCallback)
@@ -89,8 +89,8 @@ ResolveObject *ResolveObject::create(
 void *ResolveObject::getRootWrapped() {
 	if (rootSection == ~0u)
 		return nullptr;
-	DRMReadDet &det = drmReadDets->dets[rootSection];
-	return g_resolveSections[det.contentType]->getWrapped(det.domainID);
+	SectionRecord::Entry &entry = m_pRecord->m_pEntry[rootSection];
+	return g_resolveSections[entry.contentType]->getWrapped(entry.domainID);
 }
 
 void ResolveObject::markForRetry(uint32_t missingDeps, ResolveReceiver *rr) {

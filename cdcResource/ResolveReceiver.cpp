@@ -289,16 +289,15 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 				resolveSection->construct(sectionDomainIds[i], nullptr);
 	}
 
-	// what the hell is a "read det", what was I thinking?
-	auto dets = new DRMReadDet[header.sectionCount];
-	resolveObject->drmReadDets = new DRMReadDets;
-	resolveObject->drmReadDets->dets = dets;
-	resolveObject->drmReadDets->numDets = header.sectionCount;
+	auto entries = new SectionRecord::Entry[header.sectionCount];
+	resolveObject->m_pRecord = new SectionRecord;
+	resolveObject->m_pRecord->m_pEntry = entries;
+	resolveObject->m_pRecord->m_numEntries = header.sectionCount;
 	resolveObject->rootSection = header.rootSection;
 	for (uint32_t i = 0; i < header.sectionCount; i++) {
-		dets[i].domainID = sectionDomainIds[i];
-		dets[i].contentType = sectionHeaders[i].type;
-		dets[i].sectionID = sectionHeaders[i].id;
+		entries[i].domainID = sectionDomainIds[i];
+		entries[i].contentType = sectionHeaders[i].type;
+		entries[i].sectionID = sectionHeaders[i].id;
 	}
 
 	return sectionHeaders;
@@ -378,7 +377,7 @@ void ResolveReceiver::requestComplete(FileRequest *req) {
 		auto& rootSection = sectionHeaders[resolveObject->rootSection];
 		if (g_resolveSections[rootSection.type]) // HACK
 			wrapped = g_resolveSections[rootSection.type]->getWrapped(
-				resolveObject->drmReadDets->dets[resolveObject->rootSection].domainID // TODO
+				resolveObject->m_pRecord->m_pEntry[resolveObject->rootSection].domainID // TODO
 			);
 	}
 

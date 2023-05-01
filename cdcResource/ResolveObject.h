@@ -6,13 +6,13 @@ namespace cdc {
 
 class FileRequest;
 class ResolveReceiver;
-struct DRMReadDets;
 struct ObjectTracker;
+struct SectionRecord;
 
 class ResolveObject {
 public:
 	FileRequest *fileRequest = nullptr; // 8
-	DRMReadDets *drmReadDets = nullptr; // C
+	SectionRecord *m_pRecord = nullptr; // C
 	const char *path; // 18
 	uint32_t rootSection = ~0u; // 1C
 	SList<ResolveObject *> dependencies; // 20
