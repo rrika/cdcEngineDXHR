@@ -24,3 +24,4 @@ language_t localstr_get_voice_language();
 void localstr_set_language(language_t, language_t);
 void localstr_reload();
 const char *localstr_get(uint32_t);
+uint32_t localstr_get_count(); // HACK

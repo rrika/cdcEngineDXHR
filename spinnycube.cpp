@@ -1293,8 +1293,11 @@ int spinnyCube(HWND window,
 		}
 		if (showStringsWindow) {
 			if (ImGui::Begin("Strings", &showStringsWindow)) {
-				for (uint32_t i = 0; i < 1000; i++)
-					ImGui::Text("%5d %s", i, localstr_get(i));
+				ImGuiListClipper clipper;
+				clipper.Begin(localstr_get_count());
+				while (clipper.Step())
+					for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
+						ImGui::Text("%5d %s", i, localstr_get(i));
 			}
 			ImGui::End();
 		}

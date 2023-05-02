@@ -66,3 +66,8 @@ const char *localstr_get(uint32_t index) {
 	else
 		return "";
 }
+
+uint32_t localstr_get_count() {
+	uint32_t numStrings = *(uint32_t*)(ltable.locals_bin+4);
+	return numStrings;
+}
