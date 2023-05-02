@@ -2,6 +2,7 @@
 #include <cstring>
 #include "config.h"
 #include "ObjectManager.h"
+#include "UIActions.h"
 #include "cdcFile/FileHelpers.h"
 #include "cdcFile/FileSystem.h"
 #include "cdcGameShell/cdcGameShell.h"
@@ -213,7 +214,7 @@ void requestObjectNormal(uint32_t id) {
 	requestObject(id, cdc::FileRequest::NORMAL);
 }
 
-void buildObjectsUI(cdc::RenderMesh *&selectedMesh) {
+void buildObjectsUI(UIActions& uiact) {
 #if ENABLE_IMGUI
 	static bool onlyLoaded = true;
 	ImGui::Checkbox("Only show loaded objects", &onlyLoaded);
@@ -253,7 +254,7 @@ void buildObjectsUI(cdc::RenderMesh *&selectedMesh) {
 					snprintf(label, 18, "Model %d", j);
 					ImGui::SameLine();
 					if (ImGui::SmallButton(label))
-						selectedMesh = mesh;
+						uiact.select(mesh);
 					ImGui::PopID();
 				}
 			}

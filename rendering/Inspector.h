@@ -8,6 +8,7 @@ namespace cdc {
 	struct RenderPasses;
 }
 
+
 void buildUI(cdc::IRenderDrawable *drawable);
 void buildUI(cdc::DrawableList *drawableList);
 void buildUI(cdc::DrawableListsAndMasks *drawableList);

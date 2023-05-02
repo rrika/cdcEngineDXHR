@@ -12,6 +12,7 @@
 #endif
 
 #include "spinnycube.h"
+#include "UIActions.h"
 #include "camera/CameraManager.h"
 #include "camera/GenericCamera.h"
 #include "cdc/dtp/objectproperties/imfref.h"
@@ -219,6 +220,29 @@ struct DRMExplorer {
 		ImGui::End();
 	}
 } drmexplorer;
+
+struct SpinnyUIActions : public UIActions {
+	bool showModelWindow = false;
+	cdc::RenderMesh *selectedModel = nullptr;
+	cdc::ModelBatch *selectedBatch = nullptr;
+	cdc::IMaterial *selectedMaterial = nullptr;
+	cdc::MaterialBlobSub *selectedSubMaterial = nullptr;
+
+	void select(cdc::RenderMesh *model) override {
+		showModelWindow = model != nullptr;
+		selectedModel = model;
+	}
+	void select(cdc::ModelBatch *batch) override {
+		selectedBatch = batch;
+	}
+	void select(cdc::IMaterial *material) override {
+		selectedMaterial = material;
+	}
+	void select(cdc::MaterialBlobSub *subMaterial) override {
+		selectedSubMaterial = subMaterial;
+	}
+};
+
 #endif
 
 int spinnyCube(HWND window,
@@ -486,11 +510,7 @@ int spinnyCube(HWND window,
 	bool showDrawablesWindow = false;
 	bool showFilesystemWindow = false;
 	bool showObjectsWindow = false;
-	bool showModelWindow = false;
-	cdc::RenderMesh *selectedModel = nullptr;
-	cdc::ModelBatch *selectedBatch = nullptr;
-	cdc::IMaterial *selectedMaterial = nullptr;
-	cdc::MaterialBlobSub *selectedSubMaterial = nullptr;
+	SpinnyUIActions uiact;
 	bool showDRMWindow = false;
 	bool showUnitsWindow = false;
 	bool showLoadedUnitsWindow = false;
@@ -1087,14 +1107,12 @@ int spinnyCube(HWND window,
 		}
 		if (showObjectsWindow) {
 			ImGui::Begin("Objects", &showObjectsWindow);
-			cdc::buildObjectsUI(selectedModel);
-			if (selectedModel)
-				showModelWindow = true;
+			cdc::buildObjectsUI(uiact);
 			ImGui::End();
 		}
-		if (showModelWindow) {
-			ImGui::Begin("Model", &showModelWindow);
-			auto *model = static_cast<cdc::PCDX11RenderModel*>(selectedModel);
+		if (uiact.showModelWindow) {
+			ImGui::Begin("Model", &uiact.showModelWindow);
+			auto *model = static_cast<cdc::PCDX11RenderModel*>(uiact.selectedModel);
 			ImGui::Text("# model batches = %d", model->numModelBatches);
 			ImGui::Text("# prim groups = %d", model->numPrimGroups);
 			uint32_t pg = 0;
@@ -1111,17 +1129,17 @@ int spinnyCube(HWND window,
 					ImGui::SameLine();
 					ImGui::PopID();
 					if (ImGui::SmallButton("batch/material")) {
-						selectedBatch = batch;
-						selectedMaterial = group->material;
+						uiact.select(batch);
+						uiact.select(group->material);
 					}
 				}
 			}
 			ImGui::PopID();
-			if (selectedMaterial) {
+			if (uiact.selectedMaterial) {
 				ImGui::Separator();
 				ImGui::PushID("material");
-				// auto *material = static_cast<cdc::PCDX11Material*>(selectedMaterial);
-				auto *material = selectedMaterial;
+				// auto *material = static_cast<cdc::PCDX11Material*>(uiact.selectedMaterial);
+				auto *material = uiact.selectedMaterial;
 				ImGui::Text("material %p", material);
 				for (uint32_t i = 0; i < 16; i++) {
 					ImGui::PushID(i);
@@ -1130,7 +1148,7 @@ int spinnyCube(HWND window,
 						ImGui::Text("submaterial %d: %p", i, submat);
 						ImGui::SameLine();
 						if (ImGui::SmallButton("show"))
-							selectedSubMaterial = submat;
+							uiact.select(submat);
 						ImGui::SameLine();
 						if (submat->shaderVertex)
 							ImGui::Text(" VS");
@@ -1149,10 +1167,10 @@ int spinnyCube(HWND window,
 				}
 				ImGui::PopID();
 			}
-			if (selectedSubMaterial) {
+			if (uiact.selectedSubMaterial) {
 				ImGui::Separator();
 				ImGui::PushID("submaterial");
-				cdc::MaterialBlobSub *submat = selectedSubMaterial;
+				cdc::MaterialBlobSub *submat = uiact.selectedSubMaterial;
 				ImGui::Text("submaterial %p", submat);
 				if (ImGui::BeginTable("attribs", 2)) {
 					ImGui::TableSetupColumn("VB");
@@ -1160,8 +1178,8 @@ int spinnyCube(HWND window,
 					ImGui::TableHeadersRow();
 					ImGui::TableNextRow();
 					ImGui::TableSetColumnIndex(0);
-					if (selectedBatch) {
-						auto *vertexDecl = (cdc::VertexDecl*)selectedBatch->format;
+					if (uiact.selectedBatch) {
+						auto *vertexDecl = (cdc::VertexDecl*)uiact.selectedBatch->format;
 						D3D11_INPUT_ELEMENT_DESC elems[vertexDecl->numAttr];
 						decodeVertexAttribA(elems, vertexDecl->attrib, vertexDecl->numAttr, false);
 						for (uint32_t i = 0; i < vertexDecl->numAttr; i++)
@@ -1185,7 +1203,7 @@ int spinnyCube(HWND window,
 			}
 			ImGui::End();
 		} else
-			selectedModel = nullptr;
+			uiact.select((cdc::RenderMesh*)nullptr);
 		if (showDRMWindow) {
 			drmexplorer.draw(&showDRMWindow);
 		}

@@ -2,9 +2,10 @@
 #include <cstdint>
 #include "ObjectIncludes.h"
 
+struct UIActions;
+
 namespace cdc {
 
-class RenderMesh;
 class ResolveObject;
 struct Object;
 
@@ -65,6 +66,6 @@ uint32_t objectIdByName(const char *name);
 void requestObjectHigh(uint32_t id);
 void requestObjectNormal(uint32_t id);
 
-void buildObjectsUI(cdc::RenderMesh *&selectedMesh);
+void buildObjectsUI(UIActions& uiact);
 
 }
