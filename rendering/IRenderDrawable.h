@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include "UIActions.h"
 
 namespace cdc {
 
@@ -12,6 +13,7 @@ protected:
 public:
 	virtual void draw(uint32_t funcSetIndex, IRenderDrawable *other) = 0;
 	virtual uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *other) = 0;
+	virtual void buildUI(uint32_t funcSetIndex, UIActions&) {} // HACK
 	uint32_t getVtable() { return *(uint32_t*)this; }
 };
 

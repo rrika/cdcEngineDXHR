@@ -7,22 +7,27 @@
 
 using namespace cdc;
 
-void buildUI(IRenderDrawable *drawable) {
+void buildUI(UIActions& uiact, IRenderDrawable *drawable, uint32_t funcSetIndex) {
 	if (auto scene = dynamic_cast<PCDX11Scene*>(drawable)) {
 		if (ImGui::TreeNode("scene", "scene %p", scene)) {
 			ImGui::TreePop();
 		}
 	} else {
 		ImGui::Text("drawable %p %s", drawable, typeid(*drawable).name());
+		ImGui::Indent();
+		ImGui::PushID(drawable);
+		drawable->buildUI(funcSetIndex, uiact);
+		ImGui::PopID();
+		ImGui::Unindent();
 	}
 }
 
-void buildUI(DrawableList *drawableList) {
+void buildUI(UIActions& uiact, DrawableList *drawableList, uint32_t funcSetIndex) {
 	for (auto item = drawableList->first; item; item = item->next)
-		buildUI(item->drawable);
+		buildUI(uiact, item->drawable, funcSetIndex);
 }
 
-void buildUI(DrawableListsAndMasks *drawableList) {
+void buildUI(UIActions& uiact, DrawableListsAndMasks *drawableList) {
 	auto list = drawableList->drawableLists;
 	auto mask = drawableList->passMask8;
 	uint32_t index = 0;
@@ -30,7 +35,7 @@ void buildUI(DrawableListsAndMasks *drawableList) {
 		if (mask & 1) {
 			ImGui::PushID(index);
 			if (ImGui::TreeNode("pass", "pass %d: list %p", index, list)) {
-				buildUI(list++);
+				buildUI(uiact, list++, ~0u);
 				ImGui::TreePop();
 			}
 			ImGui::PopID();
@@ -40,7 +45,7 @@ void buildUI(DrawableListsAndMasks *drawableList) {
 	}
 }
 
-void buildUI(RenderPasses *renderPasses, DrawableListsAndMasks *lists) {
+void buildUI(UIActions& uiact, RenderPasses *renderPasses, DrawableListsAndMasks *lists) {
 	uint32_t *reqPass;
 	reqPass = renderPasses->requestedPassesScene; // TODO: shadow
 
@@ -54,7 +59,7 @@ void buildUI(RenderPasses *renderPasses, DrawableListsAndMasks *lists) {
 			ImGui::PushID(passId);
 			if (ImGui::TreeNode("pass", "%s (%d)", pass->name, passId)) {
 			// if (ImGui::TreeNode("pass", "pass %d (%s): list %p", passId, pass->name, list)) {
-				buildUI(list);
+				buildUI(uiact, list, pass->funcSetIndex);
 				ImGui::TreePop();
 			}
 			ImGui::PopID();

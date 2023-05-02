@@ -1030,6 +1030,11 @@ int spinnyCube(HWND window,
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Rendering")) {
+				if (ImGui::MenuItem("Capture frame")) {
+					selectedCapture = captures.size();
+					captures.push_back({renderDevice->captureRenderLists(), scene});
+				}
+				ImGui::Separator();
 				if (ImGui::MenuItem("Frustum Culling", nullptr, useFrustumCulling)) { useFrustumCulling = !useFrustumCulling; }
 				if (ImGui::MenuItem("Cell Boxes", nullptr, drawCellBoxes)) { drawCellBoxes = !drawCellBoxes; }
 				ImGui::Separator();
@@ -1097,7 +1102,7 @@ int spinnyCube(HWND window,
 				// }
 
 				// buildUI(xscene->drawableListsAndMasks);
-				buildUI(&renderDevice->renderPasses, xscene->drawableListsAndMasks);
+				buildUI(uiact, &renderDevice->renderPasses, xscene->drawableListsAndMasks);
 				buildUI(xscene);
 				ImGui::End();
 			}

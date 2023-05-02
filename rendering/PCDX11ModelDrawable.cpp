@@ -13,6 +13,11 @@
 #include "Types.h"
 #include "VertexDeclaration.h"
 
+#include "config.h"
+#ifdef ENABLE_IMGUI
+#include "imgui/imgui.h"
+#endif
+
 namespace cdc {
 
 // use of this global variable makes this class thread-unsafe
@@ -265,6 +270,61 @@ void PCDX11ModelDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *prevDrawa
 uint32_t PCDX11ModelDrawable::compare(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) {
 	// TODO
 	return 0;
+}
+
+void PCDX11ModelDrawable::buildUI(uint32_t funcSetIndex, UIActions& uiact) {
+#if ENABLE_IMGUI
+
+	uint32_t subMatIndex = ~0u;
+	switch (funcSetIndex) {
+		case kRenderFunctionDepth:
+			break; // not implemented
+		case kRenderFunctionShadow:
+			break; // not implemented
+		case kRenderFunctionComposite:
+			subMatIndex = 3; break;
+		case kRenderFunctionTranslucent:
+		case kRenderFunctionPredator:
+			subMatIndex = 8; break;
+		case kRenderFunctionAlphaBloomFSX:
+			break; // not implemented
+		case kRenderFunctionNormal:
+			subMatIndex = 7; break;
+
+		case kRenderFunctionDefault:
+		case kRenderFunctionOpaque:
+		case kRenderFunction8:
+		case kRenderFunctionXRay:
+			break;
+	}
+
+	MaterialBlob *materialData = nullptr;
+	if (tab0Ext128 && tab0Ext128->material)
+		materialData = tab0Ext128->material->GetMaterialData();
+	MaterialBlobSub *subMat = nullptr;
+	if (materialData && subMatIndex < 16)
+		subMat = materialData->subMat4C[subMatIndex];
+
+	if (ImGui::Button("Show")) {
+		uiact.select(renderModel);          // RenderMesh*
+		uiact.select(meshSub);              // ModelBatch*
+		uiact.select(tab0Ext128->material); // IMaterial*
+		uiact.select(subMat);               // MaterialBlobSub*
+	}
+	ImGui::Text("renderModel: %p", renderModel);
+	ImGui::Text("ext:         %p", ext);
+	ImGui::Text("meshSub:     %p", meshSub);
+	ImGui::Text("primGroup:   %p", primGroup);
+	ImGui::Text("tab0Ext128:  %p", tab0Ext128);
+	ImGui::Text("poseData:    %p", poseData);
+	ImGui::Text("lightset:    %p", lightReceiverData);
+	ImGui::Text("lightcbdata: %p", lightConstantBufferData);
+	if (tab0Ext128) {
+		ImGui::Text("material:    %p", tab0Ext128->material);
+	}
+	ImGui::Text("submaterial: %d", subMatIndex);
+	ImGui::Text("funcSetIndex %d", funcSetIndex);
+#endif
 }
 
 void PCDX11ModelDrawable::draw(

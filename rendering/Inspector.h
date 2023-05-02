@@ -8,9 +8,10 @@ namespace cdc {
 	struct RenderPasses;
 }
 
+struct UIActions;
 
-void buildUI(cdc::IRenderDrawable *drawable);
-void buildUI(cdc::DrawableList *drawableList);
-void buildUI(cdc::DrawableListsAndMasks *drawableList);
-void buildUI(cdc::RenderPasses *renderPasses, cdc::DrawableListsAndMasks *lists);
+void buildUI(UIActions& uiact, cdc::IRenderDrawable *drawable, uint32_t funcSetId);
+void buildUI(UIActions& uiact, cdc::DrawableList *drawableList, uint32_t funcSetId);
+void buildUI(UIActions& uiact, cdc::DrawableListsAndMasks *drawableList);
+void buildUI(UIActions& uiact, cdc::RenderPasses *renderPasses, cdc::DrawableListsAndMasks *lists);
 void buildUI(cdc::CommonScene *scene);

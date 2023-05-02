@@ -55,6 +55,7 @@ public:
 
 	void draw(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) override;
 	uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) override;
+	void buildUI(uint32_t funcSetIndex, UIActions&) override;
 
 	void draw(
 		PCDX11RenderDevice *renderDevice,
