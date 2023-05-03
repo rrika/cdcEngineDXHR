@@ -74,6 +74,7 @@
 #include "cdcResource/ResolveReceiver.h"
 #include "cdcResource/ResolveSection.h"
 #include "cdcResource/WaveSection.h"
+#include "cdcScript/Decompiler.h"
 #include "cdcScript/ScriptType.h"
 #include "cdcSound/MultiplexStream.h"
 #include "cdcScene/IMFTypes.h"
@@ -141,7 +142,7 @@ DRMIndex drmIndex;
 #if ENABLE_IMGUI
 struct DRMExplorer {
 
-	void draw(bool *showWindow) {
+	void draw(UIActions& uiact, bool *showWindow) {
 		ImGui::Begin("DRM Explorer", showWindow);
 
 		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
@@ -206,6 +207,12 @@ struct DRMExplorer {
 								if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->getWrapped(section.id)) {
 									ImGui::SameLine();
 									ImGui::Text(" %s", ty->blob->name);
+									ImGui::SameLine();
+									ImGui::PushID(section.id);
+									if (ImGui::SmallButton("Decompile")) {
+										uiact.select(ty);
+									}
+									ImGui::PopID();
 								}
 							}
 						}
@@ -226,6 +233,7 @@ struct SpinnyUIActions : public UIActions {
 	cdc::ModelBatch *selectedBatch = nullptr;
 	cdc::IMaterial *selectedMaterial = nullptr;
 	cdc::MaterialBlobSub *selectedSubMaterial = nullptr;
+	cdc::ScriptType *selectedScriptType = nullptr;
 
 	void select(cdc::RenderMesh *model) override {
 		selectedModel = model;
@@ -238,6 +246,9 @@ struct SpinnyUIActions : public UIActions {
 	}
 	void select(cdc::MaterialBlobSub *subMaterial) override {
 		selectedSubMaterial = subMaterial;
+	}
+	void select(cdc::ScriptType *scriptType) override {
+		selectedScriptType = scriptType;
 	}
 };
 
@@ -1209,8 +1220,16 @@ int spinnyCube(HWND window,
 			if (!showModelWindow)
 				uiact.select((cdc::RenderMesh*)nullptr);
 		}
+		if (uiact.selectedScriptType) {
+			bool showWindow = true;
+			ImGui::Begin("Script Type", &showWindow);
+			Decompile(uiact, *uiact.selectedScriptType);
+			ImGui::End();
+			if (!showWindow)
+				uiact.select((cdc::ScriptType*)nullptr);
+		}
 		if (showDRMWindow) {
-			drmexplorer.draw(&showDRMWindow);
+			drmexplorer.draw(uiact, &showDRMWindow);
 		}
 		if (showUnitsWindow) {
 			ImGui::Begin("Units", &showUnitsWindow);
