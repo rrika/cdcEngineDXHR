@@ -222,14 +222,12 @@ struct DRMExplorer {
 } drmexplorer;
 
 struct SpinnyUIActions : public UIActions {
-	bool showModelWindow = false;
 	cdc::RenderMesh *selectedModel = nullptr;
 	cdc::ModelBatch *selectedBatch = nullptr;
 	cdc::IMaterial *selectedMaterial = nullptr;
 	cdc::MaterialBlobSub *selectedSubMaterial = nullptr;
 
 	void select(cdc::RenderMesh *model) override {
-		showModelWindow = model != nullptr;
 		selectedModel = model;
 	}
 	void select(cdc::ModelBatch *batch) override {
@@ -1115,8 +1113,9 @@ int spinnyCube(HWND window,
 			cdc::buildObjectsUI(uiact);
 			ImGui::End();
 		}
-		if (uiact.showModelWindow) {
-			ImGui::Begin("Model", &uiact.showModelWindow);
+		if (uiact.selectedModel) {
+			bool showModelWindow = true;
+			ImGui::Begin("Model", &showModelWindow);
 			auto *model = static_cast<cdc::PCDX11RenderModel*>(uiact.selectedModel);
 			ImGui::Text("# model batches = %d", model->numModelBatches);
 			ImGui::Text("# prim groups = %d", model->numPrimGroups);
@@ -1207,8 +1206,9 @@ int spinnyCube(HWND window,
 				ImGui::PopID();
 			}
 			ImGui::End();
-		} else
-			uiact.select((cdc::RenderMesh*)nullptr);
+			if (!showModelWindow)
+				uiact.select((cdc::RenderMesh*)nullptr);
+		}
 		if (showDRMWindow) {
 			drmexplorer.draw(&showDRMWindow);
 		}
