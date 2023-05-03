@@ -57,8 +57,10 @@ struct ScriptTypeStreamData { // 692
 	uint16_t    idA;
 	char       *package; // 0C
 	char       *name; // 10
+	ScriptType *scriptTypeSelf; // 14
+	ScriptType *scriptTypeParent; // 18
 	// TODO
-	uint8_t     padding[0x34-0x14];
+	uint8_t     padding[0x34-0x1C];
 	// TODO
 	Prototype  *prototypes; // 34
 	Function   *functions; // 38
@@ -85,6 +87,8 @@ public:
 		delete[] (char*)blob;
 	}
 	virtual void finalize() { /*TODO*/ }
+
+	ScriptType *getParentType() { return blob->scriptTypeParent; }
 };
 
 }
