@@ -1,12 +1,12 @@
 #pragma once
 #include "cdcScript/cdcScript.h" // for DataValue
+#include "cdcScript/DataType.h"
 #include "cdcSys/RCObject.h"
 
 namespace cdc {
 
 class NativeScriptType;
 class ScriptType;
-struct DataType;
 
 struct Prototype { // 377
 	ScriptType *scriptType;
@@ -15,10 +15,8 @@ struct Prototype { // 377
 	uint16_t vtIndex;
 	uint16_t id8;
 	uint16_t idA;
-	DataType *scriptInit;
-	uint32_t flags10; // like varargs?
-	uint32_t returnTypeId;
-	DataType *returnType;
+	void *scriptInit;
+	DataType returnType;
 };
 
 class Function { // 477
@@ -31,9 +29,12 @@ public:
 	uint8_t  flags; // 4
 	uint32_t padding8;
 	uint32_t paddingC;
+	uint32_t padding10;
 	CallbackCallFunction *nativeFunc; // 14
 	uint32_t padding18;
 };
+
+static_assert(sizeof(Function) == 0x1C);
 
 struct VTable { // 594
 	uint16_t size;
