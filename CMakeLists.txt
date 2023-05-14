@@ -45,7 +45,7 @@ if (NATIVE_BUILD)
 
 	ExternalProject_Add(dxvk-native
 		GIT_REPOSITORY https://github.com/doitsujin/dxvk.git
-		GIT_TAG v2.0
+		GIT_TAG v2.2
 		PATCH_COMMAND patch -f -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/dxvk-meson.patch || true
 		CONFIGURE_COMMAND meson setup <SOURCE_DIR> --cross-file ${CMAKE_CURRENT_SOURCE_DIR}/dxvk-build-linux32.txt -Dcpp_std=c++17
 		BUILD_COMMAND ninja src/d3d11/libdxvk_d3d11.so
