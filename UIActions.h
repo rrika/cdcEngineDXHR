@@ -6,11 +6,13 @@ namespace cdc {
 	class ScriptType;
 	struct MaterialBlobSub;
 	struct ModelBatch;
+	struct VertexDecl;
 }
 
 struct UIActions {
 	virtual void select(cdc::RenderMesh*) = 0;
 	virtual void select(cdc::ModelBatch*) = 0;
+	virtual void select(cdc::VertexDecl*) = 0;
 	virtual void select(cdc::IMaterial*) = 0;
 	virtual void select(cdc::MaterialBlobSub*) = 0;
 	virtual void select(cdc::ScriptType*) = 0;

@@ -231,6 +231,7 @@ struct DRMExplorer {
 struct SpinnyUIActions : public UIActions {
 	cdc::RenderMesh *selectedModel = nullptr;
 	cdc::ModelBatch *selectedBatch = nullptr;
+	cdc::VertexDecl *selectedVertexDecl = nullptr;
 	cdc::IMaterial *selectedMaterial = nullptr;
 	cdc::MaterialBlobSub *selectedSubMaterial = nullptr;
 	cdc::ScriptType *selectedScriptType = nullptr;
@@ -240,6 +241,9 @@ struct SpinnyUIActions : public UIActions {
 	}
 	void select(cdc::ModelBatch *batch) override {
 		selectedBatch = batch;
+	}
+	void select(cdc::VertexDecl *vertexDecl) override {
+		selectedVertexDecl = vertexDecl;
 	}
 	void select(cdc::IMaterial *material) override {
 		selectedMaterial = material;
@@ -1143,8 +1147,9 @@ int spinnyCube(HWND window,
 					ImGui::Text(": %d tris", group->triangleCount);
 					ImGui::SameLine();
 					ImGui::PopID();
-					if (ImGui::SmallButton("batch/material")) {
+					if (ImGui::SmallButton("vertexdecl/material")) {
 						uiact.select(batch);
+						uiact.select((cdc::VertexDecl*)batch->format);
 						uiact.select(group->material);
 					}
 				}
@@ -1188,13 +1193,12 @@ int spinnyCube(HWND window,
 				cdc::MaterialBlobSub *submat = uiact.selectedSubMaterial;
 				ImGui::Text("submaterial %p", submat);
 				if (ImGui::BeginTable("attribs", 2)) {
-					ImGui::TableSetupColumn("VB");
+					ImGui::TableSetupColumn("VD");
 					ImGui::TableSetupColumn("VS");
 					ImGui::TableHeadersRow();
 					ImGui::TableNextRow();
 					ImGui::TableSetColumnIndex(0);
-					if (uiact.selectedBatch) {
-						auto *vertexDecl = (cdc::VertexDecl*)uiact.selectedBatch->format;
+					if (auto *vertexDecl = uiact.selectedVertexDecl) {
 						D3D11_INPUT_ELEMENT_DESC elems[vertexDecl->numAttr];
 						decodeVertexAttribA(elems, vertexDecl->attrib, vertexDecl->numAttr, false);
 						for (uint32_t i = 0; i < vertexDecl->numAttr; i++)
@@ -1203,7 +1207,7 @@ int spinnyCube(HWND window,
 								elems[i].SemanticName,
 								elems[i].SemanticIndex);
 					} else
-						ImGui::Text("no batch");
+						ImGui::Text("no VD");
 					ImGui::TableSetColumnIndex(1);
 					if (cdc::ShaderInputSpec *inputSpec = submat->vsLayout[0]) { // other indices?
 						for (uint32_t i = 0; i < inputSpec->numAttribs; i++)
