@@ -4,6 +4,7 @@
 #include "buffers/PCDX11StaticIndexBuffer.h"
 #include "buffers/PCDX11StaticVertexBuffer.h"
 #include "CommonRenderTerrainInstance.h"
+#include "CommonMaterial.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11RenderTerrain.h"
 #include "PCDX11TerrainDrawable.h"
@@ -92,7 +93,10 @@ void PCDX11RenderTerrain::BuildDrawables(PCDX11TerrainState *terrainState) {
 				flags,
 				terrainState);
 
-			renderDevice->recordDrawable(drawable, group->renderPasses, false);
+			uint32_t renderPasses =
+				group->renderPasses &
+				group->m_pMaterial->GetRenderPassMask(false);
+			renderDevice->recordDrawable(drawable, renderPasses, false);
 		}
 	}
 
@@ -184,9 +188,11 @@ void PCDX11RenderTerrain::resConstruct() {
 			(1 << kPassIndexNonNormalDepth);
 
 		// HACK: only these two are implemented right now
-		group->renderPasses = // 0x1002
+		group->renderPasses = // 0x100A
+			(1 << kPassIndexTranslucent) |
 			(1 << kPassIndexComposite) |
-			(1 << kPassIndexNormal);
+			(1 << kPassIndexNormal) |
+			(1 << kPassIndexDeferredShading);
 
 		if (group->flags & 1)
 			group->renderPasses = (1 << kPassIndexShadow); // 0x200
