@@ -710,14 +710,14 @@ void PCDX11StateManager::updateBlendState() {
 
 				if (m_blendState & 0x1000) {
 					blendDesc.RenderTarget[0].BlendOpAlpha = blendOps[(m_blendState >> 13) & 7];
-					blendDesc.RenderTarget[0].SrcBlendAlpha = colorBlends[(m_blendState >> 16) & 15];
-					blendDesc.RenderTarget[0].DestBlendAlpha = colorBlends[(m_blendState >> 20) & 15];
+					blendDesc.RenderTarget[0].SrcBlendAlpha = alphaBlends[(m_blendState >> 16) & 15];
+					blendDesc.RenderTarget[0].DestBlendAlpha = alphaBlends[(m_blendState >> 20) & 15];
 
 				} else {
 					// copy from color settings
 					blendDesc.RenderTarget[0].BlendOpAlpha = blendDesc.RenderTarget[0].BlendOp;
-					blendDesc.RenderTarget[0].SrcBlendAlpha = blendDesc.RenderTarget[0].SrcBlend;
-					blendDesc.RenderTarget[0].DestBlendAlpha = blendDesc.RenderTarget[0].DestBlend;
+					blendDesc.RenderTarget[0].SrcBlendAlpha = alphaBlends[(m_blendState >> 4) & 15];
+					blendDesc.RenderTarget[0].DestBlendAlpha = alphaBlends[(m_blendState >> 8) & 15];
 				}
 
 			} else {
