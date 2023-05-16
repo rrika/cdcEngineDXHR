@@ -2,6 +2,7 @@
 
 namespace cdc {
 	class IMaterial;
+	class IRenderTerrain;
 	class RenderMesh;
 	class ScriptType;
 	struct MaterialBlobSub;
@@ -10,6 +11,7 @@ namespace cdc {
 }
 
 struct UIActions {
+	virtual void select(cdc::IRenderTerrain *renderTerrain) = 0;
 	virtual void select(cdc::RenderMesh*) = 0;
 	virtual void select(cdc::ModelBatch*) = 0;
 	virtual void select(cdc::VertexDecl*) = 0;

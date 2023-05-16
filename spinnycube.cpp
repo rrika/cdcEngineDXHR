@@ -229,6 +229,7 @@ struct DRMExplorer {
 } drmexplorer;
 
 struct SpinnyUIActions : public UIActions {
+	cdc::IRenderTerrain *selectedRenderTerrain = 0;
 	cdc::RenderMesh *selectedModel = nullptr;
 	cdc::ModelBatch *selectedBatch = nullptr;
 	cdc::VertexDecl *selectedVertexDecl = nullptr;
@@ -236,8 +237,14 @@ struct SpinnyUIActions : public UIActions {
 	cdc::MaterialBlobSub *selectedSubMaterial = nullptr;
 	cdc::ScriptType *selectedScriptType = nullptr;
 
+
+	void select(cdc::IRenderTerrain *renderTerrain) override {
+		selectedModel = nullptr;
+		selectedRenderTerrain = renderTerrain;
+	}
 	void select(cdc::RenderMesh *model) override {
 		selectedModel = model;
+		selectedRenderTerrain = nullptr;
 	}
 	void select(cdc::ModelBatch *batch) override {
 		selectedBatch = batch;
@@ -1128,29 +1135,45 @@ int spinnyCube(HWND window,
 			cdc::buildObjectsUI(uiact);
 			ImGui::End();
 		}
-		if (uiact.selectedModel) {
+		if (uiact.selectedModel || uiact.selectedRenderTerrain) {
 			bool showModelWindow = true;
 			ImGui::Begin("Model", &showModelWindow);
-			auto *model = static_cast<cdc::PCDX11RenderModel*>(uiact.selectedModel);
-			ImGui::Text("# model batches = %d", model->numModelBatches);
-			ImGui::Text("# prim groups = %d", model->numPrimGroups);
-			uint32_t pg = 0;
-			ImGui::PushID("model");
-			for (uint32_t i = 0; i < model->numModelBatches; i++) {
-				cdc::ModelBatch *batch = &model->modelBatches[i];
-				ImGui::Text("batch %d", i);
-				for (uint32_t j = 0; j < batch->tab0EntryCount_30; j++, pg++) {
-					ImGui::PushID(pg);
-					ImGui::Text("  group %d", pg);
-					cdc::PrimGroup *group = &model->primGroups[pg];
+			ImGui::PushID("model or terrain");
+			if (uiact.selectedModel) {
+				auto *model = static_cast<cdc::PCDX11RenderModel*>(uiact.selectedModel);
+				ImGui::Text("# model batches = %d", model->numModelBatches);
+				ImGui::Text("# prim groups = %d", model->numPrimGroups);
+				uint32_t pg = 0;
+				for (uint32_t i = 0; i < model->numModelBatches; i++) {
+					cdc::ModelBatch *batch = &model->modelBatches[i];
+					ImGui::Text("batch %d", i);
+					for (uint32_t j = 0; j < batch->tab0EntryCount_30; j++, pg++) {
+						ImGui::PushID(pg);
+						ImGui::Text("  group %d", pg);
+						cdc::PrimGroup *group = &model->primGroups[pg];
+						ImGui::SameLine();
+						ImGui::Text(": %d tris", group->triangleCount);
+						ImGui::SameLine();
+						ImGui::PopID();
+						if (ImGui::SmallButton("vertexdecl/material")) {
+							uiact.select(batch);
+							uiact.select((cdc::VertexDecl*)batch->format);
+							uiact.select(group->material);
+						}
+					}
+				}
+			} else {
+				auto *terrain = static_cast<cdc::PCDX11RenderTerrain*>(uiact.selectedRenderTerrain);
+				uint32_t numGroups = terrain->m_pResourceData->pHeader->numGroups;
+				ImGui::Text("# groups = %d", numGroups);
+				for (uint32_t i = 0; i < numGroups; i++) {
+					cdc::RenderTerrainGroup *group = &terrain->m_pGroups[i];
+					ImGui::Text("group %d passes %08x", i, group->renderPasses);
 					ImGui::SameLine();
-					ImGui::Text(": %d tris", group->triangleCount);
-					ImGui::SameLine();
-					ImGui::PopID();
 					if (ImGui::SmallButton("vertexdecl/material")) {
-						uiact.select(batch);
-						uiact.select((cdc::VertexDecl*)batch->format);
-						uiact.select(group->material);
+						cdc::RenderTerrainVertexBuffer *group_vb = &terrain->m_pVertexBuffers[group->vbIndex];
+						uiact.select(group_vb->pVertexDecl);
+						uiact.select(group->m_pMaterial);
 					}
 				}
 			}
@@ -1159,8 +1182,13 @@ int spinnyCube(HWND window,
 				ImGui::Separator();
 				ImGui::PushID("material");
 				// auto *material = static_cast<cdc::PCDX11Material*>(uiact.selectedMaterial);
-				auto *material = uiact.selectedMaterial;
+				auto *material = static_cast<cdc::CommonMaterial*>(uiact.selectedMaterial);
 				ImGui::Text("material %p", material);
+				ImGui::Text("  mask %08x/%08x",
+					material->GetRenderPassMask(/*fading=*/false),
+					material->GetRenderPassMask(/*fading=*/true));
+				ImGui::Text("  blendMode %08x rtmask %01x",
+					material->GetBlendMode(), material->materialBlob->renderTargetWriteMask);
 				for (uint32_t i = 0; i < 16; i++) {
 					ImGui::PushID(i);
 					auto *submat = material->GetMaterialData()->subMat4C[i];

@@ -21,7 +21,7 @@ class PCDX11RenderTerrain :
 	// inherited:
 	// RenderTerrainDataHeader *m_pHeader; // 4
 	// RenderTerrainGroup *m_pGroups; // 8
-
+public:
 	uint32_t m_resourceDataSize; // 18
 	RenderTerrainData *m_pResourceData; // 1C
 	IRenderTerrain::Node *m_pNodes; // 20

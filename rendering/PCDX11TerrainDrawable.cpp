@@ -8,6 +8,11 @@
 #include "PCDX11TerrainDrawable.h"
 #include "Types.h"
 
+#include "config.h"
+#ifdef ENABLE_IMGUI
+#include "imgui/imgui.h"
+#endif
+
 namespace cdc {
 
 PCDX11TerrainDrawable::PCDX11TerrainDrawable(
@@ -191,6 +196,49 @@ uint32_t PCDX11TerrainDrawable::compare(uint32_t funcSetIndex, IRenderDrawable *
 	return 1;
 }
 
+void PCDX11TerrainDrawable::buildUI(uint32_t funcSetIndex, UIActions& uiact) {
+#if ENABLE_IMGUI
+
+	// copied from PCDX11ModelDrawable, might not be correct
+	uint32_t subMatIndex = ~0u;
+	switch (funcSetIndex) {
+		case kRenderFunctionDepth:
+			break; // not implemented
+		case kRenderFunctionShadow:
+			break; // not implemented
+		case kRenderFunctionComposite:
+			subMatIndex = 3; break;
+		case kRenderFunctionTranslucent:
+		case kRenderFunctionPredator:
+			subMatIndex = 8; break;
+		case kRenderFunctionAlphaBloomFSX:
+			break; // not implemented
+		case kRenderFunctionNormal:
+			subMatIndex = 7; break;
+
+		case kRenderFunctionDefault:
+		case kRenderFunctionOpaque:
+		case kRenderFunction8:
+		case kRenderFunctionXRay:
+			break;
+	}
+
+	MaterialBlob *materialData = nullptr;
+	if (m_pInstData && m_pInstData->material)
+		materialData = m_pInstData->material->GetMaterialData();
+	MaterialBlobSub *subMat = nullptr;
+	if (materialData && subMatIndex < 16)
+		subMat = materialData->subMat4C[subMatIndex];
+
+	if (ImGui::Button("Show")) {
+		uiact.select(m_pTerrain);            // RenderTerrain*
+		uiact.select(m_pInstData->material); // IMaterial*
+		uiact.select(subMat);                // MaterialBlobSub*
+		uiact.select(m_pTerrain->m_pVertexBuffers[m_pGroup->vbIndex].pVertexDecl); // VertexDecl*
+	}
+	ImGui::Text("TODO");
+#endif
+}
 
 void PCDX11TerrainDrawable::draw(
 	PCDX11StreamDecl *streamDecl,

@@ -60,6 +60,7 @@ public:
 
 	void draw(uint32_t funcSetIndex, IRenderDrawable *other) override;
 	uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *other) override;
+	void buildUI(uint32_t funcSetIndex, UIActions&) override;
 
 	void draw(
 		PCDX11StreamDecl *streamDecl,
