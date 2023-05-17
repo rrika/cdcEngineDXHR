@@ -63,7 +63,7 @@ public:
 		bool arg4,
 		VertexDecl *layout,
 		uint8_t flags,
-		float floatX,
+		float opacityMultiplier,
 		float floatY);
 
 	PCDX11StreamDecl *SetupShadowPass(
@@ -73,7 +73,7 @@ public:
 		uint32_t vsSelect,
 		VertexDecl *layout,
 		uint8_t flags,
-		float floatX,
+		float opacityMultiplier,
 		float floatY);
 
 	PCDX11StreamDecl *SetupBloomPass(
@@ -82,7 +82,7 @@ public:
 		uint32_t vsSelect,
 		VertexDecl *layout,
 		uint8_t flags,
-		float floatX);
+		float opacityMultiplier);
 
 	PCDX11StreamDecl *SetupSinglePass(
 		MaterialInstanceData*,
@@ -101,7 +101,7 @@ public:
 		uint32_t vsSelect,
 		VertexDecl *layout,
 		uint8_t flags,
-		float floatX,
+		float opacityMultiplier,
 		float floatY);
 };
 

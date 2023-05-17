@@ -270,7 +270,7 @@ void PCDX11Material::setupSinglePassTranslucent(
 	PCDX11RenderDevice *renderDevice,
 	MaterialInstanceData *matInstance,
 	uint32_t flags,
-	float floatX)
+	float opacityMultiplier)
 {
 	// lights use this function (eg. deferred_fast_omni_diffuse.drm)
 	auto *stateManager = deviceManager->getStateManager();
@@ -279,7 +279,7 @@ void PCDX11Material::setupSinglePassTranslucent(
 		mg_state = 5;
 	}
 
-	float opacity = matInstance->opacity * floatX;
+	float opacity = matInstance->opacity * opacityMultiplier;
 	uint32_t blendState = materialBlob->blendStateC;
 	uint32_t alphaThreshold = materialBlob->alphaThreshold;
 	if ((blendState & 1) || opacity >= 1.0) {
@@ -336,7 +336,7 @@ PCDX11StreamDecl *PCDX11Material::SetupDepthPass(
 	bool arg4,
 	VertexDecl *layoutA,
 	uint8_t flags,
-	float floatX, // opacity scale?
+	float opacityMultiplier,
 	float floatY)
 {
 	if (mg_state != 1) {
@@ -349,7 +349,7 @@ PCDX11StreamDecl *PCDX11Material::SetupDepthPass(
 		mg_state = 1;
 	}
 
-	float opacity = matInstance->opacity * floatX;
+	float opacity = matInstance->opacity * opacityMultiplier;
 	uint32_t blendState = materialBlob->blendStateC;
 	bool noPixelShader = true;
 	if ((blendState & 1) || (blendState & 0x7000000) != 0x7000000 || opacity < 1.0)
@@ -445,7 +445,7 @@ PCDX11StreamDecl *PCDX11Material::SetupShadowPass(
 	uint32_t vsSelect,
 	VertexDecl *layout,
 	uint8_t flags,
-	float floatX,
+	float opacityMultiplier,
 	float floatY)
 {
 	// TODO
@@ -459,7 +459,7 @@ PCDX11StreamDecl *PCDX11Material::SetupBloomPass(
 	uint32_t vsSelect,
 	VertexDecl *layoutA,
 	uint8_t flags,
-	float floatX)
+	float opacityMultiplier)
 {
 	auto *stateManager = deviceManager->getStateManager();
 	const uint32_t subMaterialIndex = 4;
@@ -613,7 +613,7 @@ PCDX11StreamDecl *PCDX11Material::SetupNormalMapPass(
 	uint32_t vsSelect,
 	VertexDecl *layout,
 	uint8_t flags,
-	float floatX,
+	float opacityMultiplier,
 	float floatY)
 {
 	auto *stateManager = deviceManager->getStateManager();
@@ -664,7 +664,7 @@ PCDX11StreamDecl *PCDX11Material::SetupNormalMapPass(
 		deviceManager->getStateManager()->setDepthRange(matInstance->minDepth, matInstance->maxDepth);
 	}
 
-	float opacity = matInstance->opacity * floatX;
+	float opacity = matInstance->opacity * opacityMultiplier;
 	uint32_t blendState = materialBlob->blendStateC;
 	if ((blendState & 1) || (blendState & 0x7000000) != 0x7000000 || opacity < 1.0)
 		blendState = 0x6010010;
