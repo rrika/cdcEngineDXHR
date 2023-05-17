@@ -80,15 +80,6 @@ static Matrix *cachedMatrixMulChain_eval(int p, int q) {
 	return &cachedMatrix[index];
 }
 
-Vector DeferredRenderingPackedBytesAndScale::unpack() {
-	return {
-		((uint8_t)(bytes >>  0)) * scale / 255.0f,
-		((uint8_t)(bytes >>  8)) * scale / 255.0f,
-		((uint8_t)(bytes >> 16)) * scale / 255.0f,
-		((uint8_t)(bytes >> 24)) * scale / 255.0f
-	};
-}
-
 Vector DeferredRenderingObject::Drawable::calcInstanceParamRow(
 	DeferredRenderingInstanceParam param,
 	Vector *vec0,

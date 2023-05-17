@@ -1,15 +1,9 @@
 #pragma once
 #include <cstdint>
 #include "cdcMath/Math.h"
+#include "PackedVector.h"
 
 namespace cdc { class CommonMaterial; }
-
-struct DeferredRenderingPackedBytesAndScale {
-	uint32_t bytes;
-	float scale;
-
-	cdc::Vector unpack();
-};
 
 struct DeferredRenderingInstanceParam {
 	uint8_t mode;
@@ -20,7 +14,7 @@ struct DeferredRenderingInstanceParam {
 
 struct DeferredRenderingExtraData {
 	uint8_t gap0[4];
-	DeferredRenderingPackedBytesAndScale packedVectors[4];
+	PackedBytesAndScale packedVectors[4];
 	cdc::Vector plainVectors[4];
 	uint32_t dword64;
 	uint32_t dword68;

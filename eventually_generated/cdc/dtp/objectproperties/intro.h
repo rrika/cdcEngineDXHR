@@ -17,7 +17,7 @@ struct Intro {
 	uint8_t field41;
 	uint8_t flags;
 	uint8_t field43;
-	uint32_t field44_extraData1;
+	void *extraData1; // 44
 	uint32_t field48;
 	char field_4C[12];
 	uint32_t field58_extraData2;

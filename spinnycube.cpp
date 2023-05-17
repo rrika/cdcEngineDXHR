@@ -26,6 +26,7 @@
 #include "game/dtp/objecttypes/globaldatabase.h"
 #include "game/DeferredRenderingObject.h"
 #include "game/Gameloop.h"
+#include "game/LensFlareAndCoronaID.h"
 #include "game/script/game/NsMainMenuMovieController.h"
 #include "game/ui/FakeScaleform/fakescaleform.h"
 #include "game/ui/Scaleform/ScaleformMovieInstance.h"
@@ -800,7 +801,7 @@ int spinnyCube(HWND window,
 
 		std::vector<std::unique_ptr<RMIDrawableBase>> recycleRMI;
 
-		auto putObject = [&](cdc::PCDX11RenderModel *renderModel, cdc::Matrix& instanceMatrix, DeferredRenderingExtraData *extraData) {
+		auto putObject = [&](cdc::PCDX11RenderModel *renderModel, cdc::Matrix& instanceMatrix, uint32_t objFamily, void *extraData) {
 			RMIDrawableBase *selectedRmiDrawable = &rmiDrawable;
 			if (renderModel) {
 				// printf("%p %s\n", renderModel, typeid(*(cdc::RenderMesh*)renderModel).name());
@@ -808,17 +809,25 @@ int spinnyCube(HWND window,
 
 				// printf("%f %f %f\n", instanceMatrix.m[3][0], instanceMatrix.m[3][1], instanceMatrix.m[3][2]);
 
-				if (renderModel && extraData) {
+				if (renderModel && objFamily == 0x50) {
+					auto *deferredExtraData = (DeferredRenderingExtraData*)extraData;
 					// patch all materials (even though this render model is shared between instances)
 					for (uint32_t i = 0; i < renderModel->numPrimGroups; i++)
-						renderModel->tab0Ext128Byte[i].material = static_cast<cdc::PCDX11Material*>(extraData->material);
+						renderModel->tab0Ext128Byte[i].material = static_cast<cdc::PCDX11Material*>(deferredExtraData->material);
 				}
 
 				selectedRmiDrawable = new RMIDrawableBase(renderModel);
 				auto *rmi = static_cast<cdc::CommonRenderModelInstance*>(selectedRmiDrawable->rmi);
-				if (extraData) {
+				if (objFamily == 0x50) {
 					rmi->baseMask = 0x2000; // deferred lighting
-					hackCalcInstanceParams(extraData, &instanceMatrix, rmi->ext->instanceParams);
+					auto *deferredExtraData = (DeferredRenderingExtraData*)extraData;
+					hackCalcInstanceParams(deferredExtraData, &instanceMatrix, rmi->ext->instanceParams);
+
+				} else if (objFamily == 0x5b) {
+					rmi->baseMask = 0x100A; // normals, composite, translucent, for now
+					auto *lensFlareExtraData = (LensFlareAndCoronaExtraData*)extraData;
+					hackCalcInstanceParams(lensFlareExtraData, &instanceMatrix, rmi->ext->instanceParams);
+
 				} else {
 					rmi->baseMask = 0x100A; // normals, composite, translucent. this is further narrowed down by CommonMaterial::SetRenderPasses
 				}
@@ -881,12 +890,9 @@ int spinnyCube(HWND window,
 				uint32_t objFamily = 0;
 				if (objProp && objProp->id == 0xb00b)
 					objFamily = objProp->family;
-				DeferredRenderingExtraData *extraData = nullptr;
-				if (objFamily == 0x50)
-					extraData = (DeferredRenderingExtraData*) intro.field44_extraData1;
 
 				auto *renderModel = (cdc::PCDX11RenderModel*)object->models[0]->renderMesh;
-				putObject(renderModel, instanceMatrix, extraData);
+				putObject(renderModel, instanceMatrix, objFamily, intro.extraData1);
 			}
 
 			for (uint32_t i=unit.imfShowRange[0]; i<numIMFRefs && i<unit.imfShowRange[1]; i++) {
@@ -911,7 +917,7 @@ int spinnyCube(HWND window,
 						//printf("%p ", im);
 						cdc::RenderMesh *model = im->pRenderModel;
 						//printf("%p\n", model);
-						putObject(static_cast<cdc::PCDX11RenderModel*>(model), ref.m_transform, nullptr);
+						putObject(static_cast<cdc::PCDX11RenderModel*>(model), ref.m_transform, 0, nullptr);
 					}
 				}
 			}
