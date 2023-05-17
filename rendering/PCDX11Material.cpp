@@ -128,7 +128,7 @@ void PCDX11Material::setupPixelResources(
 	bool doEverything)
 {
 	auto *stateManager = deviceManager->getStateManager();
-	auto *texref = subMat->psTextureRef;
+	MaterialTexRef *texref = subMat->psTextureRef;
 
 	if (doEverything) {
 
@@ -204,7 +204,7 @@ void PCDX11Material::setupDepthBias(MaterialInstanceData *matInstance) {
 
 void PCDX11Material::setupStencil(
 	MaterialInstanceData *matInstance,
-	bool honorRenderTwice,
+	bool isColorPass_honorRenderTwice,
 	uint32_t flags)
 {
 	auto *stateManager = deviceManager->getStateManager();
@@ -222,8 +222,8 @@ void PCDX11Material::setupStencil(
 
 	if (stencilDoubleSided || (
 		(materialDoubleSided || matInstanceDoubleSided) &&
-		!(materialRenderTwice && honorRenderTwice)
-	))
+		!(materialRenderTwice && isColorPass_honorRenderTwice)
+	)) // double-check this
 		stateManager->setCullMode(CullMode::none, frontCounterClockwise);
 	else if (materialCullFront)
 		stateManager->setCullMode(CullMode::front, frontCounterClockwise);
@@ -243,7 +243,7 @@ void PCDX11Material::setupSinglePassOpaque(
 	stateManager->setDepthRange(matInstance->minDepth, matInstance->maxDepth);
 	if (mg_state != 4) {
 		invalidate();
-		stateManager->setBlendStateAndBlendFactors(0x7010010, 128, 0);
+		stateManager->setBlendStateAndBlendFactors(0x7010010, 128, 0); // 128 instead of materialBlob->alphaThreshold
 		stateManager->setOpacity(1.0);
 		stateManager->setDepthState(D3D11_COMPARISON_EQUAL, 0);
 		stateManager->setFogColor(renderDevice->scene78->fogColor);
@@ -361,8 +361,6 @@ PCDX11StreamDecl *PCDX11Material::SetupDepthPass(
 	else
 		subMaterialIndex = noPixelShader ? 0 : 1;
 
-	subMaterialIndex = 7; // HACK: show normals submat (7) instead of 0 or 1
-
 	MaterialBlobSub *subMaterial = materialBlob->subMat4C[subMaterialIndex];
 	uint32_t vsSelectAndFlags = (vsSelect << 8) | flags;
 	bool materialChange = mg_material != this;
@@ -376,15 +374,14 @@ PCDX11StreamDecl *PCDX11Material::SetupDepthPass(
 		// set pixel shader
 		PCDX11PixelShaderTable *pixelTable;
 		uint32_t pixelIndex = 0;
-		if (false) { // HACK to see anything other than white
-		// if (materialBlob->blendStateC == 0x7010010) {
-			stateManager->setBlendStateAndBlendFactors(0x7010010, 128, 0);
+		if (materialBlob->blendStateC == 0x7010010) {
+			stateManager->setBlendStateAndBlendFactors(0x7010010, 128, 0); // 128 instead of materialBlob->alphaThreshold
 			pixelTable = &renderDevice->shtab_ps_white_27;
 			if (arg4)
 				pixelIndex = 1;
 		} else {
 			if (arg4) {
-				stateManager->setBlendStateAndBlendFactors(0x7010010, 128, 0);
+				stateManager->setBlendStateAndBlendFactors(0x7010010, 128, 0); // 128 instead of materialBlob->alphaThreshold
 				stateManager->setAlphaThreshold(materialBlob->alphaThreshold);
 			} else {
 				stateManager->setBlendStateAndBlendFactors(0x6010010, materialBlob->alphaThreshold, 0);
@@ -423,7 +420,7 @@ PCDX11StreamDecl *PCDX11Material::SetupDepthPass(
 		mg_streamDecl = streamDecl;
 
 	} else {
-		if (mg_cbdata == drawableExtDword50 || mg_matInstance == matInstance)
+		if (mg_cbdata == drawableExtDword50 || mg_matInstance == matInstance) // || or && ?
 			return mg_streamDecl;
 	}
 
@@ -619,22 +616,119 @@ PCDX11StreamDecl *PCDX11Material::SetupNormalMapPass(
 	float floatX,
 	float floatY)
 {
-	// TODO
-	// return nullptr;
-
 	auto *stateManager = deviceManager->getStateManager();
-	uint16_t renderTargetWriteMask = materialBlob->renderTargetWriteMask;
-	stateManager->setRenderTargetWriteMask(renderTargetWriteMask & 7);
 
-	return SetupDepthPass(
-		matInstance,
-		drawableExtDword50,
-		vsSelect,
-		0,
-		layout,
-		flags,
-		floatX,
-		floatY);
+	if (mg_state != 10) {
+		mg_state = 21;
+		mg_vsSelectAndFlags = -1;
+		mg_material = nullptr;
+		mg_cbdata = nullptr;
+		mg_matInstance = nullptr;
+		mg_streamDecl = nullptr;
+		mg_layoutA = nullptr;
+		StencilParams stencilParams {
+			0xFF00000E,
+			0xFF00000E,
+			0x0000FFFF,
+			0
+		};
+		stateManager->setStencil(&stencilParams);
+		stateManager->setOpacity(1.0f);
+		stateManager->setDepthState(D3D11_COMPARISON_LESS_EQUAL, /*depthWrites=*/ true);
+		stateManager->setFogColor(renderDevice->scene78->fogColor);
+		mg_state = 10;
+	}
+
+	uint32_t matDword18 = materialBlob->dword18;
+	bool frontCounterClockwise = bool(flags & 2);
+	bool matInstanceDoubleSided = bool(matInstance->polyFlags & 0x40);
+	bool materialDoubleSided = bool(matDword18 & 0x80);
+	bool materialRenderTwice = bool(matDword18 & 0x800);
+	bool materialCullFront = bool(matDword18 & 0x2000);
+
+	if (materialDoubleSided || (matInstanceDoubleSided && !materialRenderTwice)) // double-check this
+		stateManager->setCullMode(CullMode::none, frontCounterClockwise);
+	else if (materialCullFront)
+		stateManager->setCullMode(CullMode::front, frontCounterClockwise);
+	else
+		stateManager->setCullMode(CullMode::back, frontCounterClockwise);
+
+	uint32_t subMaterialIndex = 7; // normals
+	MaterialBlobSub *subMaterial = materialBlob->subMat4C[subMaterialIndex];
+
+	bool materialChange = mg_material != this;
+	if (materialChange || mg_cbdata != drawableExtDword50 || mg_matInstance != matInstance) {
+		setupPixelResources(subMaterialIndex, subMaterial, matInstance, (char*)drawableExtDword50, materialChange);
+		setupVertexResources(subMaterialIndex, subMaterial, matInstance, (char*)drawableExtDword50, materialChange);
+		setupDepthBias(matInstance);
+		deviceManager->getStateManager()->setDepthRange(matInstance->minDepth, matInstance->maxDepth);
+	}
+
+	float opacity = matInstance->opacity * floatX;
+	uint32_t blendState = materialBlob->blendStateC;
+	if ((blendState & 1) || (blendState & 0x7000000) != 0x7000000 || opacity < 1.0)
+		blendState = 0x6010010;
+	else
+		blendState = 0x7010010;
+	stateManager->setBlendStateAndBlendFactors(blendState, materialBlob->alphaThreshold, 0);
+
+	bool tesselate = false; // TODO
+
+	uint32_t vsSelectAndFlags = (vsSelect << 8) | flags;
+	if (materialChange ||
+		mg_layoutA != layout ||
+		((mg_vsSelectAndFlags ^ vsSelectAndFlags) & 0xFF08) ||
+		mg_tesselate != tesselate)
+	{
+	uint16_t renderTargetWriteMask = materialBlob->renderTargetWriteMask;
+		stateManager->setRenderTargetWriteMask(renderTargetWriteMask & 7);
+
+		// set pixel shader
+		uint32_t pixelIndex = 0;
+		if ((materialBlob->blendStateC & 0x07000000) == 0x07000000)
+			pixelIndex = 4;
+
+		auto pixelLib = static_cast<PCDX11ShaderLib*>(subMaterial->shaderPixel);
+		if (!pixelLib)
+			return nullptr; // HACK
+		auto *pixelTable = static_cast<PCDX11PixelShaderTable*>(pixelLib->table);
+		auto pixelShader = (*pixelTable)[pixelIndex];
+		stateManager->setPixelShader(pixelShader);
+
+		// set vertex shader
+		uint32_t vertexIndex = vsSelect;
+		if (flags & 8)
+			vertexIndex |= 8;
+		if (tesselate)
+			vertexIndex |= 16;
+
+		auto vertexLib = static_cast<PCDX11ShaderLib*>(subMaterial->shaderVertex);
+		auto vertexTable = static_cast<PCDX11VertexShaderTable*>(vertexLib->table);
+		auto vertexShader = (*vertexTable)[vertexIndex];
+		stateManager->setVertexShader(vertexShader);
+
+		// TODO: domain and hull shader
+		auto *streamDecl = static_cast<PCDX11StreamDecl*>(matInstance->streamDecls24[subMaterialIndex]);
+		if (!streamDecl) {
+			ShaderInputSpec *layoutB = subMaterial->vsLayout[vsSelect];
+			streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
+				layout,
+				layoutB,
+				(flags >> 3) & 1,
+				&vertexShader->m_sub);
+		}
+
+		mg_streamDecl = streamDecl;
+	}
+
+	mg_material = this;
+	mg_tesselate = tesselate;
+	mg_matInstance = matInstance;
+	mg_layoutA = layout;
+	mg_vsSelectAndFlags = vsSelectAndFlags;
+	mg_cbdata = drawableExtDword50;
+
+	return mg_streamDecl;
 }
 
 }
