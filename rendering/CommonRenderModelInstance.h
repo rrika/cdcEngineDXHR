@@ -50,6 +50,9 @@ public:
 	~CommonRenderModelInstance() {
 		delete ext;
 	}
+
+	PersistentPGData *getPersistentPGData() override { return tab0Ext128; } // TODO: confirm
+	NonPersistentPGData *getNonPersistentPGData() override { return tab0Ext16; } // TODO: confirm
 };
 
 }

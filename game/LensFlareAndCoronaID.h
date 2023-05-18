@@ -3,6 +3,8 @@
 #include "cdcMath/Math.h"
 #include "PackedVector.h"
 
+namespace cdc { class TextureMap; class CommonMaterial; };
+
 struct LensFlareAndCoronaExtraData {
 	float float0;
 	uint32_t dword4;
@@ -22,9 +24,9 @@ struct LensFlareAndCoronaExtraData {
 	uint32_t mode[8]; // 60
 	PackedBytesAndScale packedVectors[4]; // 80
 	cdc::Vector plainVectors[4]; // A0
-	float floatE0;
-	float floatE4;
-	uint8_t gapE8[60];
+	cdc::TextureMap *texture[4]; // E0
+	cdc::CommonMaterial *material; // F0
+	uint8_t gapF4[0x30];
 	uint8_t byte124;
 	uint8_t gap125[3];
 	uint32_t dword128;

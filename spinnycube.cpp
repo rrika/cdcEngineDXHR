@@ -809,11 +809,20 @@ int spinnyCube(HWND window,
 
 				// printf("%f %f %f\n", instanceMatrix.m[3][0], instanceMatrix.m[3][1], instanceMatrix.m[3][2]);
 
-				if (renderModel && objFamily == 0x50) {
-					auto *deferredExtraData = (DeferredRenderingExtraData*)extraData;
-					// patch all materials (even though this render model is shared between instances)
-					for (uint32_t i = 0; i < renderModel->numPrimGroups; i++)
-						renderModel->tab0Ext128Byte[i].material = static_cast<cdc::PCDX11Material*>(deferredExtraData->material);
+				if (renderModel) {
+					if (objFamily == 0x50) {
+						auto *deferredExtraData = (DeferredRenderingExtraData*)extraData;
+						// patch all materials (even though this render model is shared between instances)
+						for (uint32_t i = 0; i < renderModel->numPrimGroups; i++)
+							renderModel->tab0Ext128Byte[i].material = static_cast<cdc::PCDX11Material*>(deferredExtraData->material);
+
+					} else if (objFamily == 0x5b) {
+						auto *lensFlareExtraData = (LensFlareAndCoronaExtraData*)extraData;
+						// patch all materials (even though this render model is shared between instances)
+						if (lensFlareExtraData->material)
+							for (uint32_t i = 0; i < renderModel->numPrimGroups; i++)
+								renderModel->tab0Ext128Byte[i].material = static_cast<cdc::PCDX11Material*>(lensFlareExtraData->material);
+					}
 				}
 
 				selectedRmiDrawable = new RMIDrawableBase(renderModel);
@@ -827,6 +836,13 @@ int spinnyCube(HWND window,
 					rmi->baseMask = 0x100A; // normals, composite, translucent, for now
 					auto *lensFlareExtraData = (LensFlareAndCoronaExtraData*)extraData;
 					hackCalcInstanceParams(lensFlareExtraData, &instanceMatrix, rmi->ext->instanceParams);
+
+					// patch textures (even though this render model is shared between instances)
+					cdc::PersistentPGData *ppg = rmi->getPersistentPGData();
+					if (lensFlareExtraData->texture[0]) ppg->sub10.pInstanceTextures[0] = lensFlareExtraData->texture[0];
+					if (lensFlareExtraData->texture[1]) ppg->sub10.pInstanceTextures[1] = lensFlareExtraData->texture[1];
+					if (lensFlareExtraData->texture[2]) ppg->sub10.pInstanceTextures[2] = lensFlareExtraData->texture[2];
+					if (lensFlareExtraData->texture[3]) ppg->sub10.pInstanceTextures[3] = lensFlareExtraData->texture[3];
 
 				} else {
 					rmi->baseMask = 0x100A; // normals, composite, translucent. this is further narrowed down by CommonMaterial::SetRenderPasses
