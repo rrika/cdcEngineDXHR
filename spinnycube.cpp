@@ -835,7 +835,7 @@ int spinnyCube(HWND window,
 				} else if (objFamily == 0x5b) {
 					rmi->baseMask = 0x100A; // normals, composite, translucent, for now
 					auto *lensFlareExtraData = (LensFlareAndCoronaExtraData*)extraData;
-					hackCalcInstanceParams(lensFlareExtraData, &instanceMatrix, rmi->ext->instanceParams);
+					hackCalcInstanceParams(lensFlareExtraData, &instanceMatrix, /*invView*/ &renderViewport.viewMatrix, rmi->ext->instanceParams);
 
 					// patch textures (even though this render model is shared between instances)
 					cdc::PersistentPGData *ppg = rmi->getPersistentPGData();

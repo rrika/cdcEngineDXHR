@@ -45,11 +45,10 @@ struct LensFlareAndCoronaExtraData {
 	float float154;
 	uint32_t dword158;
 	uint8_t byte15C;
-	uint32_t dword160;
-	uint32_t dword164;
-	uint32_t dword168;
+	float offset[3]; // 160
 };
 
+static_assert(sizeof(LensFlareAndCoronaExtraData) == 0x16C);
 
 class LensFlareAndCoronaID /* : cdc::InstanceDrawable */ {
 public:
@@ -71,5 +70,5 @@ public:
 	);
 };
 
-void hackCalcInstanceParams(LensFlareAndCoronaExtraData *extra, cdc::Matrix *matrix, cdc::Vector4 *instanceParams);
+void hackCalcInstanceParams(LensFlareAndCoronaExtraData *extra, cdc::Matrix *matrix, cdc::Matrix *invView, cdc::Vector4 *instanceParams);
 
