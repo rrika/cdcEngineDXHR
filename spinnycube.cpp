@@ -489,6 +489,8 @@ int spinnyCube(HWND window,
 
 	bool mouseLook = false;
 	bool useFrustumCulling = true;
+	bool drawStreamGroups = true;
+	bool drawCellMeshes = true;
 	bool drawCellBoxes = false;
 	bool pointlessCopy = false;
 	int showTempBuffer = -1;
@@ -986,7 +988,7 @@ int spinnyCube(HWND window,
 				cdc::CellData *cell = cellGroupData->cells[i];
 
 				// draw streamgroup meshes
-				if (cell->pHeader) {
+				if (cell->pHeader && drawStreamGroups) {
 					cdc::CellStreamGroupData *streamgroup = cell->pHeader->streamGroup50;
 					if (streamgroup && streamgroup->resolveObject && isLoaded(streamgroup->resolveObject)) {
 						dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(cell->pHeader->streamGroupDtp54);
@@ -998,7 +1000,7 @@ int spinnyCube(HWND window,
 				}
 
 				// draw renderterrain
-				if (cell->pTerrainData) {
+				if (cell->pTerrainData && drawCellMeshes) {
 					cdc::IRenderTerrain *rt = cell->pTerrainData->pTerrain;
 					putTerrain(rt, cdc::identity4x4);
 				}
@@ -1078,6 +1080,9 @@ int spinnyCube(HWND window,
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Frustum Culling", nullptr, useFrustumCulling)) { useFrustumCulling = !useFrustumCulling; }
+
+				if (ImGui::MenuItem("Streamgroups ", nullptr, drawStreamGroups)) { drawStreamGroups = !drawStreamGroups; }
+				if (ImGui::MenuItem("Cell Meshes", nullptr, drawCellMeshes)) { drawCellMeshes = !drawCellMeshes; }
 				if (ImGui::MenuItem("Cell Boxes", nullptr, drawCellBoxes)) { drawCellBoxes = !drawCellBoxes; }
 				ImGui::Separator();
 				if (ImGui::MenuItem("Off",         nullptr, dc->antiAliasing == 0)) { dc->antiAliasing = 0; }
