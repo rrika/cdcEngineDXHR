@@ -162,10 +162,9 @@ void PCDX11Material::setupPixelResources(
 
 	// assign refIndexBeginB..refIndexEndB from submaterial or MaterialInstanceData
 	for (uint32_t i = subMat->psRefIndexBeginB; i < subMat->psRefIndexEndB; i++) {
-		auto extTextures = (PCDX11Texture**)subExt;
+		auto extTextures = subExt->pInstanceTextures;
 		auto fi = texref[i].fallbackIndex & 0x1F;
-		// PCDX11Texture* tex = extTextures[fi - 1];
-		PCDX11Texture* tex = nullptr; // HACK
+		PCDX11Texture *tex = static_cast<PCDX11Texture*>(extTextures[fi - 1]);
 		if (!tex) tex = static_cast<PCDX11Texture*>(texref[i].tex);
 		renderDevice->setTexture(
 			texref[i].slotIndex,
