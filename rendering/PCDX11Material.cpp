@@ -412,7 +412,7 @@ PCDX11StreamDecl *PCDX11Material::SetupDepthPass(
 			streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
 				layoutA,
 				layoutB,
-				(flags >> 3) & 1,
+				(flags >> 3) & 1, // flag 8 added in PCDX11TerrainDrawable constructor for example
 				&vertexShader->m_sub);
 		}
 
@@ -492,7 +492,7 @@ PCDX11StreamDecl *PCDX11Material::SetupBloomPass(
 		streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
 			layoutA,
 			layoutB,
-			(flags >> 3) & 1,
+			(flags >> 3) & 1, // flag 8 added in PCDX11TerrainDrawable constructor for example
 			&vertexShader->m_sub);
 	}
 
@@ -590,7 +590,7 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 		streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
 			layoutA,
 			layoutB,
-			(flags >> 3) & 1,
+			(flags >> 3) & 1, // flag 8 added in PCDX11TerrainDrawable constructor for example
 			&vertexShader->m_sub);
 	}
 
@@ -713,7 +713,7 @@ PCDX11StreamDecl *PCDX11Material::SetupNormalMapPass(
 			streamDecl = renderDevice->streamDeclCache.buildStreamDecl(
 				layout,
 				layoutB,
-				(flags >> 3) & 1,
+				(flags >> 3) & 1, // flag 8 added in PCDX11TerrainDrawable constructor for example
 				&vertexShader->m_sub);
 		}
 

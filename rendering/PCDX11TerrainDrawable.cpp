@@ -33,7 +33,7 @@ PCDX11TerrainDrawable::PCDX11TerrainDrawable(
 	m_pInstData = &pState->m_pInstanceData[pGroup - m_pTerrain->m_pGroups];
 	m_ppGeoms = ppGeoms;
 	m_numGeoms = numGeoms;
-	m_flags = flags;
+	m_flags = flags | 0xC;
 	m_pLocalToWorld = &pState->m_toWorld;
 	m_pInstanceParams = pState->m_pInstanceParams;
 }
