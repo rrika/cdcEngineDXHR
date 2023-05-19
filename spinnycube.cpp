@@ -692,11 +692,15 @@ int spinnyCube(HWND window,
 		for (auto &unit : StreamTracker) {
 			if (!unit.used)
 				continue;
+
 			cdc::Level *level = unit.level;
 			if (!level)
 				continue;
 
 			cdc::CellGroupData *cellGroupData = level->sub50;
+			if (!cellGroupData)
+				continue;
+
 			uint32_t numCells = cellGroupData->header->numTotalCells;
 			for (uint32_t i=0; i < numCells; i++) {
 				auto *cell = cellGroupData->cells[i];
@@ -978,11 +982,15 @@ int spinnyCube(HWND window,
 		for (auto& unit : StreamTracker) {
 			if (!unit.used)
 				continue;
+
 			cdc::Level *level = unit.level;
 			if (!level)
 				continue;
 
 			cdc::CellGroupData *cellGroupData = level->sub50;
+			if (!cellGroupData)
+				continue;
+
 			uint32_t numCells = cellGroupData->header->numTotalCells;
 			for (uint32_t i=0; i < numCells; i++) {
 				cdc::CellData *cell = cellGroupData->cells[i];
@@ -1322,29 +1330,29 @@ int spinnyCube(HWND window,
 
 				ImGui::PushID(unit.name);
 
-				ImGui::PushID("cells");
-				cdc::CellGroupData *cellGroupData = level->sub50;
-				uint32_t numCells = cellGroupData->header->numTotalCells;
-				for (uint32_t i=0; i < numCells; i++) {
-					cdc::CellData *cell = cellGroupData->cells[i];
-					ImGui::Text("cell %i: %s", i, cell->pHeader->name);
-					// RenderTerrain at cell->pTerrainData->pTerrain
-					// RenderMesh at cell->renderMesh (for visibility)
-					ImGui::SameLine();
-					ImGui::PushID(i);
-					if (ImGui::SmallButton("Teleport to")) {
-						float *mins = cell->pHeader->vec10;
-						float *maxs = cell->pHeader->vec20;
-						cameraPos.x = (mins[0] + maxs[0]) / 2.0f;
-						cameraPos.y = (mins[1] + maxs[1]) / 2.0f;
-						cameraPos.z = (mins[2] + maxs[2]) / 2.0f;
+				if (cdc::CellGroupData *cellGroupData = level->sub50) {
+					ImGui::PushID("cells");
+					uint32_t numCells = cellGroupData->header->numTotalCells;
+					for (uint32_t i=0; i < numCells; i++) {
+						cdc::CellData *cell = cellGroupData->cells[i];
+						ImGui::Text("cell %i: %s", i, cell->pHeader->name);
+						// RenderTerrain at cell->pTerrainData->pTerrain
+						// RenderMesh at cell->renderMesh (for visibility)
+						ImGui::SameLine();
+						ImGui::PushID(i);
+						if (ImGui::SmallButton("Teleport to")) {
+							float *mins = cell->pHeader->vec10;
+							float *maxs = cell->pHeader->vec20;
+							cameraPos.x = (mins[0] + maxs[0]) / 2.0f;
+							cameraPos.y = (mins[1] + maxs[1]) / 2.0f;
+							cameraPos.z = (mins[2] + maxs[2]) / 2.0f;
+						}
+						ImGui::PopID();
 					}
 					ImGui::PopID();
 				}
-				ImGui::PopID();
 
 				auto *admd = level->admdData;
-
 				ImGui::PushID("sfxmarkers");
 				for (uint32_t i=0; i < admd->m_SfxMarkerCount; i++) {
 					dtp::sfxmarker *marker = admd->m_ppSfxMarkers[i];
