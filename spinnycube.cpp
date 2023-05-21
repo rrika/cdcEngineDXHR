@@ -29,6 +29,7 @@
 #include "game/LensFlareAndCoronaID.h"
 #include "game/script/game/NsMainMenuMovieController.h"
 #include "game/ui/FakeScaleform/fakescaleform.h"
+#include "game/ui/NsPopupRequest.h"
 #include "game/ui/Scaleform/ScaleformManager.h"
 #include "game/ui/Scaleform/ScaleformMovieInstance.h"
 #include "cdcGameShell/cdcGameShell.h" // for LOAD_IMFFileName
@@ -1103,6 +1104,10 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Final Buffer", nullptr, showTempBuffer == -1)) { showTempBuffer = -1; }
 				ImGui::EndMenu();
 			}
+			if (ImGui::BeginMenu("Popups")) {
+				buildPopupsMenu();
+				ImGui::EndMenu();
+			}
 			if (mouseLook)
 				ImGui::Text("Press TAB or ESC to release cursor");
 			else
@@ -1416,6 +1421,7 @@ int spinnyCube(HWND window,
 			}
 			ImGui::End();
 		}
+		buildPopupsUI();
 
 		// mainMenuInstance.buildUI();
 #endif
