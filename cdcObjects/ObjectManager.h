@@ -49,9 +49,9 @@ struct ObjectManager {
 	ObjectList *objectList = nullptr;
 	// uint32_t numNames;
 	// ObjectManagerNamedEntry names[32];
-	InitFunc *preInit; // 4A0
-	InitFunc *postInit; // 4A4, create drawable
-	InitFunc *uninit; // 4A8
+	InitFunc *preInit; // 4A0, GameAdditionalPreInit
+	InitFunc *postInit; // 4A4, GameAdditionalPostInit, create drawable
+	InitFunc *uninit; // 4A8, GameAdditionalUninit
 
 	ObjectManager();
 };

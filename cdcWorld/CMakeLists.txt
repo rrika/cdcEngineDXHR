@@ -1,5 +1,6 @@
 target_sources(dxhr PRIVATE
 	CellStreamPrediction.cpp
+	GameTracker.cpp
 	Instance.cpp
 	InstanceManager.cpp
 	RenderLayer.cpp

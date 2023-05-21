@@ -42,9 +42,24 @@ Instance *Instance::IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, /
 		secondObject,
 		/*flags=*/ 0);
 
+	// TODO
+
+	instance->InitCommonComponents(true, true);
+
+	// TODO
+
 	return instance;
 }
 
+void Instance::InitCommonComponents(bool initEffects, bool unknown) { // line 2822
+	// TODO
+	if (unknown)
+		objectComponent.SetProcessFunctions();
+	objectComponent.SetInstance(this);
+	objectComponent.InstanceInit(unknown);
+		// this calls GameAdditionalPostInit and creates drawables for deferred lights
+	// TODO
+}
 
 void Instance::DefaultInit( // line 2977
 	Object *pObject,
@@ -59,4 +74,17 @@ void Instance::DefaultInit( // line 2977
 ) {
 	object = pObject;
 	derivedObject = pDerivedObject;
+
+	objectData = object->data;
+
+	struct ObjProp {
+		uint16_t version;
+		uint16_t family;
+		uint16_t id;
+		uint16_t type;
+	};
+	objectFamilyId = 0;
+	auto *objProp = (ObjProp*) objectData;
+	if (objProp && objProp->id == 0xb00b)
+		objectFamilyId = objProp->family;
 }
