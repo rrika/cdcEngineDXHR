@@ -11,7 +11,7 @@ struct Intro {
 	uint16_t objectListIndex;
 	uint16_t word32;
 	uint8_t padding1[4];
-	uint32_t field38;
+	uint32_t uniqueID;
 	uint32_t field3C;
 	uint8_t field40;
 	uint8_t field41;

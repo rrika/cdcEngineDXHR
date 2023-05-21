@@ -10,6 +10,7 @@
 #include "cdcGameShell/cdcGameShell.h" // for LOAD_UnitFileName
 #include "cdcObjects/ObjectManager.h" // for readAndParseObjectList
 #include "cdcResource/ResolveObject.h"
+#include "cdcWorld/Instance.h"
 
 #if ENABLE_IMGUI
 #include "../game/Gameloop.h"
@@ -42,7 +43,6 @@ void buildUnitsUI() {
 		// ImGui::Text("%s", objList->entries[i].name);
 		if (ImGui::SmallButton(objList->entries[i].name)) {
 			Gameloop::InitiateLevelLoad(objList->entries[i].name, nullptr);
-			cdc::getDefaultFileSystem()->processAll();
 		}
 	}
 #endif
@@ -132,7 +132,7 @@ void STREAM_StreamLoadLevelReturn(void *loadData, void *data, void *data2, Resol
 	// TODO
 }
 
-void STREAM_LoadLevel(const char *baseAreaName, StreamUnitPortal *streamPortal, bool loadObjects) { // 2085
+StreamUnit *STREAM_LoadLevel(const char *baseAreaName, StreamUnitPortal *streamPortal, bool loadObjects) { // 2085
 	// TODO
 	if (true) {
 		// TODO
@@ -170,6 +170,7 @@ void STREAM_LoadLevel(const char *baseAreaName, StreamUnitPortal *streamPortal, 
 				);
 			}
 		}
+		return unit;
 	}
 }
 
@@ -180,9 +181,29 @@ void STREAM_LoadLevel(const char *baseAreaName) { // 2171
 
 StreamUnit *STREAM_LevelLoadAndInit(const char *baseAreaName) { // 2855
 	// TODO
-	STREAM_LoadLevel(baseAreaName, nullptr, true);
+
+	StreamUnit *streamUnit = STREAM_LoadLevel(baseAreaName, nullptr, true);
+
 	// TODO
-	return nullptr;
+
+	// HACK: exact way of waiting for the filesystem differs
+	cdc::getDefaultFileSystem()->processAll();
+	// after waiting for fs to finish the following will have happened:
+	//   STREAM_FinishLoad
+	//     SceneLayer::PreStreamIn
+	//     SceneLayer::PostStreamIn
+	//       ObjectStreamingCallback::UnitLoaded
+
+	// TODO
+
+	// HACK: exact way of instantiating differs
+	dtp::ADMD *admd = streamUnit->level->admdData;
+	for (uint32_t i = 0; i < admd->numObjects; i++) {
+		Instance::IntroduceInstance(&admd->objects[i], streamUnit->StreamUnitID, /*force=*/ false);
+	}
+
+	// TODO
+	return streamUnit;
 }
 
 class ObjectStreamingCallback : public StreamingCallback { // 4088

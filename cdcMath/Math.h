@@ -18,11 +18,13 @@ public:
 };
 
 class Quat : public Vector {};
+class Euler : public Vector {};
 class Scalar : public Vector {};
 class Vector2 : public Vector {};
 class Vector3 : public Vector {};
 class Vector4 : public Vector {};
 using QuatArg = Quat const&;
+using EulerArg = Euler const&;
 using ScalarArg = Scalar const&;
 using VectorArg = Vector const&;
 using Vector2Arg = Vector2 const&;
