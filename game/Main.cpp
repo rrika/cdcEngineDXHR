@@ -5,6 +5,7 @@
 #include "../game/Gameloop.h"
 #include "../game/objects/objects.h"
 #include "cdcGameShell/cdcGameShell.h"
+#include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h"
 #include "../rendering/PCDX11DeviceManager.h"
 #include "postprocessing/PPManager.h"
@@ -83,6 +84,13 @@ void loadDatabases() {
 	requestObjectNormal(globalScriptingId);
 
 	// TODO
+
+	getDefaultFileSystem()->processAll();
+
+	// TODO
+
+	ObjectTracker *ort_globalDatabase = getByObjectListIndex(globalDatabaseId);
+	globalDatabase = (GlobalDatabase*)ort_globalDatabase->objBlob->data;
 }
 
 void Init_NativeScripts();

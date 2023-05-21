@@ -1,4 +1,7 @@
 #pragma once
+#include "game/dtp/objecttypes/globaldatabase.h"
+
+extern GlobalDatabase *globalDatabase;
 
 namespace Gameloop {
 

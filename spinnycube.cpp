@@ -396,10 +396,6 @@ int spinnyCube(HWND window,
 	printf("have bottle object: %p\n", bottleObject);
 
 	// unrelated: get the name of the first map in the game
-	uint32_t globalDatabaseId = cdc::objectIdByName("GlobalDatabase");
-	cdc::Object *globalDatabaseObject = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(globalDatabaseId));
-	auto *globalDatabase = (GlobalDatabase*)globalDatabaseObject->data;
-
 	printf("first map is: %s\n", globalDatabase->newGameMap);
 
 	auto bottleTexture = (cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x0396);
