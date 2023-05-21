@@ -29,6 +29,7 @@
 #include "game/LensFlareAndCoronaID.h"
 #include "game/script/game/NsMainMenuMovieController.h"
 #include "game/ui/FakeScaleform/fakescaleform.h"
+#include "game/ui/Scaleform/ScaleformManager.h"
 #include "game/ui/Scaleform/ScaleformMovieInstance.h"
 #include "cdcGameShell/cdcGameShell.h" // for LOAD_IMFFileName
 #ifdef _WIN32
@@ -534,6 +535,7 @@ int spinnyCube(HWND window,
 	bool showUnitsWindow = false;
 	bool showLoadedUnitsWindow = false;
 	bool showStringsWindow = false;
+	bool showScaleformStringsWindow = false;
 	std::vector<std::pair<void*, cdc::CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
 
@@ -1062,6 +1064,7 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Show units")) { showUnitsWindow = true; }
 				if (ImGui::MenuItem("Show loaded units")) { showLoadedUnitsWindow = true; }
 				if (ImGui::MenuItem("Show strings")) { showStringsWindow = true; }
+				if (ImGui::MenuItem("Show scaleform strings")) { showScaleformStringsWindow = true; }
 				if (ImGui::MenuItem("I never asked for this")) { howDoYouHandleAllOfThis(); }
 				ImGui::EndMenu();
 			}
@@ -1403,6 +1406,13 @@ int spinnyCube(HWND window,
 				while (clipper.Step())
 					for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
 						ImGui::Text("%5d %s", i, localstr_get(i));
+			}
+			ImGui::End();
+		}
+		if (showScaleformStringsWindow) {
+			if (ImGui::Begin("Scaleform strings", &showScaleformStringsWindow)) {
+				for (auto [string, i] : scaleformStringMap)
+					ImGui::Text("%40s : %s", string.c_str(), localstr_get(i));
 			}
 			ImGui::End();
 		}

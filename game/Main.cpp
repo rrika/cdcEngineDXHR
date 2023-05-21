@@ -2,8 +2,9 @@
 #include <cstring>
 #include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h"
-#include "../game/Gameloop.h"
-#include "../game/objects/objects.h"
+#include "game/Gameloop.h"
+#include "game/objects/objects.h"
+#include "game/ui/ui.h"
 #include "cdcGameShell/cdcGameShell.h"
 #include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h"
@@ -128,6 +129,10 @@ void MAIN_DoMainInit() {
 	// TODO
 
 	loadDatabases();
+
+	// TODO
+
+	UI_Begin();
 
 	// TODO
 }
