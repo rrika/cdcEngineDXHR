@@ -2,6 +2,7 @@
 #include <d3d11_1.h>
 #include <cfloat>
 #include <algorithm>
+#include "cdcSys/Assert.h"
 #include "buffers/PCDX11ConstantBuffer.h"
 #include "buffers/PCDX11IndexBuffer.h"
 #include "buffers/PCDX11UberConstantBuffer.h"
@@ -724,9 +725,11 @@ void PCDX11StateManager::updateBlendState() {
 				blendDesc.RenderTarget[0].BlendEnable = false;
 			}
 
-			m_device->CreateBlendState(
+			HRESULT r = m_device->CreateBlendState(
 				&blendDesc,
 				&blendState);
+			if (r != 0)
+				cdc::FatalError("Couldn't create blend state %08x", m_blendState);
 			m_blendStates[key] = blendState;
 		}
 
