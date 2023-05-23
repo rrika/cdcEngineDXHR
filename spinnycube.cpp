@@ -1180,6 +1180,7 @@ int spinnyCube(HWND window,
 			ImGui::PushID("model or terrain");
 			if (uiact.selectedModel) {
 				auto *model = static_cast<cdc::PCDX11RenderModel*>(uiact.selectedModel);
+				auto *ppg = model->getTab0Ext128();
 				ImGui::Text("# model batches = %d", model->numModelBatches);
 				ImGui::Text("# prim groups = %d", model->numPrimGroups);
 				uint32_t pg = 0;
@@ -1193,12 +1194,15 @@ int spinnyCube(HWND window,
 						ImGui::SameLine();
 						ImGui::Text(": %d tris", group->triangleCount);
 						ImGui::SameLine();
-						ImGui::PopID();
 						if (ImGui::SmallButton("vertexdecl/material")) {
 							uiact.select(batch);
 							uiact.select((cdc::VertexDecl*)batch->format);
 							uiact.select(group->material);
 						}
+						bool& hidden = ppg[pg].hide;
+						ImGui::SameLine();
+						if (ImGui::SmallButton(hidden ? "show" : "hide")) { hidden = !hidden; }
+						ImGui::PopID();
 					}
 				}
 			} else {

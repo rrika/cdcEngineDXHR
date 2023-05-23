@@ -16,7 +16,7 @@ struct NonPersistentPGData {
 	uint32_t dwordC;   // = m_shadowRegionMask
 };
 
-struct PersistentPGData {
+struct PersistentPGData {  // created in PCDX11RenderModel::resConstruct
 	PCDX11Material *material;
 	uint32_t dword4;
 	uint32_t dword8;
@@ -24,6 +24,8 @@ struct PersistentPGData {
 	MaterialInstanceData sub10;
 	uint32_t dword78; // probably also part of MaterialInstanceData
 	uint32_t dword7C; // a subfunction of RenderModel::load does a memcpy of 0x70
+
+	bool hide; // HACK
 };
 
 struct RenderModelInstanceData {

@@ -132,6 +132,8 @@ void PCDX11RenderModel::resConstruct() {
 			tab0Ext128Byte[i].sub10.stencilSettings64 = nullptr;
 			for (uint32_t j=0; j<16; j++)
 				tab0Ext128Byte[i].sub10.streamDecls24[j] = nullptr;
+
+			tab0Ext128Byte[i].hide = false; // HACK
 		}
 	}
 }
