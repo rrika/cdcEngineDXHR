@@ -1263,6 +1263,11 @@ int spinnyCube(HWND window,
 				ImGui::PushID("submaterial");
 				cdc::MaterialBlobSub *submat = uiact.selectedSubMaterial;
 				ImGui::Text("submaterial %p", submat);
+
+				static bool weirdFlag = false;
+				ImGui::Checkbox("???", &weirdFlag);
+				uint32_t forbiddenBit = weirdFlag ? 2 : 4;
+
 				if (ImGui::BeginTable("attribs", 2)) {
 					ImGui::TableSetupColumn("VD");
 					ImGui::TableSetupColumn("VS");
@@ -1281,8 +1286,16 @@ int spinnyCube(HWND window,
 						ImGui::Text("no VD");
 					ImGui::TableSetColumnIndex(1);
 					if (cdc::ShaderInputSpec *inputSpec = submat->vsLayout[0]) { // other indices?
-						for (uint32_t i = 0; i < inputSpec->numAttribs; i++)
-							ImGui::Text("%08x", inputSpec->attr[i].attribKindA);
+						for (uint32_t i = 0; i < inputSpec->numAttribs; i++) {
+							auto& at = inputSpec->attr[i];
+							if (at.field_A & forbiddenBit)
+								continue;
+							ImGui::Text("[%d] %08x", i, at.attribKindA);
+							if (at.nextAttribIndex != 0xffffffff) {
+								ImGui::SameLine();
+								ImGui::Text(" -> [%d]", at.nextAttribIndex);
+							}
+						}
 						// TODO: extract logic from PCDX11StreamDeclCache::buildStreamDecl to
 						//       determine which VertexDecl attrib this connects to
 					} else
