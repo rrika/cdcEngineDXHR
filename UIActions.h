@@ -10,6 +10,11 @@ namespace cdc {
 	struct VertexDecl;
 }
 
+namespace dtp {
+	struct Intro;
+	struct IMFRef;
+}
+
 struct UIActions {
 	virtual void select(cdc::IRenderTerrain *renderTerrain) = 0;
 	virtual void select(cdc::RenderMesh*) = 0;
@@ -18,4 +23,6 @@ struct UIActions {
 	virtual void select(cdc::IMaterial*) = 0;
 	virtual void select(cdc::MaterialBlobSub*) = 0;
 	virtual void select(cdc::ScriptType*) = 0;
+	virtual void select(dtp::Intro *intro) = 0;
+	virtual void select(dtp::IMFRef *imfRef) = 0;
 };

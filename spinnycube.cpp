@@ -239,6 +239,8 @@ struct SpinnyUIActions : public UIActions {
 	cdc::IMaterial *selectedMaterial = nullptr;
 	cdc::MaterialBlobSub *selectedSubMaterial = nullptr;
 	cdc::ScriptType *selectedScriptType = nullptr;
+	dtp::Intro *selectedIntro = nullptr;
+	dtp::IMFRef *selectedIMFRef = nullptr;
 
 
 	void select(cdc::IRenderTerrain *renderTerrain) override {
@@ -263,6 +265,12 @@ struct SpinnyUIActions : public UIActions {
 	}
 	void select(cdc::ScriptType *scriptType) override {
 		selectedScriptType = scriptType;
+	}
+	void select(dtp::Intro *intro) override {
+		selectedIntro = intro;
+	}
+	void select(dtp::IMFRef *imfRef) override {
+		selectedIMFRef = imfRef;
 	}
 };
 
@@ -1335,6 +1343,25 @@ int spinnyCube(HWND window,
 			if (!showModelWindow)
 				uiact.select((cdc::RenderMesh*)nullptr);
 		}
+		if (uiact.selectedIntro) {
+			bool showWindow = true;
+			ImGui::Begin("Intro", &showWindow);
+			ImGui::Text("%p", uiact.selectedIntro);
+			if (cdc::Object *object = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(uiact.selectedIntro->objectListIndex))) {
+				buildUI(uiact, object);
+			}
+			ImGui::End();
+			if (!showWindow)
+				uiact.select((dtp::Intro*)nullptr);
+		}
+		if (uiact.selectedIMFRef) {
+			bool showWindow = true;
+			ImGui::Begin("IMFRef", &showWindow);
+			ImGui::Text("%p", uiact.selectedIMFRef);
+			ImGui::End();
+			if (!showWindow)
+				uiact.select((dtp::IMFRef*)nullptr);
+		}
 		if (uiact.selectedScriptType) {
 			bool showWindow = true;
 			ImGui::Begin("Script Type", &showWindow);
@@ -1431,13 +1458,16 @@ int spinnyCube(HWND window,
 						? "???": cdc::g_objectManager->objectList->entries[oid].name;
 					ImGui::Text("  [%3d] intro %s (%d) %f",
 						i, name, oid, intro.scale[0]);
-					ImGui::SameLine();
 					ImGui::PushID(i);
+					ImGui::SameLine();
 					if (ImGui::SmallButton("Teleport to")) {
 						cameraPos.x = intro.position[0];
 						cameraPos.y = intro.position[1];
 						cameraPos.z = intro.position[2];
 					}
+					ImGui::SameLine();
+					if (ImGui::SmallButton("Details"))
+						uiact.select(&intro);
 					ImGui::PopID();
 				}
 				ImGui::PopID();
