@@ -1264,6 +1264,33 @@ int spinnyCube(HWND window,
 				cdc::MaterialBlobSub *submat = uiact.selectedSubMaterial;
 				ImGui::Text("submaterial %p", submat);
 
+				uint8_t psRefIndexEnd = 0;
+				psRefIndexEnd = std::max<uint8_t>(psRefIndexEnd, submat->psRefIndexEndA);
+				psRefIndexEnd = std::max<uint8_t>(psRefIndexEnd, submat->psRefIndexBeginB);
+				psRefIndexEnd = std::max<uint8_t>(psRefIndexEnd, submat->psRefIndexEndB);
+				cdc::MaterialTexRef *texref = submat->psTextureRef;
+
+				ImGui::Indent();
+				for (uint32_t i = 0; i < psRefIndexEnd; i++) {
+					bool g0 = i < submat->psRefIndexEndA;
+					bool g1 = i >= submat->psRefIndexEndA && i < submat->psRefIndexBeginB;
+					bool g2 = i >= submat->psRefIndexBeginB && i < submat->psRefIndexEndB;
+					ImGui::Text("texref %d: slot %d %s %p %p",
+						i,
+						texref[i].slotIndex,
+						g0 ? "normal" :
+						g1 ? "global" :
+						g2 ? "instnc" :
+						"unused",
+						texref[i].tex,
+						texref[i].tex ? static_cast<cdc::PCDX11Texture*>(texref[i].tex)->createShaderResourceView() : 0);
+					if (g1 || g2) {
+						ImGui::SameLine();
+						ImGui::Text("%x", texref[i].fallbackIndex);
+					}
+				}
+				ImGui::Unindent();
+
 				static bool weirdFlag = false;
 				ImGui::Checkbox("???", &weirdFlag);
 				uint32_t forbiddenBit = weirdFlag ? 2 : 4;
