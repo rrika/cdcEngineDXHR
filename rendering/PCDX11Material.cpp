@@ -679,7 +679,7 @@ PCDX11StreamDecl *PCDX11Material::SetupNormalMapPass(
 		((mg_vsSelectAndFlags ^ vsSelectAndFlags) & 0xFF08) ||
 		mg_tesselate != tesselate)
 	{
-	uint16_t renderTargetWriteMask = materialBlob->renderTargetWriteMask;
+		uint16_t renderTargetWriteMask = materialBlob->renderTargetWriteMask;
 		stateManager->setRenderTargetWriteMask(renderTargetWriteMask & 7);
 
 		// set pixel shader

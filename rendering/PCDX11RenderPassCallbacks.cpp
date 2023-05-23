@@ -95,8 +95,8 @@ bool PCDX11DeferredShadingPassCallbacks::pre(
 	rt = renderDevice->dx11_createRenderTarget(
 		rt->getWidth(),
 		rt->getHeight(),
-		0x18,
-		0x11 /*TODO*/,
+		/*dxgiFormat*/ 0x18, // DXGI_FORMAT_R10G10B10A2_UNORM
+		/*flags=*/ 0x11 /*TODO*/,
 		kTextureClass2D);
 	static_cast<PCDX11RenderTarget*>(rt)->getRenderTexture11()->createRenderTargetView(); // HACK
 

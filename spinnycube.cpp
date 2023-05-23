@@ -771,7 +771,7 @@ int spinnyCube(HWND window,
 
 		renderDevice->resetRenderLists();
 		renderDevice->beginRenderList(nullptr);
-		auto *scene = renderDevice->createSubScene(
+		auto *scene = renderDevice->createSubScene( // CommonScene::CommonScene creates the projectMatrix
 			&renderViewport,
 			tempRenderTarget ? tempRenderTarget : renderContext->renderTarget2C,
 			renderContext->depthBuffer,

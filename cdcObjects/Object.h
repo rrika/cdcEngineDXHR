@@ -30,7 +30,7 @@ struct Object {
 	uint32_t dword50;
 	dtp::ObjectBaseData *dtpDataCopy; // 54
 	void *data; // 58
-	uint32_t name;
+	char *name; // 5C
 	uint32_t dword60;
 	uint16_t word64;
 	uint16_t word66;

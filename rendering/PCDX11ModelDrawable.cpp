@@ -309,6 +309,7 @@ void PCDX11ModelDrawable::buildUI(uint32_t funcSetIndex, UIActions& uiact) {
 		uiact.select(renderModel);          // RenderMesh*
 		uiact.select(meshSub);              // ModelBatch*
 		uiact.select(tab0Ext128->material); // IMaterial*
+		uiact.select((cdc::VertexDecl*)meshSub->format);
 		uiact.select(subMat);               // MaterialBlobSub*
 	}
 	ImGui::Text("renderModel: %p", renderModel);

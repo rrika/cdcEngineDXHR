@@ -31,14 +31,14 @@ struct SectionRecord {
 	uint32_t m_numEntries;
 };
 
-struct DRMSectionHeader {
+struct DRMSectionHeader { // cdc::SectionInfo
 	uint32_t payloadSize;
 	uint8_t type;
 	uint8_t  unknown05;
-	uint16_t unknown06;
+	uint16_t unknown06; // versionID
 	struct {
-		uint32_t singleFlag : 1;
-		uint32_t allocFlags : 7;
+		uint32_t singleFlag : 1; // hasDebugInfo
+		uint32_t allocFlags : 7; // resourceType
 		uint32_t relocSize : 24;
 	};
 	uint32_t id;
