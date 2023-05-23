@@ -19,6 +19,7 @@ static const char* nameof(ScriptType *ty) {
 		return "Unknown";
 }
 
+#if ENABLE_IMGUI
 static void Type(DataType *dt) {
 	if (!dt) {
 		ImGui::Text("(null)");
@@ -45,6 +46,7 @@ static void Type(DataType *dt) {
 	}
 	ImGui::Text("%s", simple);
 }
+#endif
 
 void Decompile(UIActions& uiact, ScriptType& ty) {
 #if ENABLE_IMGUI
