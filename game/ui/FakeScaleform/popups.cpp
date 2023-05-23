@@ -26,6 +26,15 @@ void buildPopupsUI() {
 			ImGui::Separator();
 
 			if (ImGui::Button("OK", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+			if (!ImGui::IsWindowAppearing() && !popup->m_mouseSet) {
+				ImVec2 min = ImGui::GetItemRectMin();
+				ImVec2 max = ImGui::GetItemRectMax();
+				ImVec2 cen {0.5f*(min.x+max.x), 0.5f*(min.y+max.y)};
+				ImGuiIO& io = ImGui::GetIO();
+				io.WantSetMousePos = true;
+				io.MousePos = cen;
+				popup->m_mouseSet = true;
+			}
 			ImGui::SetItemDefaultFocus();
 			ImGui::SameLine();
 			if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
