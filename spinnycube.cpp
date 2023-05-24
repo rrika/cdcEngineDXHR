@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <functional>
@@ -546,6 +547,7 @@ int spinnyCube(HWND window,
 	bool showLoadedUnitsWindow = false;
 	bool showStringsWindow = false;
 	bool showScaleformStringsWindow = false;
+	bool showIntroButtons = true;
 	std::vector<std::pair<void*, cdc::CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
 
@@ -876,6 +878,18 @@ int spinnyCube(HWND window,
 				selectedRmiDrawable->draw(&instanceMatrix, 0.0f);
 		};
 
+		struct FloatingButton {
+			cdc::Vector4 pos;
+			std::string label;
+			dtp::Intro *intro;
+			cdc::IRenderTerrain *renderTerrain;
+		};
+
+		std::vector<FloatingButton> fbs {
+			// {{modelTranslation.x, modelTranslation.y, modelTranslation.z, 1}, "alc_beer_bottle_a", nullptr, nullptr},
+			// {{0, 0, 0, 1}, "origin", nullptr, nullptr}
+		};
+
 		// all the other objects
 		for (auto& unit : StreamTracker) {
 			if (!unit.used)
@@ -905,6 +919,16 @@ int spinnyCube(HWND window,
 				cdc::Object *object = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(intro.objectListIndex));
 				if (!object)
 					continue;
+
+				const char *name = cdc::objectName(intro.objectListIndex); // TODO: name = object->name;
+				if (name)
+					fbs.push_back(FloatingButton{
+						{intro.position[0], intro.position[1], intro.position[2], 1},
+						name,
+						&intro,
+						nullptr
+					});
+
 				if (object->numModels == 0)
 					continue;
 				if (cdc::objects[object->trackerID].debugHide)
@@ -982,8 +1006,16 @@ int spinnyCube(HWND window,
 				visible = cdc::Intersects(cullingVolume, cullingFrustum);
 			}
 
-			if (visible)
+			if (visible) {
+				cdc::IRenderTerrain::Node *nodes = renderTerrain->GetNodes();
+				fbs.push_back(FloatingButton{
+						{nodes->center[0], nodes->center[1], nodes->center[2], 1},
+						"[render terrain]",
+						nullptr,
+						renderTerrain
+					});
 				static_cast<cdc::PCDX11RenderTerrain*>(renderTerrain)->hackDraw(rti, &instanceMatrix);
+			}
 		};
 
 		// draw cells
@@ -1095,6 +1127,7 @@ int spinnyCube(HWND window,
 					selectedCapture = captures.size();
 					captures.push_back({renderDevice->captureRenderLists(), scene});
 				}
+				if (ImGui::MenuItem("Intro Buttons", nullptr, showIntroButtons)) { showIntroButtons = !showIntroButtons; }
 				ImGui::Separator();
 				if (ImGui::MenuItem("Frustum Culling", nullptr, useFrustumCulling)) { useFrustumCulling = !useFrustumCulling; }
 
@@ -1143,6 +1176,61 @@ int spinnyCube(HWND window,
 			}
 			ImGui::End();
 		}
+
+		if (!mouseLook && showIntroButtons) {
+
+			std::vector<FloatingButton> fbs2;
+
+			for (auto& fb : fbs) {
+				cdc::Vector4 viewPos = viewMatrix * fb.pos;
+				cdc::Vector4 projPos = scene->projectMatrix * viewPos;
+				projPos.x /= projPos.w;
+				projPos.y /= projPos.w;
+				projPos.z /= projPos.w;
+
+				if (viewPos.z >= 0 && viewPos.z < 5000.0f)
+					fbs2.push_back({projPos, (std::string&&) fb.label, fb.intro, fb.renderTerrain});
+			}
+
+			std::sort(fbs2.begin(), fbs2.end(), [](FloatingButton const &a, FloatingButton const &b) {
+				return a.pos.z > b.pos.z;
+			});
+
+			uint32_t i=0;
+			for (auto& fb : fbs2) {
+				ImGuiWindowFlags window_flags =
+					ImGuiWindowFlags_NoBackground |
+					ImGuiWindowFlags_NoDecoration |
+					ImGuiWindowFlags_AlwaysAutoResize |
+					ImGuiWindowFlags_NoSavedSettings |
+					ImGuiWindowFlags_NoFocusOnAppearing |
+					ImGuiWindowFlags_NoNav |
+					ImGuiWindowFlags_NoMove;
+				const ImGuiViewport* viewport = ImGui::GetMainViewport();
+				ImVec2 window_pos = {
+					0.5f * viewport->Size.x * ( fb.pos.x + 1.0f),
+					0.5f * viewport->Size.y * (-fb.pos.y + 1.0f)
+				};
+				ImVec2 window_pos_pivot = {0.5f, 0.5f};
+				ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+				bool open=true;
+				char name[64];
+				if (fb.intro)
+					snprintf(name, 64, "fbx%x", (uint32_t)fb.intro);
+				else
+					snprintf(name, 64, "fb%d", i++);
+				if (ImGui::Begin(name, &open, window_flags)) {
+					if (ImGui::Button(fb.label.c_str())) {
+						if (fb.intro)
+							uiact.select(fb.intro);
+						else
+							uiact.select(fb.renderTerrain);
+					}
+				}
+				ImGui::End();
+			}
+		}
+		fbs.clear();
 
 		imGuiDrawable.lastMinuteAdditions = [&]() {
 			if (showDrawablesWindow) {
