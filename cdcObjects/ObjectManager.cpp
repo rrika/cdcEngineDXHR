@@ -6,6 +6,7 @@
 #include "cdcFile/FileHelpers.h"
 #include "cdcFile/FileSystem.h"
 #include "cdcGameShell/cdcGameShell.h"
+#include "rendering/Inspector.h"
 #include "cdcResource/ResolveObject.h"
 
 #if ENABLE_IMGUI
@@ -234,29 +235,9 @@ void buildObjectsUI(UIActions& uiact) {
 				}
 			} else {
 				uint32_t slot = e->entries[i].slot;
-
-				bool& hide = objects[slot].debugHide;
-				ImGui::SameLine();
-				if (hide) {
-					if (ImGui::SmallButton("Show")) hide = false;
-				} else {
-					if (ImGui::SmallButton("Hide")) hide = true;
-				}
-
 				Object *obj = objects[slot].objBlob;
-				for (uint32_t j = 0; j < obj->numModels; j++) {
-					auto *mesh = obj->models[j]->renderMesh;
-					if (!mesh)
-						continue;
-
-					ImGui::PushID(j);
-					char label[18];
-					snprintf(label, 18, "Model %d", j);
-					ImGui::SameLine();
-					if (ImGui::SmallButton(label))
-						uiact.select(mesh);
-					ImGui::PopID();
-				}
+				ImGui::SameLine();
+				buildUI(uiact, obj);
 			}
 			ImGui::PopID();
 		}
@@ -264,4 +245,44 @@ void buildObjectsUI(UIActions& uiact) {
 #endif
 }
 
+}
+
+uint32_t buildUI(UIActions& uiact, cdc::Object *obj) {
+	struct ObjProp {
+		uint16_t version;
+		uint16_t family;
+		uint16_t id;
+		uint16_t type;
+	};
+	auto *objProp = (ObjProp*) obj->data;
+	uint32_t objFamily = 0;
+	if (objProp && objProp->id == 0xb00b)
+		objFamily = objProp->family;
+
+#if ENABLE_IMGUI
+	ImGui::Text("fam %d/0x%x", objFamily, objFamily);
+	ImGui::SameLine();
+
+	bool& hide = cdc::objects[obj->trackerID].debugHide;
+	if (hide) {
+		if (ImGui::SmallButton("Show")) hide = false;
+	} else {
+		if (ImGui::SmallButton("Hide")) hide = true;
+	}
+
+	for (uint32_t j = 0; j < obj->numModels; j++) {
+		auto *mesh = obj->models[j]->renderMesh;
+		if (!mesh)
+			continue;
+
+		ImGui::PushID(j);
+		char label[18];
+		snprintf(label, 18, "Model %d", j);
+		ImGui::SameLine();
+		if (ImGui::SmallButton(label))
+			uiact.select(mesh);
+		ImGui::PopID();
+	}
+#endif
+	return objFamily;
 }

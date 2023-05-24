@@ -69,3 +69,5 @@ void requestObjectNormal(uint32_t id);
 void buildObjectsUI(UIActions& uiact);
 
 }
+
+uint32_t buildUI(UIActions& uiact, cdc::Object *obj); // return object family
