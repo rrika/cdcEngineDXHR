@@ -8,3 +8,8 @@ target_sources(dxhr PRIVATE
 	SceneLayer.cpp
 	stream.cpp
 	StreamUnit.cpp)
+
+if (ENABLE_IMGUI)
+	target_sources(dxhr PRIVATE
+		Inspector.cpp)
+endif()

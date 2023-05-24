@@ -85,6 +85,7 @@
 #include "cdcScene/SceneCellGroup.h" // for SceneCellGroup to ISceneCellGroup cast
 #include "cdcScene/SceneEntity.h"
 #include "cdcSound/SoundPlex.h"
+#include "cdcWorld/Inspector.h"
 #include "cdcWorld/RMIDrawableBase.h"
 #include "cdcWorld/stream.h" // for buildUnitsUI
 #include "cdcWorld/StreamUnit.h"
@@ -1347,9 +1348,7 @@ int spinnyCube(HWND window,
 			bool showWindow = true;
 			ImGui::Begin("Intro", &showWindow);
 			ImGui::Text("%p", uiact.selectedIntro);
-			if (cdc::Object *object = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(uiact.selectedIntro->objectListIndex))) {
-				buildUI(uiact, object);
-			}
+			buildUI(uiact, uiact.selectedIntro);
 			ImGui::End();
 			if (!showWindow)
 				uiact.select((dtp::Intro*)nullptr);
