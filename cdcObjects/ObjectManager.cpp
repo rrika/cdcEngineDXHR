@@ -215,6 +215,10 @@ void requestObjectNormal(uint32_t id) {
 	requestObject(id, cdc::FileRequest::NORMAL);
 }
 
+char *objectName(uint32_t objectListIndex) {
+	return g_objectManager->objectList->entries[objectListIndex-1].name;
+}
+
 void buildObjectsUI(UIActions& uiact) {
 #if ENABLE_IMGUI
 	static bool onlyLoaded = true;
