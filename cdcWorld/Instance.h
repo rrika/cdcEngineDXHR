@@ -1,10 +1,20 @@
 #pragma once
 #include <cstdint>
+#include "cdcAnim/TransformComponent.h"
 #include "cdcMath/Math.h"
 #include "cdcObjects/ObjectComponent.h"
+#include "cdcWorld/InstanceDrawable.h" // for MeshComponent
 
-namespace cdc { struct Object; }
-namespace dtp { struct Intro; }
+namespace cdc {
+	class IDrawable;
+	class SceneEntity;
+	struct Object;
+}
+
+namespace dtp {
+	struct Intro;
+	struct Model;
+}
 
 class InstanceManager;
 class NsInstance;
@@ -12,21 +22,33 @@ class NsInstance;
 class Instance {
 	friend class InstanceManager;
 
+public:
 	Instance *next; // 0
 	Instance *prev; // 4
 	cdc::Object *object; // 8
-public:
+
 	uint16_t objectFamilyId; // 14
-private:
 	uint8_t flags = 0; // 18
+
 	cdc::Vector3 position; // 20
 	cdc::Euler rotation; // 30
+	// scale is in transformComponent
 
 	void *objectData; // 4C
 
+	dtp::Model **modelsOverride = nullptr; // 5C
+	uint32_t numOverrideModels = 0; // 60
+	cdc::SceneEntity *sceneEntity; // 64
 	cdc::Object *derivedObject; // 6C
 
+	// the matrices buffer is allocated by MeshComponent::SetModel
+	// the matrices are filled in by ObjectComponent::InstanceInit/G2Instance_SetTransformsToIdentity
+	cdc::TransformComponent transformComponent; // 90
 	cdc::ObjectComponent objectComponent; // 138
+
+	cdc::MeshComponent meshComponent {this}; // 218
+
+	cdc::IDrawable *instanceDrawable = nullptr; // 23C
 
 public:
 	static Instance *IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, bool force); // line 1672
@@ -42,6 +64,10 @@ public:
 		cdc::Euler *pRotation,
 		cdc::Object *pDerivedObject,
 		uint8_t flags);
+	uint32_t GetNumModels();
+	dtp::Model **GetModels();
 
+	cdc::TransformComponent& GetTransformComponent() { return transformComponent; }
 	cdc::ObjectComponent& GetObjectComponent() { return objectComponent; }
+	cdc::MeshComponent& GetMeshComponent() { return meshComponent; }
 };

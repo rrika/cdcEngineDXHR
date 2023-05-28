@@ -14,6 +14,7 @@ struct Model;
 
 struct ObjectBaseData {
 	uint32_t dword0;
+		// 20000000 see MeshComponent::SetModel
 	uint32_t dword4;
 	uint32_t dword8;
 	uint32_t dwordC;

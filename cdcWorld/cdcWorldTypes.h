@@ -1,15 +1,23 @@
 #pragma once
 #include <cstdint>
+#include <cdcMath/Math.h>
 
 namespace cdc { class RenderMesh; }
+
+struct Segment;
+
+struct SegmentList { // line 507
+	int32_t numSegments; // 0
+	Segment *segmentList; // 4
+};
 
 namespace dtp {
 
 struct Model { // line 516
 	void *field_0;
-	char gap_4[4];
-	int field_8;
-	void *field_C;
+	uint32_t oldNumSegments; // 4
+	uint32_t numVirtSegments; // 8
+	Segment *oldSegmentList; // C
 	void *field_10;
 	void *field_14;
 	void *field_18;
@@ -31,10 +39,25 @@ struct Model { // line 516
 	int field_58;
 	int field_5C;
 	int field_60;
-	cdc::RenderMesh *renderMesh;
-	void *field_68;
+	cdc::RenderMesh *renderMesh; // 64
+	SegmentList *segList; // 68
 	uint32_t *pdword6C;
 	uint32_t dword70;
+
+	inline uint32_t GetNumSegments() {
+		if (segList)
+			return segList->numSegments;
+		else
+			return oldNumSegments;
+	}
+	inline Segment *GetSegmentList() {
+		if (segList)
+			return segList->segmentList;
+		else
+			return oldSegmentList;
+	}
 };
+
+static_assert(sizeof(Model) == 0x74);
 
 }

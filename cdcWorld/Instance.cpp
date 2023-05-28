@@ -1,6 +1,7 @@
 #include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h"
 #include "Instance.h"
+#include "InstanceDrawable.h"
 #include "InstanceManager.h"
 
 using namespace cdc;
@@ -10,6 +11,11 @@ Instance *Instance::IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, b
 }
 
 Instance *Instance::IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, /*GCPtr<...>*/NsInstance *scriptObject, bool force) { // line 1679
+	// called from STREAM_LevelLoadAndInit
+
+	if (intro->objectListIndex == 0x12) // player.drm
+		return nullptr; // HACK
+
 	// TODO
 	ObjectTracker *objectTracker = getByObjectListIndex(intro->objectListIndex);
 	Object *object = objectTracker->objBlob;
@@ -52,6 +58,8 @@ Instance *Instance::IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, /
 }
 
 void Instance::InitCommonComponents(bool initEffects, bool unknown) { // line 2822
+	// this runs after DefaultInit
+
 	// TODO
 	if (unknown)
 		objectComponent.SetProcessFunctions();
@@ -72,8 +80,13 @@ void Instance::DefaultInit( // line 2977
 	Object *pDerivedObject,
 	uint8_t flags
 ) {
+	// this runs before InitCommonComponents
+
 	object = pObject;
 	derivedObject = pDerivedObject;
+
+	position = *pPosition;
+	rotation = *pRotation;
 
 	objectData = object->data;
 
@@ -87,4 +100,33 @@ void Instance::DefaultInit( // line 2977
 	auto *objProp = (ObjProp*) objectData;
 	if (objProp && objProp->id == 0xb00b)
 		objectFamilyId = objProp->family;
+
+	// TODO
+
+	meshComponent.SetModel(modelNum);
+
+	// TODO
+
+	if (!instanceDrawable)
+		instanceDrawable = new InstanceDrawable(this);
+}
+
+uint32_t Instance::GetNumModels() {
+	if (modelsOverride)
+		return numOverrideModels;
+
+	if (derivedObject)
+		return derivedObject->numModels;
+
+	return object->numModels;
+}
+
+dtp::Model **Instance::GetModels() {
+	if (modelsOverride)
+		return modelsOverride;
+
+	if (derivedObject)
+		return derivedObject->models;
+
+	return object->models;
 }

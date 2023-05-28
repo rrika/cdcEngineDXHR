@@ -25,6 +25,7 @@
 // };
 
 namespace cdc { class CellStreamGroupData; class IScene; }
+class Instance;
 struct StreamUnit;
 
 extern cdc::IScene *g_scene;
@@ -45,4 +46,6 @@ struct SceneLayer { // 192
 	static void RemoveStreamingCallback(StreamingCallback*);
 	static void PreStreamIn(StreamUnit*);
 	static void PostStreamIn(StreamUnit*);
+	static void AddInstance(Instance *instance);
+	static void Update();
 };

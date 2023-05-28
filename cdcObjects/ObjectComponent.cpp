@@ -2,6 +2,7 @@
 #include "ObjectManager.h"
 #include "cdcWorld/GameTracker.h"
 #include "cdcWorld/Instance.h"
+#include "cdcWorld/InstncG2.h"
 
 namespace cdc {
 
@@ -20,6 +21,7 @@ bool ObjectComponent::InstanceInit(bool unknown) {
 		m_familyId = m_instance->objectFamilyId;
 	}
 	g_objectManager->preInit(m_instance, &gameTrackerX); // calls GameAdditionalPreInit
+	G2Instance_SetTransformsToIdentity(m_instance);
 	// TODO
 	g_objectManager->postInit(m_instance, &gameTrackerX);// calls GameAdditionalPostInit
 	// TODO

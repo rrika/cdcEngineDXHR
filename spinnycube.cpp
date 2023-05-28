@@ -548,6 +548,7 @@ int spinnyCube(HWND window,
 	bool showStringsWindow = false;
 	bool showScaleformStringsWindow = false;
 	bool showIntroButtons = true;
+	bool editorMode = false;
 	std::vector<std::pair<void*, cdc::CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
 
@@ -774,6 +775,8 @@ int spinnyCube(HWND window,
 		cameraManager.update();
 		viewMatrix = *cameraManager.getMatrix(); // wow, it's nothing
 
+		SceneLayer::Update(); // this will create SceneEntities for Instances that don't have any yet
+
 		cdc::PCDX11RenderTarget *tempRenderTarget = nullptr;
 
 		if (dc->antiAliasing > 0 && !pointlessCopy)
@@ -903,7 +906,7 @@ int spinnyCube(HWND window,
 			uint32_t numIMFRefs = level->admdData->numIMFRefs;
 			dtp::IMFRef *imfrefs = level->admdData->imfrefs;
 
-			for (uint32_t i=unit.introShowRange[0]; i<numIntros && i<unit.introShowRange[1]; i++) {
+			for (uint32_t i=unit.introShowRange[0]; i<numIntros && i<unit.introShowRange[1] && editorMode; i++) {
 				dtp::Intro &intro = intros[i];
 				float s = 1.f;
 				cdc::Matrix instanceMatrix = {
@@ -980,7 +983,8 @@ int spinnyCube(HWND window,
 		// single bottle at origin
 		// rmiDrawable.draw(&bottleWorldMatrix, 0.0f);
 		sceneCube->setMatrix(bottleWorldMatrix);
-		g_scene->RenderWithoutCellTracing(renderViewport);
+		if (!editorMode)
+			g_scene->RenderWithoutCellTracing(renderViewport);
 
 		auto putTerrain = [&](cdc::IRenderTerrain *renderTerrain, cdc::Matrix& instanceMatrix) {
 
@@ -1110,6 +1114,13 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("I never asked for this")) { howDoYouHandleAllOfThis(); }
 				ImGui::EndMenu();
 			}
+			if (ImGui::BeginMenu("Editor")) {
+				// editorMode off: show cdc::Scene, render Instances (doesn't support lights/culling currently)
+				// editorMode on:  hide cdc::Scene, render cdc::Intros directly
+				if (ImGui::MenuItem("Editor mode", nullptr, editorMode)) { editorMode = !editorMode; }
+				if (ImGui::MenuItem("Intro Buttons", nullptr, showIntroButtons)) { showIntroButtons = !showIntroButtons; }
+				ImGui::EndMenu();
+			}
 			if (ImGui::BeginMenu("Language")) {
 				language_t vo = localstr_get_voice_language();
 				if (ImGui::MenuItem("English", nullptr, vo == language_english))  { localstr_set_language(language_english,   language_default); }
@@ -1127,7 +1138,6 @@ int spinnyCube(HWND window,
 					selectedCapture = captures.size();
 					captures.push_back({renderDevice->captureRenderLists(), scene});
 				}
-				if (ImGui::MenuItem("Intro Buttons", nullptr, showIntroButtons)) { showIntroButtons = !showIntroButtons; }
 				ImGui::Separator();
 				if (ImGui::MenuItem("Frustum Culling", nullptr, useFrustumCulling)) { useFrustumCulling = !useFrustumCulling; }
 

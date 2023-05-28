@@ -2,6 +2,8 @@ target_sources(dxhr PRIVATE
 	CellStreamPrediction.cpp
 	GameTracker.cpp
 	Instance.cpp
+	InstncG2.cpp
+	InstanceDrawable.cpp
 	InstanceManager.cpp
 	RenderLayer.cpp
 	RMIDrawableBase.cpp
