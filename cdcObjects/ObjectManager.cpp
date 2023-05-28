@@ -12,6 +12,7 @@
 #if ENABLE_IMGUI
 #include "../imgui/imgui.h"
 #include "cdcObjects/Object.h"
+#include "cdcResource/ResolveSection.h"
 #endif
 
 #ifndef _WIN32
@@ -272,6 +273,15 @@ uint32_t buildUI(UIActions& uiact, cdc::Object *obj) {
 		if (ImGui::SmallButton("Show")) hide = false;
 	} else {
 		if (ImGui::SmallButton("Hide")) hide = true;
+	}
+
+	if (uint32_t scriptTypeID = obj->dtpData->m_scriptTypeID) {
+		ImGui::SameLine();
+		if (ImGui::SmallButton("Type")) {
+			auto *scriptSection = cdc::g_resolveSections[8];
+			if (cdc::ScriptType *scriptType = (cdc::ScriptType*)scriptSection->getWrapped(scriptSection->getDomainId(scriptTypeID)))
+				uiact.select(scriptType);
+		}
 	}
 
 	for (uint32_t j = 0; j < obj->numModels; j++) {

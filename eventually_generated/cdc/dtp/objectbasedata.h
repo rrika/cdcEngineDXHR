@@ -66,7 +66,7 @@ struct ObjectBaseData {
 	uint32_t dwordB4;
 	uint32_t dwordB8;
 	void *TuneDataPtr; // BC, override data in object by this
-	uint32_t dwordC0;
+	uint32_t m_scriptTypeID; // C0
 	cdc::ObjectBlobAnim **animationsC4;
 	uint32_t dwordC8;
 	uint32_t dwordCC;
