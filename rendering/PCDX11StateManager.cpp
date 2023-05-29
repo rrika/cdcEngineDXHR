@@ -9,6 +9,7 @@
 #include "buffers/PCDX11VertexBuffer.h"
 #include "PCDX11StateManager.h"
 #include "PCDX11StreamDecl.h"
+#include "shaders/PCDX11ComputeShader.h"
 #include "shaders/PCDX11PixelShader.h"
 #include "shaders/PCDX11VertexShader.h"
 #include "surfaces/PCDX11BaseTexture.h"
@@ -851,6 +852,32 @@ void PCDX11StateManager::updateRenderState() {
 
 void PCDX11StateManager::updateViewport() {
 	// TODO
+}
+
+void PCDX11StateManager::setComputeShader(PCDX11ComputeShader *computeShader) {
+	if (!computeShader->m_d3dShader)
+		computeShader->createD3DShader();
+	m_deviceContext->CSSetShader(computeShader->m_d3dShader, nullptr, 0);
+}
+
+void PCDX11StateManager::setComputeShaderTexture(uint32_t slot, PCDX11BaseTexture *tex) {
+	ID3D11ShaderResourceView *srv = tex ? tex->createShaderResourceView() : nullptr;
+	m_deviceContext->CSSetShaderResources(slot, 1, &srv);
+}
+
+void PCDX11StateManager::setComputeShaderUAV(uint32_t slot, PCDX11BaseTexture *tex) {
+	ID3D11UnorderedAccessView *uav = tex ? tex->createUnorderedAccessView() : nullptr;
+	unsigned negOne = -1;
+	m_deviceContext->CSSetUnorderedAccessViews(slot, 1, &uav, &negOne);
+}
+
+void PCDX11StateManager::setComputeShaderCB(uint32_t slot, PCDX11ConstantBuffer *cb) {
+	ID3D11Buffer *buffer = cb ? cb->getBuffer() : nullptr;
+	m_deviceContext->CSSetConstantBuffers(slot, 1, &buffer);
+}
+
+void PCDX11StateManager::dispatch(uint32_t x, uint32_t y, uint32_t z) {
+	m_deviceContext->Dispatch(x, y, z);
 }
 
 bool PCDX11StateManager::internalCreate() {

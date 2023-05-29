@@ -23,6 +23,8 @@ PCDX11ShaderLib::PCDX11ShaderLib(
 		case 3:
 			table = new PCDX11DomainShaderTable(); break;
 		*/
+		case kCompute: // 5
+			table = new PCDX11ComputeShaderTable(blob, /*takeCopy=*/ false); break;
 		default: break;
 	}
 }

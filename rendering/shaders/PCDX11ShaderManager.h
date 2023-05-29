@@ -1,7 +1,8 @@
 #pragma once
 #include <cstdint>
-#include "PCDX11VertexShader.h"
+#include "PCDX11ComputeShader.h"
 #include "PCDX11PixelShader.h"
+#include "PCDX11VertexShader.h"
 
 namespace cdc {
 
@@ -40,6 +41,15 @@ public:
 		auto *shader = PCDX11VertexShader::create(blob, takeCopy, /*gap444,*/ &isWrapped, isWrapped);
 		// if (isWrapped)
 		// 	sub10.dword0++;
+		return shader;
+	}
+	PCDX11ComputeShader *createComputeShader(char *blob, bool takeCopy, bool isWrapped) {
+		// uint32_t a = ++sub34.dword4;
+		// uint32_t b = sub34.dword8;
+		// sub34.dword8 = a > b ? a : b;
+		auto *shader = PCDX11ComputeShader::create(blob, takeCopy, /*gap1050,*/ &isWrapped, isWrapped);
+		// if (isWrapped)
+		// 	sub34.dword0++;
 		return shader;
 	}
 };

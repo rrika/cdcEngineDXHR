@@ -15,6 +15,7 @@ bool operator==(D3D11_DEPTH_STENCIL_DESC const&, D3D11_DEPTH_STENCIL_DESC const&
 namespace cdc {
 
 class PCDX11BaseTexture;
+class PCDX11ComputeShader;
 class PCDX11ConstantBuffer;
 class PCDX11DepthBuffer;
 class PCDX11IndexBuffer;
@@ -200,6 +201,12 @@ public:
 	void updateRenderTargets(PCDX11RenderTarget *renderTarget, PCDX11DepthBuffer *depthBuffer);
 	void updateRenderState();
 	void updateViewport();
+
+	void setComputeShader(PCDX11ComputeShader *computeShader);
+	void setComputeShaderTexture(uint32_t slot, PCDX11BaseTexture *cb);
+	void setComputeShaderUAV(uint32_t slot, PCDX11BaseTexture *cb);
+	void setComputeShaderCB(uint32_t slot, PCDX11ConstantBuffer *cb);
+	void dispatch(uint32_t x, uint32_t y, uint32_t z);
 
 	bool internalCreate() override;
 	void internalRelease() override;

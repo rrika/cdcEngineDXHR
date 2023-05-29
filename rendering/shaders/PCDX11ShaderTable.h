@@ -6,7 +6,7 @@
 #include "PCDX11VertexShader.h"
 // #include "PCDX11HullShader.h"
 // #include "PCDX11DomainShader.h"
-// #include "PCDX11ComputeShader.h"
+#include "PCDX11ComputeShader.h"
 
 
 namespace cdc {
@@ -94,11 +94,37 @@ class PCDX11DomainShaderTable : public PCDX11ShaderTable {
 public:
 	// todo
 };
+*/
 
 class PCDX11ComputeShaderTable : public PCDX11ShaderTable {
 public:
-	// todo
+	// uint32_t dword10;
+	PCDX11ComputeShader **computeShaders = nullptr;
+	bool hasOwnership = 0;
+	// uint8_t byte19;
+	// uint8_t byte1A;
+	// uint8_t byte1B;
+public:
+	PCDX11ComputeShaderTable(char *blob, bool takeCopy) :
+		PCDX11ShaderTable(blob)
+	{
+		auto *blobWords = (uint32_t*)blob;
+		offsets = &blobWords[2];
+		numShaders = blobWords[0] >> 2;
+		computeShaders = new PCDX11ComputeShader*[numShaders];
+		hasOwnership = takeCopy;
+		memset(computeShaders, 0, sizeof(PCDX11ComputeShader*) * numShaders);
+		for (uint32_t i = 0; i < numShaders; i++)
+			if (offsets[i] != ~0u) {
+				computeShaders[i] = deviceManager->getShaderManager()->createComputeShader(
+					/*blob=*/ blob + offsets[i],
+					/*takeCopy=*/ hasOwnership,
+					/*isWrapped=*/ true);
+			} else
+				computeShaders[i] = nullptr;
+	}
+
+	PCDX11ComputeShader *operator[](size_t i) const { return computeShaders[i]; }
 };
-*/
 
 }
