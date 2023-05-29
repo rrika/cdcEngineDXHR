@@ -8,15 +8,26 @@ namespace cdc {
 class NativeScriptType;
 class ScriptType;
 
+struct DataMember { // 219
+	DataType type;
+	uint16_t offset;
+	uint16_t name;
+	uint32_t initializer;
+};
+
 struct Prototype { // 377
 	ScriptType *scriptType;
 	uint8_t flags4;
-	uint8_t callType;
-	uint16_t vtIndex;
+	uint8_t callType; // 5
+	uint16_t vtIndex; // 6
 	uint16_t id8;
 	uint16_t idA;
-	void *scriptInit;
+	DataMember *args;
 	DataType returnType;
+
+	uint32_t GetNumArgs() {
+		return args ? ((uint32_t*)args)[-1] : 0;
+	}
 };
 
 class Function { // 477
@@ -60,12 +71,16 @@ struct ScriptTypeStreamData { // 692
 	ScriptType *scriptTypeSelf; // 14
 	ScriptType *scriptTypeParent; // 18
 	// TODO
-	uint8_t     padding[0x34-0x1C];
+	uint8_t     padding[0x2C-0x1C];
 	// TODO
+	DataMember *members; // 2C
+	uint32_t    padding30;
 	Prototype  *prototypes; // 34
 	Function   *functions; // 38
 	VTableArray vtableArray; // 3C
 };
+
+static_assert(sizeof(ScriptTypeStreamData) == 0x48);
 
 class ScriptType : public RCObject { // 749
 public:

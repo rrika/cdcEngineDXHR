@@ -3,6 +3,7 @@
 
 namespace cdc {
 
+class ScriptType;
 class DataType { // 20
 public:
 
@@ -23,6 +24,11 @@ public:
 		STRUCT_REF = 13, // RCObject
 		ENUM = 14,
 		NTENUM = 15
+	};
+
+	struct Compound { // 203
+		ScriptType *m_script;
+		DataType *m_subType;
 	};
 
 	uint8_t type;
