@@ -234,9 +234,14 @@ ID3D11ShaderResourceView *PCDX11RenderTexture::createShaderResourceView() {
 ID3D11UnorderedAccessView *PCDX11RenderTexture::createUnorderedAccessView() {
 	ensureBuffer();
 	if (!unorderedAccessView) {
-		// TODO
+		auto *device = deviceManager->getD3DDevice();
+		D3D11_UNORDERED_ACCESS_VIEW_DESC desc;
+		desc.Format = (DXGI_FORMAT)PCDX11BaseTexture::textureFormat;
+		desc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+		desc.Texture2D.MipSlice = 0;
+		device->CreateUnorderedAccessView(resource, &desc, &unorderedAccessView);
 	}
-	return unorderedAccessView;
+	return unorderedAccessView; // wait, why not return unorderedAccessView?
 }
 
 ID3D11RenderTargetView *PCDX11RenderTexture::createRenderTargetView() {
