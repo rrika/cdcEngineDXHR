@@ -52,15 +52,16 @@ int main(int argc, char** argv) {
 	if (!createWindow())
 		return 1;
 	cdc::DisplayConfig *displayConfig = deviceManager->getDisplayConfig();
-	displayConfig->fullscreenRefreshRate = 60;
-	displayConfig->fullscreen = false;
 	displayConfig->fullscreenWidth = 1366;
 	displayConfig->fullscreenHeight = 768;
+	displayConfig->fullscreenRefreshRate = 60;
+	displayConfig->fullscreen = false;
+	displayConfig->lockWindowResolution = false;
+	displayConfig->enableVsync = true;
+	displayConfig->enableTripleBuffer = false;
+	displayConfig->antiAliasing = 0;
 	displayConfig->sampleCount = 1;
 	displayConfig->sampleQuality = 0;
-	displayConfig->enableTripleBuffer = false;
-	displayConfig->enableVsync = true;
-	displayConfig->lockWindowResolution = false;
 	g_renderDevice = createPCDX11RenderDevice(hwnd1, 640, 480, 0);
 
 	{
