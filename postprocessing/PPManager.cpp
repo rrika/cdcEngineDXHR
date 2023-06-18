@@ -35,10 +35,13 @@ bool PPManager::createScene(
 
 		auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
 		cdc::CommonRenderTarget *aaDst;
+		bool fastblur = true;
 
 		if (rt == rtDest) {
 			auto *tempRenderTarget = renderDevice->dx11_createRenderTarget(
-				100, 100, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, 0x18, cdc::kTextureClass2D);
+				100, 100,
+				fastblur ? DXGI_FORMAT_B8G8R8A8_UNORM : DXGI_FORMAT_B8G8R8A8_UNORM_SRGB,
+				0x18, cdc::kTextureClass2D);
 			tempRenderTarget->getRenderTexture11()->createRenderTargetView();
 			aaDst = tempRenderTarget;
 
@@ -55,10 +58,19 @@ bool PPManager::createScene(
 				nullptr);
 		}
 
-		PPAntiAlias(
-			/*src=*/ rt->getRenderTexture(),
-			/*dst=*/ aaDst,
-			/*passMask=*/ 0x100);
+		if (fastblur)
+			PPFastBlur(
+				/*src=*/ rt->getRenderTexture(),
+				/*dst=*/ aaDst,
+				/*passMask=*/ 0x100,
+				/*isHorizonalPass=*/ true,
+				/*weighted=*/ false);
+		else
+			PPAntiAlias(
+				/*src=*/ rt->getRenderTexture(),
+				/*dst=*/ aaDst,
+				/*passMask=*/ 0x100);
+
 		rt = aaDst;
 
 		if (rt != rtDest) {

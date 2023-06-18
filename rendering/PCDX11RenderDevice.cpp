@@ -1,5 +1,6 @@
 #include "BuiltinResources.h"
 #include "drawables/PCDX11ClearDrawable.h"
+#include "drawables/PCDX11FastBlurDrawable.h"
 #include "LinearAllocator.h"
 #include "PCDX11DeviceManager.h"
 #include "PCDX11LightManager.h"
@@ -974,6 +975,31 @@ void PCDX11RenderDevice::ApplyMLAA(
 	stateManager->popRenderTargets();
 }
 
+void PCDX11RenderDevice::fastBlur(
+	PCDX11BaseTexture *texture, PCDX11RenderTarget *renderTarget,
+	uint32_t passMask, bool isHorizontal, /*TODO*/ bool weighted)
+{
+	if (passMask) {
+		auto *drawable = new (linear30) PCDX11FastBlurDrawable(
+			this, texture, renderTarget, isHorizontal, weighted);
+		recordDrawable(drawable, passMask, 0);
+	}
+}
+
+
+PCDX11ComputeShader *PCDX11RenderDevice::getBlurShader(bool horizontal, uint32_t kind) {
+	PCDX11ShaderLib *sl;
+
+	if (kind == 0 || kind >= 3)
+		sl = shlib_4; // fastblur 0
+	else if (kind == 1)
+		sl = shlib_3; // fastblur 1
+	else if (kind == 2)
+		sl = shlib_2; // bilateral blur
+
+	auto *cst = static_cast<PCDX11ComputeShaderTable*>(sl->table);
+	return cst->computeShaders[horizontal ? 1 : 0];
+}
 
 CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t height, bool unknown) {
 	// createPCDX11DeviceManager(); // already done, else wouldn't have an hwnd

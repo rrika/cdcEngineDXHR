@@ -226,6 +226,10 @@ public:
 	void copySurface(PCDX11RenderTexture *texture, bool writeDepth, uint8_t rtMask);
 	void ApplyFXAA(uint32_t quality, PCDX11BaseTexture *texture, PCDX11RenderTarget *renderTarget);
 	void ApplyMLAA(PCDX11BaseTexture *texture, PCDX11RenderTarget *renderTarget);
+	void fastBlur(
+		PCDX11BaseTexture *texture, PCDX11RenderTarget *renderTarget,
+		uint32_t passMask, bool isHorizontal, bool weighted);
+	PCDX11ComputeShader *getBlurShader(bool horizontal, uint32_t kind);
 };
 
 CommonRenderDevice *createPCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t height, bool unknown);

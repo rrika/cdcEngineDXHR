@@ -500,7 +500,7 @@ int spinnyCube(HWND window,
 	bool drawStreamGroups = true;
 	bool drawCellMeshes = true;
 	bool drawCellBoxes = false;
-	bool pointlessCopy = false;
+	bool pointlessCopy = true;
 	int showTempBuffer = -1;
 	cdc::Vector cameraPos{0, 0, 0};
 

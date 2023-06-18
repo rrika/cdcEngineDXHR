@@ -10,8 +10,18 @@
 
 using namespace cdc;
 
-void PPFastBlur(TextureMap *src, CommonRenderTarget *dst, uint32_t passMask /*...*/) {
-	// TODO
+void PPFastBlur(TextureMap *src, CommonRenderTarget *dst, uint32_t passMask, bool isHorizonalPass, bool weighted) {
+	if (g_CurrentRenderer == RENDERER_DX9) {
+		// empty
+	} else if (g_CurrentRenderer == RENDERER_DX11) {
+		auto *renderDevice = static_cast<PCDX11RenderDevice*>(g_renderDevice);
+		renderDevice->fastBlur(
+			/*texture*/ static_cast<PCDX11RenderTexture*>(src),
+			/*renderTarget*/ static_cast<PCDX11RenderTarget*>(dst),
+			passMask,
+			isHorizonalPass,
+			weighted);
+	}
 }
 
 void PPAntiAlias(TextureMap *src, CommonRenderTarget *dst, uint32_t passMask) {
