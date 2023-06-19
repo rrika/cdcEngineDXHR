@@ -6,6 +6,7 @@
 #include "cdcResource/ResolveSection.h"
 #include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h"
+#include "cdcWorld/Instance.h"
 
 void buildUI(DeferredRenderingExtraData *extra) {
 	ImGui::Text("scale mode %d",
@@ -45,5 +46,28 @@ void buildUI(UIActions& uiact, dtp::Intro *intro) {
 			auto *extraData = (LensFlareAndCoronaExtraData*) intro->extraData1;
 			buildUI(extraData);
 		}
+	}
+}
+
+void buildUI(UIActions& uiact, Instance *instance) {
+	if (ImGui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen)) {
+		ImGui::Text("Position         %f %f %f",
+			instance->position.x,
+			instance->position.y,
+			instance->position.z);
+		ImGui::Text("SceneEntity      %p", instance->sceneEntity);
+		ImGui::Text("InstanceDrawable %p", instance->instanceDrawable);
+	}
+	if (ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
+		buildUI(uiact, instance->object);
+	}
+	if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
+		// TODO
+	}
+	if (ImGui::CollapsingHeader("ObjectComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
+		// TODO
+	}
+	if (ImGui::CollapsingHeader("MeshComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
+		// TODO
 	}
 }

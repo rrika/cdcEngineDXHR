@@ -15,6 +15,8 @@ namespace dtp {
 	struct IMFRef;
 }
 
+class Instance;
+
 struct UIActions {
 	virtual void select(cdc::IRenderTerrain *renderTerrain) = 0;
 	virtual void select(cdc::RenderMesh*) = 0;
@@ -25,4 +27,5 @@ struct UIActions {
 	virtual void select(cdc::ScriptType*) = 0;
 	virtual void select(dtp::Intro *intro) = 0;
 	virtual void select(dtp::IMFRef *imfRef) = 0;
+	virtual void select(Instance *instance) = 0;
 };

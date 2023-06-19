@@ -87,6 +87,8 @@
 #include "cdcScene/SceneEntity.h"
 #include "cdcSound/SoundPlex.h"
 #include "cdcWorld/Inspector.h"
+#include "cdcWorld/Instance.h"
+#include "cdcWorld/InstanceManager.h"
 #include "cdcWorld/RMIDrawableBase.h"
 #include "cdcWorld/stream.h" // for buildUnitsUI
 #include "cdcWorld/StreamUnit.h"
@@ -243,6 +245,7 @@ struct SpinnyUIActions : public UIActions {
 	cdc::ScriptType *selectedScriptType = nullptr;
 	dtp::Intro *selectedIntro = nullptr;
 	dtp::IMFRef *selectedIMFRef = nullptr;
+	Instance *selectedInstance = nullptr;
 
 
 	void select(cdc::IRenderTerrain *renderTerrain) override {
@@ -273,6 +276,9 @@ struct SpinnyUIActions : public UIActions {
 	}
 	void select(dtp::IMFRef *imfRef) override {
 		selectedIMFRef = imfRef;
+	}
+	void select(Instance *instance) override {
+		selectedInstance = instance;
 	}
 };
 
@@ -886,11 +892,12 @@ int spinnyCube(HWND window,
 			std::string label;
 			dtp::Intro *intro;
 			cdc::IRenderTerrain *renderTerrain;
+			Instance *instance;
 		};
 
 		std::vector<FloatingButton> fbs {
-			// {{modelTranslation.x, modelTranslation.y, modelTranslation.z, 1}, "alc_beer_bottle_a", nullptr, nullptr},
-			// {{0, 0, 0, 1}, "origin", nullptr, nullptr}
+			// {{modelTranslation.x, modelTranslation.y, modelTranslation.z, 1}, "alc_beer_bottle_a", nullptr, nullptr, nullptr},
+			// {{0, 0, 0, 1}, "origin", nullptr, nullptr, nullptr}
 		};
 
 		// all the other objects
@@ -929,6 +936,7 @@ int spinnyCube(HWND window,
 						{intro.position[0], intro.position[1], intro.position[2], 1},
 						name,
 						&intro,
+						nullptr,
 						nullptr
 					});
 
@@ -980,6 +988,20 @@ int spinnyCube(HWND window,
 			}
 		}
 
+
+		if (!editorMode) {
+			for (Instance *instance : InstanceManager::s_instances) {
+				const char *name = instance->object ? cdc::objectName(instance->object->dword14) : "no object";
+				fbs.push_back({
+					{instance->position.x, instance->position.y, instance->position.z, 1},
+					name,
+					nullptr,
+					nullptr,
+					instance
+				});
+			}
+		}
+
 		// single bottle at origin
 		// rmiDrawable.draw(&bottleWorldMatrix, 0.0f);
 		sceneCube->setMatrix(bottleWorldMatrix);
@@ -1016,7 +1038,8 @@ int spinnyCube(HWND window,
 						{nodes->center[0], nodes->center[1], nodes->center[2], 1},
 						"[render terrain]",
 						nullptr,
-						renderTerrain
+						renderTerrain,
+						nullptr
 					});
 				static_cast<cdc::PCDX11RenderTerrain*>(renderTerrain)->hackDraw(rti, &instanceMatrix);
 			}
@@ -1199,7 +1222,7 @@ int spinnyCube(HWND window,
 				projPos.z /= projPos.w;
 
 				if (viewPos.z >= 0 && viewPos.z < 5000.0f)
-					fbs2.push_back({projPos, (std::string&&) fb.label, fb.intro, fb.renderTerrain});
+					fbs2.push_back({projPos, (std::string&&) fb.label, fb.intro, fb.renderTerrain, fb.instance});
 			}
 
 			std::sort(fbs2.begin(), fbs2.end(), [](FloatingButton const &a, FloatingButton const &b) {
@@ -1227,14 +1250,19 @@ int spinnyCube(HWND window,
 				char name[64];
 				if (fb.intro)
 					snprintf(name, 64, "fbx%x", (uint32_t)fb.intro);
+				else if (fb.instance)
+					snprintf(name, 64, "fbx%x", (uint32_t)fb.instance);
 				else
 					snprintf(name, 64, "fb%d", i++);
 				if (ImGui::Begin(name, &open, window_flags)) {
 					if (ImGui::Button(fb.label.c_str())) {
 						if (fb.intro)
 							uiact.select(fb.intro);
-						else
+						else if (fb.renderTerrain)
 							uiact.select(fb.renderTerrain);
+						else if (fb.instance) {
+							uiact.select(fb.instance);
+						}
 					}
 				}
 				ImGui::End();
@@ -1466,6 +1494,14 @@ int spinnyCube(HWND window,
 			ImGui::End();
 			if (!showWindow)
 				uiact.select((cdc::ScriptType*)nullptr);
+		}
+		if (uiact.selectedInstance) {
+			bool showWindow = true;
+			ImGui::Begin("Instance", &showWindow);
+			buildUI(uiact, uiact.selectedInstance);
+			ImGui::End();
+			if (!showWindow)
+				uiact.select((Instance*)nullptr);
 		}
 		if (showDRMWindow) {
 			drmexplorer.draw(uiact, &showDRMWindow);

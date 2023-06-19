@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "cdc/dtp/objectproperties/intro.h"
 
 class Instance;
@@ -14,4 +15,6 @@ public:
 		else
 			return CreateInstance2();
 	}
+
+	static std::vector<Instance*> s_instances;
 };
