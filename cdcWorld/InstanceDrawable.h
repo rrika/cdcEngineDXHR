@@ -16,6 +16,7 @@ struct Matrix;
 class IMatrixState;
 
 class MeshComponent : public InstanceComponent {
+public:
 	Instance *m_instance; // 4
 	uint8_t m_currentRenderModel = 0; // 8
 	uint8_t m_currentBaseModel = 0; // 9

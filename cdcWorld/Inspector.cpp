@@ -68,6 +68,23 @@ void buildUI(UIActions& uiact, Instance *instance) {
 		// TODO
 	}
 	if (ImGui::CollapsingHeader("MeshComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
-		// TODO
+		cdc::MeshComponent& mc = instance->GetMeshComponent();
+		dtp::Model *currentModel = mc.GetModel();
+		uint32_t numModels = instance->GetNumModels();
+		dtp::Model **models = instance->GetModels();
+
+		const char *names[] = {
+			"Model 0",
+			"Model 1"
+		};
+
+		if (ImGui::BeginListBox("##models")) {
+			for (uint32_t i=0; i<numModels; i++) {
+				const bool is_selected = models[i] == currentModel;
+				if (ImGui::Selectable(i < 2 ? names[i] : "Model", is_selected))
+					mc.SetModel(i);
+			}
+			ImGui::EndListBox();
+		}
 	}
 }
