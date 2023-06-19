@@ -10,6 +10,15 @@ class ISceneCellGroup;
 class ISceneEntity {
 public:
 	struct UpdateState {
+		static const uint32_t kEnabled = 1;
+		static const uint32_t kDrawable = 2;
+		static const uint32_t kCellGroup = 4;
+		static const uint32_t kMatrix = 8;
+		static const uint32_t kMoveState = 16;
+		static const uint32_t kUpdateVolume = 32;
+		static const uint32_t kUpdateFlags = 64;
+		static const uint32_t kUpdateAll = 127;
+
 		uint32_t updateFlags;
 		bool enabled;
 		IDrawable *drawable;

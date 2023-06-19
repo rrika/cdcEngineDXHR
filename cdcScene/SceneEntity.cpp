@@ -13,11 +13,36 @@ SceneEntity::SceneEntity(Scene *scene) : scene(scene) {
 void SceneEntity::ApplyUpdateState(UpdateState *updateState) {
 	// called from UpdateInstances
 	// without this, the object might still render in the correct position
-	// but QueryVolumeFromDrawable can't move the culling volume away from origin
-	
-	// HACK
-	if (updateState && (updateState->updateFlags & 8))
+	// but TransformVolumeAndPivot can't move the culling volume away from origin
+
+	if (updateState->updateFlags & UpdateState::kEnabled) {
+		// TODO
+	}
+
+	if (updateState->updateFlags & UpdateState::kDrawable) {
+		// TODO
+	}
+
+	if (updateState->updateFlags & UpdateState::kCellGroup) {
+		// TODO
+	}
+
+	if (updateState->updateFlags & UpdateState::kMatrix) {
+		// TODO
 		setMatrix(updateState->matrix);
+	}
+
+	if (updateState->updateFlags & UpdateState::kMoveState) {
+		// TODO
+	}
+
+	if (updateState->updateFlags & (UpdateState::kUpdateVolume | UpdateState::kDrawable)) {
+		// TODO
+	}
+
+	if (updateState->updateFlags & (UpdateState::kUpdateFlags | UpdateState::kDrawable)) {
+		// TODO
+	}
 }
 
 void SceneEntity::setMatrix(Matrix& newMatrix) {
