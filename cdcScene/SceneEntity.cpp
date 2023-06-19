@@ -10,6 +10,16 @@ SceneEntity::SceneEntity(Scene *scene) : scene(scene) {
 	scene->AddEntity(this);
 }
 
+void SceneEntity::ApplyUpdateState(UpdateState *updateState) {
+	// called from UpdateInstances
+	// without this, the object might still render in the correct position
+	// but QueryVolumeFromDrawable can't move the culling volume away from origin
+	
+	// HACK
+	if (updateState && (updateState->updateFlags & 8))
+		setMatrix(updateState->matrix);
+}
+
 void SceneEntity::setMatrix(Matrix& newMatrix) {
 	matrix = newMatrix;
 	QueryVolumeFromDrawable();

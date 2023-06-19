@@ -27,6 +27,7 @@ public:
 	SceneEntity(Scene *scene);
 
 	// 25 methods
+	void ApplyUpdateState(UpdateState*) override;
 	void setMatrix(Matrix&) override;
 	Matrix& getMatrix() override;
 	void setDrawable(IDrawable *) override;

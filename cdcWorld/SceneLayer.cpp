@@ -74,7 +74,16 @@ static void UpdateInstances() { // 2052
 		// TODO
 		if (i->sceneEntity)
 			SceneLayer::AddInstance(i);
+
 		// TODO
+
+		if (i->sceneEntity) {
+			SceneEntity::UpdateState us;
+			us.updateFlags = 8; // update the matrix
+			us.matrix = *i->GetTransformComponent().m_matrix;
+			i->sceneEntity->ApplyUpdateState(&us);
+		}
+
 		id->RemoveFromDirtyList(); // via ValidateAll
 	}
 }

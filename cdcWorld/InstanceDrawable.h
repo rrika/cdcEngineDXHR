@@ -55,6 +55,8 @@ public:
 
 	void GetBoundingVolume(cdc::BasicCullingVolume*) override;
 	void draw(cdc::Matrix *, float) override;
+	bool GetBoundingSphere(Vector *pCenter, float *pRadius) override;
+	bool GetBoundingBox(Vector *pMin, Vector *pMax) override;
 
 	void AddToDirtyList();
 	void RemoveFromDirtyList();

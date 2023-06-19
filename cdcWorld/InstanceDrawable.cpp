@@ -4,7 +4,9 @@
 #include "cdcWorld/Instance.h"
 #include "rendering/CommonRenderDevice.h"
 #include "rendering/Culling/BasicPrimitives.h"
+#include "rendering/Culling/BasicPrimitives_inlines.h" // for SetFromMinMax
 #include "rendering/PCDX11MatrixState.h"
+#include "rendering/RenderMesh.h"
 
 namespace cdc {
 
@@ -82,9 +84,28 @@ InstanceDrawable::InstanceDrawable(Instance *instance) :
 }
 
 void InstanceDrawable::GetBoundingVolume(BasicCullingVolume *volume) {
-	// HACK
-	BasicCullingVolume everything;
-	*volume = everything;
+
+	Vector center, min, max;
+	float radius;
+
+	if (GetBoundingSphere(&center, &radius)) {
+		CullingSphere sphere {center};
+		const float minimumRadius = 1.0f / 0x4000;
+		if (radius < minimumRadius)
+			radius = minimumRadius;
+		sphere.m_sphereEq.w = radius;
+		volume->m_data.sphere = sphere;
+		volume->m_type = kVolumeSphere;
+
+	} else if (GetBoundingBox(&min, &max)) {
+		CullingBox box;
+		box.SetFromMinMax({min}, {max});
+		volume->m_data.box = box;
+		volume->m_type = kVolumeBox;
+
+	} else {
+		volume->m_type = kVolumeEverything;
+	}
 }
 
 void InstanceDrawable::draw(Matrix *, float) {
@@ -113,6 +134,19 @@ void InstanceDrawable::draw(Matrix *, float) {
 
 		rmi->recordDrawables(m_pMatrixState);
 	}
+}
+
+bool InstanceDrawable::GetBoundingSphere(Vector *pCenter, float *pRadius) {
+	// TODO
+	return false;
+}
+
+bool InstanceDrawable::GetBoundingBox(Vector *pMin, Vector *pMax) {
+	// HACK
+	MeshComponent& meshComponent = m_instance->GetMeshComponent();
+	cdc::RenderModelInstance *rmi = m_renderModelInstances[meshComponent.GetCurrentRenderModelIndex()];
+	cdc::RenderMesh const *rm = rmi->GetRenderMesh();
+	return rm->getBoundingBox(*(Vector3*)pMin, *(Vector3*)pMax);
 }
 
 void InstanceDrawable::AddToDirtyList() { // 2038
