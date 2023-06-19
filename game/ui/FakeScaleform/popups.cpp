@@ -1,12 +1,24 @@
 #include <vector>
 #include "imgui/imgui.h"
+#include "game/Impulse.h"
 #include "game/ui/NsPopupRequest.h"
 
 static std::vector<NsPopupRequest*> newPopups;
 static std::vector<NsPopupRequest*> popups;
 
-void submitPopupRequest(NsPopupRequest *popup) {
+void handlePopupRequest(void *popupManagerMovieController, IXYZ *arg) {
+	auto *popup = (NsPopupRequest*) arg->z;
 	newPopups.push_back(popup);
+}
+
+void registerPopupHandler() {
+	void *popupManagerMovieController = nullptr;
+	impulse_register(
+		54,
+		popupManagerMovieController,
+		popupManagerMovieController,
+		(ImpulseFunc*) &handlePopupRequest,
+		0);
 }
 
 void buildPopupsUI() {
@@ -48,6 +60,10 @@ void buildPopupsUI() {
 			popups.pop_back();
 		}
 	}
+}
+
+static void submitPopupRequest(NsPopupRequest *request) {
+	request->submit();
 }
 
 void buildPopupsMenu() {

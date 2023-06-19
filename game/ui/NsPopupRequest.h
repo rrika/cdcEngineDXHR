@@ -9,9 +9,10 @@ public:
 	bool m_mouseSet = false; // HACK
 public:
 	NsPopupRequest(const char *title, const char *message);
+	void submit();
 };
 
 // defined in fakescaleform/popups.cpp
-void submitPopupRequest(NsPopupRequest *popup);
+void registerPopupHandler();
 void buildPopupsMenu();
 void buildPopupsUI();

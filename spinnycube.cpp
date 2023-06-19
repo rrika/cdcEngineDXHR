@@ -289,6 +289,7 @@ int spinnyCube(HWND window,
 	ID3D11DeviceContext *baseDeviceContext) {
 
 	localstr_set_language(language_english, language_default);
+	registerPopupHandler();
 
 	std::unique_ptr<cdc::PCMouseKeyboard> mouseKeyboard(cdc::PCMouseKeyboard::create(window));
 	auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
