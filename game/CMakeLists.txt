@@ -1,6 +1,7 @@
 target_sources(dxhr PRIVATE
 	DeferredRenderingObject.cpp
 	Gameloop.cpp
+	Impulse.cpp
 	LensFlareAndCoronaID.cpp
 	Main.cpp
 	PackedVector.cpp
