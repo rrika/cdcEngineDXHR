@@ -19,6 +19,11 @@ dtp::Model *MeshComponent::GetModel() {
 	return models[m_currentRenderModel];
 }
 
+dtp::Model *MeshComponent::GetBaseModel() {
+	dtp::Model **models = m_instance->GetModels();
+	return models[m_currentBaseModel];
+}
+
 void MeshComponent::SetModel(uint32_t index) {
 	dtp::Model **models = m_instance->GetModels();
 	dtp::Model *baseModel = models[m_currentBaseModel];

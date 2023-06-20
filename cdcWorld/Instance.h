@@ -7,6 +7,7 @@
 #include "cdcWorld/UserDataComponent.h"
 
 namespace cdc {
+	class AnimComponentV2;
 	class IDrawable;
 	class SceneEntity;
 	struct Object;
@@ -54,6 +55,7 @@ public:
 
 	cdc::IDrawable *instanceDrawable = nullptr; // 23C
 	UserDataComponent *userDataComponent = nullptr; // 2E0
+	cdc::AnimComponentV2 *animComponentV2 = nullptr; // 2F8
 
 	bool enableOverridePose = true; // HACK
 	std::vector<cdc::Matrix> overridePose; // HACK

@@ -1,4 +1,6 @@
+#include "cdcAnim/AnimComponentV2.h"
 #include "cdcObjects/ObjectManager.h"
+#include "cdcSys/Assert.h"
 #include "Instance.h"
 #include "InstanceDrawable.h"
 #include "InstanceManager.h"
@@ -77,8 +79,8 @@ void Instance::InitCommonComponents(bool initEffects, bool unknown) { // line 28
 		if (object->numAnims + object->numPatterns > 0) {
 			dtp::ObjectBaseData *dtpData = object->dtpData;
 			if (dtpData->hasAnimGraph || dtpData->numHostedAnimGraphs) {
-				// animComponentV2 = new AnimComponentV2(this);
-				// animComponentV2->Init(meshComponent.GetBaseModel());
+				animComponentV2 = new AnimComponentV2(this);
+				animComponentV2->Init(meshComponent.GetBaseModel());
 			}
 		}
 	}

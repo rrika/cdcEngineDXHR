@@ -30,6 +30,7 @@ public:
 	MeshComponent(Instance *instance) : m_instance(instance) {}
 	uint8_t GetCurrentRenderModelIndex() { return m_currentRenderModel; }
 	dtp::Model *GetModel();
+	dtp::Model *GetBaseModel();
 	void SetModel(uint32_t index);
 	void SetModel(uint32_t index, dtp::Model *baseModel);
 };

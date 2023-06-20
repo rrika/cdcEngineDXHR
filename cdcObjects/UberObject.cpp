@@ -32,8 +32,8 @@ Instance *UBEROBJECT_BirthSectionInstance(Instance *parent, uint32_t modelIndex,
 	dtp::ObjectBaseData *dtpData = instance->object->dtpData;
 	if (dtpData->hasAnimGraph || dtpData->numHostedAnimGraphs) {
 		dtp::Model *model = instance->GetModels()[modelIndex];
-		// instance->animComponentV2 = new cdc::AnimComponentV2(instance);
-		// instance->animComponentV2->Init(model);
+		instance->animComponentV2 = new cdc::AnimComponentV2(instance);
+		instance->animComponentV2->Init(model);
 	}
 
 	return instance;

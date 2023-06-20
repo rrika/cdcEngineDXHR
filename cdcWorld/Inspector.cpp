@@ -185,6 +185,9 @@ void buildUI(UIActions& uiact, Instance *instance) {
 				c3d.position[2] = instance->position.z;
 			}
 	}
+	if (instance->animComponentV2 && ImGui::CollapsingHeader("AnimComponentV2", ImGuiTreeNodeFlags_DefaultOpen)) {
+		buildUI(uiact, instance->animComponentV2);
+	}
 	if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
 		cdc::TransformComponent& tc = instance->GetTransformComponent();
 		ImGui::Text("matrix %p", tc.m_matrix);

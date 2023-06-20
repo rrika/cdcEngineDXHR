@@ -125,3 +125,7 @@ void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
 
 	ImGui::Unindent();
 }
+
+void buildUI(UIActions& uiact, AnimComponentV2 *ac) {
+	ImGui::Text("todo");
+}
