@@ -19,8 +19,8 @@ struct Object {
 	uint32_t dword30;
 	uint16_t word34;
 	uint16_t numModels;
-	uint16_t uberFake1;
-	uint16_t uberFake2;
+	uint16_t numAnims;
+	uint16_t numPatterns;
 	uint16_t word3C;
 	uint8_t f3E[2];
 	dtp::Model **models;

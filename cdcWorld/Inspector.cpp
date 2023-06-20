@@ -75,6 +75,9 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			if (ImGui::SmallButton(i < 2 ? names[i] : "Sound"))
 				cdc::SOUND_StartPaused(dtpData->sounds[i].m_plex, /*delay=*/ 0.0f);
 	}
+	if (instance->animComponentV2 && ImGui::CollapsingHeader("AnimComponentV2", ImGuiTreeNodeFlags_DefaultOpen)) {
+		// TODO
+	}
 	// if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
 	// 	// TODO
 	// }

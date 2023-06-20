@@ -6,6 +6,7 @@
 #include "cdcWorld/InstanceDrawable.h" // for MeshComponent
 
 namespace cdc {
+	class AnimComponentV2;
 	class IDrawable;
 	class SceneEntity;
 	struct Object;
@@ -51,6 +52,7 @@ public:
 	cdc::MeshComponent meshComponent {this}; // 218
 
 	cdc::IDrawable *instanceDrawable = nullptr; // 23C
+	cdc::AnimComponentV2 *animComponentV2 = nullptr; // 2F8
 
 public:
 	static Instance *IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, bool force); // line 1672

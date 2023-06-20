@@ -1,5 +1,7 @@
+#include "cdcAnim/AnimComponentV2.h"
 #include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h"
+#include "cdcSys/Assert.h"
 #include "Instance.h"
 #include "InstanceDrawable.h"
 #include "InstanceManager.h"
@@ -61,6 +63,16 @@ void Instance::InitCommonComponents(bool initEffects, bool unknown) { // line 28
 	// this runs after DefaultInit
 
 	// TODO
+
+	if (object->numAnims + object->numPatterns > 0) {
+		// apparently this never happens
+		cdc::FatalError("prove me wrong");
+		animComponentV2 = new AnimComponentV2(this);
+		animComponentV2->instantiate(meshComponent.GetBaseModel());
+	}
+
+	// TODO
+
 	if (unknown)
 		objectComponent.SetProcessFunctions();
 	objectComponent.SetInstance(this);
