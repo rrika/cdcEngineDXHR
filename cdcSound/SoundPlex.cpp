@@ -57,6 +57,7 @@ SoundPlex *SoundPlexCollection::Create( // line 126
 ) {
 	SoundPlex *plex = nullptr;
 
+retry:
 	printf("SoundPlexCollection::Create type=%d (%s)\n",
 		snd->m_type,
 		snd->m_type >= 17 ? "???" : soundPlexNodeNames[snd->m_type]);
@@ -70,9 +71,14 @@ SoundPlex *SoundPlexCollection::Create( // line 126
 		break;
 
 	case dtp::SoundPlex::SoundPlexSelector_Reference1: // 1
-	case dtp::SoundPlex::SoundPlexSelector_Reference2: // 2
-		// TODO
-		break;
+	case dtp::SoundPlex::SoundPlexSelector_Reference2: { // 2
+		auto data = *(uint32_t*)snd->m_data;
+		snd = (dtp::SoundPlex*)cdc::g_resolveSections[7]->getWrapped(data); // HACK
+		if (!snd)
+			return nullptr;
+
+		goto retry;
+	}
 
 	case dtp::SoundPlex::SoundPlexSelector_Wave: { // 3
 		// TODO
@@ -245,10 +251,16 @@ void buildUI(dtp::SoundPlex *snd, std::string indent) {
 		break;
 
 	case dtp::SoundPlex::SoundPlexSelector_Reference1: // 1
-		break;
-
 	case dtp::SoundPlex::SoundPlexSelector_Reference2: // 2
+	{
+		auto data = *(uint32_t*)snd->m_data;
+		ImGui::SameLine();
+		ImGui::Text("%04x", data);
+		auto *refplex = (dtp::SoundPlex*)cdc::g_resolveSections[7]->getWrapped(data);
+		if (refplex)
+			buildUI(refplex, indent + "  ");
 		break;
+	}
 
 	case dtp::SoundPlex::SoundPlexSelector_Wave: { // 3
 		auto *data = (dtp::SoundPlex::Wave*)snd->m_data;
