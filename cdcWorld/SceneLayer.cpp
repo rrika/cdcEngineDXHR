@@ -72,7 +72,7 @@ static void UpdateInstances() { // 2052
 	while (auto *id = InstanceDrawable::s_pFirstDirty) {
 		Instance *i = id->m_instance;
 		// TODO
-		if (i->sceneEntity)
+		if (!i->sceneEntity)
 			SceneLayer::AddInstance(i);
 
 		// TODO

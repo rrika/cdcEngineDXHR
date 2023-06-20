@@ -7,6 +7,7 @@
 namespace cdc {
 
 SceneEntity::SceneEntity(Scene *scene) : scene(scene) {
+	// called from SceneLayer::AddInstance
 	scene->AddEntity(this);
 }
 

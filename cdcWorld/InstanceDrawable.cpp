@@ -173,6 +173,10 @@ void InstanceDrawable::RemoveFromDirtyList() { // 2052
 		m_pNextDirty->m_pPrevDirty = m_pPrevDirty;
 	else
 		s_pLastDirty = m_pPrevDirty;
+
+	// HACK
+	m_pNextDirty = nullptr;
+	m_pPrevDirty = nullptr;
 }
 
 }

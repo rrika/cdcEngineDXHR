@@ -38,7 +38,7 @@ public:
 
 	dtp::Model **modelsOverride = nullptr; // 5C
 	uint32_t numOverrideModels = 0; // 60
-	cdc::SceneEntity *sceneEntity; // 64
+	cdc::SceneEntity *sceneEntity = nullptr; // 64
 	cdc::Object *derivedObject; // 6C
 
 	// the matrices buffer is allocated by MeshComponent::SetModel
