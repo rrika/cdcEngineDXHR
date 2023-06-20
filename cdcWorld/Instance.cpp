@@ -103,6 +103,11 @@ void Instance::DefaultInit( // line 2977
 
 	// TODO
 
+	intro = pIntro;
+	introData = pIntroData;
+
+	// TODO
+
 	meshComponent.SetModel(modelNum);
 
 	// TODO

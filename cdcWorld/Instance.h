@@ -44,6 +44,8 @@ public:
 	// the matrices buffer is allocated by MeshComponent::SetModel
 	// the matrices are filled in by ObjectComponent::InstanceInit/G2Instance_SetTransformsToIdentity
 	cdc::TransformComponent transformComponent; // 90
+	dtp::Intro *intro; // 124
+	void *introData; // 128
 	cdc::ObjectComponent objectComponent; // 138
 
 	cdc::MeshComponent meshComponent {this}; // 218
