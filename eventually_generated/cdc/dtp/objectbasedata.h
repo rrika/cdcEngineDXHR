@@ -11,8 +11,17 @@ class ObjectBlobAnim;
 namespace dtp {
 
 struct Model;
+struct SoundPlex;
 
 struct ObjectBaseData {
+
+	struct SoundHandle {
+		dtp::SoundPlex* m_plex;
+		uint16_t word4;
+		uint16_t word6;
+		uint32_t dword8;
+	};
+
 	uint32_t dword0;
 		// 20000000 see MeshComponent::SetModel
 	uint32_t dword4;
@@ -51,8 +60,8 @@ struct ObjectBaseData {
 	int field_78_cloth;
 	int field_7C_softBody;
 	uint32_t dword80;
-	uint32_t hasSoundMaybe;
-	uint32_t dword88;
+	uint32_t numSounds;
+	SoundHandle *sounds;
 	uint32_t dword8C;
 	uint32_t dword90;
 	uint32_t dword94_softAccessory;

@@ -4,6 +4,7 @@
 #include "game/DeferredRenderingObject.h"
 #include "game/LensFlareAndCoronaID.h"
 #include "cdcResource/ResolveSection.h"
+#include "cdcSound/SoundPlex.h"
 #include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcWorld/Instance.h"
@@ -58,15 +59,28 @@ void buildUI(UIActions& uiact, Instance *instance) {
 		ImGui::Text("SceneEntity      %p", instance->sceneEntity);
 		ImGui::Text("InstanceDrawable %p", instance->instanceDrawable);
 	}
-	if (ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
+	if (ImGui::CollapsingHeader("Intro", ImGuiTreeNodeFlags_DefaultOpen)) {
+		buildUI(uiact, instance->intro);
+	}
+	if (instance->intro == nullptr && ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
 		buildUI(uiact, instance->object);
 	}
-	if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
-		// TODO
+	if (ImGui::CollapsingHeader("SoundComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
+		dtp::ObjectBaseData *dtpData = instance->object->dtpData;
+		const char *names[] = {
+			"Sound 0",
+			"Sound 1"
+		};
+		for (uint32_t i=0; i<dtpData->numSounds; i++)
+			if (ImGui::SmallButton(i < 2 ? names[i] : "Sound"))
+				cdc::SOUND_StartPaused(dtpData->sounds[i].m_plex, /*delay=*/ 0.0f);
 	}
-	if (ImGui::CollapsingHeader("ObjectComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
-		// TODO
-	}
+	// if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
+	// 	// TODO
+	// }
+	// if (ImGui::CollapsingHeader("ObjectComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
+	// 	// TODO
+	// }
 	if (ImGui::CollapsingHeader("MeshComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
 		cdc::MeshComponent& mc = instance->GetMeshComponent();
 		dtp::Model *currentModel = mc.GetModel();
