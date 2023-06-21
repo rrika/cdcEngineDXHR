@@ -10,6 +10,7 @@ class ObjectBlobAnim;
 
 namespace dtp {
 
+struct AnimStateGraph;
 struct Model;
 struct SoundPlex;
 
@@ -47,9 +48,9 @@ struct ObjectBaseData {
 	uint16_t word42;
 	uint32_t dword44;
 	uint32_t dword48;
-	cdc::AnimGraphRequest **pAnimGraphReq4C;
+	dtp::AnimStateGraph **pAnimGraphReq4C;
 	uint32_t numAnimGraphs50;
-	struct { cdc::AnimGraphRequest *req; uint32_t unk4; } *animgraphs54;
+	struct { dtp::AnimStateGraph *req; uint32_t unk4; } *animgraphs54;
 	uint32_t dword58;
 	uint32_t dword5C;
 	uint32_t dword60;
