@@ -1,13 +1,14 @@
 #include "Inspector.h"
 #include "3rdParty/imgui/imgui.h"
 #include "cdc/dtp/objectproperties/intro.h"
-#include "game/DeferredRenderingObject.h"
-#include "game/LensFlareAndCoronaID.h"
+#include "cdcAnim/Inspector.h"
 #include "cdcResource/ResolveSection.h"
 #include "cdcSound/SoundPlex.h"
-#include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcWorld/Instance.h"
+#include "cdcWorld/Object.h"
+#include "game/DeferredRenderingObject.h"
+#include "game/LensFlareAndCoronaID.h"
 
 void buildUI(DeferredRenderingExtraData *extra) {
 	ImGui::Text("scale mode %d",
@@ -58,6 +59,12 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			instance->position.z);
 		ImGui::Text("SceneEntity      %p", instance->sceneEntity);
 		ImGui::Text("InstanceDrawable %p", instance->instanceDrawable);
+
+		dtp::ObjectBaseData *dtpData = instance->object->dtpData;
+		ImGui::Text("dtpData->dword48         %08X", dtpData->dword48);
+		ImGui::Text("dtpData->pAnimGraphReq4C %p", dtpData->pAnimGraphReq4C);
+		ImGui::Text("dtpData->numAnimGraphs50 %08X", dtpData->numAnimGraphs50);
+		ImGui::Text("dtpData->animgraphs54    %p", dtpData->animgraphs54);
 	}
 	if (ImGui::CollapsingHeader("Intro", ImGuiTreeNodeFlags_DefaultOpen)) {
 		buildUI(uiact, instance->intro);
@@ -76,11 +83,19 @@ void buildUI(UIActions& uiact, Instance *instance) {
 				cdc::SOUND_StartPaused(dtpData->sounds[i].m_plex, /*delay=*/ 0.0f);
 	}
 	if (instance->animComponentV2 && ImGui::CollapsingHeader("AnimComponentV2", ImGuiTreeNodeFlags_DefaultOpen)) {
-		// TODO
+		buildUI(uiact, instance->animComponentV2);
 	}
-	// if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
-	// 	// TODO
-	// }
+	if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
+		cdc::TransformComponent& tc = instance->GetTransformComponent();
+		ImGui::Text("matrix %p", tc.m_matrix);
+		if (tc.m_matrix) {
+			for (uint32_t rowIndex=0; rowIndex<4; rowIndex++) {
+				float *row = tc.m_matrix->m[rowIndex];
+				ImGui::Text("%-5.3f %-5.3f %-5.3f %-5.3f",
+					row[0], row[1], row[2], row[3]);
+			}
+		}
+	}
 	// if (ImGui::CollapsingHeader("ObjectComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
 	// 	// TODO
 	// }

@@ -4,8 +4,8 @@
 #include "ResolveObject.h"
 #include "cdcFile/FileHelpers.h"
 #include "cdcFile/FileSystem.h"
-#include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h"
+#include "cdcWorld/Object.h"
 #include "config.h"
 
 #ifdef ENABLE_IMGUI

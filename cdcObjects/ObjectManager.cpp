@@ -11,8 +11,8 @@
 
 #if ENABLE_IMGUI
 #include "../imgui/imgui.h"
-#include "cdcObjects/Object.h"
 #include "cdcResource/ResolveSection.h"
+#include "cdcWorld/Object.h"
 #endif
 
 #ifndef _WIN32

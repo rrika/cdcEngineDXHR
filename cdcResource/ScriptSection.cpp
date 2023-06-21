@@ -3,12 +3,12 @@
 #include "ScriptSection.h"
 #include "cdcFile/FileHelpers.h"
 #include "cdcFile/FileSystem.h"
-#include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcResource/ResolveObject.h"
 #include "cdcScript/NativeScriptType.h"
 #include "cdcScript/ScriptManager.h"
 #include "cdcScript/ScriptType.h"
+#include "cdcWorld/Object.h"
 
 namespace cdc {
 

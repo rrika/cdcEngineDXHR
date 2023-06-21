@@ -3,6 +3,7 @@
 #include <unordered_map>
 
 // named after the generic console command in half-life
+// this might correspond to EventSystem in Tomb Raider
 
 struct ImpulseEntry {
 	uint32_t index;

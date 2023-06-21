@@ -48,7 +48,7 @@ struct ObjectBaseData {
 	uint32_t dword44;
 	uint32_t dword48;
 	cdc::AnimGraphRequest **pAnimGraphReq4C;
-	uint32_t numAnimGraphs54;
+	uint32_t numAnimGraphs50;
 	struct { cdc::AnimGraphRequest *req; uint32_t unk4; } *animgraphs54;
 	uint32_t dword58;
 	uint32_t dword5C;
@@ -106,5 +106,7 @@ struct ObjectBaseData {
 	uint32_t dword128;
 	uint32_t hasDeferredLightMaybe;
 };
+
+static_assert(sizeof(ObjectBaseData) == 0x130);
 
 }

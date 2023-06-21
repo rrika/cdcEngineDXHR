@@ -1,7 +1,7 @@
 #include "cdcAnim/AnimComponentV2.h"
-#include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcSys/Assert.h"
+#include "cdcWorld/Object.h"
 #include "Instance.h"
 #include "InstanceDrawable.h"
 #include "InstanceManager.h"
@@ -64,11 +64,25 @@ void Instance::InitCommonComponents(bool initEffects, bool unknown) { // line 28
 
 	// TODO
 
-	if (object->numAnims + object->numPatterns > 0) {
-		// apparently this never happens
-		cdc::FatalError("prove me wrong");
-		animComponentV2 = new AnimComponentV2(this);
-		animComponentV2->instantiate(meshComponent.GetBaseModel());
+	if (objectFamilyId != /*UberObject*/ 2) {
+		// UberObjects create their own components in
+		//   ObjectComponent::InstanceInit (called below)
+		//   UBEROBJECT_DX3_Init
+		//   UberObjectComposite_DX3
+		//   CreateSections
+		//   CreateSectionInstance
+		//   UBEROBJECT_BirthSectionInstance
+
+		if (object->numAnims + object->numPatterns > 0) {
+			// apparently this never happens
+			cdc::FatalError("prove me wrong");
+
+			dtp::ObjectBaseData *dtpData = object->dtpData;
+			if (dtpData->dword44 || dtpData->numAnimGraphs50) {
+				animComponentV2 = new AnimComponentV2(this);
+				animComponentV2->instantiate(meshComponent.GetBaseModel());
+			}
+		}
 	}
 
 	// TODO

@@ -40,7 +40,6 @@
 #include "input/PCMouseKeyboard.h"
 #include "cdcLocale/localstr.h"
 #include "cdcMath/Math.h" // for cdc::Matrix
-#include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h" // for buildObjectsUI
 #include "postprocessing/PPManager.h"
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
@@ -90,6 +89,7 @@
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/InstanceDrawable.h"
 #include "cdcWorld/InstanceManager.h"
+#include "cdcWorld/Object.h"
 #include "cdcWorld/RMIDrawableBase.h"
 #include "cdcWorld/stream.h" // for buildUnitsUI
 #include "cdcWorld/StreamUnit.h"
@@ -1251,14 +1251,20 @@ int spinnyCube(HWND window,
 				ImVec2 window_pos_pivot = {0.5f, 0.5f};
 				ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
 				bool open=true;
-				char name[64];
-				if (fb.intro)
+				char name[128];
+				// this ensures that objects at the same position are packed into the same window
+				snprintf(name, 128, "fb%f,%f,%f", fb.pos.x, fb.pos.y, fb.pos.z);
+				/*if (fb.intro)
 					snprintf(name, 64, "fbx%x", (uint32_t)fb.intro);
 				else if (fb.instance)
 					snprintf(name, 64, "fbx%x", (uint32_t)fb.instance);
 				else
-					snprintf(name, 64, "fb%d", i++);
+					snprintf(name, 64, "fb%d", i++);*/
 				if (ImGui::Begin(name, &open, window_flags)) {
+					ImGui::PushID((void*)(
+						uintptr_t(fb.intro) |
+						uintptr_t(fb.renderTerrain) |
+						uintptr_t(fb.instance)));
 					if (ImGui::Button(fb.label.c_str())) {
 						if (fb.intro)
 							uiact.select(fb.intro);
@@ -1268,6 +1274,7 @@ int spinnyCube(HWND window,
 							uiact.select(fb.instance);
 						}
 					}
+					ImGui::PopID();
 				}
 				ImGui::End();
 			}

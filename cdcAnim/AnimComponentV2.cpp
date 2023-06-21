@@ -1,4 +1,5 @@
 #include "AnimComponentV2.h"
+#include "cdcAnim/AnimGraphFactory.h"
 #include "cdcWorld/cdcWorldTypes.h" // for dtp::Model*
 
 namespace cdc {

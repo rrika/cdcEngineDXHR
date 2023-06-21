@@ -4,6 +4,7 @@
 #include "cdcMath/Math.h"
 #include "cdcObjects/ObjectComponent.h"
 #include "cdcWorld/InstanceDrawable.h" // for MeshComponent
+#include "cdcWorld/UserDataComponent.h"
 
 namespace cdc {
 	class AnimComponentV2;
@@ -27,6 +28,7 @@ public:
 	Instance *next; // 0
 	Instance *prev; // 4
 	cdc::Object *object; // 8
+	int32_t introUniqueID; // C
 
 	uint16_t objectFamilyId; // 14
 	uint8_t flags = 0; // 18
@@ -52,6 +54,7 @@ public:
 	cdc::MeshComponent meshComponent {this}; // 218
 
 	cdc::IDrawable *instanceDrawable = nullptr; // 23C
+	UserDataComponent *userDataComponent = nullptr; // 2E0
 	cdc::AnimComponentV2 *animComponentV2 = nullptr; // 2F8
 
 public:
