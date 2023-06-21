@@ -1,15 +1,10 @@
 #pragma once
 #include <cstdint>
+#include <vector>
 
 namespace cdc {
 
 class IAnimGraphNode;
-
-template <typename T>
-struct AnimArrayView {
-	T *m_pData;
-	uint32_t m_size;
-};
 
 struct Plug {
 	IAnimGraphNode *node;
@@ -17,8 +12,8 @@ struct Plug {
 };
 
 struct PlugInfo {
-	AnimArrayView<Plug> outputPlugs;
-	AnimArrayView<Plug> inputPlugs;
+	std::vector<Plug> outputPlugs;
+	std::vector<Plug> inputPlugs;
 };
 
 }

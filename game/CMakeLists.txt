@@ -1,4 +1,5 @@
 target_sources(dxhr PRIVATE
+	Animation/AnimNodes/AnimDynamicFragmentNode.cpp
 	DeferredRenderingObject.cpp
 	Gameloop.cpp
 	Impulse.cpp

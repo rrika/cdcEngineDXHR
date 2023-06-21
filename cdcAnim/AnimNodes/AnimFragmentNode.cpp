@@ -1,6 +1,16 @@
 #include "AnimFragmentNode.h"
+#include "cdcAnim/AnimGraphFactory.h"
 
 namespace cdc {
+
+AnimGraphFactory::Registry<AnimFragmentNode, dtp::FragmentNode>
+	s_nodeFactory_AnimDynamicFragmentNode("cdc\\dtp\\animnodes\\Fragment.dtp");
+
+AnimFragmentNode::AnimFragmentNode(AnimComponentV2 *ac, dtp::FragmentNode *data) :
+	AnimPipelineNode(ac, /*numInputs=*/ 0, /*addToChain=*/ true)
+{
+	// TODO
+}
 
 void AnimFragmentNode::SetAnimData(uint16_t anim) {
 	// TODO
