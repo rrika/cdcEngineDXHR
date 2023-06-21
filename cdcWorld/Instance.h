@@ -3,6 +3,7 @@
 #include "cdcAnim/TransformComponent.h"
 #include "cdcMath/Math.h"
 #include "cdcObjects/ObjectComponent.h"
+#include "cdcWorld/BoneUsageComponent.h"
 #include "cdcWorld/InstanceDrawable.h" // for MeshComponent
 #include "cdcWorld/UserDataComponent.h"
 
@@ -53,6 +54,7 @@ public:
 
 	cdc::MeshComponent meshComponent {this}; // 218
 
+	cdc::BoneUsageComponent *boneUsageComponent = nullptr; // 238
 	cdc::IDrawable *instanceDrawable = nullptr; // 23C
 	UserDataComponent *userDataComponent = nullptr; // 2E0
 	cdc::AnimComponentV2 *animComponentV2 = nullptr; // 2F8

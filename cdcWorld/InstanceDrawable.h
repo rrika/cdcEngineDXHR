@@ -60,6 +60,7 @@ public:
 	bool GetBoundingSphere(Vector *pCenter, float *pRadius) override;
 	bool GetBoundingBox(Vector *pMin, Vector *pMax) override;
 
+	void TouchUpBoneUsageMaps();
 	void AddToDirtyList();
 	void RemoveFromDirtyList();
 };

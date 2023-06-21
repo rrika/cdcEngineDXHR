@@ -50,12 +50,15 @@ void ObjectSection::construct(uint32_t domainId, void *) {
 	if (objBlob->dtpData) {
 		// TODO
 		printf("  numModels     = %d\n", objBlob->dtpData->numModels);
-		objBlob->numModels = objBlob->dtpData->numModels;
+		objBlob->numModels   = objBlob->dtpData->numModels;
+		objBlob->numAnims    = objBlob->dtpData->numAnims;
+		// objBlob->numPatterns = 0; // huh?
 		// TODO
 		printf("  models        = %p\n", objBlob->dtpData->models);
 		objBlob->models = objBlob->dtpData->models;
 		if (objBlob->models && objBlob->numModels != 0)
 			printf("  models[0]     = %p\n", objBlob->models[0]);
+		objBlob->animations = objBlob->dtpData->animations;
 
 		// TODO		
 		printf("  TuneDataPtr   = %p\n", objBlob->dtpData->TuneDataPtr);

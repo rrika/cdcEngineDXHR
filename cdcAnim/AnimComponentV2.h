@@ -1,6 +1,10 @@
 #pragma once
+#include <cstdint>
 
-namespace dtp { struct Model; }
+namespace dtp {
+	struct AnimGraphExt;
+	struct Model;
+}
 
 class Instance;
 
@@ -16,6 +20,7 @@ public:
 
 	AnimComponentV2(Instance *instance);
 	void instantiate(dtp::Model *model);
+	dtp::AnimGraphExt *getExt(uint32_t index);
 };
 
 }

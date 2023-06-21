@@ -60,11 +60,24 @@ void buildUI(UIActions& uiact, Instance *instance) {
 		ImGui::Text("SceneEntity      %p", instance->sceneEntity);
 		ImGui::Text("InstanceDrawable %p", instance->instanceDrawable);
 
-		dtp::ObjectBaseData *dtpData = instance->object->dtpData;
-		ImGui::Text("dtpData->dword48         %08X", dtpData->dword48);
-		ImGui::Text("dtpData->pAnimGraphReq4C %p", dtpData->pAnimGraphReq4C);
-		ImGui::Text("dtpData->numAnimGraphs50 %08X", dtpData->numAnimGraphs50);
-		ImGui::Text("dtpData->animgraphs54    %p", dtpData->animgraphs54);
+		cdc::Object *object = instance->object;
+		dtp::ObjectBaseData *dtpData = object->dtpData;
+		for (uint32_t i=0; i<object->numAnims; i++) {
+			ImGui::Text("anim [%3d]                   %04x %04x %08x %08x", i,
+				object->animations[i].animID,
+				object->animations[i].word2,
+				object->animations[i].dword4,
+				object->animations[i].dword8);
+			auto animID = object->animations[i].animID;
+			auto *animSection = cdc::g_resolveSections[2];
+			if (cdc::AnimFragment *anim = (cdc::AnimFragment*)animSection->getWrapped(animSection->getDomainId(animID))) {
+				buildUI(uiact, anim);
+			}
+		}
+		ImGui::Text("dtpData->hasAnimGraph        %08X", dtpData->hasAnimGraph);
+		ImGui::Text("dtpData->pAnimGraph          %p", dtpData->pAnimGraph);
+		ImGui::Text("dtpData->numHostedAnimGraphs %08X", dtpData->numHostedAnimGraphs);
+		ImGui::Text("dtpData->pHostedAnimGraphs   %p", dtpData->pHostedAnimGraphs);
 	}
 	if (ImGui::CollapsingHeader("Intro", ImGuiTreeNodeFlags_DefaultOpen)) {
 		buildUI(uiact, instance->intro);

@@ -84,6 +84,11 @@ InstanceDrawable::InstanceDrawable(Instance *instance) :
 
 	m_pMatrixState = g_renderDevice->createMatrixState();
 
+	if (!instance->boneUsageComponent && (instance->object->dtpData->dword4 & 0x4000)) {
+		instance->boneUsageComponent = new BoneUsageComponent();
+		TouchUpBoneUsageMaps();
+	}
+
 	// this ensures that SceneLayer::Update/UpdateInstances creates a SceneEntity for this Instance
 	AddToDirtyList();
 }
@@ -152,6 +157,38 @@ bool InstanceDrawable::GetBoundingBox(Vector *pMin, Vector *pMax) {
 	cdc::RenderModelInstance *rmi = m_renderModelInstances[meshComponent.GetCurrentRenderModelIndex()];
 	cdc::RenderMesh const *rm = rmi->GetRenderMesh();
 	return rm->getBoundingBox(*(Vector3*)pMin, *(Vector3*)pMax);
+}
+
+void InstanceDrawable::TouchUpBoneUsageMaps() {
+	BoneUsageComponent *boneUsage = m_instance->boneUsageComponent;
+	if (!boneUsage)
+		return;
+
+	for (uint32_t i=0; i<m_renderModelInstances.size(); i++) {
+		if (!m_renderModelInstances[i])
+			continue;
+		dtp::Model *model = m_instance->GetModels()[i];
+		Segment *segments = model->GetSegmentList();
+		// BUG? old segment count used for new segments
+		for (uint32_t j=0; j<model->oldNumSegments; j++) {
+			HInfo *hInfo = segments[j].hInfo;
+			if (!hInfo)
+				continue;
+			uint32_t htotal =
+				hInfo->numHSpheres +
+				hInfo->numHBoxes +
+				hInfo->numHMarkers +
+				hInfo->numHCapsules +
+				hInfo->numHGeoms;
+			if (htotal > 0) {
+				// mark this one
+				boneUsage->mapB[j>>5] |= 1<<(j&31);
+				// mark all parents
+				for (uint32_t k=segments[j].parent; k != ~0u; k=segments[k].parent)
+					boneUsage->mapB[k>>5] |= 1<<(j&31);
+			}
+		}
+	}
 }
 
 void InstanceDrawable::AddToDirtyList() { // 2038

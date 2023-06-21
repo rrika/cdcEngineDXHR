@@ -4,7 +4,35 @@
 
 namespace cdc { class RenderMesh; }
 
-struct Segment;
+/*struct Segment { // line 445
+	0[16]	min: struct cdc::Vector3
+	16[16]	max: struct cdc::Vector3
+	32[16]	pivot: struct cdc::Vector3
+	48[4]	flags: cdc::int32
+	52[2]	firstVertex: cdc::int16
+	54[2]	lastVertex: cdc::int16
+	56[4]	parent: cdc::int32
+	60[4]	hInfo: * struct HInfo
+};*/
+
+struct HInfo {
+	uint32_t numHSpheres;
+	void *hsphereList;
+	uint32_t numHBoxes;
+	void *hboxList;
+	uint32_t numHMarkers;
+	void *hmarkerList;
+	uint32_t numHCapsules;
+	void *hcapsuleList;
+	uint32_t numHGeoms;
+	void *hgeomList;
+};
+
+struct Segment {
+	uint32_t pad[14];
+	uint32_t parent;
+	HInfo *hInfo;
+};
 
 struct SegmentList { // line 507
 	int32_t numSegments; // 0

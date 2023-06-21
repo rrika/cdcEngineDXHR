@@ -1,7 +1,27 @@
 #pragma once
 #include <cstdint>
+#include "cdcMath/Math.h"
 
 namespace cdc {
+
+struct AnimSegment {
+	Vector3 rot;
+	Vector3 trans;
+};
+
+struct AnimBuffer {
+	AnimSegment *segments;
+	uint32_t numSegments;
+	// Vector3 rootTrans;
+	// Quat rootQuatLog;
+};
+
+
+/*struct BoneSet {
+	float weight;
+	int16_t firstBone;
+	int16_t lastBone;
+};*/
 
 struct AnimFragment {
 	char pad[48];
@@ -16,5 +36,8 @@ struct AnimFragment {
 	uint8_t *mExtraChannelLengthPtr; // 44
 	float *mExtraChannelDataPtr; // 48
 };
+
+void AdvanceToNextTrack(uint16_t *pChannelFlags, uint8_t *pLengthData, float **pValueData, int32_t keyCount);
+void SkipComponents(uint16_t *pChannelFlags, uint8_t *pLengthData, float **pValueData, int32_t keyCount);
 
 }

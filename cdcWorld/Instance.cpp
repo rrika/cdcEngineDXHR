@@ -74,11 +74,8 @@ void Instance::InitCommonComponents(bool initEffects, bool unknown) { // line 28
 		//   UBEROBJECT_BirthSectionInstance
 
 		if (object->numAnims + object->numPatterns > 0) {
-			// apparently this never happens
-			cdc::FatalError("prove me wrong");
-
 			dtp::ObjectBaseData *dtpData = object->dtpData;
-			if (dtpData->dword44 || dtpData->numAnimGraphs50) {
+			if (dtpData->hasAnimGraph || dtpData->numHostedAnimGraphs) {
 				animComponentV2 = new AnimComponentV2(this);
 				animComponentV2->instantiate(meshComponent.GetBaseModel());
 			}

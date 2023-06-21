@@ -16,7 +16,7 @@ struct AnimGraphNode {
 		uint32_t dword0;
 		NodeTypeEnum type4;
 		void *data;
-		uint32_t dwordC;
+		void *namedNodeData;
 		uint32_t dword10;
 	};
 

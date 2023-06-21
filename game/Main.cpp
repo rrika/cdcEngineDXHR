@@ -6,8 +6,9 @@
 #include "game/objects/objects.h"
 #include "game/ui/ui.h"
 #include "cdcGameShell/cdcGameShell.h"
+#include "cdcKit/Animation/anitracker.h"
 #include "cdcObjects/ObjectManager.h"
-#include "../rendering/PCDX11DeviceManager.h"
+#include "rendering/PCDX11DeviceManager.h"
 #include "postprocessing/PPManager.h"
 #include "cdcResource/Resolve.h"
 #include "cdcResource/ResolveObject.h"
@@ -108,6 +109,7 @@ void MAIN_DoMainInit() {
 
 	// TODO
 
+	ANITRACKER_Init();
 	SOUND_Init();
 
 	// TODO

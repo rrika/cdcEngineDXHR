@@ -3,13 +3,13 @@
 
 namespace cdc {
 
-class AnimGraphRequest;
 class ObjectBlobAnim;
 
 }
 
 namespace dtp {
 
+struct AnimGraphRootRef;
 struct AnimStateGraph;
 struct Model;
 struct SoundPlex;
@@ -26,6 +26,7 @@ struct ObjectBaseData {
 	uint32_t dword0;
 		// 20000000 see MeshComponent::SetModel
 	uint32_t dword4;
+		// 00004000 has bones
 	uint32_t dword8;
 	uint32_t dwordC;
 	float float10_lod1_distance_maybe;
@@ -41,16 +42,15 @@ struct ObjectBaseData {
 	uint8_t f2C[4];
 	uint16_t word30;
 	uint8_t f32[6];
-	uint16_t word38;
-	uint8_t f3A[2];
-	uint32_t dword3C;
+	uint32_t numAnims; // 38
+	dtp::AnimEntry *animations; // 3C
 	uint16_t word40;
 	uint16_t word42;
 	uint32_t dword44;
-	uint32_t dword48;
-	dtp::AnimStateGraph **pAnimGraphReq4C;
-	uint32_t numAnimGraphs50;
-	struct { dtp::AnimStateGraph *req; uint32_t unk4; } *animgraphs54;
+	uint32_t hasAnimGraph; // 48
+	dtp::AnimGraphRootRef *pAnimGraph; // 4C
+	uint32_t numHostedAnimGraphs;
+	dtp::AnimGraphRootRef *pHostedAnimGraphs;
 	uint32_t dword58;
 	uint32_t dword5C;
 	uint32_t dword60;
