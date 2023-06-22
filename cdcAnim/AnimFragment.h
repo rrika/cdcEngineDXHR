@@ -10,6 +10,9 @@ struct Model;
 
 namespace cdc {
 
+// using G2TimerAtomicUnit = float;
+// using G2AnimKeyframeNumber = int32_t;
+
 struct AnimSegment {
 	Vector3 rot;
 	Vector3 trans;
@@ -37,9 +40,9 @@ struct BoneMap { // not to be confused with dtp::BoneMap
 
 struct AnimFragment {
 	char pad[48];
-	int16_t mAnimID; // 30 (TODO: confirm)
+	int16_t mAnimID; // 30
 	int16_t mKeyCount; // 32
-	int16_t word34;
+	int16_t mTimePerKey; // 34
 	uint8_t mSegmentCount; // 36
 	uint8_t mSectionCount; // 37 (TODO: confirm)
 	uint8_t mExtraChannelCount; // 38
@@ -57,7 +60,7 @@ struct AnimFragment {
 static_assert(sizeof(AnimFragment) == 0x60);
 
 BoneMap *GenerateIDMaps(AnimFragment *fragment, dtp::Model *model);
-void AdvanceToNextTrack(uint16_t *pChannelFlags, uint8_t *pLengthData, float **pValueData, int32_t keyCount);
-void SkipComponents(uint16_t *pChannelFlags, uint8_t *pLengthData, float **pValueData, int32_t keyCount);
+void AdvanceToNextTrack(uint16_t **pComponentMasks, uint16_t **pLengthData, float **pCompressedFloats, int32_t keyCount);
+void SkipComponents(uint16_t *pChannelFlags, uint16_t **pLengthData, float **pValueData, int32_t keyCount);
 
 }
