@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include <cdcMath/Math.h>
+#include "cdcMath/Math.h"
 
 namespace cdc { class RenderMesh; }
 
@@ -29,10 +29,14 @@ struct HInfo {
 };
 
 struct Segment {
-	uint32_t pad[14];
+	uint32_t pad0[8];
+	cdc::Vector pivot; // 20
+	uint32_t pad30[2];
 	uint32_t parent;
 	HInfo *hInfo;
 };
+
+static_assert(sizeof(Segment) == 0x40);
 
 struct SegmentList { // line 507
 	int32_t numSegments; // 0
@@ -40,6 +44,17 @@ struct SegmentList { // line 507
 };
 
 namespace dtp {
+
+struct BoneMapEntry {
+	uint16_t boneID;
+	uint16_t boneIndex;
+};
+
+struct BoneMap { // not to be confused with cdc::BoneMap
+	uint32_t count;
+	uint32_t pad;
+	BoneMapEntry *entries;
+};
 
 struct Model { // line 516
 	void *field_0;
@@ -69,8 +84,8 @@ struct Model { // line 516
 	int field_60;
 	cdc::RenderMesh *renderMesh; // 64
 	SegmentList *segList; // 68
-	uint32_t *pdword6C;
-	uint32_t dword70;
+	BoneMap *boneMap; // 6C
+	uint32_t boneMapHash; // 70
 
 	inline uint32_t GetNumSegments() {
 		if (segList)
@@ -83,6 +98,16 @@ struct Model { // line 516
 			return segList->segmentList;
 		else
 			return oldSegmentList;
+	}
+	inline int16_t GetBoneIndexFromID(uint16_t boneID) {
+		if (oldNumSegments == 1)
+			return 0;
+		// assert (boneMap);
+		for (uint32_t i=0; i<boneMap->count; i++) {
+			if (boneID == boneMap->entries[i].boneID)
+				return boneMap->entries[i].boneIndex;
+		}
+		return -1;
 	}
 };
 
