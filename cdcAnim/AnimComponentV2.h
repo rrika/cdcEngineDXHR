@@ -17,18 +17,20 @@ struct BoneSet;
 class AnimComponentV2 {
 	static BoneSet s_allBones;
 public:
-	IAnimGraphNode *graphOutput0 = nullptr;
-	AnimPoseNode *poseNode4 = nullptr;
+	IAnimGraphNode *graphOutput = nullptr; // 0
+	AnimPoseNode *poseNode = nullptr; // 4
 	dtp::Model *model = nullptr; // 20
 	Instance *instance; // 24
 	IAnimGraphNode *firstNode = nullptr; // 54
 
 	AnimComponentV2(Instance *instance);
-	void instantiate(dtp::Model *model);
+	void Init(dtp::Model *model);
+	AnimPoseNode *CreatePoseNode();
 	dtp::AnimGraphExt *getExt(uint32_t index);
 	void BuildTransforms();
 	void PrePhysics();
 	void BuildSegTransforms();
+	void BuildSegTransformForRoot();
 };
 
 }

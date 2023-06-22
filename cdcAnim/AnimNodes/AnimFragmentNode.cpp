@@ -12,6 +12,13 @@ AnimFragmentNode::AnimFragmentNode(AnimComponentV2 *ac, dtp::FragmentNode *data)
 	// TODO
 }
 
+AnimFragmentNode::AnimFragmentNode(AnimComponentV2 *ac, AnimFragment *fragment) :
+	AnimPipelineNode(ac, /*numInputs=*/ 0, /*addToChain=*/ true),
+	fragment(fragment)
+{
+	// TODO
+}
+
 void AnimFragmentNode::SetAnimData(uint16_t anim) {
 	// TODO
 }

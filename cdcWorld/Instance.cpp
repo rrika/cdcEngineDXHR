@@ -77,7 +77,7 @@ void Instance::InitCommonComponents(bool initEffects, bool unknown) { // line 28
 			dtp::ObjectBaseData *dtpData = object->dtpData;
 			if (dtpData->hasAnimGraph || dtpData->numHostedAnimGraphs) {
 				animComponentV2 = new AnimComponentV2(this);
-				animComponentV2->instantiate(meshComponent.GetBaseModel());
+				animComponentV2->Init(meshComponent.GetBaseModel());
 			}
 		}
 	}

@@ -14,6 +14,7 @@ class AnimFragmentNode : public AnimPipelineNode {
 
 public:
 	AnimFragmentNode(AnimComponentV2 *ac, dtp::FragmentNode *data);
+	AnimFragmentNode(AnimComponentV2 *ac, AnimFragment *fragment);
 	void Activate(Instance*, float) override;
 	void Deactivate(Instance*) override;
 	float GetNextSyncPoint(void*) override;
