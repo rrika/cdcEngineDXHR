@@ -37,7 +37,26 @@ void AnimFragmentNode::Update(void*) {
 	// TODO
 }
 
-void AnimFragmentNode::PrePhysics(AnimGraphNodeMethod18Args *) {
+void AnimFragmentNode::PrePhysics(AnimContextData *data) {
+	if (data->weight >= 0.00001) {
+		if (data->weight != 0.0) {
+			if (fragment) { // AnimFragment
+				if (fragment->mKeyCount == 1)
+					DecompressPose(data);
+				else
+					DecompressFrame(data);
+			} else {
+				// TODO
+			}
+		}
+	}
+}
+
+void AnimFragmentNode::DecompressPose(AnimContextData *data) {
+	// TODO
+}
+
+void AnimFragmentNode::DecompressFrame(AnimContextData *data) {
 	// TODO
 }
 

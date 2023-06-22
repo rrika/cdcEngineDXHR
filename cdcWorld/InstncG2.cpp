@@ -26,4 +26,9 @@ void G2Instance_SetTransformsToIdentity(Instance *instance) {
 	instance->GetTransformComponent().m_matrix[0] = instanceMatrix;
 }
 
+void G2Instance_RebuildTransforms(Instance *instance) {
+	// TODO
+}
+
+
 }

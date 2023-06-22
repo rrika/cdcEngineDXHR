@@ -10,10 +10,15 @@ class Instance;
 
 namespace cdc {
 
+class AnimPoseNode;
 class IAnimGraphNode;
+struct BoneSet;
 
 class AnimComponentV2 {
+	static BoneSet s_allBones;
 public:
+	IAnimGraphNode *graphOutput0 = nullptr;
+	AnimPoseNode *poseNode4 = nullptr;
 	dtp::Model *model = nullptr; // 20
 	Instance *instance; // 24
 	IAnimGraphNode *firstNode = nullptr; // 54
@@ -21,6 +26,9 @@ public:
 	AnimComponentV2(Instance *instance);
 	void instantiate(dtp::Model *model);
 	dtp::AnimGraphExt *getExt(uint32_t index);
+	void BuildTransforms();
+	void PrePhysics();
+	void BuildSegTransforms();
 };
 
 }
