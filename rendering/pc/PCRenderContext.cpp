@@ -29,6 +29,7 @@ bool PCRenderContext::internalCreate() {
 
 	d3d9Device->EvictManagedResources();
 
+	deviceManager->config1.fullscreen = false; // HACK
 	if (!deviceManager->config1.fullscreen) {
 		D3DPRESENT_PARAMETERS presentParams = deviceManager9->presentParams;
 
