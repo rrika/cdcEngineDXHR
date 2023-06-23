@@ -1,9 +1,11 @@
+#include <cstdio>
 #include <d3d9.h>
 #include "PCStateManager.h"
 #include "PCStreamDecl.h"
 #include "buffers/PCVertexBuffer.h"
 #include "shaders/PCPixelShader.h"
 #include "shaders/PCVertexShader.h"
+#include "surfaces/PCDeviceBaseTexture.h"
 
 namespace cdc {
 
@@ -17,6 +19,18 @@ void PCStateManager::setIndexBuffer(PCIndexBuffer *indexBuffer) {
 	if (buffer != m_indexBufferD3D) {
 		m_device->SetIndices(buffer);
 		m_indexBufferD3D = buffer;
+	}
+}
+
+void PCStateManager::setDeviceTexture(uint32_t slot, PCDeviceBaseTexture *tex, TextureFilter filter, float unknown) {
+	if (tex != m_textures[slot]) {
+		if (tex) {
+			IDirect3DBaseTexture9 *d3dTexture = tex->GetD3DTexture();
+			m_device->SetTexture(slot, d3dTexture);
+		} else {
+			m_device->SetTexture(slot, nullptr);
+		}
+		m_textures[slot] = tex;
 	}
 }
 

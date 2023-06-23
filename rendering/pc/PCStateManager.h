@@ -1,9 +1,11 @@
 #pragma once
 #include "PCInternalResource.h"
 #include "buffers/PCIndexBuffer.h"
+#include "rendering/Types.h"
 
 namespace cdc {
 
+class PCDeviceBaseTexture;
 class PCPixelShader;
 class PCStreamDecl;
 class PCVertexBuffer;
@@ -16,6 +18,7 @@ class PCStateManager : public PCInternalResource {
 	PCStreamDecl *m_streamDecl; // 1C
 	PCPixelShader *m_pixelShader; // 20
 	PCVertexShader *m_vertexShader; // 24
+	PCDeviceBaseTexture *m_textures[20]; // 28
 
 public:
 	PCStateManager();
@@ -25,6 +28,7 @@ public:
 	{}
 
 	void setIndexBuffer(PCIndexBuffer *indexBuffer);
+	void setDeviceTexture(uint32_t, PCDeviceBaseTexture*, TextureFilter, float);
 	void setVertexBuffer(PCVertexBuffer *vertexBuffer);
 	void setStreamDecl(PCStreamDecl *streamDecl);
 	void setPixelShader(PCPixelShader *pixelShader);
