@@ -43,6 +43,7 @@
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/IRenderPassCallback.h"
 #include "rendering/pc/buffers/PCIndexBuffer.h"
+#include "rendering/pc/buffers/PCStaticVertexBuffer.h"
 #include "rendering/pc/PCDeviceManager.h"
 #include "rendering/pc/PCRenderContext.h"
 #include "rendering/pc/PCRenderDevice.h"
@@ -525,6 +526,8 @@ int spinnyCube(HWND window) {
 		memcpy(pVoid, VertexData, sizeof(VertexData));
 		v_buffer->Unlock();
 
+		cdc::PCStaticVertexBuffer cdcVertexBuffer(v_buffer, 12*sizeof(float));
+
 		IDirect3DIndexBuffer9 *i_buffer = nullptr;
 		d3dDevice9->CreateIndexBuffer(sizeof(IndexData),
 			0,
@@ -645,7 +648,7 @@ int spinnyCube(HWND window) {
 
 				stateManager9.setVertexShader(&cdcVertex9);
 				stateManager9.setPixelShader(&cdcPixel9);
-				d3dDevice9->SetStreamSource(0, v_buffer, 0, 12*sizeof(float));
+				stateManager9.setVertexBuffer(&cdcVertexBuffer);
 				stateManager9.setIndexBuffer(&cdcIndexBuffer9);
 				d3dDevice9->SetVertexDeclaration(vertexDecl);
 				d3dDevice9->SetVertexShaderConstantF(0, (float*)WorldViewProject.m, 4);

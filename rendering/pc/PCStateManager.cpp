@@ -1,5 +1,6 @@
 #include <d3d9.h>
 #include "PCStateManager.h"
+#include "buffers/PCVertexBuffer.h"
 #include "shaders/PCPixelShader.h"
 #include "shaders/PCVertexShader.h"
 
@@ -15,6 +16,19 @@ void PCStateManager::setIndexBuffer(PCIndexBuffer *indexBuffer) {
 	if (buffer != m_indexBufferD3D) {
 		m_device->SetIndices(buffer);
 		m_indexBufferD3D = buffer;
+	}
+}
+
+void PCStateManager::setVertexBuffer(PCVertexBuffer *vertexBuffer) {
+	if (vertexBuffer != m_vertexBuffer) {
+		if (vertexBuffer) {
+			IDirect3DVertexBuffer9 *buffer = vertexBuffer->GetD3DVertexBuffer();
+			uint16_t stride = vertexBuffer->GetStride();
+			m_device->SetStreamSource(0, buffer, 0, stride);
+		} else {
+			m_device->SetStreamSource(0, nullptr, 0, 0);
+		}
+		m_vertexBuffer = vertexBuffer;
 	}
 }
 
