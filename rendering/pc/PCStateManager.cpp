@@ -1,5 +1,6 @@
 #include <d3d9.h>
 #include "PCStateManager.h"
+#include "PCStreamDecl.h"
 #include "buffers/PCVertexBuffer.h"
 #include "shaders/PCPixelShader.h"
 #include "shaders/PCVertexShader.h"
@@ -29,6 +30,14 @@ void PCStateManager::setVertexBuffer(PCVertexBuffer *vertexBuffer) {
 			m_device->SetStreamSource(0, nullptr, 0, 0);
 		}
 		m_vertexBuffer = vertexBuffer;
+	}
+}
+
+void PCStateManager::setStreamDecl(PCStreamDecl *streamDecl) {
+	if (streamDecl != m_streamDecl) {
+		if (streamDecl)
+			streamDecl->apply();
+		m_streamDecl = streamDecl;
 	}
 }
 

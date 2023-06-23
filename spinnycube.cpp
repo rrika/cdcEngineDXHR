@@ -48,6 +48,7 @@
 #include "rendering/pc/PCRenderContext.h"
 #include "rendering/pc/PCRenderDevice.h"
 #include "rendering/pc/PCStateManager.h"
+#include "rendering/pc/PCStreamDecl.h"
 #include "rendering/pc/shaders/PCPixelShader.h"
 #include "rendering/pc/shaders/PCVertexShader.h"
 #include "rendering/pc/surfaces/PCDeviceTexture.h"
@@ -555,7 +556,6 @@ int spinnyCube(HWND window) {
 		cdc::PCPixelShader cdcPixel9((char*)psblob, false, false);
 #endif // ENABLE_D3DCOMPILER
 
-		IDirect3DVertexDeclaration9 *vertexDecl;
 		D3DVERTEXELEMENT9 elements[] = {
 			{0,  0, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION,  0},
 			{0, 16, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,    0},
@@ -563,7 +563,8 @@ int spinnyCube(HWND window) {
 			{0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR,     0},
 			D3DDECL_END()
 		};
-		d3dDevice9->CreateVertexDeclaration(elements, &vertexDecl);
+		cdc::PCStreamDecl cdcStreamDecl(elements);
+		cdcStreamDecl.internalCreate();
 
 		cdc::Matrix World = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 3, 1 };
 
@@ -650,7 +651,7 @@ int spinnyCube(HWND window) {
 				stateManager9.setPixelShader(&cdcPixel9);
 				stateManager9.setVertexBuffer(&cdcVertexBuffer);
 				stateManager9.setIndexBuffer(&cdcIndexBuffer9);
-				d3dDevice9->SetVertexDeclaration(vertexDecl);
+				stateManager9.setStreamDecl(&cdcStreamDecl);
 				d3dDevice9->SetVertexShaderConstantF(0, (float*)WorldViewProject.m, 4);
 				d3dDevice9->SetVertexShaderConstantF(4, (float*)World.m, 4);
 				d3dDevice9->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 168, 0, 288 / 3);
