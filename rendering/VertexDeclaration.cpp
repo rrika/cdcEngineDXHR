@@ -14,7 +14,7 @@ uint16_t getLayoutAIndexFromHash(
 	return 0xffff;
 }
 
-DXGI_FORMAT decodeFormat(uint16_t format) {
+DXGI_FORMAT MakeElementFormat(uint16_t format) {
 	switch (format) {
 		case 0: return DXGI_FORMAT_R32_FLOAT; // 41
 		case 1: return DXGI_FORMAT_R32G32_FLOAT; // 16
@@ -50,18 +50,18 @@ DXGI_FORMAT decodeFormat(uint16_t format) {
 }
 
 // very confusingly, the mesh will sometimes have two inputs called
-// Texcoord1 and Texcoord2, which when decoded using decodeVertexAttribA
+// Texcoord1 and Texcoord2, which when decoded using MakeD3DVertexElements
 // will turn into the same semantics in d3d.
 // But when using semanticFromEnum they will be mapped to Texcoord0 and
 // Texcoord1, which is what the pixel shader expects.
 
-void decodeVertexAttribA(D3D11_INPUT_ELEMENT_DESC *dst, VertexAttributeA *src, uint32_t count, bool wineWorkaround) {
+void MakeD3DVertexElements(D3D11_INPUT_ELEMENT_DESC *dst, VertexAttributeA *src, uint32_t count, bool wineWorkaround) {
 	uint32_t customSlots = 0;
 	for (uint32_t i=0; i<count; i++) {
 		dst[i].SemanticName = "";
 		dst[i].InputSlot = 0;
 		dst[i].AlignedByteOffset = (uint32_t)(int32_t)(int16_t)src[i].offset; // 0xffff -> 0xffffffff
-		dst[i].Format = decodeFormat(src[i].format);
+		dst[i].Format = MakeElementFormat(src[i].format);
 		auto& elem = dst[i];
 		auto kind = src[i].attribKind;
 		if (kind == VertexAttributeA::kPosition) {
