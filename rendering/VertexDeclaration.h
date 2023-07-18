@@ -82,7 +82,7 @@ uint16_t getLayoutAIndexFromHash(
 	VertexDecl *layoutA,
 	uint32_t hash);
 
-void decodeVertexAttribA(
+void MakeD3DVertexElements(
 	D3D11_INPUT_ELEMENT_DESC *dst,
 	VertexAttributeA *src,
 	uint32_t count,

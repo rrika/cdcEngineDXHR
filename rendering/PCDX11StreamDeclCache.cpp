@@ -9,7 +9,7 @@
 
 namespace cdc {
 
-DXGI_FORMAT decodeFormat(uint16_t format);
+DXGI_FORMAT MakeElementFormat(uint16_t format);
 
 PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 	VertexDecl *layout,
@@ -22,7 +22,7 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 	if (it.second) {
 		D3D11_INPUT_ELEMENT_DESC *inputElementDesc = new D3D11_INPUT_ELEMENT_DESC[layout->numAttr];
 		memset(inputElementDesc, 0, sizeof(D3D11_INPUT_ELEMENT_DESC) * layout->numAttr);
-		decodeVertexAttribA(inputElementDesc, layout->attrib, layout->numAttr, shaderSub->wineWorkaround);
+		MakeD3DVertexElements(inputElementDesc, layout->attrib, layout->numAttr, shaderSub->wineWorkaround);
 		streamDecl = new PCDX11StreamDecl(renderDevice, inputElementDesc, layout->numAttr, shaderSub);
 
 		// HACK
@@ -95,7 +95,7 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 
 					inputElementDesc[numElements].InputSlot = 0;
 					inputElementDesc[numElements].AlignedByteOffset = layoutA->attrib[indexA].offset;
-					inputElementDesc[numElements].Format = decodeFormat(layoutA->attrib[indexA].format);
+					inputElementDesc[numElements].Format = MakeElementFormat(layoutA->attrib[indexA].format);
 
 					if (attribB->attribKindB >= 10 && attribB->attribKindB < 14) {
 						if (layoutA->attrib[indexA].format < 19 ||
