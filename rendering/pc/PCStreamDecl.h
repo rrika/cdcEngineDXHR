@@ -15,15 +15,18 @@ class PCStreamDecl :
 {
 public:
 	PCStreamDecl(
-		D3DVERTEXELEMENT9 *elements)
+		D3DVERTEXELEMENT9 *elements,
+		uint32_t stride)
 	:
-		elements(elements)
+		elements(elements),
+		stride(stride)
 	{
 		// TODO
 	}
 
 	D3DVERTEXELEMENT9 *elements; // 18
 	IDirect3DVertexDeclaration9 *vertexDecl; // 1C
+	uint32_t stride;
 
 	void apply();
 

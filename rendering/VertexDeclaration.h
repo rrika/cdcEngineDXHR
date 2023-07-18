@@ -3,6 +3,8 @@
 #include <cstring>
 
 class D3D11_INPUT_ELEMENT_DESC;
+struct _D3DVERTEXELEMENT9;
+typedef struct _D3DVERTEXELEMENT9 D3DVERTEXELEMENT9;
 
 namespace cdc {
 
@@ -87,6 +89,11 @@ void MakeD3DVertexElements(
 	VertexAttributeA *src,
 	uint32_t count,
 	bool wineWorkaround);
+
+void MakeD3DVertexElements(
+	D3DVERTEXELEMENT9 *dst,
+	VertexAttributeA *src,
+	uint32_t count);
 
 void semanticFromEnum(
 	D3D11_INPUT_ELEMENT_DESC *elem,

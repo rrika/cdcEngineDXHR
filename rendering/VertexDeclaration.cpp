@@ -1,5 +1,7 @@
 #include "VertexDeclaration.h"
 #include <d3d11.h>
+#include <windows.h> // d3dtypes relies on DWORD, etc. being defined
+#include <d3d9types.h>
 
 namespace cdc {
 
@@ -49,6 +51,37 @@ DXGI_FORMAT MakeElementFormat(uint16_t format) {
 	}
 }
 
+D3DDECLTYPE MakeD3DDeclType(uint16_t format) {
+	switch (format) {
+		case 0: return D3DDECLTYPE_FLOAT1; // 0
+		case 1: return D3DDECLTYPE_FLOAT2; // 1
+		case 2: return D3DDECLTYPE_FLOAT3; // 2
+		case 3: return D3DDECLTYPE_FLOAT4; // 3
+		case 4:
+		case 6:
+		case 7:
+			return D3DDECLTYPE_D3DCOLOR; // 4
+		case 8: return D3DDECLTYPE_UBYTE4; // 5
+		case 9:
+		case 19:
+			return D3DDECLTYPE_SHORT2; // 6
+		case 10:
+		case 20:
+			return D3DDECLTYPE_SHORT4; // 7
+		case 5:
+		case 11:
+			return D3DDECLTYPE_UBYTE4N; // 8
+		case 12: return D3DDECLTYPE_SHORT2N; // 9
+		case 13: return D3DDECLTYPE_SHORT4N; // 10
+		case 14: return D3DDECLTYPE_USHORT2N; // 11
+		case 15: return D3DDECLTYPE_USHORT4N; // 12
+		case 16: return D3DDECLTYPE_UDEC3; // 13
+		case 17: return D3DDECLTYPE_DEC3N; // 14
+		default:
+			return D3DDECLTYPE_UNUSED; // 17
+	}
+}
+
 // very confusingly, the mesh will sometimes have two inputs called
 // Texcoord1 and Texcoord2, which when decoded using MakeD3DVertexElements
 // will turn into the same semantics in d3d.
@@ -93,6 +126,45 @@ void MakeD3DVertexElements(D3D11_INPUT_ELEMENT_DESC *dst, VertexAttributeA *src,
 			elem.SemanticIndex = customSlots++;
 		}
 	}
+}
+
+void MakeD3DVertexElements(D3DVERTEXELEMENT9 *dst, VertexAttributeA *src, uint32_t count) {
+	uint32_t customSlots = 0;
+	for (uint32_t i=0; i<count; i++) {
+		dst[i].Stream = 0;
+		dst[i].Offset = src[i].offset;
+		dst[i].Type = MakeD3DDeclType(src[i].format);
+		dst[i].Method = 0;
+		// inline of cdc::SetD3DUsage
+		auto& elem = dst[i];
+		auto kind = src[i].attribKind;
+		if (kind == VertexAttributeA::kPosition) {
+			elem.Usage = D3DDECLUSAGE_POSITION; // 0
+			elem.UsageIndex = 0;
+		} else if (kind == VertexAttributeA::kNormal) {
+			elem.Usage = D3DDECLUSAGE_NORMAL; // 3
+			elem.UsageIndex = 0;
+		} else if (kind == VertexAttributeA::kTangent) {
+			elem.Usage = D3DDECLUSAGE_TANGENT; // 6
+			elem.UsageIndex = 0;
+		} else if (kind == VertexAttributeA::kBinormal) {
+			elem.Usage = D3DDECLUSAGE_BINORMAL; // 7
+			elem.UsageIndex = 0;
+		} else if (kind == VertexAttributeA::kColor1) {
+			elem.Usage = D3DDECLUSAGE_COLOR; // 10
+			elem.UsageIndex = 0;
+		} else if (kind == VertexAttributeA::kTexcoord1) {
+			elem.Usage = D3DDECLUSAGE_TEXCOORD; // 5
+			elem.UsageIndex = 0;
+		} else if (kind == VertexAttributeA::kTexcoord2) {
+			elem.Usage = D3DDECLUSAGE_TEXCOORD; // 5
+			elem.UsageIndex = 1;
+		} else {
+			elem.Usage = D3DDECLUSAGE_TEXCOORD;
+			elem.UsageIndex = 4 + customSlots++;
+		}
+	}
+	dst[count] = { 255, 0, D3DDECLTYPE_UNUSED /*17*/, 0, 0, 0 };
 }
 
 void semanticFromEnum(D3D11_INPUT_ELEMENT_DESC *elem, int e) {

@@ -49,6 +49,7 @@
 #include "rendering/pc/PCRenderDevice.h"
 #include "rendering/pc/PCStateManager.h"
 #include "rendering/pc/PCStreamDecl.h"
+#include "rendering/pc/PCStreamDeclManager.h"
 #include "rendering/pc/shaders/PCPixelShader.h"
 #include "rendering/pc/shaders/PCVertexShader.h"
 #include "rendering/pc/surfaces/PCDeviceTexture.h"
@@ -563,6 +564,7 @@ int spinnyCube(HWND window) {
 		cdc::PCPixelShader cdcPixel9((char*)psblob, false, false);
 #endif // ENABLE_D3DCOMPILER
 
+		/*
 		D3DVERTEXELEMENT9 elements[] = {
 			{0,  0, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION,  0},
 			{0, 16, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,    0},
@@ -571,6 +573,19 @@ int spinnyCube(HWND window) {
 			D3DDECL_END()
 		};
 		cdc::PCStreamDecl cdcStreamDecl(elements);
+		*/
+
+		cdc::VertexAttributeA cdcElements[4] = {
+			{ cdc::VertexAttributeA::kPosition,   0, 3, 0}, // D3DDECLTYPE_FLOAT4
+			{ cdc::VertexAttributeA::kNormal,    16, 2, 0}, // D3DDECLTYPE_FLOAT3
+			{ cdc::VertexAttributeA::kTexcoord2, 28, 1, 0}, // D3DDECLTYPE_FLOAT2
+			{ cdc::VertexAttributeA::kColor1,    36, 2, 0}  // D3DDECLTYPE_FLOAT3
+		};
+		auto *vertexDecl = cdc::VertexDecl::Create(cdcElements, 4, cdcVertexBuffer.GetStride());
+		cdc::PCStreamDeclManager streamDeclManager(renderDevice9);
+		cdc::PCStreamDecl *pCdcStreamDecl = streamDeclManager.FindOrCreate(vertexDecl);
+		cdc::PCStreamDecl& cdcStreamDecl = *pCdcStreamDecl;
+
 		cdcStreamDecl.internalCreate();
 
 		cdc::Matrix World = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 3, 1 };
