@@ -5,6 +5,7 @@ target_sources(dxhr PRIVATE
 	drawables/PCDX11MLAADrawable.cpp
 	drawables/PCDX11SetRTDrawable.cpp
 
+	pc/buffers/PCStaticIndexBuffer.cpp
 	pc/buffers/PCStaticVertexBuffer.cpp
 
 	pc/shaders/PCPixelShader.cpp
@@ -37,6 +38,7 @@ target_sources(dxhr PRIVATE
 	pc/PCMaterial.cpp
 	pc/PCRenderContext.cpp
 	pc/PCRenderDevice.cpp
+	pc/PCRenderModel.cpp
 	pc/PCStateManager.cpp
 	pc/PCStreamDecl.cpp
 	pc/PCStreamDeclManager.cpp

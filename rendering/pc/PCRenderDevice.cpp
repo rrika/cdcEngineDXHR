@@ -1,5 +1,6 @@
 #include "PCMaterial.h"
 #include "PCRenderDevice.h"
+#include "PCRenderModel.h"
 #include "shaders/PCShaderLib.h"
 #include "surfaces/PCTexture.h"
 
@@ -178,9 +179,8 @@ IShaderLib *PCRenderDevice::createShaderLib(uint32_t size) {
 	return new PCShaderLib(size, this);
 }
 
-RenderMesh *PCRenderDevice::createRenderModel(uint32_t) {
-	// TODO
-	return nullptr;
+RenderMesh *PCRenderDevice::createRenderModel(uint32_t size) {
+	return new PCRenderModel(size, this);
 }
 
 RenderModelInstance *PCRenderDevice::createRenderModelInstance(RenderMesh*) {
