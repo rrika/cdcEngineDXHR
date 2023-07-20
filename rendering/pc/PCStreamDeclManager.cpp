@@ -129,7 +129,7 @@ PCStreamDecl *PCStreamDeclManager::FindOrCreate(
 
 		for (uint32_t i=0; i<numElements; i++) {
 			D3DVERTEXELEMENT9& elem = vertexElem[i];
-			printf("%d[%d] at offset %d with type %d\n", elem.Usage, elem.UsageIndex, elem.Offset, elem.Type);
+			// printf("%d[%d] at offset %d with type %d\n", elem.Usage, elem.UsageIndex, elem.Offset, elem.Type);
 		}
 
 

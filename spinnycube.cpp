@@ -42,11 +42,12 @@
 #include "rendering/CommonRenderTerrainInstance.h"
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/IRenderPassCallback.h"
-#include "rendering/pc/buffers/PCIndexBuffer.h"
+#include "rendering/pc/buffers/PCStaticIndexBuffer.h"
 #include "rendering/pc/buffers/PCVertexBuffer.h"
 #include "rendering/pc/PCDeviceManager.h"
 #include "rendering/pc/PCRenderContext.h"
 #include "rendering/pc/PCRenderDevice.h"
+#include "rendering/pc/PCRenderModel.h"
 #include "rendering/pc/PCStateManager.h"
 #include "rendering/pc/PCStreamDecl.h"
 #include "rendering/pc/PCStreamDeclManager.h"
@@ -585,18 +586,19 @@ int spinnyCube(HWND window) {
 			{ cdc::VertexAttributeA::kColor1,    36, 2, 0}  // D3DDECLTYPE_FLOAT3
 		};
 		auto *vertexDecl = cdc::VertexDecl::Create(cdcElements, 4, cdcVertexBuffer.GetStride());
+		auto *inputSpec = (cdc::ShaderInputSpec *)new char[
+			sizeof(cdc::ShaderInputSpec) +
+			sizeof(cdc::VertexAttributeB) * 5];
+		inputSpec->hash0 = 0;
+		inputSpec->hash4 = 0;
+		inputSpec->numAttribs = 4;
+		inputSpec->dwordC = 0;
+		inputSpec->attr[0] = { cdc::VertexAttributeA::kPosition,  ~0u,  1 };
+		inputSpec->attr[1] = { cdc::VertexAttributeA::kNormal,    ~0u,  4 };
+		inputSpec->attr[2] = { cdc::VertexAttributeA::kTexcoord2, ~0u, 11 };
+		inputSpec->attr[3] = { cdc::VertexAttributeA::kColor1,      4,  8 };
+		inputSpec->attr[4] = { cdc::VertexAttributeA::kNormal,    ~0u,  8 };
 		if (true) {
-			auto *inputSpec = (cdc::ShaderInputSpec *)new char[
-				sizeof(cdc::ShaderInputSpec) +
-				sizeof(cdc::VertexAttributeB) * 4];
-			inputSpec->hash0 = 0;
-			inputSpec->hash4 = 0;
-			inputSpec->numAttribs = 4;
-			inputSpec->dwordC = 0;
-			inputSpec->attr[0] = { cdc::VertexAttributeA::kPosition,  ~0u,  1 };
-			inputSpec->attr[1] = { cdc::VertexAttributeA::kNormal,    ~0u,  4 };
-			inputSpec->attr[2] = { cdc::VertexAttributeA::kTexcoord2, ~0u, 11 };
-			inputSpec->attr[3] = { cdc::VertexAttributeA::kColor1,    ~0u,  8 };
 			pCdcStreamDecl = streamDeclManager.FindOrCreate(vertexDecl, inputSpec, true);
 		} else {
 			pCdcStreamDecl = streamDeclManager.FindOrCreate(vertexDecl);
@@ -605,7 +607,17 @@ int spinnyCube(HWND window) {
 
 		cdcStreamDecl.internalCreate();
 
-		cdc::Matrix World = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 3, 1 };
+		cdc::Matrix World_Bottle = {
+			0.03, 0, 0, 0,
+			0, 0, 0.03, 0,
+			0, 0.03, 0, 0,
+			0, -1, 3, 1 };
+
+		cdc::Matrix World_Cube = {
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 3, 1 };
 
 		cdc::Matrix Project = cdc::BuildPerspectiveLH(
 			0.925f,
@@ -613,12 +625,31 @@ int spinnyCube(HWND window) {
 			0.01f,
 			100.0f);
 
-		cdc::Matrix WorldViewProject = Project * World;
+		cdc::Matrix WorldViewProject_Bottle = Project * World_Bottle;
+		cdc::Matrix WorldViewProject_Cube = Project * World_Cube;
 
 		auto bottleIndex = cdc::objectIdByName("alc_beer_bottle_a");
 		cdc::requestObjectNormal(bottleIndex);
 		cdc::archiveFileSystem_default->processAll();
 		auto bottleTexture = (cdc::PCTexture*)cdc::g_resolveSections[5]->getWrapped(0x0396);
+
+		cdc::ResolveSection *objectSection = cdc::g_resolveSections[11];
+		cdc::Object *bottleObject = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(0x04a8));
+		auto bottleRenderModel = (cdc::PCRenderModel*)bottleObject->models[0]->renderMesh;
+
+		cdc::ModelBatch *bottleBatch0 = &bottleRenderModel->modelBatches[0];
+		cdc::VertexDecl *bottleVertexDecl = (cdc::VertexDecl*) bottleBatch0->format;
+		cdc::PCStreamDecl *bottleStreamDecl = streamDeclManager.FindOrCreate(bottleVertexDecl, inputSpec, true);;
+		bottleStreamDecl->internalCreate();
+
+		for (uint32_t i=0; i<bottleVertexDecl->numAttr; i++) {
+			cdc::VertexAttributeA& a = bottleVertexDecl->attrib[i];
+			printf("%08x %d %d %d\n",
+				a.attribKind,
+				a.offset,
+				a.format,
+				a.bufferIndex);
+		}
 
 		while (true)
 		{
@@ -689,15 +720,25 @@ int spinnyCube(HWND window) {
 			d3dDevice9->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, clear_col_dx, 1.0f, 0);
 
 			if (d3dDevice9->BeginScene() >= 0) {
-
 				stateManager9.setVertexShader(&cdcVertex9);
 				stateManager9.setPixelShader(&cdcPixel9);
+
+				stateManager9.setDeviceTexture(0, bottleTexture->GetDeviceBaseTexture(), cdc::kTextureFilterTrilinear, 0.0f);
+
+				// draw bottle
+				stateManager9.setVertexBuffer(static_cast<cdc::PCVertexBuffer*>(bottleBatch0->staticVertexBuffer));
+				stateManager9.setIndexBuffer(bottleRenderModel->indexBuffer);
+				stateManager9.setStreamDecl(bottleStreamDecl);
+				d3dDevice9->SetVertexShaderConstantF(0, (float*)WorldViewProject_Bottle.m, 4);
+				d3dDevice9->SetVertexShaderConstantF(4, (float*)World_Bottle.m, 4);
+				d3dDevice9->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, bottleBatch0->numVertices, 0, bottleBatch0->numTrianglesProbably);
+
+				// draw cube
 				stateManager9.setVertexBuffer(&cdcVertexBuffer);
 				stateManager9.setIndexBuffer(&cdcIndexBuffer9);
 				stateManager9.setStreamDecl(&cdcStreamDecl);
-				stateManager9.setDeviceTexture(0, bottleTexture->GetDeviceBaseTexture(), cdc::kTextureFilterTrilinear, 0.0f);
-				d3dDevice9->SetVertexShaderConstantF(0, (float*)WorldViewProject.m, 4);
-				d3dDevice9->SetVertexShaderConstantF(4, (float*)World.m, 4);
+				d3dDevice9->SetVertexShaderConstantF(0, (float*)WorldViewProject_Cube.m, 4);
+				d3dDevice9->SetVertexShaderConstantF(4, (float*)World_Cube.m, 4);
 				d3dDevice9->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 168, 0, 288 / 3);
 
 			#if ENABLE_IMGUI
