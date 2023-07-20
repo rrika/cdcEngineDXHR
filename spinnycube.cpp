@@ -43,7 +43,7 @@
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/IRenderPassCallback.h"
 #include "rendering/pc/buffers/PCIndexBuffer.h"
-#include "rendering/pc/buffers/PCStaticVertexBuffer.h"
+#include "rendering/pc/buffers/PCVertexBuffer.h"
 #include "rendering/pc/PCDeviceManager.h"
 #include "rendering/pc/PCRenderContext.h"
 #include "rendering/pc/PCRenderDevice.h"
@@ -535,7 +535,7 @@ int spinnyCube(HWND window) {
 		memcpy(pVoid, VertexData, sizeof(VertexData));
 		v_buffer->Unlock();
 
-		cdc::PCStaticVertexBuffer cdcVertexBuffer(v_buffer, 12*sizeof(float));
+		cdc::HackVertexBuffer9 cdcVertexBuffer(v_buffer, 12*sizeof(float));
 
 		IDirect3DIndexBuffer9 *i_buffer = nullptr;
 		d3dDevice9->CreateIndexBuffer(sizeof(IndexData),
@@ -575,6 +575,8 @@ int spinnyCube(HWND window) {
 		cdc::PCStreamDecl cdcStreamDecl(elements);
 		*/
 
+		cdc::PCStreamDeclManager streamDeclManager(renderDevice9);
+		cdc::PCStreamDecl *pCdcStreamDecl = nullptr;
 		cdc::VertexAttributeA cdcElements[4] = {
 			{ cdc::VertexAttributeA::kPosition,   0, 3, 0}, // D3DDECLTYPE_FLOAT4
 			{ cdc::VertexAttributeA::kNormal,    16, 2, 0}, // D3DDECLTYPE_FLOAT3
@@ -582,8 +584,22 @@ int spinnyCube(HWND window) {
 			{ cdc::VertexAttributeA::kColor1,    36, 2, 0}  // D3DDECLTYPE_FLOAT3
 		};
 		auto *vertexDecl = cdc::VertexDecl::Create(cdcElements, 4, cdcVertexBuffer.GetStride());
-		cdc::PCStreamDeclManager streamDeclManager(renderDevice9);
-		cdc::PCStreamDecl *pCdcStreamDecl = streamDeclManager.FindOrCreate(vertexDecl);
+		if (true) {
+			auto *inputSpec = (cdc::ShaderInputSpec *)new char[
+				sizeof(cdc::ShaderInputSpec) +
+				sizeof(cdc::VertexAttributeB) * 4];
+			inputSpec->hash0 = 0;
+			inputSpec->hash4 = 0;
+			inputSpec->numAttribs = 4;
+			inputSpec->dwordC = 0;
+			inputSpec->attr[0] = { cdc::VertexAttributeA::kPosition,  ~0u,  1 };
+			inputSpec->attr[1] = { cdc::VertexAttributeA::kNormal,    ~0u,  4 };
+			inputSpec->attr[2] = { cdc::VertexAttributeA::kTexcoord2, ~0u, 11 };
+			inputSpec->attr[3] = { cdc::VertexAttributeA::kColor1,    ~0u,  8 };
+			pCdcStreamDecl = streamDeclManager.FindOrCreate(vertexDecl, inputSpec, true);
+		} else {
+			pCdcStreamDecl = streamDeclManager.FindOrCreate(vertexDecl);
+		}
 		cdc::PCStreamDecl& cdcStreamDecl = *pCdcStreamDecl;
 
 		cdcStreamDecl.internalCreate();

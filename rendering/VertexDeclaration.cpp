@@ -242,4 +242,76 @@ void semanticFromEnum(D3D11_INPUT_ELEMENT_DESC *elem, int e) {
 	}
 }
 
+void semanticFromEnum(D3DVERTEXELEMENT9 *elem, int e) {
+	switch (e) {
+		case 1:
+			elem->Usage = D3DDECLUSAGE_POSITION; // 0
+			elem->UsageIndex = 0;
+			break;
+		case 2:
+			elem->Usage = D3DDECLUSAGE_BLENDWEIGHT; // 1
+			elem->UsageIndex = 0;
+			break;
+		case 3:
+			elem->Usage = D3DDECLUSAGE_BLENDINDICES; // 2
+			elem->UsageIndex = 0;
+			break;
+		case 4:
+			elem->Usage = D3DDECLUSAGE_NORMAL; // 3
+			elem->UsageIndex = 0;
+			break;
+		case 5:
+			elem->Usage = D3DDECLUSAGE_BINORMAL; // 7
+			elem->UsageIndex = 0;
+			break;
+		case 6:
+			elem->Usage = D3DDECLUSAGE_TANGENT; // 6
+			elem->UsageIndex = 0;
+			break;
+		// case 7: N/A
+		case 8:
+			elem->Usage = D3DDECLUSAGE_COLOR; // 10
+			elem->UsageIndex = 0;
+			break;
+		case 9:
+			elem->Usage = D3DDECLUSAGE_COLOR; // 10
+			elem->UsageIndex = 1;
+			break;
+		case 10:
+			elem->Usage = D3DDECLUSAGE_TEXCOORD; // 5
+			elem->UsageIndex = 0;
+			break;
+		case 11:
+			elem->Usage = D3DDECLUSAGE_TEXCOORD; // 5
+			elem->UsageIndex = 1;
+			break;
+		case 12:
+			elem->Usage = D3DDECLUSAGE_TEXCOORD; // 5
+			elem->UsageIndex = 2;
+			break;
+		case 13:
+			elem->Usage = D3DDECLUSAGE_TEXCOORD; // 5
+			elem->UsageIndex = 3;
+			break;
+		case 14:
+			elem->Usage = D3DDECLUSAGE_TEXCOORD; // 5
+			elem->UsageIndex = 4;
+			break;
+		case 15:
+			elem->Usage = D3DDECLUSAGE_TEXCOORD; // 5
+			elem->UsageIndex = 5;
+			break;
+		case 16:
+			elem->Usage = D3DDECLUSAGE_TEXCOORD; // 5
+			elem->UsageIndex = 6;
+			break;
+		case 17:
+			elem->Usage = D3DDECLUSAGE_TEXCOORD; // 5
+			elem->UsageIndex = 7;
+			break;
+		default:
+			break;
+	}
+}
+
 }

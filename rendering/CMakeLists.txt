@@ -5,6 +5,8 @@ target_sources(dxhr PRIVATE
 	drawables/PCDX11MLAADrawable.cpp
 	drawables/PCDX11SetRTDrawable.cpp
 
+	pc/buffers/PCStaticVertexBuffer.cpp
+
 	pc/shaders/PCPixelShader.cpp
 	pc/shaders/PCShaderLib.cpp
 	pc/shaders/PCVertexShader.cpp

@@ -99,4 +99,8 @@ void semanticFromEnum(
 	D3D11_INPUT_ELEMENT_DESC *elem,
 	int e);
 
+void semanticFromEnum(
+	D3DVERTEXELEMENT9 *elem,
+	int e);
+
 }

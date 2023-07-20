@@ -25,6 +25,7 @@ namespace cdc {
 class PCRenderDevice;
 class PCStreamDecl;
 struct PCShaderBinary;
+struct ShaderInputSpec;
 struct VertexDecl;
 
 class PCStreamDeclManager {
@@ -37,6 +38,7 @@ public:
 	{}
 
 	PCStreamDecl *FindOrCreate(VertexDecl *vertexDecl);
+	PCStreamDecl *FindOrCreate(VertexDecl *vertexDecl, ShaderInputSpec *inputSpec, bool);
 };
 
 }

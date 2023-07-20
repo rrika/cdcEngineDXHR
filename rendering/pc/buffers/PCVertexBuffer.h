@@ -14,4 +14,15 @@ public:
 	virtual uint16_t GetStride() = 0;
 };
 
+class HackVertexBuffer9 : public PCVertexBuffer {
+	IDirect3DVertexBuffer9 *buffer;
+	uint32_t stride;
+public:
+	HackVertexBuffer9(IDirect3DVertexBuffer9 *buffer, uint32_t stride)
+		: buffer(buffer), stride(stride) {}
+	IDirect3DVertexBuffer9 *GetD3DVertexBuffer() override { return buffer; }
+	uint16_t GetStride() override { return stride; }
+};
+
+
 }
