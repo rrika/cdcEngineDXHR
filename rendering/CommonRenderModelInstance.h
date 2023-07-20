@@ -7,7 +7,7 @@
 
 namespace cdc {
 
-class PCDX11Material;
+class CommonMaterial;
 
 struct NonPersistentPGData {
 	uint32_t dword0;   // = m_instanceFlags
@@ -17,7 +17,7 @@ struct NonPersistentPGData {
 };
 
 struct PersistentPGData {
-	PCDX11Material *material;
+	CommonMaterial *material;
 	uint32_t dword4;
 	uint32_t dword8;
 	uint32_t dwordC;

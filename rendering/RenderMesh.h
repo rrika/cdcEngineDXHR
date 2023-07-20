@@ -3,8 +3,8 @@
 
 namespace cdc {
 
+class CommonVertexBuffer;
 class IMaterial;
-class PCDX11StaticVertexBuffer;
 // struct StencilParams;
 struct NonPersistentPGData;
 struct PersistentPGData;
@@ -29,7 +29,7 @@ struct ModelBatch {
 	uint16_t word36;
 	uint32_t *matrixGatherOffsets; // 38
 	uint32_t vertices; // 3C, offset patched to pointer
-	PCDX11StaticVertexBuffer *staticVertexBuffer;
+	CommonVertexBuffer *staticVertexBuffer;
 	uint32_t dword44;
 	uint32_t dword48;
 	uint32_t format; // 4C, offset patched to pointer

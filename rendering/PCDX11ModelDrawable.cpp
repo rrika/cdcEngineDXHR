@@ -54,7 +54,7 @@ void PCDX11ModelDrawable::drawDepth(uint32_t funcSetIndex, IRenderDrawable *draw
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
-	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupDepthPass(
+	PCDX11StreamDecl *streamDecl = static_cast<PCDX11Material*>(mt0x128->material)->SetupDepthPass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		mesh->vsSelect4C,
@@ -79,7 +79,7 @@ void PCDX11ModelDrawable::drawShadow(uint32_t funcSetIndex, IRenderDrawable *dra
 
 	/*auto *lightManager = static_cast<PCDX11LightManager*>(renderDevice->lightManager84);
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
-	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupShadowPass(
+	PCDX11StreamDecl *streamDecl = static_cast<PCDX11Material*>(mt0x128->material)->SetupShadowPass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		(*(char**)lightManager->ptr434)[276],
@@ -104,7 +104,7 @@ void PCDX11ModelDrawable::drawAlphaBloom(uint32_t funcSetIndex, IRenderDrawable 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
-	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupBloomPass(
+	PCDX11StreamDecl *streamDecl = static_cast<PCDX11Material*>(mt0x128->material)->SetupBloomPass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		mesh->vsSelect4C,
@@ -127,7 +127,7 @@ void PCDX11ModelDrawable::drawComposite(uint32_t funcSetIndex, IRenderDrawable *
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
-	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupSinglePass(
+	PCDX11StreamDecl *streamDecl = static_cast<PCDX11Material*>(mt0x128->material)->SetupSinglePass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		thisModel->lightConstantBufferData,
@@ -156,7 +156,7 @@ void PCDX11ModelDrawable::drawTranslucent(uint32_t funcSetIndex, IRenderDrawable
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
-	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupSinglePass(
+	PCDX11StreamDecl *streamDecl = static_cast<PCDX11Material*>(mt0x128->material)->SetupSinglePass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		thisModel->lightConstantBufferData,
@@ -185,7 +185,7 @@ void PCDX11ModelDrawable::drawNormal(uint32_t funcSetIndex, IRenderDrawable *dra
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
-	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupNormalMapPass(
+	PCDX11StreamDecl *streamDecl = static_cast<PCDX11Material*>(mt0x128->material)->SetupNormalMapPass(
 		&mt0x128->sub10,
 		(void*)thisModel->ext->instanceParams,
 		mesh->vsSelect4C,
@@ -272,7 +272,7 @@ void PCDX11ModelDrawable::draw(
 	Mesh *mesh = renderModel->getMesh();
 	stateManager->setDepthLayer(mesh->flags.depthLayer);
 	stateManager->setIndexBuffer(renderModel->indexBuffer);
-	stateManager->setVertexBuffer(meshSub->staticVertexBuffer);
+	stateManager->setVertexBuffer(static_cast<PCDX11VertexBuffer*>(meshSub->staticVertexBuffer));
 	stateManager->setStreamDecl(streamDecl);
 
 	if (renderTwice) {
@@ -281,7 +281,7 @@ void PCDX11ModelDrawable::draw(
 	}
 
 	ID3D11DeviceContext *d3d11DeviceContext = renderDevice->getD3DDeviceContext();
-	uint32_t baseVertex = meshSub->staticVertexBuffer->getBaseVertex();
+	uint32_t baseVertex = static_cast<PCDX11VertexBuffer*>(meshSub->staticVertexBuffer)->getBaseVertex();
 	uint32_t startIndex = primGroup->startIndex + renderModel->indexBuffer->getStartIndex();
 	uint32_t indexCount = getTriangleCount() * 3;
 

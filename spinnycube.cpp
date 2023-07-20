@@ -55,6 +55,7 @@
 #include "rendering/pc/surfaces/PCDeviceTexture.h"
 #include "rendering/pc/surfaces/PCTexture.h"
 #include "rendering/PCDX11DeviceManager.h"
+#include "rendering/PCDX11Material.h"
 #include "rendering/PCDX11MatrixState.h"
 #include "rendering/PCDX11RenderContext.h"
 #include "rendering/PCDX11RenderDevice.h"
