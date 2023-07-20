@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdio>
 #include "../PCDeviceManager.h"
 #include "PCPixelShader.h"
 #include "PCShaderBinary.h"
@@ -67,7 +68,11 @@ public:
 	PCPixelShaderTable(char *blob, bool takeCopy) :
 		PCShaderTable(blob)
 	{
+		printf("pixelshadertable %p\n", this);
 		auto *blobWords = (uint32_t*)blob;
+		printf("  blob[0] %08x\n", blobWords[0]);
+		printf("  blob[1] %08x\n", blobWords[1]);
+		printf("  blob[2] %08x\n", blobWords[2]);
 		offsets = &blobWords[2];
 		numShaders = blobWords[0] >> 2;
 		pixelShaders = new PCPixelShader*[numShaders];

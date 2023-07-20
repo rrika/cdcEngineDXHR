@@ -5,6 +5,8 @@
 namespace cdc {
 
 class PCRenderDevice;
+class PCStreamDecl;
+struct VertexDecl;
 
 class PCMaterial :
 	public CommonMaterial,
@@ -18,6 +20,14 @@ public:
 	void method_18() override;
 
 	~PCMaterial() = default;
+
+	PCStreamDecl *SetupNormalMapPass(
+		MaterialInstanceData& data,
+		void *instanceParams, // float4
+		uint32_t modelType,
+		VertexDecl *pVertexDecl,
+		uint32_t flags,
+		float opacityMultiplier);
 };
 
 }

@@ -3,6 +3,7 @@
 #include "rendering/CommonRenderDevice.h"
 #include "rendering/pc/PCInternalResource.h"
 #include "rendering/pc/PCRenderContext.h"
+#include "rendering/pc/PCStreamDeclManager.h"
 
 namespace cdc {
 
@@ -11,6 +12,9 @@ class PCRenderDevice :
 	public CommonRenderDevice
 {
 	PCRenderContext *renderContext = nullptr; // 10C9C
+public:
+	PCStreamDeclManager streamDeclManager { this }; // 111288
+private:
 
 	PCRenderContext	*CreateRenderContext(HWND hwnd, uint32_t width, uint32_t height, bool useMultiSample);
 

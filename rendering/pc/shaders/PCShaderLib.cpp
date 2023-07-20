@@ -25,10 +25,10 @@ void PCShaderLib::fill(char *blob, uint32_t offset, uint32_t size, bool done) {
 	if (done) {
 		bool isPixelShader = bool(*(uint32_t*)buffer);
 		if (isPixelShader) {
-			table = new PCPixelShaderTable(blob, /*takeCopy=*/ true);
+			table = new PCPixelShaderTable(blob + 4, /*takeCopy=*/ true);
 			// TODO
 		} else {
-			table = new PCVertexShaderTable(blob, /*takeCopy=*/ true);
+			table = new PCVertexShaderTable(blob + 4, /*takeCopy=*/ true);
 		}
 		delete[] buffer;
 		buffer = nullptr;

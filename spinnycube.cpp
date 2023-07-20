@@ -45,6 +45,7 @@
 #include "rendering/pc/buffers/PCStaticIndexBuffer.h"
 #include "rendering/pc/buffers/PCVertexBuffer.h"
 #include "rendering/pc/PCDeviceManager.h"
+#include "rendering/pc/PCMaterial.h"
 #include "rendering/pc/PCRenderContext.h"
 #include "rendering/pc/PCRenderDevice.h"
 #include "rendering/pc/PCRenderModel.h"
@@ -551,6 +552,7 @@ int spinnyCube(HWND window) {
 		i_buffer->Unlock();
 
 		cdc::PCStateManager stateManager9(d3dDevice9);
+		cdc::deviceManager9->stateManager = &stateManager9;
 		cdc::HackIndexBuffer9 cdcIndexBuffer9(i_buffer);
 
 #if ENABLE_D3DCOMPILER
@@ -638,9 +640,13 @@ int spinnyCube(HWND window) {
 		auto bottleRenderModel = (cdc::PCRenderModel*)bottleObject->models[0]->renderMesh;
 
 		cdc::ModelBatch *bottleBatch0 = &bottleRenderModel->modelBatches[0];
+		cdc::PrimGroup *bottleGroup0 = &bottleRenderModel->primGroups[0];
 		cdc::VertexDecl *bottleVertexDecl = (cdc::VertexDecl*) bottleBatch0->format;
+		cdc::PCMaterial *bottleMaterial = static_cast<cdc::PCMaterial*>(bottleGroup0->material);
 		cdc::PCStreamDecl *bottleStreamDecl = streamDeclManager.FindOrCreate(bottleVertexDecl, inputSpec, true);;
 		bottleStreamDecl->internalCreate();
+
+		cdc::MaterialInstanceData bottleMaterialInstance;
 
 		for (uint32_t i=0; i<bottleVertexDecl->numAttr; i++) {
 			cdc::VertexAttributeA& a = bottleVertexDecl->attrib[i];
@@ -720,20 +726,35 @@ int spinnyCube(HWND window) {
 			d3dDevice9->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, clear_col_dx, 1.0f, 0);
 
 			if (d3dDevice9->BeginScene() >= 0) {
-				stateManager9.setVertexShader(&cdcVertex9);
-				stateManager9.setPixelShader(&cdcPixel9);
 
 				stateManager9.setDeviceTexture(0, bottleTexture->GetDeviceBaseTexture(), cdc::kTextureFilterTrilinear, 0.0f);
 
 				// draw bottle
+				bottleMaterial->SetupNormalMapPass(
+					bottleMaterialInstance,
+					nullptr,
+					0,
+					bottleVertexDecl,
+					0,
+					1.0f);
 				stateManager9.setVertexBuffer(static_cast<cdc::PCVertexBuffer*>(bottleBatch0->staticVertexBuffer));
 				stateManager9.setIndexBuffer(bottleRenderModel->indexBuffer);
 				stateManager9.setStreamDecl(bottleStreamDecl);
 				d3dDevice9->SetVertexShaderConstantF(0, (float*)WorldViewProject_Bottle.m, 4);
 				d3dDevice9->SetVertexShaderConstantF(4, (float*)World_Bottle.m, 4);
+				struct { float values[4]; } row;
+				row = {2.0f, -1.0f, 0.0f, 0.0f}; d3dDevice9->SetVertexShaderConstantF(21, (float*)WorldViewProject_Bottle.m, 1); // NormalScaleOffset
+				row = {1.0f,  0.0f, 0.0f, 0.0f}; d3dDevice9->SetVertexShaderConstantF(254, (float*)World_Bottle.m, 1); // TexcoordScales
+				row = {1.0f, 0.0f, 0.0f, 0.0f}; d3dDevice9->SetPixelShaderConstantF(  1, row.values, 1); // opacity
+				row = {1.0f, 0.0f, 0.0f, 0.0f}; d3dDevice9->SetPixelShaderConstantF( 39, row.values, 1); // some matrix
+				row = {0.0f, 1.0f, 0.0f, 0.0f}; d3dDevice9->SetPixelShaderConstantF( 40, row.values, 1); // some matrix
+				row = {0.0f, 0.0f, 1.0f, 0.0f}; d3dDevice9->SetPixelShaderConstantF( 41, row.values, 1); // some matrix
+				row = {1.0f, 1.0f, 1.0f, 1.0f}; d3dDevice9->SetPixelShaderConstantF(100, row.values, 1); // some scaling factors
 				d3dDevice9->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, bottleBatch0->numVertices, 0, bottleBatch0->numTrianglesProbably);
 
 				// draw cube
+				stateManager9.setVertexShader(&cdcVertex9);
+				stateManager9.setPixelShader(&cdcPixel9);
 				stateManager9.setVertexBuffer(&cdcVertexBuffer);
 				stateManager9.setIndexBuffer(&cdcIndexBuffer9);
 				stateManager9.setStreamDecl(&cdcStreamDecl);

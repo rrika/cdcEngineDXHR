@@ -7,6 +7,7 @@ namespace cdc {
 
 class PCRenderContext;
 class PCShaderManager;
+class PCStateManager;
 
 class PCDeviceManager :
 	public IPCDeviceManager
@@ -19,11 +20,11 @@ class PCDeviceManager :
 	DisplayConfig config2; // 1E4
 	D3DPRESENT_PARAMETERS presentParams; // 270
 	PCShaderManager *shaderManager; // 2B4
-	// PCStateManager *stateManager; // 2B8
 
 	friend class PCRenderContext;
 
 public:
+	PCStateManager *stateManager; // 2B8
 	enum PCCaps { // line 50
 		PC_CAPS_TEXTURE_NONPOW2 = 1,
 		PC_CAPS_TEXTURE_MIPMAPS = 2,
@@ -51,7 +52,7 @@ public:
 
 	IDirect3D9 *getD3D() { return d3d9; }
 	IDirect3DDevice9 *getD3DDevice() { return d3d9Device; }
-	// PCStateManager *getStateManager() { return stateManager; }
+	PCStateManager *getStateManager() { return stateManager; }
 	PCShaderManager *getShaderManager() { return shaderManager; }
 
 	uint32_t GetCaps() {
