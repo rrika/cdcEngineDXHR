@@ -13,6 +13,7 @@ namespace cdc {
 class AnimPoseNode;
 class IAnimGraphNode;
 struct BoneSet;
+struct Matrix;
 
 class AnimComponentV2 {
 	static BoneSet s_allBones;
@@ -21,6 +22,7 @@ public:
 	AnimPoseNode *poseNode = nullptr; // 4
 	dtp::Model *model = nullptr; // 20
 	Instance *instance; // 24
+	Matrix *matrices = nullptr; // 2C, assigned by G2Instance_RebuildTransforms
 	IAnimGraphNode *firstNode = nullptr; // 54
 
 	AnimComponentV2(Instance *instance);
@@ -30,7 +32,7 @@ public:
 	void BuildTransforms();
 	void PrePhysics();
 	void BuildSegTransforms();
-	void BuildSegTransformForRoot();
+	void BuildSegTransformForRoot(Matrix&, Matrix&);
 };
 
 }

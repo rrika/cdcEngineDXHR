@@ -402,10 +402,10 @@ bool PCDX11ModelDrawable::setMatrices(
 				m[11] = matrix[14]; // translation z
 
 				// last row is different
-				m[12] = vector[0];
-				m[13] = vector[1];
-				m[14] = vector[2];
-				m[15] = vector[3];
+				m[12] = 0.0f; // vector[0];
+				m[13] = 0.0f; // vector[1];
+				m[14] = 0.0f; // vector[2];
+				m[15] = 0.0f; // vector[3];
 			}
 			auto &skinningBuffer = stateManager->accessCommonCB(3);
 			skinningBuffer.assignRow(0, matrixStagingBuffer, 4 * meshSub->commonCb3_numMatrices);

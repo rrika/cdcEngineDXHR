@@ -66,7 +66,8 @@ void AnimFragmentNode::PrePhysics(AnimContextData *data) {
 
 void AnimFragmentNode::EnsureIDMap(dtp::Model *model) {
 	// TODO: keep these maps in a hashmap
-	if (animID == boneMap->animID &&
+	if (boneMap &&
+		animID == boneMap->animID &&
 		boneMapHash == boneMap->boneMapHash)
 		return;
 
@@ -154,13 +155,12 @@ void AnimFragmentNode::CalcTargetKeyAndTimeOffset(uint32_t& targetKey, float& ti
 	float keyIndexF = elapsedTime / timePerKey;
 	uint16_t keyIndex = (uint16_t)keyIndexF;
 	uint32_t keyCount = fragment->mKeyCount;
-	float fractionalTime;
 	if (keyIndex >= keyCount)
 		keyIndex = keyCount -1;
 
 	float fractionalTime = 0.0f;
 	if (elapsedTime >= 0.0f)
-		fractionalTime = (elapsedTime - frameIndex * timePerKey) / timePerKey;
+		fractionalTime = (elapsedTime - keyIndex * timePerKey) / timePerKey;
 	else
 		keyIndex = 0;
 

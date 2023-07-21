@@ -32,7 +32,7 @@ struct Segment {
 	uint32_t pad0[8];
 	cdc::Vector pivot; // 20
 	uint32_t pad30[2];
-	uint32_t parent;
+	uint32_t parent; // 38
 	HInfo *hInfo;
 };
 

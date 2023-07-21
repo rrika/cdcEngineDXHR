@@ -2,7 +2,7 @@
 
 namespace cdc {
 
-struct AnimComponentV2;
+class AnimComponentV2;
 struct AnimFragment;
 
 }

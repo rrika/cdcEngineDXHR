@@ -48,8 +48,7 @@ void AnimPoseNode::PrePhysics(AnimContextData *data) {
 		// childData.model    = data->model;
 		// childData.boneSet  = data->boneSet;
 		// childData.weight   = data->weight;
-		if (useBlend)
-			childData.pose = &pose;
+		childData.pose = &pose;
 		pose.ClearSegValues(1.0f);
 		inputNode->PrePhysics(&childData);
 	}

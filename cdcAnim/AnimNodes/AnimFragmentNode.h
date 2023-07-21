@@ -14,7 +14,7 @@ class AnimFragmentNode : public AnimPipelineNode {
 	float elapsedTime;
 	uint32_t animID; // 6C
 	uint32_t boneMapHash; // 70
-	BoneMap *boneMap; // 74
+	BoneMap *boneMap = nullptr; // 74
 	AnimDecoder *decoders; // 7C
 
 	void SetAnimData(uint16_t);
@@ -39,7 +39,7 @@ public:
 	void DecompressPose(AnimContextData*);
 	void CalcTargetKeyAndTimeOffset(uint32_t& targetKey, float& timeOffset);
 	void DecompressFrame(AnimContextData*);
-	void DecompressFrame(AnimContextData*, int32_t frameIndex, float fractionalTime);
+	void DecompressFrame(AnimContextData*, uint32_t frameIndex, float fractionalTime);
 };
 
 }

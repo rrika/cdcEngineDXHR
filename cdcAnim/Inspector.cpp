@@ -93,7 +93,7 @@ void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
 	ImGui::Indent();
 	ImGui::Text("mAnimID %d", fragment->mAnimID);
 	ImGui::Text("mKeyCount %d", fragment->mKeyCount);
-	ImGui::Text("word34 %d", fragment->word34);
+	ImGui::Text("mTimePerKey %d", fragment->mTimePerKey);
 	ImGui::Text("mSegmentCount %d", fragment->mSegmentCount);
 	ImGui::Text("mSectionCount %d", fragment->mSectionCount);
 	ImGui::Text("mExtraChannelCount %d", fragment->mExtraChannelCount);

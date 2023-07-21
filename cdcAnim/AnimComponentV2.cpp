@@ -5,6 +5,7 @@
 #include "cdcAnim/AnimPoseNode.h"
 #include "cdcAnim/IAnimGraphNode.h" // for cdc::AnimContextData
 #include "cdcKit/Animation/anitracker.h"
+#include "cdcMath/MathUtil.h"
 #include "cdcWorld/cdcWorldTypes.h" // for dtp::Model*
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Object.h"
@@ -70,12 +71,37 @@ void AnimComponentV2::PrePhysics() {
 	}
 }
 
-void AnimComponentV2::BuildSegTransforms() {
+static bool AlmostZero(Vector& v) {
+	float limit = 1.f/0x4000;
+	if (-limit < v.x && v.x < limit)
+		if (-limit < v.y && v.y < limit)
+			if (-limit < v.z && v.z < limit)
+				return true;
+	return false;
+}
+
+void AnimComponentV2::BuildSegTransformForRoot(Matrix& a, Matrix& b) {
+	AnimBuffer *buffer = poseNode->pose.buffer;
+	AnimSegment *segments = buffer ? buffer->segments : nullptr;
+	if (AlmostZero(segments[0].trans) && AlmostZero(segments[0].rot)) {
+		a = b;
+
+	} else {
+		MathUtil::QuatLogToMatrix(&a, segments[0].rot);
+		a.m[3][0] = segments[0].trans.x;
+		a.m[3][1] = segments[0].trans.y;
+		a.m[3][2] = segments[0].trans.z;
+		a = b * a;
+		b = a;
+	}
 	//
 }
 
-void AnimComponentV2::BuildSegTransformForRoot() {
-	//
+void AnimComponentV2::BuildSegTransforms() {
+	Segment *modelSegments = model->GetSegmentList();
+	uint32_t parent0 = modelSegments[0]->parent;
+	BuildSegTransformForRoot(&matrices[0], &matrices[parent0]);
 }
+
 
 }
