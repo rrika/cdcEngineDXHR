@@ -188,6 +188,10 @@ if (ENABLE_IMGUI)
 			3rdParty/imgui/backends/imgui_impl_win32.cpp)
 	endif()
 
+	include_directories(3rdParty/imguizmo)
+	target_sources(dxhr PRIVATE
+		3rdParty/imguizmo/ImGuizmo.cpp)
+
 	# clang-cl doesn't find _mm_set_ss
 	add_compile_definitions(
 		IMGUI_DISABLE_SSE=1)

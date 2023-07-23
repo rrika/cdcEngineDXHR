@@ -88,6 +88,7 @@
 #include "cdcSound/SoundPlex.h"
 #include "cdcWorld/Inspector.h"
 #include "cdcWorld/Instance.h"
+#include "cdcWorld/InstanceDrawable.h"
 #include "cdcWorld/InstanceManager.h"
 #include "cdcWorld/RMIDrawableBase.h"
 #include "cdcWorld/stream.h" // for buildUnitsUI
@@ -104,6 +105,7 @@ extern HCURSOR ImGui_ImplWin32_Arrow;
 #include "imgui/backends/imgui_impl_sdl.h"
 #endif
 #include "rendering/Inspector.h"
+#include "ImGuizmo.h"
 #endif
 
 #ifdef __linux__
@@ -638,6 +640,7 @@ int spinnyCube(HWND window,
 		ImGui_ImplSDL2_NewFrame();
 #endif
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 
 		if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {
 			mouseLook = false;
@@ -1497,6 +1500,18 @@ int spinnyCube(HWND window,
 				uiact.select((cdc::ScriptType*)nullptr);
 		}
 		if (uiact.selectedInstance) {
+
+			ImGuiIO& io = ImGui::GetIO();
+			ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+			ImGuizmo::Manipulate(
+				(float*)viewMatrix.m,
+				(float*)scene->projectMatrix.m,
+				ImGuizmo::TRANSLATE,
+				ImGuizmo::WORLD,
+				(float*)uiact.selectedInstance->GetTransformComponent().m_matrix[0].m);
+			if (auto *instanceDrawable = uiact.selectedInstance->instanceDrawable)
+				static_cast<cdc::InstanceDrawable*>(instanceDrawable)->AddToDirtyList();
+
 			bool showWindow = true;
 			ImGui::Begin("Instance", &showWindow);
 			buildUI(uiact, uiact.selectedInstance);
