@@ -1,5 +1,6 @@
 #include "InstanceDrawable.h"
 #include "cdcWorld/cdcWorldTypes.h" // for dtp::Model
+#include "cdcWorld/CalcSkeleton.h"
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Object.h"
 #include "rendering/CommonRenderDevice.h"
@@ -118,7 +119,7 @@ void InstanceDrawable::GetBoundingVolume(BasicCullingVolume *volume) {
 	}
 }
 
-void InstanceDrawable::draw(Matrix *, float) {
+void InstanceDrawable::draw(Matrix *, float) { // line 1243
 
 	if (m_renderModelInstances.empty())
 		return; // HACK
@@ -129,19 +130,12 @@ void InstanceDrawable::draw(Matrix *, float) {
 	cdc::RenderModelInstance *rmi = m_renderModelInstances[meshComponent.GetCurrentRenderModelIndex()];
 
 	if (model && rmi) {
-		// HACK
 		cdc::Matrix *matrix = m_instance->GetTransformComponent().m_matrix;
-
-		m_pMatrixState->resize(0);
-		auto *poseData = static_cast<cdc::PCDX11MatrixState*>(m_pMatrixState)->poseData;
-		auto *pMatrix = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));
-		float *pVector = poseData->getVector(0);
-		*pMatrix = *matrix;
-		pVector[0] = pMatrix->m[0][3];
-		pVector[1] = pMatrix->m[1][3];
-		pVector[2] = pMatrix->m[2][3];
-		pVector[3] = 1.0f;
-
+		// if (skydome) {
+		//	...
+		// } else {
+		PrepareMatrixState(matrix, model, rmi, false);
+		// }
 		rmi->recordDrawables(m_pMatrixState);
 	}
 }
@@ -157,6 +151,20 @@ bool InstanceDrawable::GetBoundingBox(Vector *pMin, Vector *pMax) {
 	cdc::RenderModelInstance *rmi = m_renderModelInstances[meshComponent.GetCurrentRenderModelIndex()];
 	cdc::RenderMesh const *rm = rmi->GetRenderMesh();
 	return rm->getBoundingBox(*(Vector3*)pMin, *(Vector3*)pMax);
+}
+
+void InstanceDrawable::PrepareMatrixState(Matrix *matrix, dtp::Model *model, RenderModelInstance *rmi, bool force) { // line 1880
+	if (true || force) {
+		auto boneCount = rmi->GetRenderMesh()->getBoneCount();
+		m_pMatrixState->resize(boneCount);
+		if (boneCount) {
+			CalcSkeletonMatrices(model, matrix, boneCount, m_pMatrixState);
+		} else {
+			auto *poseData = static_cast<cdc::PCDX11MatrixState*>(m_pMatrixState)->poseData;
+			auto *pMatrix = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));
+			*pMatrix = *matrix;
+		}
+	}
 }
 
 void InstanceDrawable::TouchUpBoneUsageMaps() {

@@ -389,7 +389,7 @@ bool PCDX11ModelDrawable::setMatrices(
 				m[0] = matrix[0];
 				m[1] = matrix[4];
 				m[2] = matrix[8];
-				m[3] = matrix[12]; // translation x (unless, I made a mistake)
+				m[3] = matrix[12]; // translation x
 
 				m[4] = matrix[1];
 				m[5] = matrix[5];
@@ -401,11 +401,11 @@ bool PCDX11ModelDrawable::setMatrices(
 				m[10] = matrix[10];
 				m[11] = matrix[14]; // translation z
 
-				// last row is different
-				m[12] = 0.0f; // vector[0];
-				m[13] = 0.0f; // vector[1];
-				m[14] = 0.0f; // vector[2];
-				m[15] = 0.0f; // vector[3];
+				// last row is different, these values seem to be uninitialized and ignored
+				m[12] = vector[0];
+				m[13] = vector[1];
+				m[14] = vector[2];
+				m[15] = vector[3];
 			}
 			auto &skinningBuffer = stateManager->accessCommonCB(3);
 			skinningBuffer.assignRow(0, matrixStagingBuffer, 4 * meshSub->commonCb3_numMatrices);

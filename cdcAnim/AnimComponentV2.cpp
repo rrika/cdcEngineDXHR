@@ -87,7 +87,8 @@ void AnimComponentV2::BuildSegTransformForRoot(Matrix& a, Matrix& b) {
 		a = b;
 
 	} else {
-		MathUtil::QuatLogToMatrix(&a, segments[0].rot);
+		Quat rot { segments[0].rot };
+		MathUtil::QuatLogToMatrix(&a, &rot);
 		a.m[3][0] = segments[0].trans.x;
 		a.m[3][1] = segments[0].trans.y;
 		a.m[3][2] = segments[0].trans.z;
@@ -99,8 +100,8 @@ void AnimComponentV2::BuildSegTransformForRoot(Matrix& a, Matrix& b) {
 
 void AnimComponentV2::BuildSegTransforms() {
 	Segment *modelSegments = model->GetSegmentList();
-	uint32_t parent0 = modelSegments[0]->parent;
-	BuildSegTransformForRoot(&matrices[0], &matrices[parent0]);
+	uint32_t parent0 = modelSegments[0].parent;
+	BuildSegTransformForRoot(matrices[0], matrices[parent0]);
 }
 
 

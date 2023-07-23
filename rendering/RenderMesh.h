@@ -109,7 +109,7 @@ public:
 	virtual void getBoundingSphere(float*, float*) const = 0; // 1C
 	virtual bool getBoundingBox(Vector3&, Vector3&) const { return false; }; // 20
 	virtual void getLodDistances(float*, float*) = 0; // 24
-	virtual uint32_t getBoneCount() = 0; // 28
+	virtual uint32_t getBoneCount() const = 0; // 28
 	virtual void mesh2C() = 0;
 	virtual NonPersistentPGData *getTab0Ext16() = 0;
 	virtual PersistentPGData *getTab0Ext128() = 0;

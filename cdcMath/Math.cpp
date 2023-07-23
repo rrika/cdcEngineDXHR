@@ -118,6 +118,10 @@ Vector operator*(VectorArg a, float b) {
     return {a.x * b, a.y * b, a.z * b, a.w * b};
 }
 
+Vector operator-(VectorArg a) {
+    return {-a.x, -a.y, -a.z, -a.w};
+}
+
 Matrix transpose(Matrix m) {
     return {{
         {m.m[0][0], m.m[1][0], m.m[2][0], m.m[3][0]},
