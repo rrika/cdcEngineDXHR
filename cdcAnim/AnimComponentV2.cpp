@@ -83,7 +83,7 @@ static bool AlmostZero(Vector& v) {
 void AnimComponentV2::BuildSegTransformForRoot(Matrix& a, Matrix& b) {
 	AnimBuffer *buffer = poseNode->pose.buffer;
 	AnimSegment *segments = buffer ? buffer->segments : nullptr;
-	if (AlmostZero(segments[0].trans) && AlmostZero(segments[0].rot)) {
+	if (!segments || AlmostZero(segments[0].trans) && AlmostZero(segments[0].rot)) {
 		a = b;
 
 	} else {
