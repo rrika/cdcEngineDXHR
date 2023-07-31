@@ -1510,14 +1510,21 @@ int spinnyCube(HWND window,
 		}
 		if (uiact.selectedInstance) {
 
+			dtp::Model *model = uiact.selectedInstance->GetMeshComponent().GetModel();
+			uint32_t numMatrices = model ? model->GetNumSegments() : 1;
+
 			ImGuiIO& io = ImGui::GetIO();
 			ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
-			ImGuizmo::Manipulate(
-				(float*)viewMatrix.m,
-				(float*)scene->projectMatrix.m,
-				ImGuizmo::TRANSLATE,
-				ImGuizmo::WORLD,
-				(float*)uiact.selectedInstance->GetTransformComponent().m_matrix[0].m);
+			for (uint32_t i=0; i<numMatrices; i++) {
+				ImGui::PushID(i);
+				ImGuizmo::Manipulate(
+					(float*)viewMatrix.m,
+					(float*)scene->projectMatrix.m,
+					ImGuizmo::TRANSLATE,
+					ImGuizmo::WORLD,
+					(float*)uiact.selectedInstance->GetTransformComponent().m_matrix[i].m);
+				ImGui::PopID();
+			}
 			if (auto *instanceDrawable = uiact.selectedInstance->instanceDrawable)
 				static_cast<cdc::InstanceDrawable*>(instanceDrawable)->AddToDirtyList();
 
