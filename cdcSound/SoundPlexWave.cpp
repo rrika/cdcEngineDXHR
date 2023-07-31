@@ -17,6 +17,8 @@ SoundPlexWave::SoundPlexWave(
 	if (wave && wave->sample) {	
 		// TODO
 		m_voice = Voice::s_voiceCollection.Create(wave->sample);
+		// TODO
+		static_cast<VoiceImpl*>(m_voice)->SetControls(controls, controls3d);
 	}
 }
 

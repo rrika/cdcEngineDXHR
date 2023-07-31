@@ -80,6 +80,7 @@
 #include "cdcResource/WaveSection.h"
 #include "cdcScript/Decompiler.h"
 #include "cdcScript/ScriptType.h"
+#include "cdcSound/Microphone.h"
 #include "cdcSound/MultiplexStream.h"
 #include "cdcScene/IMFTypes.h"
 #include "cdcScene/IScene.h"
@@ -803,6 +804,8 @@ int spinnyCube(HWND window,
 			nullptr);
 		scene->viewMatrix = viewMatrix;
 		cdc::OrthonormalInverse3x4(&renderViewport.viewMatrix, viewMatrix);
+
+		cdc::g_microphone.m_viewMatrix = viewMatrix;
 
 		cdc::CullingFrustum cullingFrustum;
 		cullingFrustum.Set(renderViewport);

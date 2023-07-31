@@ -10,7 +10,7 @@ class SoundOwner : public RCObject, protected SoundTypes {
 public:
 	SoundPlex *plex; // 8
 	Controls controls; // 14
-	Controls3d controls3d; // 50
+	Controls3d controls3d = {{.playbackType=0}}; // 50
 };
 
 using SoundHandle = Handle<SoundOwner>;

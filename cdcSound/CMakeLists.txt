@@ -1,5 +1,6 @@
 target_sources(dxhr PRIVATE
 	HackMultiplexStream.cpp
+	Microphone.cpp
 	MultiplexStream.cpp
 	RingBuffer.cpp
 	RingBufferChain.cpp

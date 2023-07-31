@@ -72,8 +72,14 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			"Sound 1"
 		};
 		for (uint32_t i=0; i<dtpData->numSounds; i++)
-			if (ImGui::SmallButton(i < 2 ? names[i] : "Sound"))
-				cdc::SOUND_StartPaused(dtpData->sounds[i].m_plex, /*delay=*/ 0.0f);
+			if (ImGui::SmallButton(i < 2 ? names[i] : "Sound")) {
+				cdc::SoundHandle sh = cdc::SOUND_StartPaused(dtpData->sounds[i].m_plex, /*delay=*/ 0.0f);
+				cdc::SoundTypes::Controls3d& c3d = sh->controls3d;
+				c3d.playbackType = 0x101; // 3D sound
+				c3d.position[0] = instance->position.x;
+				c3d.position[1] = instance->position.y;
+				c3d.position[2] = instance->position.z;
+			}
 	}
 	// if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
 	// 	// TODO

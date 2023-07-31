@@ -1,3 +1,5 @@
+#include "cdcMath/Math.h"
+#include "Microphone.h"
 #include "snd.h"
 #include "Voice.h"
 
@@ -30,11 +32,24 @@ FMOD_RESULT VoiceImpl::VirtualCallback(bool nowVirtual) { // line 233
 	return FMOD_OK;
 }
 
+void VoiceImpl::SetControls(
+	SoundTypes::Controls *controls,
+	SoundTypes::Controls3d *controls3d)
+{
+	// TODO
+	m_controls3d = controls3d;
+	// TODO
+}
+
 Voice::UpdateCode VoiceImpl::Update() { // 498
 	if (m_bStoppedFMOD)
 		return kNormal;
+	float directOcclusion, reverbOcclusion;
+	float volume3d = Update3D(directOcclusion, reverbOcclusion);
 	// TODO
 	bool isVirtual, isPaused;
+	m_channel->setVolume(volume3d);
+	m_channel->set3DOcclusion(directOcclusion, reverbOcclusion);
 	m_channel->isVirtual(&isVirtual);
 	m_channel->getPaused(&isPaused);
 	// TODO
@@ -46,6 +61,64 @@ Voice::UpdateCode VoiceImpl::Update() { // 498
 	}
 
 	return kNormal;
+}
+
+// should be read from globalsoundinfo.drm
+static uint8_t volumeCurve[] = {0xFF, 0xD2, 0xA5, 0x7F, 0x64, 0x4F, 0x40, 0x34, 0x2B, 0x24, 0x1D, 0x16, 0x10, 0x0B, 0x05, 0x00};
+static uint8_t directCurve[] = {0x00, 0x11, 0x22, 0x32, 0x43, 0x54, 0x65, 0x76, 0x87, 0x97, 0xA8, 0xB9, 0xCA, 0xDB, 0xEC, 0xFC};
+static uint8_t reverbCurve[] = {0xAF, 0x9B, 0x86, 0x71, 0x5F, 0x51, 0x47, 0x40, 0x3A, 0x35, 0x31, 0x2D, 0x29, 0x26, 0x22, 0x1E};
+
+static float samplePiecewiseLinear(uint8_t *curve, uint32_t steps, float t) {
+	float u = t * (steps-1);
+	uint32_t i = u;
+	uint32_t j = i < steps-1 ? i + 1 : steps-1;
+	float f = u - i;
+	return (float(curve[i]) + (float(curve[j])-float(curve[i])) * f) / 255.0;
+}
+
+static float distanceCurve(float distance, float maxDistance, uint8_t *curve, uint32_t steps) {
+	float t = distance / maxDistance;
+	if (distance >= maxDistance) t = 1.0f;
+	float value = samplePiecewiseLinear(curve, steps, t);
+	if (value > 1.0)
+		return 1.0;
+	if (value < 0.0)
+		return 0.0;
+	return value;
+}
+
+float VoiceImpl::Update3D(float& directOcclusion, float& reverbOcclusion) {
+	directOcclusion = 0.0f;
+	reverbOcclusion = 0.0f;
+	if (!m_controls3d)
+		return 1.0f;
+
+	// TODO
+
+	uint32_t playbackType = m_controls3d->playbackType & 0xFF;
+	switch (playbackType) {
+	case 1:
+		if (m_controls3d->playbackType & 0x100) {
+			SND_SetFMODModeFlag(m_channel, FMOD_3D);
+			Vector4 direction;
+			float distance;
+			g_microphone.GetRelativePositionVector(m_controls3d, &direction, &distance);
+			float volume = distanceCurve(distance, 4000.f, volumeCurve, 16);
+			directOcclusion = distanceCurve(distance, 4000.f, directCurve, 16);
+			reverbOcclusion = distanceCurve(distance, 4000.f, reverbCurve, 16);
+			// printf("distance %f -> volume %f direct %f reverb %f\n", distance, volume, directOcclusion, reverbOcclusion);
+
+			FMOD_VECTOR pos {direction.x, direction.y, direction.z};
+			FMOD_VECTOR vel {0, 0, 0};
+			m_channel->set3DAttributes(&pos, &vel);
+			return volume;
+		}
+		return 1.0f;
+
+	default:
+		SND_SetFMODModeFlag(m_channel, FMOD_2D);
+		return 1.0f;
+	}
 }
 
 VoiceImpl::~VoiceImpl() {
