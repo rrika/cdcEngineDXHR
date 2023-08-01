@@ -33,6 +33,8 @@ public:
 	operator T*() const; // line 647
 	T *operator->() const; // line 653
 	T *operator*() const; // line 660
+
+	bool isSet() const { return !!m_handle; } // HACK
 };
 
 class RCObject { // line 141

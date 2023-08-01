@@ -1603,7 +1603,12 @@ int spinnyCube(HWND window,
 								c3d.position[0] = marker->position.x;
 								c3d.position[1] = marker->position.y;
 								c3d.position[2] = marker->position.z;
+								marker->soundHandles[0] = sh;
 							};
+							if (marker->soundHandles[0].isSet()) {
+								ImGui::SameLine();
+								ImGui::Text("playing");
+							}
 							buildUI(plex, &onPlay, /*indent=*/ "    ");
 						}
 				}
