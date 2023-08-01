@@ -201,7 +201,7 @@ SoundHandle SoundPlexCollection::StartPaused( // 178
 
 	if (plex) {
 		// TODO
-		m_plexes.push_back(owner);
+		m_plexes.emplace_back(owner);
 		// TODO
 
 		return owner; // calls cdc::Handle<SoundOwner>::Handle(SoundOwner*)

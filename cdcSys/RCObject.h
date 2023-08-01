@@ -90,7 +90,7 @@ private:
 	friend void InitHandlePool(uint32_t count);
 	friend bool IsHandlePoolValid();
 
-	HandleData() : m_object(nullptr), m_refCount(9) {} // line 297
+	HandleData() : m_object(nullptr), m_refCount(0) {} // line 297
 	HandleData(HandleData const&); // line 298
 	HandleData& operator=(HandleData const&); // line 299
 
@@ -117,8 +117,10 @@ public:
 inline HandleOwner::HandleOwner() : m_handle(0) {} // line 345
 
 inline HandleOwner::~HandleOwner() { // ?
-	if (m_handle)
+	if (m_handle) {
+		HandleData::s_handles[m_handle].m_object = nullptr;
 		HandleData::s_handles[m_handle].RemReference();
+	}
 }
 
 inline void HandleOwner::CreateHandle(void *object) { // line 364

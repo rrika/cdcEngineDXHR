@@ -240,6 +240,7 @@ void VoiceCollection::Remove(VoiceImpl *voice) { // line 1260
 		// link0 -> voice0
 		//  ...
 
+		VoiceImpl *voice0 = *nextIt;
 		m_voices.erase(voice->it);
 
 		// iterator <- (voice1)
@@ -248,7 +249,7 @@ void VoiceCollection::Remove(VoiceImpl *voice) { // line 1260
 		// link0 -> voice0
 		//  ...
 
-		nextIt->it = voice->it;
+		voice0->it = voice->it;
 
 		// iterator <- (voice1)
 		//   | `---.
