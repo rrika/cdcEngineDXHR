@@ -223,8 +223,8 @@ inline Handle<T>::~Handle() { // line 589
 		m_handle->RemReference();
 }
 
-// template <typename T>
-// inline Handle<T>::Handle(Handle const&); // line 596
+template <typename T>
+inline Handle<T>::Handle(Handle const& other) : Handle(other.Get()) {} // line 596
 
 template <typename T>
 inline Handle<T>& Handle<T>::operator=(Handle const& other) { // line 604

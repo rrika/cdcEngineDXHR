@@ -208,7 +208,7 @@ struct DRMExplorer {
 									if (ImGui::SmallButton("Play soundplex")) {
 										cdc::SOUND_StartPaused(plex, /*delay=*/ 0.0f);
 									}
-									buildUI(plex, /*indent=*/ "    ");
+									buildUI(plex, nullptr, /*indent=*/ "    ");
 								}
 								ImGui::PopID();
 
@@ -1594,10 +1594,17 @@ int spinnyCube(HWND window,
 						cameraPos.z = marker->position.z;
 					}
 					ImGui::PopID();
-					if (false)
+					if (true)
 						for (uint32_t j=0; j < marker->numSounds; j++) {
 							dtp::SoundPlex *plex = marker->soundData[j];
-							buildUI(plex, /*indent=*/ "    ");
+							std::function<void(cdc::SoundHandle)> onPlay = [&](cdc::SoundHandle sh) {
+								auto& c3d = sh->controls3d;
+								c3d.playbackType = 0x101;
+								c3d.position[0] = marker->position.x;
+								c3d.position[1] = marker->position.y;
+								c3d.position[2] = marker->position.z;
+							};
+							buildUI(plex, &onPlay, /*indent=*/ "    ");
 						}
 				}
 				ImGui::PopID();

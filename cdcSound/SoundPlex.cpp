@@ -233,7 +233,7 @@ SoundHandle SOUND_StartPaused( // 382
 
 }
 
-void buildUI(dtp::SoundPlex *snd, std::string indent) {
+void buildUI(dtp::SoundPlex *snd, std::function<void(cdc::SoundHandle)>* onPlay, std::string indent) {
 #if ENABLE_IMGUI
 	ImGui::PushID((uint32_t)snd);
 
@@ -243,7 +243,8 @@ void buildUI(dtp::SoundPlex *snd, std::string indent) {
 
 	ImGui::SameLine();
 	if (ImGui::SmallButton("Play")) {
-		cdc::SOUND_StartPaused(snd, /*delay=*/ 0.0f);
+		auto handle = cdc::SOUND_StartPaused(snd, /*delay=*/ 0.0f);
+		if (onPlay) (*onPlay)(handle);
 	}
 
 	switch (snd->m_type) {
@@ -258,7 +259,7 @@ void buildUI(dtp::SoundPlex *snd, std::string indent) {
 		ImGui::Text("%04x", data);
 		auto *refplex = (dtp::SoundPlex*)cdc::g_resolveSections[7]->getWrapped(data);
 		if (refplex)
-			buildUI(refplex, indent + "  ");
+			buildUI(refplex, onPlay, indent + "  ");
 		break;
 	}
 
@@ -278,13 +279,13 @@ void buildUI(dtp::SoundPlex *snd, std::string indent) {
 
 	case dtp::SoundPlex::SoundPlexSelector_Assignment: { // 5
 		auto *data = (dtp::SoundPlex::Assignment*)snd->m_data;
-		buildUI(data->m_sound, indent + "  ");
+		buildUI(data->m_sound, onPlay, indent + "  ");
 		break;
 	}
 
 	case dtp::SoundPlex::SoundPlexSelector_Envelope: { // 6
 		auto *data = (dtp::SoundPlex**)snd->m_data;
-		buildUI(*data, indent + "  ");
+		buildUI(*data, onPlay, indent + "  ");
 		// TODO
 		break;
 	}
@@ -296,7 +297,7 @@ void buildUI(dtp::SoundPlex *snd, std::string indent) {
 		auto *data = (dtp::SoundPlex::ChoiceList*)snd->m_data;
 		for (uint32_t i=0; i<data->m_numSounds; i++) {
 			auto *subPlex = data->m_sounds[i];
-			buildUI(subPlex, indent + "  ");
+			buildUI(subPlex, onPlay, indent + "  ");
 		}
 		break;
 	}
