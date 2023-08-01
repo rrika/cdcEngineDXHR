@@ -10,6 +10,7 @@
 #include "cdcGameShell/cdcGameShell.h" // for LOAD_UnitFileName
 #include "cdcObjects/ObjectManager.h" // for readAndParseObjectList
 #include "cdcResource/ResolveObject.h"
+#include "cdcSound/sfxmarker.h"
 #include "cdcWorld/Instance.h"
 #include "cdc/dtp/objectproperties/sfxmarker.h"
 
@@ -113,11 +114,9 @@ StreamUnit *STREAM_GetAndInitStreamUnitWithID(const char *name, int32_t id) { //
 void STREAM_FinishLoad(StreamUnit *unit) { // 1658
 	printf("unit->level=%p\n", unit->level);
 	dtp::ADMD *admd = unit->level->admdData;
-	for (uint32_t i=0; i<admd->m_SfxMarkerCount; i++) {
-		// inline of SFXMARKER_Create
-		dtp::sfxmarker *sfxmarker = admd->m_ppSfxMarkers[i];
-		sfxmarker->soundHandles = new SoundHandle[sfxmarker->numSounds];
-	}
+	for (uint32_t i=0; i<admd->m_SfxMarkerCount; i++)
+		SFXMARKER_Create(admd->m_ppSfxMarkers[i]);
+
 	// TODO
 	SceneLayer::PreStreamIn(unit);
 	// TODO

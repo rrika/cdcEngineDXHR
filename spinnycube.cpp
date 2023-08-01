@@ -80,12 +80,13 @@
 #include "cdcResource/WaveSection.h"
 #include "cdcScript/Decompiler.h"
 #include "cdcScript/ScriptType.h"
-#include "cdcSound/Microphone.h"
-#include "cdcSound/MultiplexStream.h"
 #include "cdcScene/IMFTypes.h"
 #include "cdcScene/IScene.h"
 #include "cdcScene/SceneCellGroup.h" // for SceneCellGroup to ISceneCellGroup cast
 #include "cdcScene/SceneEntity.h"
+#include "cdcSound/Microphone.h"
+#include "cdcSound/MultiplexStream.h"
+#include "cdcSound/sfxmarker.h"
 #include "cdcSound/SoundPlex.h"
 #include "cdcWorld/Inspector.h"
 #include "cdcWorld/Instance.h"
@@ -806,6 +807,8 @@ int spinnyCube(HWND window,
 		cdc::OrthonormalInverse3x4(&renderViewport.viewMatrix, viewMatrix);
 
 		cdc::g_microphone.m_viewMatrix = viewMatrix;
+		cdc::g_microphone.m_position = cameraPos;
+		cdc::SFXMARKER_ProcessAllMarkers();
 
 		cdc::CullingFrustum cullingFrustum;
 		cullingFrustum.Set(renderViewport);
@@ -1595,6 +1598,27 @@ int spinnyCube(HWND window,
 					}
 					ImGui::PopID();
 					if (true)
+						if (marker->soundHandles[0].isSet()) {
+							ImGui::SameLine();
+							if (ImGui::SmallButton("Stop")) {
+								marker->soundHandles[0]->End((cdc::SoundTypes::EndType)0);
+							}
+						}
+						ImGui::Indent();
+						for (uint32_t j=0; j < marker->numTriggers; j++) {
+							auto& trigger = marker->triggers[j];
+							if (trigger.condition == 0)
+								ImGui::Text("trigger %d: Init", j);
+							else {
+								ImGui::Text("trigger %d: %s radius=%f dist=%f breached=%d count=%d",
+									j, trigger.condition == 1 ? "Enter" : "Exit",
+									trigger.conditionData.radius,
+									trigger.conditionData.lastDistance,
+									(int)trigger.conditionData.bBreached,
+									(int)trigger.conditionData.nCountFired);
+							}
+						}
+						ImGui::Unindent();
 						for (uint32_t j=0; j < marker->numSounds; j++) {
 							dtp::SoundPlex *plex = marker->soundData[j];
 							std::function<void(cdc::SoundHandle)> onPlay = [&](cdc::SoundHandle sh) {
@@ -1605,10 +1629,6 @@ int spinnyCube(HWND window,
 								c3d.position[2] = marker->position.z;
 								marker->soundHandles[0] = sh;
 							};
-							if (marker->soundHandles[0].isSet()) {
-								ImGui::SameLine();
-								ImGui::Text("playing");
-							}
 							buildUI(plex, &onPlay, /*indent=*/ "    ");
 						}
 				}

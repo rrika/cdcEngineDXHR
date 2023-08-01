@@ -7,6 +7,7 @@ namespace cdc {
 
 class Microphone {
 public:
+	Vector m_position; // 0
 	Matrix m_viewMatrix; // HACK
 
 	void GetRelativePositionVector(

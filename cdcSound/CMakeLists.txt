@@ -6,10 +6,12 @@ target_sources(dxhr PRIVATE
 	RingBufferChain.cpp
 	Sample.cpp
 	Sound.cpp
+	SoundOwner.cpp
 	SoundPlex.cpp
 	SoundPlexAssignment.cpp
 	SoundPlexChoiceList.cpp
 	SoundPlexStream.cpp
 	SoundPlexWave.cpp
 	Voice.cpp
+	sfxmarker.cpp
 	snd.cpp)
