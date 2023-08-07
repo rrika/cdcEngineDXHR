@@ -24,6 +24,7 @@ public:
 	PCStaticVertexBuffer(void *pool) : pool(pool) {}
 	void Create(void *data, uint32_t numVertices, uint32_t stride);
 
+	uint32_t GetBaseVertexIndex() override { /*TODO*/ return 0; }
 	IDirect3DVertexBuffer9 *GetD3DVertexBuffer() override { return buffer; }
 	uint16_t GetStride() override { return stride; }
 };

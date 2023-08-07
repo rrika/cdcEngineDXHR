@@ -46,6 +46,7 @@
 #include "rendering/pc/buffers/PCVertexBuffer.h"
 #include "rendering/pc/PCDeviceManager.h"
 #include "rendering/pc/PCMaterial.h"
+#include "rendering/pc/PCModelDrawable.h"
 #include "rendering/pc/PCRenderContext.h"
 #include "rendering/pc/PCRenderDevice.h"
 #include "rendering/pc/PCRenderModel.h"
@@ -646,6 +647,18 @@ int spinnyCube(HWND window) {
 		cdc::PCStreamDecl *bottleStreamDecl = streamDeclManager.FindOrCreate(bottleVertexDecl, inputSpec, true);;
 		bottleStreamDecl->internalCreate();
 
+		cdc::PCModelDrawable bottleRenderDrawable {
+			bottleRenderModel,
+			/*ext=*/ nullptr,
+			bottleBatch0,
+			bottleGroup0,
+			/*persistentPG=*/ nullptr,
+			/*poseData=*/ nullptr,
+			1,
+			1.0f,
+			/*flags=*/ 0
+		};
+
 		cdc::MaterialInstanceData bottleMaterialInstance;
 
 		for (uint32_t i=0; i<bottleVertexDecl->numAttr; i++) {
@@ -737,9 +750,6 @@ int spinnyCube(HWND window) {
 					bottleVertexDecl,
 					0,
 					1.0f);
-				stateManager9.setVertexBuffer(static_cast<cdc::PCVertexBuffer*>(bottleBatch0->staticVertexBuffer));
-				stateManager9.setIndexBuffer(bottleRenderModel->indexBuffer);
-				stateManager9.setStreamDecl(bottleStreamDecl);
 				d3dDevice9->SetVertexShaderConstantF(0, (float*)WorldViewProject_Bottle.m, 4);
 				d3dDevice9->SetVertexShaderConstantF(4, (float*)World_Bottle.m, 4);
 				struct { float values[4]; } row;
@@ -750,7 +760,16 @@ int spinnyCube(HWND window) {
 				row = {0.0f, 1.0f, 0.0f, 0.0f}; d3dDevice9->SetPixelShaderConstantF( 40, row.values, 1); // some matrix
 				row = {0.0f, 0.0f, 1.0f, 0.0f}; d3dDevice9->SetPixelShaderConstantF( 41, row.values, 1); // some matrix
 				row = {1.0f, 1.0f, 1.0f, 1.0f}; d3dDevice9->SetPixelShaderConstantF(100, row.values, 1); // some scaling factors
-				d3dDevice9->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, bottleBatch0->numVertices, 0, bottleBatch0->numTrianglesProbably);
+
+				if (true) {
+					bottleRenderDrawable.DrawPrimitive(renderDevice9, &stateManager9, bottleStreamDecl, false);
+
+				} else {
+					stateManager9.setVertexBuffer(static_cast<cdc::PCVertexBuffer*>(bottleBatch0->staticVertexBuffer));
+					stateManager9.setIndexBuffer(bottleRenderModel->indexBuffer);
+					stateManager9.setStreamDecl(bottleStreamDecl);
+					d3dDevice9->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, bottleBatch0->numVertices, 0, bottleBatch0->numTrianglesProbably);
+				}
 
 				// draw cube
 				stateManager9.setVertexShader(&cdcVertex9);
