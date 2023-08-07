@@ -28,7 +28,7 @@ public:
 	}
 
 	D3DVERTEXELEMENT9 *elements; // 18
-	IDirect3DVertexDeclaration9 *vertexDecl; // 1C
+	IDirect3DVertexDeclaration9 *vertexDecl = nullptr; // 1C
 	uint32_t stride; // 20
 	Vector4 *secondaryData; // 24
 	PCVertexBuffer *secondaryVertexBuffer; // 28

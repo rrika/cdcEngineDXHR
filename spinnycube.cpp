@@ -647,12 +647,15 @@ int spinnyCube(HWND window) {
 		cdc::PCStreamDecl *bottleStreamDecl = streamDeclManager.FindOrCreate(bottleVertexDecl, inputSpec, true);;
 		bottleStreamDecl->internalCreate();
 
+		cdc::PersistentPGData bottlePPG {
+			.material = bottleMaterial
+		};
 		cdc::PCModelDrawable bottleRenderDrawable {
 			bottleRenderModel,
 			/*ext=*/ nullptr,
 			bottleBatch0,
 			bottleGroup0,
-			/*persistentPG=*/ nullptr,
+			&bottlePPG,
 			/*poseData=*/ nullptr,
 			1,
 			1.0f,
@@ -743,13 +746,6 @@ int spinnyCube(HWND window) {
 				stateManager9.setDeviceTexture(0, bottleTexture->GetDeviceBaseTexture(), cdc::kTextureFilterTrilinear, 0.0f);
 
 				// draw bottle
-				bottleMaterial->SetupNormalMapPass(
-					bottleMaterialInstance,
-					nullptr,
-					0,
-					bottleVertexDecl,
-					0,
-					1.0f);
 				d3dDevice9->SetVertexShaderConstantF(0, (float*)WorldViewProject_Bottle.m, 4);
 				d3dDevice9->SetVertexShaderConstantF(4, (float*)World_Bottle.m, 4);
 				struct { float values[4]; } row;
@@ -762,13 +758,27 @@ int spinnyCube(HWND window) {
 				row = {1.0f, 1.0f, 1.0f, 1.0f}; d3dDevice9->SetPixelShaderConstantF(100, row.values, 1); // some scaling factors
 
 				if (true) {
-					bottleRenderDrawable.DrawPrimitive(renderDevice9, &stateManager9, bottleStreamDecl, false);
+					cdc::PCModelDrawable::drawNormal(0, &bottleRenderDrawable, nullptr);
 
 				} else {
-					stateManager9.setVertexBuffer(static_cast<cdc::PCVertexBuffer*>(bottleBatch0->staticVertexBuffer));
-					stateManager9.setIndexBuffer(bottleRenderModel->indexBuffer);
-					stateManager9.setStreamDecl(bottleStreamDecl);
-					d3dDevice9->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, bottleBatch0->numVertices, 0, bottleBatch0->numTrianglesProbably);
+					cdc::PCStreamDecl *bottleStreamDecl2 = bottleMaterial->SetupNormalMapPass(
+						bottleMaterialInstance,
+						nullptr,
+						0,
+						bottleVertexDecl,
+						0,
+						1.0f);
+
+					if (true) {
+						bottleRenderDrawable.DrawPrimitive(renderDevice9, &stateManager9, bottleStreamDecl, false);
+
+					} else {
+						stateManager9.setVertexBuffer(static_cast<cdc::PCVertexBuffer*>(bottleBatch0->staticVertexBuffer));
+						stateManager9.setIndexBuffer(bottleRenderModel->indexBuffer);
+						//stateManager9.setStreamDecl(bottleStreamDecl); // more saturated colors (=normals)
+						stateManager9.setStreamDecl(bottleStreamDecl2); // darker colors (=normals)
+						d3dDevice9->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, bottleBatch0->numVertices, 0, bottleBatch0->numTrianglesProbably);
+					}
 				}
 
 				// draw cube

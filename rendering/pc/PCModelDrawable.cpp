@@ -1,4 +1,5 @@
 #include "PCDeviceManager.h"
+#include "PCMaterial.h"
 #include "PCModelDrawable.h"
 #include "PCRenderModel.h"
 #include "PCStateManager.h"
@@ -28,9 +29,40 @@ PCModelDrawable::PCModelDrawable(
 	poseData(poseData),
 	lodOpacity(lodOpacity)
 {
-	// typeID = kDrawableTypeIDModel;
+	typeID = kDrawableTypeIDModel;
 	this->flags = (primGroup[0].triangleCount << 8) | (flags & 0xff);
 	// TODO
+}
+
+void PCModelDrawable::drawNormal(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable) {
+	// aka. cdc::DrawableRenderNormal
+	auto *thisModel = static_cast<PCModelDrawable*>(drawable);
+	auto *prevModel = static_cast<PCModelDrawable*>(prevDrawable);
+	PCRenderDevice *renderDevice = thisModel->renderModel->renderDevice;
+	PCStateManager *stateManager = deviceManager9->getStateManager();
+	Mesh *mesh = thisModel->renderModel->mesh;
+
+	thisModel->SetupMatrixState(stateManager, prevModel, mesh->flags.hasBones);
+
+	PersistentPGData *persistentPG = thisModel->persistentPG;
+	PCStreamDecl *streamDecl = static_cast<PCMaterial*>(persistentPG->material)->SetupNormalMapPass(
+		persistentPG->sub10,
+		(void*)thisModel->ext->instanceParams,
+		mesh->vsSelect4C,
+		(VertexDecl*)thisModel->modelBatch->format,
+		(uint8_t)thisModel->flags,
+		thisModel->lodOpacity);
+
+	thisModel->DrawPrimitive(renderDevice, stateManager, streamDecl, false);
+}
+
+void PCModelDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) {
+	// TODO
+}
+
+uint32_t PCModelDrawable::compare(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) {
+	// TODO
+	return 0;
 }
 
 void PCModelDrawable::DrawPrimitive(
@@ -75,6 +107,15 @@ void PCModelDrawable::DrawPrimitive(
 			d3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, baseVertex, 0, numVertices, startIndex, numPrimitives);
 		}
 	}
+}
+
+bool PCModelDrawable::SetupMatrixState(
+	PCStateManager *stateManager,
+	PCModelDrawable *prevDrawable,
+	bool hasBones)
+{
+	// TODO
+	return false;
 }
 
 }

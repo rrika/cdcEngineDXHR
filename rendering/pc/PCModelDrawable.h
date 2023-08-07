@@ -13,7 +13,7 @@ class PCStreamDecl;
 class PCPoseData;
 struct LightReceiverData;
 
-class PCModelDrawable /*: public IRenderDrawable*/ {
+class PCModelDrawable : public IRenderDrawable {
 
 	PCRenderModel *renderModel; // C
 	RenderModelInstanceData *ext; // 10
@@ -38,18 +38,20 @@ public:
 		float lodOpacity,
 		uint32_t flags);
 
-	// void draw(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) override;
-	// uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) override;
+	static void drawNormal(uint32_t funcSetIndex, IRenderDrawable *drawable, IRenderDrawable *prevDrawable);
+
+	void draw(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) override;
+	uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *prevDrawable) override;
 
 	void DrawPrimitive(
 		PCRenderDevice *renderDevice,
 		PCStateManager *stateManager,
 		PCStreamDecl *streamDecl,
 		bool renderTwice);
-	/*bool setMatrices(
+	bool SetupMatrixState(
 		PCStateManager *stateManager,
 		PCModelDrawable *prevDrawable,
-		bool hasBones);*/
+		bool hasBones);
 };
 
 }
