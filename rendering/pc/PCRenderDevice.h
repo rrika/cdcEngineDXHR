@@ -20,6 +20,7 @@ private:
 
 public:
 	PCRenderDevice(HWND hwnd, uint32_t width, uint32_t height);
+	void registerComparatorsAndDrawersModel();
 
 	void refCountDec() override;
 	void method_08() override;

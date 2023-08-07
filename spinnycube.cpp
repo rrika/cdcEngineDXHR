@@ -758,7 +758,15 @@ int spinnyCube(HWND window) {
 				row = {1.0f, 1.0f, 1.0f, 1.0f}; d3dDevice9->SetPixelShaderConstantF(100, row.values, 1); // some scaling factors
 
 				if (true) {
-					cdc::PCModelDrawable::drawNormal(0, &bottleRenderDrawable, nullptr);
+					if (true) {
+						auto *linear = renderDevice9->getLinear();
+						auto *list = new (linear, 0, true) cdc::DrawableList { linear, 0, 0, 0 };
+						list->add(&bottleRenderDrawable);
+						renderDevice9->renderPasses.draw(list, cdc::kPassIndexNormal);
+
+					} else {
+						cdc::PCModelDrawable::drawNormal(0, &bottleRenderDrawable, nullptr);
+					}
 
 				} else {
 					cdc::PCStreamDecl *bottleStreamDecl2 = bottleMaterial->SetupNormalMapPass(

@@ -1,4 +1,5 @@
 #include "PCMaterial.h"
+#include "PCModelDrawable.h"
 #include "PCRenderDevice.h"
 #include "PCRenderModel.h"
 #include "shaders/PCShaderLib.h"
@@ -10,7 +11,31 @@ PCRenderDevice::PCRenderDevice(HWND hwnd, uint32_t width, uint32_t height) {
 	// TODO
 	renderContext = CreateRenderContext(hwnd, width, height, /*useMultiSapmle=*/ true);
 	// TODO
+	renderPasses.addRenderPass(kRegularPass, 0x1800, 1, /*10*/ kRenderFunctionNormal, /*12*/ kPassIndexNormal);
+	registerComparatorsAndDrawersModel();
 }
+
+void PCRenderDevice::registerComparatorsAndDrawersModel() {
+	allocFuncIndex("RenderModelDrawable");
+	uint8_t funcIndex = 1;
+	// registerComparator(funcIndex, /*1*/ kRenderFunctionDepth,         PCModelDrawable::compare128);
+	// registerComparator(funcIndex, /*2*/ kRenderFunctionShadow,        PCModelDrawable::compare128);
+	// registerComparator(funcIndex, /*8*/ kRenderFunction8,             PCModelDrawable::compare128);
+	// registerComparator(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, PCModelDrawable::compare7);
+	// registerComparator(funcIndex, /*4*/ kRenderFunctionComposite,     PCModelDrawable::compare46);
+	// registerComparator(funcIndex, /*6*/ kRenderFunctionPredator,      PCModelDrawable::compare46);
+
+	// registerDrawer(funcIndex, /*1*/ kRenderFunctionDepth,         PCModelDrawable::drawDepth);
+	// registerDrawer(funcIndex, /*2*/ kRenderFunctionShadow,        PCModelDrawable::drawShadow);
+	// registerDrawer(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, PCModelDrawable::drawAlphaBloom);
+	// registerDrawer(funcIndex, /*4*/ kRenderFunctionComposite,     PCModelDrawable::drawComposite);
+	// registerDrawer(funcIndex, /*5*/ kRenderFunctionTranslucent,   PCModelDrawable::drawTranslucent);
+	// registerDrawer(funcIndex, /*6*/ kRenderFunctionPredator,      PCModelDrawable::drawTranslucent);
+
+	// registerComparator(funcIndex, /*10*/ kRenderFunctionNormal, PCModelDrawable::compareNormal);
+	registerDrawer(funcIndex, /*10*/ kRenderFunctionNormal, PCModelDrawable::drawNormal);
+}
+
 
 PCRenderContext	*PCRenderDevice::CreateRenderContext(HWND hwnd, uint32_t width, uint32_t height, bool useMultiSample) {
 
