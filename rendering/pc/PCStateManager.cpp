@@ -82,6 +82,45 @@ void PCStateManager::setVertexShader(PCVertexShader *vertexShader) {
 	}
 }
 
+void PCStateManager::SetWorldMatrix(Matrix *world) {
+	m_worldMatrix = *world;
+	m_worldMatrixIsDirty = true;
+}
+
+void PCStateManager::SetViewMatrix(Matrix *view) {
+	m_viewMatrix = *view;
+	m_viewOrProjectMatrixIsDirty = true;
+}
+
+void PCStateManager::SetProjectionMatrix(Matrix *project) {
+	m_projectionMatrix = *project;
+	m_viewOrProjectMatrixIsDirty = true;
+}
+
+void PCStateManager::UpdateStateMatrices() {
+	if (m_viewOrProjectMatrixIsDirty) {
+		Matrix *project = m_pProjectionOverrideMatrix;
+		if (!project)
+			project = &m_projectionMatrix;
+		m_viewProjectMatrix = (*project) * m_viewMatrix;
+
+		Matrix buffer[2];
+		buffer[0] = m_viewMatrix;
+		buffer[1] = m_viewProjectMatrix;
+		m_device->SetVertexShaderConstantF(8, (float*)buffer, 8); // assign vs rows 8..15
+		m_device->SetPixelShaderConstantF(8, (float*)buffer, 4); // assign ps rows 8..11
+    }
+	if (m_viewOrProjectMatrixIsDirty || m_worldMatrixIsDirty) {
+		Matrix buffer[2];
+		buffer[0] = m_viewProjectMatrix * m_worldMatrix;
+		buffer[1] = m_worldMatrix;
+		m_device->SetVertexShaderConstantF(0, (float*)buffer, 8); // assign vs rows 0..7
+		m_viewOrProjectMatrixIsDirty = false;
+		m_worldMatrixIsDirty = false;
+	}
+}
+
+
 bool PCStateManager::internalCreate() { return true; }; // TODO
 void PCStateManager::internalRelease() {}; // TODO
 

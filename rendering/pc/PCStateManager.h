@@ -1,4 +1,5 @@
 #pragma once
+#include "cdcMath/Math.h"
 #include "PCInternalResource.h"
 #include "buffers/PCIndexBuffer.h"
 #include "rendering/Types.h"
@@ -20,6 +21,14 @@ class PCStateManager : public PCInternalResource {
 	PCVertexShader *m_vertexShader; // 24
 	PCDeviceBaseTexture *m_textures[20]; // 28
 
+	Matrix m_projectionMatrix; // 5B0
+	Matrix m_viewMatrix; // 5F0, or perhaps m_invViewMatrix
+	Matrix m_viewProjectMatrix; // 630
+	Matrix m_worldMatrix; // 670
+	Matrix *m_pProjectionOverrideMatrix = nullptr; // 6B0
+	bool m_viewOrProjectMatrixIsDirty = false; // 6B4
+	bool m_worldMatrixIsDirty = false;
+
 public:
 	PCStateManager();
 	PCStateManager(IDirect3DDevice9 *device) :
@@ -33,6 +42,12 @@ public:
 	void setStreamDecl(PCStreamDecl *streamDecl);
 	void setPixelShader(PCPixelShader *pixelShader);
 	void setVertexShader(PCVertexShader *vertexShader);
+
+	void SetWorldMatrix(Matrix *world);
+	void SetViewMatrix(Matrix *view);
+	void SetProjectionMatrix(Matrix *project);
+
+	void UpdateStateMatrices();
 
 	bool internalCreate() override;
 	void internalRelease() override;

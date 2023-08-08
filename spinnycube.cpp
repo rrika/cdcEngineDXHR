@@ -746,8 +746,15 @@ int spinnyCube(HWND window) {
 				stateManager9.setDeviceTexture(0, bottleTexture->GetDeviceBaseTexture(), cdc::kTextureFilterTrilinear, 0.0f);
 
 				// draw bottle
-				d3dDevice9->SetVertexShaderConstantF(0, (float*)WorldViewProject_Bottle.m, 4);
-				d3dDevice9->SetVertexShaderConstantF(4, (float*)World_Bottle.m, 4);
+				if (true) {
+					stateManager9.SetWorldMatrix(&World_Bottle);
+					stateManager9.SetViewMatrix(&identity4x4);
+					stateManager9.SetProjectionMatrix(&Project);
+					stateManager9.UpdateStateMatrices();
+				} else {
+					d3dDevice9->SetVertexShaderConstantF(0, (float*)WorldViewProject_Bottle.m, 4);
+					d3dDevice9->SetVertexShaderConstantF(4, (float*)World_Bottle.m, 4);
+				}
 				struct { float values[4]; } row;
 				row = {2.0f, -1.0f, 0.0f, 0.0f}; d3dDevice9->SetVertexShaderConstantF(21, (float*)WorldViewProject_Bottle.m, 1); // NormalScaleOffset
 				row = {1.0f,  0.0f, 0.0f, 0.0f}; d3dDevice9->SetVertexShaderConstantF(254, (float*)World_Bottle.m, 1); // TexcoordScales
