@@ -40,6 +40,7 @@ target_sources(dxhr PRIVATE
 	pc/PCRenderContext.cpp
 	pc/PCRenderDevice.cpp
 	pc/PCRenderModel.cpp
+	pc/PCScene.cpp
 	pc/PCStateManager.cpp
 	pc/PCStreamDecl.cpp
 	pc/PCStreamDeclManager.cpp
