@@ -11,7 +11,23 @@ class PCRenderDevice :
 	public PCInternalResource,
 	public CommonRenderDevice
 {
+	struct RenderList {
+		RenderList(PCRenderDevice *renderDevice) :
+			drawableList { renderDevice->getLinear() }
+		{}
+
+		DrawableList drawableList; // 18
+		RenderList *next; // 30
+	};
+
 	PCRenderContext *renderContext = nullptr; // 10C9C
+
+	RenderList *renderList_current = nullptr; // 10CAC
+	RenderList *renderList_processing = nullptr; // 10CB0
+	RenderList *renderList_first = nullptr; // 10CB4
+	RenderList *renderList_last = nullptr; // 10CB8
+	RenderList *renderList_override = nullptr; // own addition
+
 public:
 	PCStreamDeclManager streamDeclManager { this }; // 111288
 private:
@@ -40,7 +56,7 @@ public:
 	// inherit method_40
 	// inherit method_44
 	CommonScene *createSubScene(
-		RenderViewport *renderViewport,
+		RenderViewport *viewport,
 		CommonRenderTarget *renderTarget,
 		CommonDepthBuffer *depthBuffer) override;
 	// inherit createSiblingScene
@@ -164,9 +180,8 @@ public:
 	// virtual void method3C() = 0;
 	// virtual void method40() = 0;
 
-	static RenderResource *createResource(uint32_t, uint32_t);
-	LinearAllocator *getLinear() { return linear30; }
-	void freeTemporarySurfaces();
+	void recordDrawable(IRenderDrawable *drawable, uint32_t mask, bool addToNextScene);
+	void drawRenderListsInternal();
 };
 
 CommonRenderDevice *createPCRenderDevice(HWND hwnd, uint32_t width, uint32_t height, bool unknown);

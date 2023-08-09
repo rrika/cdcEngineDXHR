@@ -2,6 +2,7 @@
 #include "PCModelDrawable.h"
 #include "PCRenderDevice.h"
 #include "PCRenderModel.h"
+#include "PCScene.h"
 #include "shaders/PCShaderLib.h"
 #include "surfaces/PCTexture.h"
 
@@ -60,19 +61,41 @@ void PCRenderDevice::method_08() {
 }
 
 void PCRenderDevice::resetRenderLists() {
+	// copied from PCDX11RenderDevice, need proper implementation
+
+	// TODO
+	renderList_current = nullptr;
+	renderList_last = nullptr;
+	renderList_first = nullptr;
 	// TODO
 }
 
 void PCRenderDevice::drawRenderLists() {
+	// copied from PCDX11RenderDevice, need proper implementation
+
+	if (hasRenderList())
+		endRenderList();
 	// TODO
+	drawRenderListsInternal();
 }
 
 bool PCRenderDevice::beginRenderList(float*) {
-	// TODO
+	// copied from PCDX11RenderDevice, need proper implementation
+
+	renderList_current = new (linear30, 0, true) RenderList(this);
 	return true;
 }
 
 bool PCRenderDevice::endRenderList() {
+	// copied from PCDX11RenderDevice, need proper implementation
+
+	if (renderList_last) {
+		renderList_last->next = renderList_current;
+	} else {
+		renderList_first = renderList_current;
+	}
+	renderList_last = renderList_current;
+	renderList_current = 0;
 	// TODO
 	return true;
 }
@@ -97,16 +120,32 @@ void PCRenderDevice::method_30() {
 }
 
 CommonScene *PCRenderDevice::createSubScene(
-	RenderViewport *renderViewport,
+	RenderViewport *viewport,
 	CommonRenderTarget *renderTarget,
 	CommonDepthBuffer *depthBuffer)
 {
+	// copied from PCDX11RenderDevice, need proper implementation
+
 	// TODO
-	return nullptr;
+	auto scene = new (linear30, 1, true) PCScene(
+		this,
+		scene7C, // parent scene perhaps?
+		viewport,
+		renderTarget,
+		depthBuffer,
+		getGlobalState(),
+		&renderPasses);
+	scene7C = scene;
+	return scene;
 }
 
 void PCRenderDevice::finishScene() {
+	// copied from PCDX11RenderDevice, need proper implementation
+
 	// TODO
+	// static_cast<PCScene*>(scene7C)->addToDrawableList(&renderList_current->drawableList);
+	renderList_current->drawableList.add(scene7C); // HACK
+	scene7C = scene7C->parentScene;
 }
 
 void PCRenderDevice::getSceneRenderTarget() {
@@ -314,6 +353,42 @@ void PCRenderDevice::internalRelease() {
 
 PCRenderContext *PCRenderDevice::getRenderContext() {
 	return renderContext; // 10C9C
+}
+
+void PCRenderDevice::recordDrawable(IRenderDrawable *drawable, uint32_t mask, bool addToNextScene) {
+	// copied from PCDX11RenderDevice, need proper implementation
+
+	// TODO
+	// drawable->draw(0, nullptr); // hack
+	scene7C->drawableListsAndMasks->add(drawable, mask);
+}
+
+void PCRenderDevice::drawRenderListsInternal() {
+	// copied from PCDX11RenderDevice, need proper implementation
+
+	// TODO
+	auto linear = linear34;
+	linear34 = linear30;
+	linear30 = linear;
+	linear->rewind();
+
+	// TODO
+	if (renderList_override)
+		renderList_processing = renderList_override;
+	else
+		renderList_processing = renderList_first;
+
+	// TODO
+	if (true) {
+		// TODO
+		while (renderList_processing) {
+			// TODO
+			renderList_processing->drawableList.draw(renderPasses.drawers, /*funcSetIndex=*/0);
+			renderList_processing = renderList_processing->next;
+		}
+	}
+
+	freeTemporarySurfaces();
 }
 
 CommonRenderDevice *createPCRenderDevice(HWND hwnd, uint32_t width, uint32_t height, bool unknown) {

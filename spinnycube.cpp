@@ -673,6 +673,13 @@ int spinnyCube(HWND window) {
 				a.bufferIndex);
 		}
 
+		cdc::RenderViewport renderViewport;
+		renderViewport.nearz = 1.0f;
+		renderViewport.farz = 10000.0f;
+		renderViewport.fov = 0.925f;
+		renderViewport.aspect = 4.f/3;
+		renderViewport.mask = 0x1000; // normals pass
+
 		while (true)
 		{
 		#ifdef _WIN32
@@ -766,6 +773,15 @@ int spinnyCube(HWND window) {
 
 				if (true) {
 					if (true) {
+						renderDevice9->resetRenderLists();
+						renderDevice9->beginRenderList(nullptr);
+						renderDevice9->createSubScene(&renderViewport, nullptr, nullptr);
+						renderDevice9->recordDrawable(&bottleRenderDrawable, 0x1000, false);
+						renderDevice9->finishScene();
+						renderDevice9->endRenderList();
+						renderDevice9->drawRenderLists();
+
+					} else if (true) {
 						auto *linear = renderDevice9->getLinear();
 						auto *list = new (linear, 0, true) cdc::DrawableList { linear, 0, 0, 0 };
 						list->add(&bottleRenderDrawable);
