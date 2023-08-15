@@ -39,6 +39,20 @@ PCStreamDecl *PCMaterial::SetupNormalMapPass(
 {
 	auto *stateManager = deviceManager9->getStateManager();
 
+	uint32_t matDword18 = materialBlob->dword18;
+	bool frontCounterClockwise = bool(flags & 2);
+	bool matInstanceDoubleSided = bool(data.polyFlags & 0x40);
+	bool materialDoubleSided = bool(matDword18 & 0x80);
+	bool materialRenderTwice = bool(matDword18 & 0x800);
+	bool materialCullFront = bool(matDword18 & 0x2000);
+
+	if ((materialDoubleSided || matInstanceDoubleSided) && !materialRenderTwice)
+		stateManager->SetCullMode(CullMode::none, frontCounterClockwise);
+	else if (materialCullFront)
+		stateManager->SetCullMode(CullMode::front, frontCounterClockwise);
+	else
+		stateManager->SetCullMode(CullMode::back, frontCounterClockwise);
+
 	uint32_t subMaterialIndex = 7; // normals
 	MaterialBlobSub *subMaterial = materialBlob->subMat4C[subMaterialIndex];
 
