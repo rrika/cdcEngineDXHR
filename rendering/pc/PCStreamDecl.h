@@ -25,6 +25,7 @@ public:
 		stride(stride)
 	{
 		// TODO
+		internalCreateIfDeviceManagerAgrees();
 	}
 
 	D3DVERTEXELEMENT9 *elements; // 18

@@ -608,8 +608,6 @@ int spinnyCube(HWND window) {
 		}
 		cdc::PCStreamDecl& cdcStreamDecl = *pCdcStreamDecl;
 
-		cdcStreamDecl.internalCreate();
-
 		cdc::Matrix World_Bottle = {
 			0.03, 0, 0, 0,
 			0, 0, 0.03, 0,
@@ -644,8 +642,7 @@ int spinnyCube(HWND window) {
 		cdc::PrimGroup *bottleGroup0 = &bottleRenderModel->primGroups[0];
 		cdc::VertexDecl *bottleVertexDecl = (cdc::VertexDecl*) bottleBatch0->format;
 		cdc::PCMaterial *bottleMaterial = static_cast<cdc::PCMaterial*>(bottleGroup0->material);
-		cdc::PCStreamDecl *bottleStreamDecl = streamDeclManager.FindOrCreate(bottleVertexDecl, inputSpec, true);;
-		bottleStreamDecl->internalCreate();
+		cdc::PCStreamDecl *bottleStreamDecl = streamDeclManager.FindOrCreate(bottleVertexDecl, inputSpec, true);
 
 		cdc::PersistentPGData bottlePPG {
 			.material = bottleMaterial
