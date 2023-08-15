@@ -2,6 +2,12 @@
 
 namespace cdc {
 
+enum class CullMode { // line 51
+	none = 0,
+	back = 1,
+	front = 2
+};
+
 enum TextureFilter { // line 59
 	kTextureFilterPoint = 0,
 	kTextureFilterBilinear = 1,

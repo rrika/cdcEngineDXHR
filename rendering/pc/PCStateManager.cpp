@@ -22,6 +22,19 @@ void PCStateManager::setIndexBuffer(PCIndexBuffer *indexBuffer) {
 	}
 }
 
+void PCStateManager::SetCullMode(CullMode cullMode, bool frontIsCounterClockwise) {
+	uint32_t compactCullMode = 2 * uint32_t(cullMode) + uint32_t(frontIsCounterClockwise);
+	if (compactCullMode != m_cullMode) {
+		m_cullMode = compactCullMode;
+		const uint32_t cullModeD3D9[] = {
+			/*1*/ D3DCULL_NONE, /*1*/ D3DCULL_NONE, // cull none
+			/*3*/ D3DCULL_CCW,  /*2*/ D3DCULL_CW,   // cull back
+			/*2*/ D3DCULL_CW,   /*3*/ D3DCULL_CCW   // cull front
+		};
+		SetRenderState(D3DRS_CULLMODE, cullModeD3D9[compactCullMode]);
+	}
+}
+
 void PCStateManager::setDeviceTexture(uint32_t slot, PCDeviceBaseTexture *tex, TextureFilter filter, float unknown) {
 	if (tex != m_textures[slot]) {
 		if (tex) {

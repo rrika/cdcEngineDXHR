@@ -2,6 +2,7 @@
 #include "cdcMath/Math.h" // for Matrix
 #include "PCDX11InternalResource.h"
 #include "Stencil.h"
+#include "Types.h"
 #include <array>
 #include <cstring>
 #include <d3d11.h>
@@ -57,12 +58,6 @@ struct DepthStencilHash {
 		h ^= h >> 15;
 		return h;
 	}
-};
-
-enum class CullMode {
-	none = 0,
-	back = 1,
-	front = 2
 };
 
 class PCDX11StateManager : public PCDX11InternalResource {

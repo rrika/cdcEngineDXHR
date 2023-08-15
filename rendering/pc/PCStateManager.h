@@ -25,6 +25,7 @@ class PCStateManager : public PCInternalResource {
 
 	uint32_t m_renderStates[210]; // 168, indexed by D3DRENDERSTATETYPE
 
+	uint32_t m_cullMode; // 5AC
 	Matrix m_projectionMatrix; // 5B0
 	Matrix m_viewMatrix; // 5F0, or perhaps m_invViewMatrix
 	Matrix m_viewProjectMatrix; // 630
@@ -41,6 +42,7 @@ public:
 	{}
 
 	void setIndexBuffer(PCIndexBuffer *indexBuffer);
+	void SetCullMode(CullMode cullMode, bool frontIsCounterClockwise);
 	void setDeviceTexture(uint32_t, PCDeviceBaseTexture*, TextureFilter, float);
 	void setVertexBuffer(PCVertexBuffer *vertexBuffer);
 	void setStreamDecl(PCStreamDecl *streamDecl);
