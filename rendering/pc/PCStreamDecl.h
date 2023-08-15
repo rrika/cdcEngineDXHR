@@ -32,7 +32,7 @@ public:
 	IDirect3DVertexDeclaration9 *vertexDecl = nullptr; // 1C
 	uint32_t stride; // 20
 	Vector4 *secondaryData; // 24
-	PCVertexBuffer *secondaryVertexBuffer; // 28
+	PCVertexBuffer *secondaryVertexBuffer = nullptr; // 28
 	Vector4 texcoordScales; // 30
 	Vector4 normalScaleOffset; // 40
 

@@ -2,6 +2,7 @@
 #include "PCDeviceManager.h"
 #include "PCStateManager.h"
 #include "PCStreamDecl.h"
+#include "buffers/PCVertexBuffer.h"
 
 namespace cdc {
 
@@ -10,7 +11,13 @@ void PCStreamDecl::apply() {
 	if (vertexDecl)
 		device->SetVertexDeclaration(vertexDecl);
 
-	// TODO
+	if (secondaryVertexBuffer) {
+		IDirect3DVertexBuffer9 *buffer = secondaryVertexBuffer->GetD3DVertexBuffer();
+		uint32_t offset =
+			secondaryVertexBuffer->GetBaseVertexIndex() *
+			secondaryVertexBuffer->GetStride();
+		device->SetStreamSource(1, buffer, offset, 0);
+	}
 
 	PCStateManager *stateManager = deviceManager9->getStateManager();
 	stateManager->SetVertexShaderConstantF(254, (float*)&texcoordScales, 1);
