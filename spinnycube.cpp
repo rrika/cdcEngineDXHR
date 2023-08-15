@@ -632,7 +632,8 @@ int spinnyCube(HWND window) {
 		auto bottleIndex = cdc::objectIdByName("alc_beer_bottle_a");
 		cdc::requestObjectNormal(bottleIndex);
 		cdc::archiveFileSystem_default->processAll();
-		auto bottleTexture = (cdc::PCTexture*)cdc::g_resolveSections[5]->getWrapped(0x0396);
+		auto bottleDiffuseTexture = (cdc::PCTexture*)cdc::g_resolveSections[5]->getWrapped(0x0396);
+		auto bottleNormalTexture = (cdc::PCTexture*)cdc::g_resolveSections[5]->getWrapped(0x005b);
 
 		cdc::ResolveSection *objectSection = cdc::g_resolveSections[11];
 		cdc::Object *bottleObject = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(0x04a8));
@@ -747,7 +748,7 @@ int spinnyCube(HWND window) {
 
 			if (d3dDevice9->BeginScene() >= 0) {
 
-				stateManager9.setDeviceTexture(0, bottleTexture->GetDeviceBaseTexture(), cdc::kTextureFilterTrilinear, 0.0f);
+				stateManager9.setDeviceTexture(0, bottleNormalTexture->GetDeviceBaseTexture(), cdc::kTextureFilterTrilinear, 0.0f);
 
 				// draw bottle
 				if (true) {
@@ -810,6 +811,7 @@ int spinnyCube(HWND window) {
 				}
 
 				// draw cube
+				stateManager9.setDeviceTexture(0, bottleDiffuseTexture->GetDeviceBaseTexture(), cdc::kTextureFilterTrilinear, 0.0f);
 				stateManager9.setVertexShader(&cdcVertex9);
 				stateManager9.setPixelShader(&cdcPixel9);
 				stateManager9.setVertexBuffer(&cdcVertexBuffer);
