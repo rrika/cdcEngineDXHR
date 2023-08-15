@@ -761,8 +761,8 @@ int spinnyCube(HWND window) {
 					d3dDevice9->SetVertexShaderConstantF(4, (float*)World_Bottle.m, 4);
 				}
 				struct { float values[4]; } row;
-				row = {2.0f, -1.0f, 0.0f, 0.0f}; d3dDevice9->SetVertexShaderConstantF(21, (float*)WorldViewProject_Bottle.m, 1); // NormalScaleOffset
-				row = {1.0f,  0.0f, 0.0f, 0.0f}; d3dDevice9->SetVertexShaderConstantF(254, (float*)World_Bottle.m, 1); // TexcoordScales
+				row = {2.0f, -1.0f, 0.0f, 0.0f}; d3dDevice9->SetVertexShaderConstantF(21, row.values, 1); // NormalScaleOffset
+				row = {1.0f,  0.0f, 0.0f, 0.0f}; d3dDevice9->SetVertexShaderConstantF(254, row.values, 1); // TexcoordScales
 				row = {1.0f, 0.0f, 0.0f, 0.0f}; d3dDevice9->SetPixelShaderConstantF(  1, row.values, 1); // opacity
 				row = {1.0f, 0.0f, 0.0f, 0.0f}; d3dDevice9->SetPixelShaderConstantF( 39, row.values, 1); // some matrix
 				row = {0.0f, 1.0f, 0.0f, 0.0f}; d3dDevice9->SetPixelShaderConstantF( 40, row.values, 1); // some matrix
