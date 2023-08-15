@@ -6,6 +6,7 @@ namespace cdc {
 
 class PCRenderDevice;
 class PCStreamDecl;
+struct MaterialBlobSub; // = cdc::PassData
 struct VertexDecl;
 
 class PCMaterial :
@@ -18,6 +19,9 @@ public:
 	void load(MaterialBlob*) override;
 	void Release() override;
 	void method_18() override;
+
+	void SetupVertexConstantsAndTextures(uint32_t, MaterialBlobSub*, MaterialInstanceData*, char*, bool);
+	void SetupPixelConstantsAndTextures(uint32_t, MaterialBlobSub*, MaterialInstanceData*, char*, bool);
 
 	~PCMaterial() = default;
 

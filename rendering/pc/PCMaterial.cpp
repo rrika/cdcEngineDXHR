@@ -29,6 +29,44 @@ void PCMaterial::method_18() {
 	// TODO
 }
 
+void PCMaterial::SetupVertexConstantsAndTextures(
+	uint32_t subMaterialIndex,
+	MaterialBlobSub* subMat,
+	MaterialInstanceData *matInstance,
+	char *cbData,
+	bool doEverything)
+{
+	auto *stateManager = deviceManager9->getStateManager();
+
+	// TODO
+
+	if (subMat->vsBufferNumRows) {
+		auto firstRow = subMat->vsBufferFirstRow;
+		auto numRows = subMat->vsBufferNumRows;
+		if (cbData)
+			stateManager->SetVertexShaderConstantF(firstRow + 132, (float*)&cbData[16 * firstRow], numRows);
+	}
+}
+
+void PCMaterial::SetupPixelConstantsAndTextures(
+	uint32_t subMaterialIndex,
+	MaterialBlobSub* subMat,
+	MaterialInstanceData *matInstance,
+	char *cbData,
+	bool doEverything)
+{
+	auto *stateManager = deviceManager9->getStateManager();
+
+	// TODO
+
+	if (subMat->psBufferNumRows) {
+		auto firstRow = subMat->psBufferFirstRow;
+		auto numRows = subMat->psBufferNumRows;
+		if (cbData)
+			stateManager->SetPixelShaderConstantF(firstRow + 132, (float*)&cbData[16 * firstRow], numRows);
+	}
+}
+
 PCStreamDecl *PCMaterial::SetupNormalMapPass(
 	MaterialInstanceData& data,
 	void *instanceParams, // float4
@@ -55,6 +93,10 @@ PCStreamDecl *PCMaterial::SetupNormalMapPass(
 
 	uint32_t subMaterialIndex = 7; // normals
 	MaterialBlobSub *subMaterial = materialBlob->subMat4C[subMaterialIndex];
+
+	bool materialChange = true;
+	SetupVertexConstantsAndTextures(subMaterialIndex, subMaterial, &data, (char*)instanceParams, materialChange);
+	SetupPixelConstantsAndTextures(subMaterialIndex, subMaterial, &data, (char*)instanceParams, materialChange);
 
 	if (true)
 	{
