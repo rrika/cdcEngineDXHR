@@ -4,6 +4,8 @@
 #include "buffers/PCIndexBuffer.h"
 #include "rendering/Types.h"
 
+typedef enum _D3DRENDERSTATETYPE D3DRENDERSTATETYPE;
+
 namespace cdc {
 
 class PCDeviceBaseTexture;
@@ -20,6 +22,8 @@ class PCStateManager : public PCInternalResource {
 	PCPixelShader *m_pixelShader; // 20
 	PCVertexShader *m_vertexShader; // 24
 	PCDeviceBaseTexture *m_textures[20]; // 28
+
+	uint32_t m_renderStates[210]; // 168, indexed by D3DRENDERSTATETYPE
 
 	Matrix m_projectionMatrix; // 5B0
 	Matrix m_viewMatrix; // 5F0, or perhaps m_invViewMatrix
@@ -51,6 +55,7 @@ public:
 	void SetProjectionMatrix(Matrix *project);
 
 	void UpdateStateMatrices();
+	void SetRenderState(D3DRENDERSTATETYPE state, uint32_t value);
 
 	bool internalCreate() override;
 	void internalRelease() override;

@@ -128,6 +128,12 @@ void PCStateManager::UpdateStateMatrices() {
 	}
 }
 
+void PCStateManager::SetRenderState(D3DRENDERSTATETYPE state, uint32_t value) {
+	if (m_renderStates[state] != value) {
+		m_device->SetRenderState(state, value);
+		m_renderStates[state] = value;
+	}
+}
 
 bool PCStateManager::internalCreate() { return true; }; // TODO
 void PCStateManager::internalRelease() {}; // TODO
