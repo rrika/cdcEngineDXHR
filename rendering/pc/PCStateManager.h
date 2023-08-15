@@ -43,6 +43,9 @@ public:
 	void setPixelShader(PCPixelShader *pixelShader);
 	void setVertexShader(PCVertexShader *vertexShader);
 
+	void SetVertexShaderConstantF(uint32_t index, float *data, uint32_t rows);
+	void SetPixelShaderConstantF(uint32_t index, float *data, uint32_t rows);
+
 	void SetWorldMatrix(Matrix *world);
 	void SetViewMatrix(Matrix *view);
 	void SetProjectionMatrix(Matrix *project);

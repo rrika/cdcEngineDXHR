@@ -82,6 +82,14 @@ void PCStateManager::setVertexShader(PCVertexShader *vertexShader) {
 	}
 }
 
+void PCStateManager::SetVertexShaderConstantF(uint32_t index, float *data, uint32_t rows) {
+	m_device->SetVertexShaderConstantF(index, data, rows);
+}
+
+void PCStateManager::SetPixelShaderConstantF(uint32_t index, float *data, uint32_t rows) {
+	m_device->SetPixelShaderConstantF(index, data, rows);
+}
+
 void PCStateManager::SetWorldMatrix(Matrix *world) {
 	m_worldMatrix = *world;
 	m_worldMatrixIsDirty = true;
