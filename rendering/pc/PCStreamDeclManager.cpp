@@ -90,9 +90,15 @@ PCStreamDecl *PCStreamDeclManager::FindOrCreate(
 						)
 							texcoordScales.vec128[attribB->attribKindB-10] = 1.0f;
 						else
-							texcoordScales.vec128[attribB->attribKindB-10] = 15.999512f;
-
+							texcoordScales.vec128[attribB->attribKindB-10] = 0.00048828125f; // contrast with 15.999512f used in DX11
 					}
+					if (attribB->attribKindB == 4 && vertexDecl->attrib[indexA].format == 2) {
+						normalScaleOffset.x = 1.0f;
+						normalScaleOffset.y = 0.0f;
+						normalScaleOffset.z = 0.0f;
+						normalScaleOffset.w = 0.0f;
+					}
+
 				} else {
 					// input from secondary buffer
 
