@@ -4,8 +4,11 @@
 #include "rendering/pc/PCInternalResource.h"
 #include "rendering/pc/PCRenderContext.h"
 #include "rendering/pc/PCStreamDeclManager.h"
+#include "rendering/Types.h"
 
 namespace cdc {
+
+class PCBaseTexture;
 
 class PCRenderDevice :
 	public PCInternalResource,
@@ -181,6 +184,7 @@ public:
 	// virtual void method40() = 0;
 
 	void recordDrawable(IRenderDrawable *drawable, uint32_t mask, bool addToNextScene);
+	void setTexture(uint32_t slot, PCBaseTexture *tex, TextureFilter filter, float unknown);
 	void drawRenderListsInternal();
 };
 

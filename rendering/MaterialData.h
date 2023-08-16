@@ -1,5 +1,6 @@
 #pragma once
 #include "Stencil.h"
+#include "Types.h"
 
 namespace cdc {
 
@@ -14,7 +15,7 @@ struct MaterialTexRef { // = cdc::MaterialData::TextureEntry
 	uint32_t dword8; // = m_category
 	uint8_t fallbackIndex; // = m_type | m_class << 5
 	uint8_t slotIndex;
-	uint16_t filter;
+	TextureFilter filter;
 };
 
 struct MaterialBlobSub { // = cdc::PassData

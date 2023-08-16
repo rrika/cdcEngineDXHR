@@ -1,8 +1,10 @@
+#include "PCDeviceManager.h"
 #include "PCMaterial.h"
 #include "PCModelDrawable.h"
 #include "PCRenderDevice.h"
 #include "PCRenderModel.h"
 #include "PCScene.h"
+#include "PCStateManager.h"
 #include "shaders/PCShaderLib.h"
 #include "surfaces/PCTexture.h"
 
@@ -361,6 +363,14 @@ void PCRenderDevice::recordDrawable(IRenderDrawable *drawable, uint32_t mask, bo
 	// TODO
 	// drawable->draw(0, nullptr); // hack
 	scene7C->drawableListsAndMasks->add(drawable, mask);
+}
+
+void PCRenderDevice::setTexture(uint32_t slot, PCBaseTexture *tex, TextureFilter filter, float unknown) {
+	// if (!tex)
+	// 	tex = missingTexture;
+	PCStateManager *stateManager = deviceManager9->getStateManager();
+	stateManager->setDeviceTexture(slot, tex->GetDeviceBaseTexture(), filter, unknown);
+	// TODO
 }
 
 void PCRenderDevice::drawRenderListsInternal() {

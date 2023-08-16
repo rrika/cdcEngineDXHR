@@ -8,7 +8,7 @@ enum class CullMode { // line 51
 	front = 2
 };
 
-enum TextureFilter { // line 59
+enum TextureFilter : uint16_t { // line 59
 	kTextureFilterPoint = 0,
 	kTextureFilterBilinear = 1,
 	kTextureFilterTrilinear = 2,
