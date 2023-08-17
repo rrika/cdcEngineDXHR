@@ -6,6 +6,7 @@ namespace cdc {
 
 class PCRenderDevice;
 class PCStreamDecl;
+class PCStreamDeclManager;
 struct MaterialBlobSub; // = cdc::PassData
 struct VertexDecl;
 
@@ -24,6 +25,14 @@ public:
 	void SetupPixelConstantsAndTextures(uint32_t, MaterialBlobSub*, MaterialInstanceData*, char*, bool);
 
 	~PCMaterial() = default;
+
+	PCStreamDecl *PrepStreamDecl(
+		MaterialInstanceData& data,
+		uint32_t modelType,
+		uint32_t passIndex,
+		bool withNormals,
+		VertexDecl *pVertexDecl,
+		PCStreamDeclManager& streamDeclManager);
 
 	PCStreamDecl *SetupNormalMapPass(
 		MaterialInstanceData& data,

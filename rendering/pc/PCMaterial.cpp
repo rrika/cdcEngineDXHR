@@ -144,6 +144,27 @@ void PCMaterial::SetupPixelConstantsAndTextures(
 	}
 }
 
+PCStreamDecl *PCMaterial::PrepStreamDecl(
+	MaterialInstanceData& data,
+	uint32_t modelType,
+	uint32_t passIndex,
+	bool withNormals,
+	VertexDecl *pVertexDecl,
+	PCStreamDeclManager& streamDeclManager)
+{
+	auto *streamDecl = static_cast<PCStreamDecl*>(data.streamDecls24[passIndex]);
+	if (!streamDecl) {
+		MaterialBlobSub *subMaterial = materialBlob->subMat4C[passIndex];
+		ShaderInputSpec *inputSpec = subMaterial->vsLayout[modelType];
+		streamDecl = streamDeclManager.FindOrCreate(
+			pVertexDecl,
+			inputSpec,
+			withNormals
+		);
+	}
+	return streamDecl;
+}
+
 PCStreamDecl *PCMaterial::SetupNormalMapPass(
 	MaterialInstanceData& data,
 	void *instanceParams, // float4
@@ -195,17 +216,10 @@ PCStreamDecl *PCMaterial::SetupNormalMapPass(
 		auto vertexShader = (*vertexTable)[vertexIndex];
 		stateManager->setVertexShader(vertexShader);
 
-		auto *streamDecl = static_cast<PCStreamDecl*>(data.streamDecls24[subMaterialIndex]);
-		if (!streamDecl) {
-			ShaderInputSpec *inputSpec = subMaterial->vsLayout[modelType];
-			streamDecl = renderDevice->streamDeclManager.FindOrCreate(
-				pVertexDecl,
-				inputSpec,
-				(flags >> 3) & 1 // flag 8 added in PCTerrainDrawable constructor for example
-			);
-		}
-
-		return streamDecl;
+		return PrepStreamDecl(
+			data, modelType, subMaterialIndex,
+			flags & 8, // added in PCTerrainDrawable constructor for example
+			pVertexDecl, renderDevice->streamDeclManager);
 	}
 }
 
