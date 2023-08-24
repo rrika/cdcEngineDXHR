@@ -3,13 +3,19 @@
 #include "cdc/dtp/objectproperties/intro.h"
 #include "game/DeferredRenderingObject.h"
 #include "game/LensFlareAndCoronaID.h"
+#include "rendering/CommonMaterial.h"
+#include "rendering/MaterialData.h"
 #include "cdcResource/ResolveSection.h"
 #include "cdcSound/SoundPlex.h"
 #include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcWorld/Instance.h"
+#include "UIActions.h"
 
-void buildUI(DeferredRenderingExtraData *extra) {
+void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
+	if (extra->material)
+		if (ImGui::SmallButton("show override material"))
+			uiact.select(extra->material);
 	ImGui::Text("scale mode %d",
 		extra->scaleModeE1);
 	for (uint32_t i=0; i<8; i++) {
@@ -19,7 +25,10 @@ void buildUI(DeferredRenderingExtraData *extra) {
 	}
 }
 
-void buildUI(LensFlareAndCoronaExtraData *extra) {
+void buildUI(UIActions& uiact, LensFlareAndCoronaExtraData *extra) {
+	if (extra->material)
+		if (ImGui::SmallButton("show override material"))
+			uiact.select(extra->material);
 	ImGui::Text("matrix mode %d",
 		extra->matrixMode);
 	for (uint32_t i=0; i<8; i++) {
@@ -41,11 +50,11 @@ void buildUI(UIActions& uiact, dtp::Intro *intro) {
 
 		if (objFamily == 0x50) {
 			auto *extraData = (DeferredRenderingExtraData*) intro->extraData1;
-			buildUI(extraData);
+			buildUI(uiact, extraData);
 
 		} else if (objFamily == 0x5b) {
 			auto *extraData = (LensFlareAndCoronaExtraData*) intro->extraData1;
-			buildUI(extraData);
+			buildUI(uiact, extraData);
 		}
 	}
 }

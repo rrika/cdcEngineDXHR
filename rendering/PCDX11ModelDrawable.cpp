@@ -325,6 +325,10 @@ void PCDX11ModelDrawable::buildUI(uint32_t funcSetIndex, UIActions& uiact) {
 	}
 	ImGui::Text("submaterial: %d", subMatIndex);
 	ImGui::Text("funcSetIndex %d", funcSetIndex);
+	ImVec4 white {1.0f, 1.0f, 1.0f, 1.0f};
+	ImVec4 red {1.0f, 0.0f, 0.0f, 1.0f};
+	ImGui::TextColored(subMat->vsBufferNumRows ? red : white, "vs cb rows:  %d", subMat->vsBufferNumRows);
+	ImGui::TextColored(subMat->psBufferNumRows ? red : white, "ps cb rows:  %d", subMat->psBufferNumRows);
 #endif
 }
 
