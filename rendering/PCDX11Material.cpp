@@ -645,7 +645,7 @@ PCDX11StreamDecl *PCDX11Material::SetupNormalMapPass(
 	bool materialRenderTwice = bool(matDword18 & 0x800);
 	bool materialCullFront = bool(matDword18 & 0x2000);
 
-	if (materialDoubleSided || (matInstanceDoubleSided && !materialRenderTwice)) // double-check this
+	if ((materialDoubleSided || matInstanceDoubleSided) && !materialRenderTwice)
 		stateManager->setCullMode(CullMode::none, frontCounterClockwise);
 	else if (materialCullFront)
 		stateManager->setCullMode(CullMode::front, frontCounterClockwise);
