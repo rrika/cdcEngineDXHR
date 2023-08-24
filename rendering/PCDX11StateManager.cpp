@@ -332,7 +332,7 @@ void PCDX11StateManager::setBlendStateAndBlendFactors(
 	uint8_t alphaThreshold,
 	uint32_t blendFactors)
 {
-	if (blendState & 0x7000000)
+	if ((blendState & 0x7000000) == 0x7000000)
 		alphaThreshold = 0;
 
 	setAlphaThreshold(alphaThreshold);

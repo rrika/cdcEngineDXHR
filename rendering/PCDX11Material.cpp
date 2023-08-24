@@ -683,9 +683,9 @@ PCDX11StreamDecl *PCDX11Material::SetupNormalMapPass(
 		stateManager->setRenderTargetWriteMask(renderTargetWriteMask & 7);
 
 		// set pixel shader
-		uint32_t pixelIndex = 0;
-		if ((materialBlob->blendStateC & 0x07000000) == 0x07000000)
-			pixelIndex = 4;
+		uint32_t pixelIndex = 0; // without discard
+		if ((materialBlob->blendStateC & 0x07000000) != 0x07000000)
+			pixelIndex = 4; // with discard
 
 		auto pixelLib = static_cast<PCDX11ShaderLib*>(subMaterial->shaderPixel);
 		if (!pixelLib)
