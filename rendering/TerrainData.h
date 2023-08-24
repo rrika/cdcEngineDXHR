@@ -49,7 +49,7 @@ struct RenderTerrainGroup { // 89
 		uint32_t materialIndex; // 0
 	};
 	uint32_t vbIndex; // 4
-	uint16_t flags; // 8 (1=shadow only, 2=no shadows)
+	uint16_t flags; // 8 (2=shadow only, 4=no shadows)
 	uint32_t renderPasses; // C
 	union {
 		uint32_t m_instanceTextureIndices[4]; // 10
