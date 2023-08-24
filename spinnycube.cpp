@@ -1358,6 +1358,7 @@ int spinnyCube(HWND window,
 			ImGui::PushID("model or terrain");
 			if (uiact.selectedModel) {
 				auto *model = static_cast<cdc::PCDX11RenderModel*>(uiact.selectedModel);
+				auto *nppg = model->getTab0Ext16();
 				auto *ppg = model->getTab0Ext128();
 				ImGui::Text("# model batches = %d", model->numModelBatches);
 				ImGui::Text("# prim groups = %d", model->numPrimGroups);
@@ -1370,7 +1371,10 @@ int spinnyCube(HWND window,
 						ImGui::Text("  group %d", pg);
 						cdc::PrimGroup *group = &model->primGroups[pg];
 						ImGui::SameLine();
-						ImGui::Text(": %d tris", group->triangleCount);
+						ImGui::Text(": flags %02x passMask %08x  %d tris",
+							group->flags,
+							nppg[pg].mask8,
+							group->triangleCount);
 						ImGui::SameLine();
 						if (ImGui::SmallButton("vertexdecl/material")) {
 							uiact.select(batch);

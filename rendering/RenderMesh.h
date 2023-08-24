@@ -75,10 +75,10 @@ struct Mesh { // = cdc::ModelData
 
 struct PrimGroup {
 	uint32_t vec0[4];
-	uint32_t startIndex;
-	uint32_t triangleCount;
+	uint32_t startIndex; // 10
+	uint32_t triangleCount; // 14
 	uint32_t dword18;
-	uint32_t dword1C;
+	uint32_t flags; // 1C
 	uint32_t dword20;
 	uint32_t dword24;
 	IMaterial *material; // 28, index patched to pointer

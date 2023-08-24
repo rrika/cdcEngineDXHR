@@ -65,14 +65,14 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 				return; // HACK: nothing good can come from this
 			// printf("PCDX11RenderModelInstance::recordDrawables %d %d %d %p %p %p %p\n", i, j, tab0index, mesh, sub, mesh->meshTable, mesh->primGroups);
 			PrimGroup *primGroup = &mesh->primGroups[tab0index];
-			// NonPersistentPGData *tab0ext16 = &this->tab0Ext16[tab0index];
+			NonPersistentPGData *tab0ext16 = &this->tab0Ext16[tab0index];
 			PersistentPGData *tab0ext128 = &this->tab0Ext128[tab0index];
 
 			if (tab0ext128->hide)
 				continue;
 
 			bool isFading = fade < 1.0f;
-			uint32_t mask = baseMask & primGroup->material->GetRenderPassMask(isFading); // & tab0ext16->mask8;
+			uint32_t mask = baseMask & primGroup->material->GetRenderPassMask(isFading) & tab0ext16->mask8;
 
 			auto drawable = new (renderDevice->getLinear(), 6, true) PCDX11ModelDrawable(
 				getRenderModel(),
