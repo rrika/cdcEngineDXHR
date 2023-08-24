@@ -1388,6 +1388,7 @@ int spinnyCube(HWND window,
 				uint32_t numGroups = terrain->m_pResourceData->pHeader->numGroups;
 				ImGui::Text("# groups = %d", numGroups);
 				for (uint32_t i = 0; i < numGroups; i++) {
+					ImGui::PushID(i);
 					cdc::RenderTerrainGroup *group = &terrain->m_pGroups[i];
 					ImGui::Text("group %d passes %08x", i, group->renderPasses);
 					ImGui::SameLine();
@@ -1396,6 +1397,11 @@ int spinnyCube(HWND window,
 						uiact.select(group_vb->pVertexDecl);
 						uiact.select(group->m_pMaterial);
 					}
+					bool hidden = group->flags & 0x8000; // HACK
+					ImGui::SameLine();
+					if (ImGui::SmallButton(hidden ? "show" : "hide"))
+						group->flags ^= 0x8000;
+					ImGui::PopID();
 				}
 			}
 			ImGui::PopID();

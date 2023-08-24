@@ -93,6 +93,9 @@ void PCDX11RenderTerrain::BuildDrawables(PCDX11TerrainState *terrainState) {
 				flags,
 				terrainState);
 
+			if (group->flags & 0x8000) // HACK
+				continue;
+
 			uint32_t renderPasses =
 				group->renderPasses &
 				group->m_pMaterial->GetRenderPassMask(false);
