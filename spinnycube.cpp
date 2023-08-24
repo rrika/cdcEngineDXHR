@@ -125,6 +125,25 @@ void howDoYouHandleAllOfThis() {
 	subtitleIndex = 7497;
 }
 
+cdc::Vector halton[512];
+
+void InitHalton(unsigned component, unsigned b) {
+	unsigned n = 0, d = 1;
+	for (unsigned i=0; i<512; i++) {
+		unsigned x = d - n;
+		if (x == 1) {
+			n = 1;
+			d *= b;
+		} else {
+			unsigned y = d / b;
+			while (x <= y)
+				y /= b;
+			n = (b + 1) * y - x;
+		}
+		halton[i].vec128[component] = float(n) / d;
+	}
+}
+
 class ImGuiDrawable : public cdc::IRenderDrawable {
 public:
 	std::function<void()> lastMinuteAdditions;
@@ -294,6 +313,13 @@ int spinnyCube(HWND window,
 
 	localstr_set_language(language_english, language_default);
 	registerPopupHandler();
+
+	InitHalton(0, 2);
+	InitHalton(1, 3);
+	InitHalton(2, 5);
+
+	for (unsigned i=0; i<32; i++)
+		printf("halton[%d] = %f %f %f\n", i, halton[i].x, halton[i].y, halton[i].z);
 
 	std::unique_ptr<cdc::PCMouseKeyboard> mouseKeyboard(cdc::PCMouseKeyboard::create(window));
 	auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
@@ -1094,7 +1120,14 @@ int spinnyCube(HWND window,
 				if (cell->renderMesh && drawCellBoxes) {
 					auto *cellRMIDrawable = new RMIDrawableBase(cell->renderMesh);
 					recycleRMI.emplace_back(cellRMIDrawable);
-					static_cast<cdc::PCDX11RenderModelInstance*>(cellRMIDrawable->rmi)->baseMask = 0x1002; // normals & composite
+					auto *rmi = static_cast<cdc::PCDX11RenderModelInstance*>(cellRMIDrawable->rmi);
+					rmi->baseMask = 0x1002; // normals & composite
+					rmi->ext->instanceParams[0] = { // assign a distinguishable color for this cell
+						halton[i].x,
+						halton[i].y,
+						halton[i].z,
+						1.0f
+					};
 					cellRMIDrawable->draw(&cdc::identity4x4, 0.0f);
 				}
 			}
@@ -1435,6 +1468,9 @@ int spinnyCube(HWND window,
 					}
 				}
 				ImGui::Unindent();
+
+				ImGui::Text("vs cb4 %d..%d", submat->vsBufferFirstRow, submat->vsBufferFirstRow + submat->vsBufferNumRows);
+				ImGui::Text("ps cb4 %d..%d", submat->psBufferFirstRow, submat->psBufferFirstRow + submat->psBufferNumRows);
 
 				static bool weirdFlag = false;
 				ImGui::Checkbox("???", &weirdFlag);
