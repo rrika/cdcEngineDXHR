@@ -18,6 +18,9 @@ Instance *Instance::IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, /
 
 	// TODO
 	ObjectTracker *objectTracker = getByObjectListIndex(intro->objectListIndex);
+	if (objectTracker == nullptr)
+		return nullptr;
+
 	Object *object = objectTracker->objBlob;
 
 	Object *firstObject;
