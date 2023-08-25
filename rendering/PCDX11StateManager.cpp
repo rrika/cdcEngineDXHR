@@ -315,16 +315,25 @@ void PCDX11StateManager::setDepthRange(float minDepth, float maxDepth) {
 	// TODO
 }
 
-void PCDX11StateManager::setDepthBias(int32_t) {
-	// TODO
+void PCDX11StateManager::setDepthBias(int32_t bias) {
+	if (bias != m_rasterizerDesc.DepthBias) {
+		m_rasterizerDesc.DepthBias = bias;
+		m_dirtyRasterizerState = true;
+	}
 }
 
-void PCDX11StateManager::setDepthBiasClamp(float) {
-	// TODO
+void PCDX11StateManager::setDepthBiasClamp(float biasClamp) {
+	if (biasClamp != m_rasterizerDesc.DepthBiasClamp) {
+		m_rasterizerDesc.DepthBiasClamp = biasClamp;
+		m_dirtyRasterizerState = true;
+	}
 }
 
-void PCDX11StateManager::setSlopeScaledDepthBias(float) {
-	// TODO
+void PCDX11StateManager::setSlopeScaledDepthBias(float slopeScaledDepthBias) {
+	if (slopeScaledDepthBias != m_rasterizerDesc.SlopeScaledDepthBias) {
+		m_rasterizerDesc.SlopeScaledDepthBias = slopeScaledDepthBias;
+		m_dirtyRasterizerState = true;
+	}
 }
 
 void PCDX11StateManager::setBlendStateAndBlendFactors(
