@@ -13,15 +13,94 @@
 #include "UIActions.h"
 
 void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
+	// material
 	if (extra->material)
 		if (ImGui::SmallButton("show override material"))
 			uiact.select(extra->material);
+
+	// scale
 	ImGui::Text("scale mode %d",
 		extra->scaleModeE1);
+	if (extra->scaleModeE1 == 1)
+		ImGui::SliderFloat("Scale", extra->scale, 0, 10000.f);
+	else
+		ImGui::SliderFloat3("Scale", extra->scale, 0, 10000.f);
+
+	// packed[...]
+	const char *labels_packed[] = {"packed[0]", "packed[1]", "packed[2]", "packed[3]"};
+	uint8_t v[4]; uint8_t minmax[] = {0, 255};
+	for (uint32_t i=0; i<4; i++) {
+		memcpy(v, &extra->packedVectors[i].bytes, 4);
+		ImGui::SliderScalarN(labels_packed[i], ImGuiDataType_U8, v, 4, minmax+0, minmax+1, "%u");
+		memcpy(&extra->packedVectors[i].bytes, v, 4);
+	}
+
+	// plain[...]
+	const char *labels_plain[] = {"plain[0]", "plain[1]", "plain[2]", "plain[3]"};
+	for (uint32_t i=0; i<4; i++) {
+		ImGui::SliderFloat4(labels_plain[i], extra->plainVectors[i].vec128, 0.f, 10.f);
+	}
+
+	// params
+	const char *modes[] = {
+		"packed[0]",
+		"packed[1]",
+		"packed[2]",
+		"packed[3]",
+		"plain[0]",
+		"plain[1]",
+		"plain[2]",
+		"plain[3]",
+		"scale", // 8
+		"inverse scale", // 9
+		"object to world (row 0)", // 10
+		"object to world (row 1)",
+		"object to world (row 2)",
+		"object to world (row 3)",
+		"world to camera (row 0)",
+		"world to camera (row 1)",
+		"world to camera (row 2)",
+		"world to camera (row 3)",
+		"camera to view (row 0)",
+		"camera to view (row 1)",
+		"camera to view (row 2)",
+		"camera to view (row 3)",
+		"world to object (row 0)", // 22
+		"world to object (row 1)",
+		"world to object (row 2)",
+		"world to object (row 3)",
+		"camera to world (row 0)",
+		"camera to world (row 1)",
+		"camera to world (row 2)",
+		"camera to world (row 3)",
+		"view to camera (row 0)",
+		"view to camera (row 1)",
+		"view to camera (row 2)",
+		"view to camera (row 3)",
+		"not implemented 34",
+		"not implemented 35",
+		"unused" // 36
+	};
+	const char *spaces[] = {
+		"object",
+		"world",
+		"camera", // maybe call this view space
+		"view"    // and this clip space
+	};
+	const char *transformMode[] = {
+		"pos (mat4x4)",
+		"dir (mat3x3)",
+		"[not implemented]"
+	};
 	for (uint32_t i=0; i<8; i++) {
 		auto& param = extra->params[i];
-		ImGui::Text("param %d mode %d",
-			i, param.mode);
+		ImGui::Text("param %d mode %2d %s",
+			i, param.mode, modes[param.mode]);
+		if (param.matrixP != 4 && param.matrixQ != 4)
+			ImGui::Text("  transform %s %s -> %s",
+				transformMode[param.multiplyMode],
+				spaces[param.matrixP],
+				spaces[param.matrixQ]);
 	}
 }
 
