@@ -1,5 +1,6 @@
 #include <cstdio>
 #include "cdcGameShell.h"
+#include "cdcScript/GarbageCollector.h"
 #include "cdcSound/Sound.h"
 
 extern char pathPrefix[36];
@@ -10,6 +11,12 @@ bool GameShell::UpdateLoop(float timeInFrames) { // 572
 	float timeInSeconds = timeInFrames * 0.03333333507180214;
 	// TODO
 	SOUND_Update(timeInSeconds);
+	// TODO
+	uint32_t numObjects = GarbageCollector::s_instance->NumObjects();
+	if (numObjects < 50)
+		numObjects = 50;
+	GarbageCollector::s_instance->StartCollection();
+	GarbageCollector::s_instance->Update(numObjects);
 	// TODO
 	return true;
 }

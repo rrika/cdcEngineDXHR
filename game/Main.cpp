@@ -14,6 +14,7 @@
 #include "cdcResource/ResolveObject.h"
 #include "cdcResource/ResolveSection.h"
 #include "../spinnycube.h"
+#include "cdcScript/GarbageCollector.h"
 #include "cdcScript/ScriptManager.h"
 #include "cdcSound/Sound.h"
 #include "cdcSound/MultiplexStream.h"
@@ -99,6 +100,7 @@ void Init_NativeScripts();
 void MAIN_DoMainInit() {
 	// TODO
 
+	GarbageCollector::Create();
 	ScriptManager::s_instance = new ScriptManager();
 	Init_NativeScripts();
 
