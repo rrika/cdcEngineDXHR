@@ -271,6 +271,7 @@ struct SpinnyUIActions : public UIActions {
 	dtp::IMFRef *selectedIMFRef = nullptr;
 	Instance *selectedInstance = nullptr;
 
+	void *selectedMovable = nullptr;
 
 	void select(cdc::IRenderTerrain *renderTerrain) override {
 		selectedModel = nullptr;
@@ -300,9 +301,11 @@ struct SpinnyUIActions : public UIActions {
 	}
 	void select(dtp::IMFRef *imfRef) override {
 		selectedIMFRef = imfRef;
+		selectedMovable = (void*)imfRef;
 	}
 	void select(Instance *instance) override {
 		selectedInstance = instance;
+		selectedMovable = (void*)instance;
 	}
 };
 
@@ -928,6 +931,7 @@ int spinnyCube(HWND window,
 			dtp::Intro *intro = nullptr;
 			cdc::IRenderTerrain *renderTerrain = nullptr;
 			Instance *instance = nullptr;
+			dtp::IMFRef *imfRef = nullptr;
 		};
 
 		struct FloatingButton {
@@ -1014,6 +1018,15 @@ int spinnyCube(HWND window,
 						cdc::FileRequest::NORMAL);
 					cdc::archiveFileSystem_default->processAll();
 				}
+				if (ref.m_imfDRMName && strrchr(ref.m_imfDRMName, '\\'))
+					fbs.push_back(FloatingButton{
+						{ref.m_transform.m[3][0],
+						 ref.m_transform.m[3][1],
+						 ref.m_transform.m[3][2],
+						 1},
+						strrchr(ref.m_imfDRMName, '\\')+1,
+						{.imfRef=&ref}
+					});
 				if (isLoaded(ref.m_pResolveObject) || ref.m_imfDRMName == nullptr) {
 					//printf("%d %04x %s ", i, ref.dtpID, ref.m_imfDRMName);
 					dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(ref.dtpID);
@@ -1297,6 +1310,8 @@ int spinnyCube(HWND window,
 					snprintf(name, 64, "fbx%x", (uint32_t)fbit.intro);
 				else if (fbit.instance)
 					snprintf(name, 64, "fbx%x", (uint32_t)fbit.instance);
+				else if (fbit.imfRef)
+					snprintf(name, 64, "fbx%x", (uint32_t)fbit.imfRef);
 				else
 					snprintf(name, 64, "fb%d", i++);
 				if (ImGui::Begin(name, &open, window_flags)) {
@@ -1305,9 +1320,10 @@ int spinnyCube(HWND window,
 							uiact.select(fbit.intro);
 						else if (fbit.renderTerrain)
 							uiact.select(fbit.renderTerrain);
-						else if (fbit.instance) {
+						else if (fbit.instance)
 							uiact.select(fbit.instance);
-						}
+						else if (fbit.imfRef)
+							uiact.select(fbit.imfRef);
 					}
 				}
 				ImGui::End();
@@ -1528,6 +1544,18 @@ int spinnyCube(HWND window,
 			if (!showModelWindow)
 				uiact.select((cdc::RenderMesh*)nullptr);
 		}
+
+		ImGuiIO& io = ImGui::GetIO();
+		ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+		auto manipulate = [&](cdc::Matrix& m) {
+			ImGuizmo::Manipulate(
+				(float*)viewMatrix.m,
+				(float*)scene->projectMatrix.m,
+				ImGuizmo::TRANSLATE,
+				ImGuizmo::WORLD,
+				(float*)m.m);
+		};
+
 		if (uiact.selectedIntro) {
 			bool showWindow = true;
 			ImGui::Begin("Intro", &showWindow);
@@ -1538,12 +1566,30 @@ int spinnyCube(HWND window,
 				uiact.select((dtp::Intro*)nullptr);
 		}
 		if (uiact.selectedIMFRef) {
+			if (uiact.selectedIMFRef == uiact.selectedMovable)
+				manipulate(uiact.selectedIMFRef->m_transform);
+
 			bool showWindow = true;
 			ImGui::Begin("IMFRef", &showWindow);
 			ImGui::Text("%p", uiact.selectedIMFRef);
+			ImGui::Text("debug name: %s", uiact.selectedIMFRef->m_debugName);
 			ImGui::End();
 			if (!showWindow)
 				uiact.select((dtp::IMFRef*)nullptr);
+		}
+		if (uiact.selectedInstance) {
+			if (uiact.selectedInstance == uiact.selectedMovable) {
+				manipulate(*uiact.selectedInstance->GetTransformComponent().m_matrix);
+				if (auto *instanceDrawable = uiact.selectedInstance->instanceDrawable)
+					static_cast<cdc::InstanceDrawable*>(instanceDrawable)->AddToDirtyList();
+			}
+
+			bool showWindow = true;
+			ImGui::Begin("Instance", &showWindow);
+			buildUI(uiact, uiact.selectedInstance);
+			ImGui::End();
+			if (!showWindow)
+				uiact.select((Instance*)nullptr);
 		}
 		if (uiact.selectedScriptType) {
 			bool showWindow = true;
@@ -1552,26 +1598,6 @@ int spinnyCube(HWND window,
 			ImGui::End();
 			if (!showWindow)
 				uiact.select((cdc::ScriptType*)nullptr);
-		}
-		if (uiact.selectedInstance) {
-
-			ImGuiIO& io = ImGui::GetIO();
-			ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
-			ImGuizmo::Manipulate(
-				(float*)viewMatrix.m,
-				(float*)scene->projectMatrix.m,
-				ImGuizmo::TRANSLATE,
-				ImGuizmo::WORLD,
-				(float*)uiact.selectedInstance->GetTransformComponent().m_matrix[0].m);
-			if (auto *instanceDrawable = uiact.selectedInstance->instanceDrawable)
-				static_cast<cdc::InstanceDrawable*>(instanceDrawable)->AddToDirtyList();
-
-			bool showWindow = true;
-			ImGui::Begin("Instance", &showWindow);
-			buildUI(uiact, uiact.selectedInstance);
-			ImGui::End();
-			if (!showWindow)
-				uiact.select((Instance*)nullptr);
 		}
 		if (showDRMWindow) {
 			drmexplorer.draw(uiact, &showDRMWindow);
