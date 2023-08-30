@@ -4,6 +4,7 @@
 #include <functional>
 #include <iterator>
 #include <memory>
+#include <variant>
 #include "config.h" // for ENABLE_IMGUI and ENABLE_D3DCOMPILER
 
 #include <windows.h>
@@ -923,17 +924,21 @@ int spinnyCube(HWND window,
 				selectedRmiDrawable->draw(&instanceMatrix, 0.0f);
 		};
 
+		struct ButtonItem {
+			dtp::Intro *intro = nullptr;
+			cdc::IRenderTerrain *renderTerrain = nullptr;
+			Instance *instance = nullptr;
+		};
+
 		struct FloatingButton {
 			cdc::Vector4 pos;
 			std::string label;
-			dtp::Intro *intro;
-			cdc::IRenderTerrain *renderTerrain;
-			Instance *instance;
+			ButtonItem item;
 		};
 
 		std::vector<FloatingButton> fbs {
-			// {{modelTranslation.x, modelTranslation.y, modelTranslation.z, 1}, "alc_beer_bottle_a", nullptr, nullptr, nullptr},
-			// {{0, 0, 0, 1}, "origin", nullptr, nullptr, nullptr}
+			// {{modelTranslation.x, modelTranslation.y, modelTranslation.z, 1}, "alc_beer_bottle_a", {}},
+			// {{0, 0, 0, 1}, "origin", {}}
 		};
 
 		// all the other objects
@@ -971,9 +976,7 @@ int spinnyCube(HWND window,
 					fbs.push_back(FloatingButton{
 						{intro.position[0], intro.position[1], intro.position[2], 1},
 						name,
-						&intro,
-						nullptr,
-						nullptr
+						{.intro=&intro}
 					});
 
 				if (object->numModels == 0)
@@ -1073,9 +1076,7 @@ int spinnyCube(HWND window,
 				fbs.push_back(FloatingButton{
 						{nodes->center[0], nodes->center[1], nodes->center[2], 1},
 						"[render terrain]",
-						nullptr,
-						renderTerrain,
-						nullptr
+						{.renderTerrain=renderTerrain}
 					});
 				static_cast<cdc::PCDX11RenderTerrain*>(renderTerrain)->hackDraw(rti, &instanceMatrix);
 			}
@@ -1265,7 +1266,7 @@ int spinnyCube(HWND window,
 				projPos.z /= projPos.w;
 
 				if (viewPos.z >= 0 && viewPos.z < 5000.0f)
-					fbs2.push_back({projPos, (std::string&&) fb.label, fb.intro, fb.renderTerrain, fb.instance});
+					fbs2.push_back({projPos, (std::string&&) fb.label, fb.item});
 			}
 
 			std::sort(fbs2.begin(), fbs2.end(), [](FloatingButton const &a, FloatingButton const &b) {
@@ -1291,20 +1292,21 @@ int spinnyCube(HWND window,
 				ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
 				bool open=true;
 				char name[64];
-				if (fb.intro)
-					snprintf(name, 64, "fbx%x", (uint32_t)fb.intro);
-				else if (fb.instance)
-					snprintf(name, 64, "fbx%x", (uint32_t)fb.instance);
+				auto& fbit = fb.item;
+				if (fbit.intro)
+					snprintf(name, 64, "fbx%x", (uint32_t)fbit.intro);
+				else if (fbit.instance)
+					snprintf(name, 64, "fbx%x", (uint32_t)fbit.instance);
 				else
 					snprintf(name, 64, "fb%d", i++);
 				if (ImGui::Begin(name, &open, window_flags)) {
 					if (ImGui::Button(fb.label.c_str())) {
-						if (fb.intro)
-							uiact.select(fb.intro);
-						else if (fb.renderTerrain)
-							uiact.select(fb.renderTerrain);
-						else if (fb.instance) {
-							uiact.select(fb.instance);
+						if (fbit.intro)
+							uiact.select(fbit.intro);
+						else if (fbit.renderTerrain)
+							uiact.select(fbit.renderTerrain);
+						else if (fbit.instance) {
+							uiact.select(fbit.instance);
 						}
 					}
 				}
