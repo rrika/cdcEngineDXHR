@@ -1,6 +1,7 @@
 #pragma once
 #include "cdcScript/cdcScript.h" // for DataValue
 #include "cdcScript/DataType.h"
+#include "cdcScript/ScriptName.h"
 #include "cdcSys/RCObject.h"
 
 namespace cdc {
@@ -64,8 +65,7 @@ struct ScriptTypeStreamData { // 692
 	uint32_t    m_version;
 	uint16_t    field_4;
 	uint16_t    field_6;
-	uint16_t    id8;
-	uint16_t    idA;
+	ScriptName  m_name; // 08
 	char       *m_nativeScriptPackageName; // 0C
 	char       *m_nativeScriptName; // 10
 	ScriptType *m_scriptType; // 14
