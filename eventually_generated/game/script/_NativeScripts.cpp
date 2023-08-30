@@ -31,7 +31,7 @@ bool NsScaleformMovieController_ScriptType::InitType(ScriptType *type) { // line
 	// InitFunction(2, &_ProcessMovieFunction);
 	// TODO
 
-	_NsScaleformMovieController::s_virtual = type->blob->prototypes[0].vtIndex;
+	_NsScaleformMovieController::s_virtual = type->blob->m_prototypes[0].vtIndex;
 
 	return true;
 }

@@ -237,7 +237,7 @@ struct DRMExplorer {
 							if (section.type == 8) { // Script
 								if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->getWrapped(section.id)) {
 									ImGui::SameLine();
-									ImGui::Text(" %s", ty->blob->name);
+									ImGui::Text(" %s", ty->blob->m_nativeScriptName);
 									ImGui::SameLine();
 									ImGui::PushID(section.id);
 									if (ImGui::SmallButton("Decompile")) {

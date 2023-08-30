@@ -13,8 +13,8 @@ using namespace cdc;
 static const char* nameof(ScriptType *ty) {
 	if (!ty)
 		return "(null)";
-	else if (ty->blob->name)
-		return ty->blob->name;
+	else if (ty->blob->m_nativeScriptName)
+		return ty->blob->m_nativeScriptName;
 	else
 		return "Unknown";
 }
@@ -89,19 +89,19 @@ void Decompile(UIActions& uiact, ScriptType& ty) {
 	}
 	ImGui::Text("{");
 	ImGui::Indent();
-	if (ty.blob->members) {
-		uint32_t numMembers = ((uint32_t*)ty.blob->members)[-1];
+	if (ty.blob->m_members) {
+		uint32_t numMembers = ((uint32_t*)ty.blob->m_members)[-1];
 		for (uint32_t i=0; i<numMembers; i++) {
-			DataMember *m = &ty.blob->members[i];
-			Type(uiact, &m->type);
+			DataMember *m = &ty.blob->m_members[i];
+			Type(uiact, &m->m_type);
 			ImGui::SameLine();
-			ImGui::Text("field_%x;", m->offset);
+			ImGui::Text("field_%x;", m->m_offset);
 		}
 	}
-	if (ty.blob->functions) {
-		uint32_t numFunctions = ((uint32_t*)ty.blob->functions)[-1];
+	if (ty.blob->m_functions) {
+		uint32_t numFunctions = ((uint32_t*)ty.blob->m_functions)[-1];
 		for (uint32_t i=0; i<numFunctions; i++) {
-			Function *fn = &ty.blob->functions[i];
+			Function *fn = &ty.blob->m_functions[i];
 			Prototype *pt = fn->prototype;
 			Type(uiact, &pt->returnType); ImGui::SameLine();
 			ImGui::Text("method_%d(", i);
@@ -113,9 +113,9 @@ void Decompile(UIActions& uiact, ScriptType& ty) {
 					ImGui::SameLine();
 				}
 				DataMember *m = &pt->args[i];
-				Type(uiact, &m->type);
+				Type(uiact, &m->m_type);
 				ImGui::SameLine();
-				ImGui::Text("arg_%x", m->offset);
+				ImGui::Text("arg_%x", m->m_offset);
 				ImGui::SameLine();
 			}
 			ImGui::SameLine();

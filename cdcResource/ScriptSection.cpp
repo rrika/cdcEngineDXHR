@@ -51,8 +51,8 @@ void ScriptSection::construct(uint32_t domainId, void *) {
 	// HACK
 	ScriptType *ty = FindScript(domainId);
 	auto *nt = ScriptManager::s_instance->GetNativeScriptType(
-		ty->blob->package,
-		ty->blob->name);
+		ty->blob->m_nativeScriptPackageName,
+		ty->blob->m_nativeScriptName);
 
 	if (nt) {
 		nt->InitType(ty);
