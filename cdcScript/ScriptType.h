@@ -3,6 +3,7 @@
 #include "cdcScript/DataType.h"
 #include "cdcScript/ScriptName.h"
 #include "cdcSys/RCObject.h"
+#include "cdcSys/SArray.h"
 
 namespace cdc {
 
@@ -73,11 +74,11 @@ struct ScriptTypeStreamData { // 692
 	// TODO
 	uint8_t     padding[0x2C-0x1C];
 	// TODO
-	DataMember *m_members; // 2C
-	uint32_t    padding30;
-	Prototype  *m_prototypes; // 34
-	Function   *m_functions; // 38
-	VTableArray m_vtables; // 3C
+	SArray<DataMember> m_members; // 2C
+	uint32_t           padding30;
+	Prototype         *m_prototypes; // 34
+	SArray<Function>   m_functions; // 38
+	VTableArray        m_vtables; // 3C
 };
 
 static_assert(sizeof(ScriptTypeStreamData) == 0x48);

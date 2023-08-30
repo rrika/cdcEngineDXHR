@@ -90,7 +90,7 @@ void Decompile(UIActions& uiact, ScriptType& ty) {
 	ImGui::Text("{");
 	ImGui::Indent();
 	if (ty.blob->m_members) {
-		uint32_t numMembers = ((uint32_t*)ty.blob->m_members)[-1];
+		uint32_t numMembers = ty.blob->m_members.size();
 		for (uint32_t i=0; i<numMembers; i++) {
 			DataMember *m = &ty.blob->m_members[i];
 			Type(uiact, &m->m_type);
@@ -99,7 +99,7 @@ void Decompile(UIActions& uiact, ScriptType& ty) {
 		}
 	}
 	if (ty.blob->m_functions) {
-		uint32_t numFunctions = ((uint32_t*)ty.blob->m_functions)[-1];
+		uint32_t numFunctions = ty.blob->m_functions.size();
 		for (uint32_t i=0; i<numFunctions; i++) {
 			Function *fn = &ty.blob->m_functions[i];
 			Prototype *pt = fn->prototype;
