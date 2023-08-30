@@ -601,6 +601,7 @@ int spinnyCube(HWND window,
 		(cdc::ScriptType*)cdc::g_resolveSections[8]->getWrapped(0x154a7); // pc-w/globaloutershell.drm section 0xb7
 	ScaleformMovieInstance mainMenuInstance(&mainMenuMovie);
 	NsMainMenuMovieController mainMenuMovieController(mainMenuScriptType);
+	cdc::GCPtr<NsMainMenuMovieController> keepControllerAlive(&mainMenuMovieController); // garbage collected else
 
 	// unsure how this link is established in the game
 	mainMenuInstance.m_controllerArray.push_back(&mainMenuMovieController);

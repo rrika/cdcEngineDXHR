@@ -446,7 +446,7 @@ void GarbageCollector::Impl::StartCollection() {
 void GarbageCollector::Impl::Update(int32_t maxObjects) {
 	auto startTicks = GetSystemTicks();
 	while (s_phase != IDLE) {
-		if (maxObjects < 0)
+		if (maxObjects <= 0)
 			return;
 		if (s_phase == MARK) {
 			if (m_finalizing)
