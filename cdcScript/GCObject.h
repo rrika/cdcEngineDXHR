@@ -15,9 +15,7 @@ class GCObject {
 	bool     gcmark : 1;
 	uint32_t gcnode : 31;
 public:
-	GCObject() {
-		GarbageCollector::s_instance->AllocNode(this, /*markNode=*/ true);
-	}
+	GCObject();
 	virtual ~GCObject();
 	virtual void MarkChildren();
 	virtual void Finalize();
@@ -48,7 +46,7 @@ union GCNode {
 	AllocNode m_alloc;
 };
 
-void GCMark(GCObject *object) {
+inline void GCMark(GCObject *object) {
 	if (object && !object->gcmark) {
 		GCNode *node = &GarbageCollector::s_nodes[object->gcnode];
 		node->m_alloc.mark = true;
@@ -60,7 +58,7 @@ void GCMark(GCObject *object) {
 }
 
 template <typename T>
-void GCAssign(T *&ptr, T *other) { // line 332
+inline void GCAssign(T *&ptr, T *other) { // line 332
 	ptr = other;
 	if (other && GarbageCollector::s_phase == GarbageCollector::MARK)
 		GCMark(other);
