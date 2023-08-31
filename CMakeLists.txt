@@ -79,7 +79,7 @@ elseif (MSVC)
 	add_executable(dxhr WIN32
 		spinnycube.cpp)
 	target_link_libraries(dxhr PRIVATE
-		user32 d3d11)
+		user32 advapi32 d3d11)
 
 	if (ENABLE_D3DCOMPILER)
 		target_link_libraries(dxhr PRIVATE
@@ -124,7 +124,7 @@ else()
 		../winsdk/sdk/lib/um/x86
 		../winsdk/sdk/lib/ucrt/x86)
 	target_link_libraries(dxhr PRIVATE
-		-luser32 -ld3d11)
+		-luser32 -ladvapi32 -ld3d11)
 	if (ENABLE_D3DCOMPILER)
 		target_link_libraries(dxhr PRIVATE
 			-ld3dcompiler)

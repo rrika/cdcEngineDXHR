@@ -55,4 +55,4 @@ Run the binary as follows:
     ./dxhr     # for linux build
     ./dxhr.exe # for windows build
 
-In Visual Studio you can [set the environment](https://stackoverflow.com/questions/100543/) to `BIGFILE=C:/path/to/game/BIGFILE.000` in the project properties.
+In Visual Studio you can [set the environment](https://stackoverflow.com/questions/100543/) to `BIGFILE=C:/path/to/game/BIGFILE.000` in the project properties. If you have installed the game through Steam on windows/wine, the files will be detected automatically.
