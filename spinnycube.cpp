@@ -899,6 +899,13 @@ int spinnyCube(HWND window,
 					auto *deferredExtraData = (DeferredRenderingExtraData*)extraData;
 					hackCalcInstanceParams(deferredExtraData, &instanceMatrix, rmi->ext->instanceParams);
 
+					// patch textures (even though this render model is shared between instances)
+					cdc::PersistentPGData *ppg = rmi->getPersistentPGData();
+					if (deferredExtraData->texture[0]) ppg->sub10.pInstanceTextures[0] = deferredExtraData->texture[0];
+					if (deferredExtraData->texture[1]) ppg->sub10.pInstanceTextures[1] = deferredExtraData->texture[1];
+					if (deferredExtraData->texture[2]) ppg->sub10.pInstanceTextures[2] = deferredExtraData->texture[2];
+					if (deferredExtraData->texture[3]) ppg->sub10.pInstanceTextures[3] = deferredExtraData->texture[3];
+
 				} else if (objFamily == 0x5b) {
 					rmi->baseMask = 0x100A; // normals, composite, translucent, for now
 					auto *lensFlareExtraData = (LensFlareAndCoronaExtraData*)extraData;
