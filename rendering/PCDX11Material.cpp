@@ -97,8 +97,8 @@ void PCDX11Material::setupVertexResources(
 		}
 	}
 
-	// assign refIndexBeginB..refIndexEndB from submaterial or MaterialInstanceData
-	for (uint32_t i = subMat->vsRefIndexBeginB; i < subMat->vsRefIndexEndB; i++) {
+	// assign refIndexBeginB..+refIndexCountB from submaterial or MaterialInstanceData
+	for (uint32_t i = subMat->vsRefIndexBeginB; i < subMat->vsRefIndexBeginB + subMat->vsRefIndexCountB; i++) {
 		auto extTextures = (PCDX11Texture**)matInstance;
 		auto fi = texref[i].fallbackIndex & 0x1F;
 		PCDX11Texture* tex = extTextures[fi - 1];
@@ -160,8 +160,8 @@ void PCDX11Material::setupPixelResources(
 		}
 	}
 
-	// assign refIndexBeginB..refIndexEndB from submaterial or MaterialInstanceData
-	for (uint32_t i = subMat->psRefIndexBeginB; i < subMat->psRefIndexEndB; i++) {
+	// assign refIndexBeginB..+refIndexCountB from submaterial or MaterialInstanceData
+	for (uint32_t i = subMat->psRefIndexBeginB; i < subMat->psRefIndexBeginB + subMat->psRefIndexCountB; i++) {
 		auto extTextures = subExt->pInstanceTextures;
 		auto fi = texref[i].fallbackIndex & 0x1F;
 		PCDX11Texture *tex = static_cast<PCDX11Texture*>(extTextures[fi - 1]);

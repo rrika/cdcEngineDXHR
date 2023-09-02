@@ -1477,14 +1477,14 @@ int spinnyCube(HWND window,
 				uint8_t psRefIndexEnd = 0;
 				psRefIndexEnd = std::max<uint8_t>(psRefIndexEnd, submat->psRefIndexEndA);
 				psRefIndexEnd = std::max<uint8_t>(psRefIndexEnd, submat->psRefIndexBeginB);
-				psRefIndexEnd = std::max<uint8_t>(psRefIndexEnd, submat->psRefIndexEndB);
+				psRefIndexEnd = std::max<uint8_t>(psRefIndexEnd, submat->psRefIndexBeginB + submat->psRefIndexCountB);
 				cdc::MaterialTexRef *texref = submat->psTextureRef;
 
 				ImGui::Indent();
 				for (uint32_t i = 0; i < psRefIndexEnd; i++) {
 					bool g0 = i < submat->psRefIndexEndA;
 					bool g1 = i >= submat->psRefIndexEndA && i < submat->psRefIndexBeginB;
-					bool g2 = i >= submat->psRefIndexBeginB && i < submat->psRefIndexEndB;
+					bool g2 = i >= submat->psRefIndexBeginB && i < submat->psRefIndexBeginB + submat->psRefIndexCountB;
 					ImGui::Text("texref %d: slot %d %s %p %p",
 						i,
 						texref[i].slotIndex,
