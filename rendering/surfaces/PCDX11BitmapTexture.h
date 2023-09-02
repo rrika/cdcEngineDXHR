@@ -16,12 +16,11 @@ class PCDX11BitmapTexture :
 public:
 	PCDX11BitmapTexture(
 		PCDX11RenderDevice *renderDevice,
-		uint32_t format, uint32_t b, uint32_t c, uint32_t d)
+		uint32_t format, uint16_t wrapMode, uint32_t maxFilter, TextureClass shape)
 	:
-		PCDX11BaseTexture(renderDevice, format, 0, 0, /*maxFilter=*/ 256, /*wrapMode=*/ 7, kTextureClassUnknown),
+		PCDX11BaseTexture(renderDevice, format, 0, 0, maxFilter, wrapMode, shape),
 		PCDX11AsyncCreateResource()
 	{
-		// wrapMode = 7; // wrap in all axes (rather than clamp)
 	}
 
 	ID3D11Resource *getTextureResource() override;

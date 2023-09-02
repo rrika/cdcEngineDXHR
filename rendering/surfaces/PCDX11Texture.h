@@ -31,8 +31,8 @@ struct TextureBlob {
 	uint16_t bpp;
 	uint8_t unknown16;
 	uint8_t mipLevels;
-	uint16_t flags;
-	uint16_t unknown1A;
+	uint16_t flags; // 18, wrap mode, etc.
+	uint8_t textureClass; // 1A
 };
 
 class PCDX11Texture :
@@ -60,7 +60,7 @@ public:
 public:
 	PCDX11Texture(PCDX11RenderDevice *renderDevice) :
 		TextureMap(),
-		PCDX11BitmapTexture(renderDevice, 0, 0, 256, 0),
+		PCDX11BitmapTexture(renderDevice, /*format=*/0, /*wrapMode=*/0, /*maxFilter=*/256, kTextureClassUnknown),
 		PCDX11RenderExternalResource(renderDevice)
 	{}
 

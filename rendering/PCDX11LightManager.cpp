@@ -25,7 +25,7 @@ void LightManagerSubC::renderLights(PCDX11LightManager *lightManager) {
 PCDX11LightManager::PCDX11LightManager(CommonRenderDevice *commonRenderDevice) :
 	renderDevice(static_cast<PCDX11RenderDevice*>(commonRenderDevice))
 {
-	attenuationSampler430 = new PCDX11BitmapTexture(renderDevice, 0, 0, 256, 0);
+	attenuationSampler430 = new PCDX11BitmapTexture(renderDevice, 0, 0, 256, kTextureClassUnknown);
 }
 
 LightManagerSubB *PCDX11LightManager::allocateSubB() {
