@@ -9,6 +9,8 @@
 
 namespace cdc {
 
+bool neverInsideSfxPerimeter = false;
+
 void SFXMARKER_ProcessAllMarkers() { // line 100
 	for (uint32_t i=0; i<sizeof(StreamTracker)/sizeof(StreamUnit); i++) {
 		StreamUnit& streamUnit = StreamTracker[i];
@@ -75,6 +77,8 @@ bool CheckPerimeter(dtp::sfxmarker::Perimeter *perimeter, dtp::sfxmarker *marker
 	auto distanceSq = Dot3(distanceVec, distanceVec);
 	auto distance = sqrtf(distanceSq);
 	bool inside = perimeter->radius >= distance;
+	if (neverInsideSfxPerimeter)
+		inside = false; // override
 	bool changed = perimeter->bBreached != inside;
 	perimeter->bBreached = inside;
 	perimeter->lastDistance = distance;

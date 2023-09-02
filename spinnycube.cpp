@@ -589,6 +589,7 @@ int spinnyCube(HWND window,
 	bool showStringsWindow = false;
 	bool showScaleformStringsWindow = false;
 	bool showIntroButtons = true;
+	bool showIntroButtonsIMF = true;
 	bool editorMode = false;
 	std::vector<std::pair<void*, cdc::CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
@@ -1019,7 +1020,7 @@ int spinnyCube(HWND window,
 						cdc::FileRequest::NORMAL);
 					cdc::archiveFileSystem_default->processAll();
 				}
-				if (ref.m_imfDRMName && strrchr(ref.m_imfDRMName, '\\'))
+				if (showIntroButtonsIMF && ref.m_imfDRMName && strrchr(ref.m_imfDRMName, '\\'))
 					fbs.push_back(FloatingButton{
 						{ref.m_transform.m[3][0],
 						 ref.m_transform.m[3][1],
@@ -1200,6 +1201,8 @@ int spinnyCube(HWND window,
 				// editorMode on:  hide cdc::Scene, render cdc::Intros directly
 				if (ImGui::MenuItem("Editor mode", nullptr, editorMode)) { editorMode = !editorMode; }
 				if (ImGui::MenuItem("Intro Buttons", nullptr, showIntroButtons)) { showIntroButtons = !showIntroButtons; }
+				if (ImGui::MenuItem("Intro Buttons IMF", nullptr, showIntroButtonsIMF)) { showIntroButtonsIMF = !showIntroButtonsIMF; }
+				if (ImGui::MenuItem("Disable SFX", nullptr, cdc::neverInsideSfxPerimeter)) { cdc::neverInsideSfxPerimeter = !cdc::neverInsideSfxPerimeter; }
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Language")) {

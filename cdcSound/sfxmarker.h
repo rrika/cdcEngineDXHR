@@ -3,6 +3,8 @@
 
 namespace cdc {
 
+extern bool neverInsideSfxPerimeter;
+
 void SFXMARKER_ProcessAllMarkers(); // line 100
 
 void TriggerAction(dtp::sfxmarker *marker, dtp::sfxmarker::Trigger *trigger); // line 131
