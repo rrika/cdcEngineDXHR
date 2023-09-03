@@ -29,6 +29,7 @@ PCDX11ModelDrawable::PCDX11ModelDrawable(
 	ModelBatch *meshSub,
 	PrimGroup *primGroup,
 	PersistentPGData *tab0Ext128,
+	float sortZ,
 	PoseData *poseData,
 	float opacity,
 	uint8_t flags)
@@ -42,6 +43,7 @@ PCDX11ModelDrawable::PCDX11ModelDrawable(
 	opacity(opacity)
 { // hack
 	typeID = kDrawableTypeIDModel;
+	this->sortZ = sortZ;
 	flags34 = (primGroup[0].triangleCount << 8) | flags;
 
 	auto lightManager = static_cast<PCDX11LightManager*>(renderModel->renderDevice->lightManager);

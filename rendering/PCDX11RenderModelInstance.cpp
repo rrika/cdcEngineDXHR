@@ -73,6 +73,7 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 
 			bool isFading = fade < 1.0f;
 			uint32_t mask = baseMask & primGroup->material->GetRenderPassMask(isFading) & tab0ext16->mask8;
+			float sortZ = dist; // HACK
 
 			auto drawable = new (renderDevice->getLinear(), 6, true) PCDX11ModelDrawable(
 				getRenderModel(),
@@ -80,6 +81,7 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 				sub,
 				primGroup,
 				tab0ext128,
+				sortZ,
 				poseData,
 				fade,
 				flags);
