@@ -1400,11 +1400,9 @@ int spinnyCube(HWND window,
 						ImGui::Text("  group %d", pg);
 						cdc::PrimGroup *group = &model->primGroups[pg];
 						ImGui::SameLine();
-						ImGui::Text(": flags %02x passMask %08x  %d tris",
-							group->flags,
-							nppg[pg].mask8,
-							group->triangleCount);
-						ImGui::SameLine();
+						ImGui::Text(": flags %02x passMask", group->flags); ImGui::SameLine();
+						UIPassMask(nppg[pg].mask8); ImGui::SameLine();
+						ImGui::Text(" %d tris", group->triangleCount); ImGui::SameLine();
 						if (ImGui::SmallButton("vertexdecl/material")) {
 							uiact.select(batch);
 							uiact.select((cdc::VertexDecl*)batch->format);
@@ -1444,11 +1442,17 @@ int spinnyCube(HWND window,
 				// auto *material = static_cast<cdc::PCDX11Material*>(uiact.selectedMaterial);
 				auto *material = static_cast<cdc::CommonMaterial*>(uiact.selectedMaterial);
 				ImGui::Text("material %p", material);
-				ImGui::Text("  mask %08x/%08x",
-					material->GetRenderPassMask(/*fading=*/false),
-					material->GetRenderPassMask(/*fading=*/true));
-				ImGui::Text("  blendMode %08x rtmask %01x",
-					material->GetBlendMode(), material->materialBlob->renderTargetWriteMask);
+
+				ImGui::Text("  mask "); ImGui::SameLine();
+				UIPassMask(material->GetRenderPassMask(/*fading=*/false)); ImGui::SameLine();
+				ImGui::Text("/"); ImGui::SameLine();
+				UIPassMask(material->GetRenderPassMask(/*fading=*/true));
+
+				ImGui::Text("  blendMode"); ImGui::SameLine();
+				UIBlendMode(material->GetBlendMode(), material->materialBlob->renderTargetWriteMask); ImGui::SameLine();
+				ImGui::Text("rtmask %01x",
+					material->materialBlob->renderTargetWriteMask);
+
 				for (uint32_t i = 0; i < 16; i++) {
 					ImGui::PushID(i);
 					auto *submat = material->GetMaterialData()->subMat4C[i];
