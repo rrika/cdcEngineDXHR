@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <cstring>
+#include <vector>
 #include "IRenderDrawable.h"
 #include "LinearAllocator.h"
 #include "RenderPasses.h"
@@ -157,7 +159,23 @@ void DrawableList::add(IRenderDrawable *drawable) {
 }
 
 void DrawableList::sortSimple() {
-	// TODO
+	// I don't see a point trying to sort them while in a linked-list
+	std::vector<DrawableItem*> items;
+	for (DrawableItem *item = first; item; item = item->next)
+		items.push_back(item);
+
+	// sort the vector
+	std::sort(items.begin(), items.end(), [](DrawableItem *a, DrawableItem *b) {
+		return a->drawable->sortZ < b->drawable->sortZ;
+	});
+
+	// relink the list
+	DrawableItem **tracer = &first;
+	for (auto item : items) {
+		*tracer = item;
+		tracer = &item->next;
+	}
+	*tracer = nullptr;
 }
 
 void DrawableList::sortWithFunc(CompareFunctionSet *funcSet, uint32_t funcSetIndex) {
