@@ -38,6 +38,7 @@
 #include "cdcGameShell/win32/MainVM.h" // for yellowCursor
 #endif
 #include "input/PCMouseKeyboard.h"
+#include "cdcKit/Animation/anitracker.h"
 #include "cdcLocale/localstr.h"
 #include "cdcMath/Math.h" // for cdc::Matrix
 #include "cdcObjects/ObjectManager.h" // for buildObjectsUI
@@ -557,6 +558,7 @@ int spinnyCube(HWND window,
 	bool showLoadedUnitsWindow = false;
 	bool showStringsWindow = false;
 	bool showScaleformStringsWindow = false;
+	bool showAnimationsWindow = true;
 	bool showIntroButtons = true;
 	bool editorMode = false;
 	std::vector<std::pair<void*, cdc::CommonScene*>> captures { { nullptr, nullptr } };
@@ -1140,6 +1142,7 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Show loaded units")) { showLoadedUnitsWindow = true; }
 				if (ImGui::MenuItem("Show strings")) { showStringsWindow = true; }
 				if (ImGui::MenuItem("Show scaleform strings")) { showScaleformStringsWindow = true; }
+				if (ImGui::MenuItem("Show animations")) { showAnimationsWindow = true; }
 				if (ImGui::MenuItem("I never asked for this")) { howDoYouHandleAllOfThis(); }
 				ImGui::EndMenu();
 			}
@@ -1657,6 +1660,12 @@ int spinnyCube(HWND window,
 			if (ImGui::Begin("Scaleform strings", &showScaleformStringsWindow)) {
 				for (auto [string, i] : scaleformStringMap)
 					ImGui::Text("%40s : %s", string.c_str(), localstr_get(i));
+			}
+			ImGui::End();
+		}
+		if (showAnimationsWindow) {
+			if (ImGui::Begin("Animations", &showAnimationsWindow)) {
+				cdc::ANITRACKER_BuildUI(uiact);
 			}
 			ImGui::End();
 		}

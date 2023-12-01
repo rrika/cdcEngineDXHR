@@ -1,6 +1,13 @@
 #include <cstdint>
 #include <cstring>
 #include "anitracker.h"
+#include "config.h"
+
+#if ENABLE_IMGUI
+#include <cstdio>
+#include "imgui/imgui.h"
+#include "cdcAnim/Inspector.h"
+#endif
 
 namespace cdc {
 
@@ -60,6 +67,23 @@ void ANITRACKER_FreeAnimation(uint32_t handle) {
 		// TODO
 		--gNumLoadedAnimations;
 	}
+}
+
+void ANITRACKER_BuildUI(UIActions& uiact) {
+#if ENABLE_IMGUI
+	uint32_t encountered = 0;
+	for (uint32_t i=0; i<4000 && encountered < gNumLoadedAnimations; i++) {
+		if (sAnimRefCounts[i] != 0) {
+			encountered++;
+			char label[20];
+			snprintf(label, 20, "fragment %04x", sAnimIDs[i]);
+			if (ImGui::TreeNode(label)) {
+				buildUI(uiact, aniTracker[i].animationData);
+				ImGui::TreePop();
+			}
+		}
+	}
+#endif
 }
 
 }
