@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <cstring>
 #include "Inspector.h"
 #include "3rdParty/imgui/imgui.h"
@@ -86,6 +87,16 @@ static void buildUI(UIActions& uiact, dtp::AnimStateGraph::State *state, dtp::An
 	ImGui::Unindent();
 }
 
+void animTrackUI(bool fmt16, void *offsetTable, uint16_t *lengthTable) {
+	if (fmt16) {
+		auto *offsets = (int16_t*)offsetTable;
+		ImGui::Text("  [0] = %d", offsets[0]);
+	} else {
+		auto *offsets = (float*)offsetTable;
+		ImGui::Text("  [0] = %f", offsets[0]);
+	}
+}
+
 void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
 	ImGui::Text("fragment %p", fragment);
 	if (!fragment)
@@ -97,6 +108,82 @@ void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
 	ImGui::Text("mSegmentCount %d", fragment->mSegmentCount);
 	ImGui::Text("mSectionCount %d", fragment->mSectionCount);
 	ImGui::Text("mExtraChannelCount %d", fragment->mExtraChannelCount);
+
+	ImGui::Indent();
+	if (false) { // decode pose
+		uint16_t *masks = fragment->mSegKeyListPtr + 1;
+		float *values = fragment->mValueDataPtr + 1;
+		for (int i=0; i < fragment->mSegmentCount; i++) {
+			ImGui::Text("bone %d", i);
+			uint8_t mask = uint8_t(*masks++);
+			for (int j=0; j<8; j++) {
+				if ((mask >> j) & 1) {
+					ImGui::SameLine();
+					ImGui::Text("%c=%f", "ijklxyzw"[j], *values++);
+				}
+			}
+		}
+	} else { // decode frame
+		uint16_t *masks = fragment->mSegKeyListPtr + 1;
+		uint16_t *lengths = fragment->mLengthDataPtr;
+		char *values = (char*)(fragment->mValueDataPtr + 1);
+		for (int i=0; i < fragment->mSegmentCount; i++) {
+			uint8_t mask = uint8_t(*masks++);
+			ImGui::Text("bone %d mask=%x", i, mask);
+			for (int j=0; j<8; j++) {
+				if ((mask >> j) & 1) {
+					uint16_t mode = lengths[0];
+					const char *modes[] = { "tabulated", "constant", "piece-wise linear", "zero" };
+					ImGui::Text(" channel %c %s", "ijklxyzw"[j], modes[mode]);
+					if (mode == 0) { // tabulated
+						uint16_t fmt16 = lengths[1];
+						if (fmt16) {
+							auto *offsets = (int16_t*)values;
+							for (int k=0; k<fragment->mKeyCount; k++)
+								ImGui::Text("  [%d] = %d", k, offsets[k]);
+							values += sizeof(uint16_t) * ((fragment->mKeyCount+1) & ~1);
+						} else {
+							auto *offsets = (float*)values;
+							for (int k=0; k<fragment->mKeyCount; k++)
+								ImGui::Text("  [%d] = %f", k, offsets[k]);
+							values += sizeof(float) * fragment->mKeyCount;
+						}
+						lengths += 2;
+
+					} else if (mode == 1) { // constant
+						ImGui::Text("  %f", *(float*)values);
+						values += sizeof(float);
+						lengths++;
+
+					} else if (mode == 2) { // piece-wise linear
+						const char *fmts[] = { "f32", "i16" };
+						uint16_t fmt = lengths[1];
+						uint16_t numEntries = lengths[2];
+						ImGui::Text("  %s length %d", fmts[fmt], numEntries);
+						animTrackUI(fmt, /*offsetTable=*/values, /*lengthTable=*/lengths+3);
+						if (fmt) {
+							values += sizeof(uint16_t) * ((numEntries+1) & ~1);
+						} else {
+							values += sizeof(float) * numEntries;
+						}
+						lengths += 3 + numEntries/2;
+					} else { // zero
+						// empty
+					}
+				}
+			}
+		}
+	}
+
+	uint16_t *extraInfo = fragment->mExtraChannelLengthPtr;
+	float *extraValues = fragment->mExtraChannelDataPtr;
+	for (int i=0; i < fragment->mExtraChannelCount; i++) {
+		uint8_t vectorIndex = *extraInfo++;
+		uint8_t componentIndex = *extraInfo++;
+		ImGui::Text("extra[%d].%c=%f", vectorIndex, "?xyzw"[componentIndex], *extraValues++);
+	}
+	ImGui::Unindent();
+
 	ImGui::Unindent();
 }
 

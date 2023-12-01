@@ -48,7 +48,7 @@ struct AnimFragment {
 	uint8_t mExtraChannelCount; // 38
 	uint32_t dword3C;
 	uint32_t dword40;
-	uint8_t *mExtraChannelLengthPtr; // 44
+	uint16_t *mExtraChannelLengthPtr; // 44
 	float *mExtraChannelDataPtr; // 48
 	uint32_t dword4C;
 	uint16_t *mBoneIDsDataPtr; // 50

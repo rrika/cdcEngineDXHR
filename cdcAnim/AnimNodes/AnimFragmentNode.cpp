@@ -105,7 +105,9 @@ void AnimFragmentNode::DecompressPose(AnimContextData *data) {
 		int16_t boneIndex = boneMap->channelToBoneIndex[i];
 
 		float weight;
-		Vector3 rot, trans;
+		Vector3 rot_trans[2];
+		Vector3& rot = rot_trans[0];
+		Vector3& trans = rot_trans[1];
 		if (boneIndex == -1) {
 			weight = 0.0f;
 		} else {
@@ -135,7 +137,7 @@ void AnimFragmentNode::DecompressPose(AnimContextData *data) {
 			mask >>= 1;
 		}
 
-		if (boneIndex == -1) {
+		if (boneIndex != -1) {
 			AnimBuffer *buffer = data->pose->buffer;
 			AnimSegment *segments = buffer->segments;
 			if (additive) {
