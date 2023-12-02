@@ -14,10 +14,6 @@ void CalcSkeletonMatrices(dtp::Model *model, Matrix *src, uint32_t boneCount, IM
 	uint32_t numSegments = model->GetNumSegments();
 	uint32_t lesserCount = numSegments < boneCount-1 ? numSegments : boneCount-1;
 
-	for (uint32_t i=0; i<boneCount; i++)
-		pMatrix[i] = identity4x4; // src[-1];
-	return;
-
 	static Vector rest_pose[256];
 	rest_pose[0] = segments->pivot;
 	for (uint32_t i=1; i<lesserCount; i++)
@@ -25,14 +21,14 @@ void CalcSkeletonMatrices(dtp::Model *model, Matrix *src, uint32_t boneCount, IM
 
 	static Vector3 pose[256];
 	for (uint32_t i=1; i<lesserCount; i++)
-		pose[i] = src[i] * Vector3{-rest_pose[i]};
+		pose[i] = src[0 /*i*/] * Vector3{-rest_pose[i]};
 
 	for (uint32_t i=0; i<numSegments; i++) {
-		Matrix m = src[i];
-		m.m[3][0] = pose[i].x;
-		m.m[3][1] = pose[i].y;
-		m.m[3][2] = pose[i].z;
-		m.m[3][3] = 1.0f;
+		Matrix m = src[0 /*i*/];
+		// m.m[3][0] = pose[i].x;
+		// m.m[3][1] = pose[i].y;
+		// m.m[3][2] = pose[i].z;
+		// m.m[3][3] = 1.0f;
 		pMatrix[i] = m;
 	}
 	for (uint32_t i=numSegments; i<boneCount; i++) {

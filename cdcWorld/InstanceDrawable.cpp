@@ -161,15 +161,17 @@ void InstanceDrawable::PrepareMatrixState(Matrix *matrix, dtp::Model *model, Ren
 		auto boneCount = rmi->GetRenderMesh()->getBoneCount();
 		m_pMatrixState->resize(boneCount);
 		if (boneCount) {
-			auto *poseData = static_cast<cdc::PCDX11MatrixState*>(m_pMatrixState)->poseData;
-			auto *pMatrix = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));
-			*pMatrix = *matrix;
+			// auto *poseData = static_cast<cdc::PCDX11MatrixState*>(m_pMatrixState)->poseData;
+			// auto *pMatrix = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));
+			// *pMatrix = *matrix;
 			CalcSkeletonMatrices(model, matrix, boneCount, m_pMatrixState);
-			*pMatrix = identity4x4;
 		} else {
 			auto *poseData = static_cast<cdc::PCDX11MatrixState*>(m_pMatrixState)->poseData;
 			auto *pMatrix = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));
-			*pMatrix = *matrix;
+			if (m_instance->GetTransformComponent().GetNotAnimated())
+				*pMatrix = matrix[0];
+			else
+				*pMatrix = matrix[-1]; // HACK
 		}
 	}
 }
