@@ -369,13 +369,16 @@ bool PCDX11ModelDrawable::setMatrices(
 	PCDX11ModelDrawable *prevDrawable,
 	bool hasBones)
 {
+	// poseData is prepared by CalcSkeletonMatrices through
+	// InstanceDrawable::PrepareMatrixState for example.
 	ModelBatch *prevModelBatch = prevDrawable ? prevDrawable->meshSub : nullptr;
 	PoseData *prevPoseData = prevDrawable ? prevDrawable->poseData : nullptr;
 	if (hasBones) {
 		if (meshSub != prevModelBatch || poseData != prevPoseData) {
 			for (uint32_t i = 0; i < meshSub->commonCb3_numMatrices; i++) {
-				// uint32_t j = meshSub->matrixGatherOffsets[i];
-				uint32_t j = 0; // HACK
+				uint32_t j = meshSub->matrixGatherOffsets[i];
+				if (j >= poseData->numMatrices)
+					j = 0; // HACK
 				float *matrix = poseData->getMatrix(j);
 				float *vector = poseData->getVector(j);
 

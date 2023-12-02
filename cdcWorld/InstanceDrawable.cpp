@@ -122,7 +122,13 @@ void InstanceDrawable::GetBoundingVolume(BasicCullingVolume *volume) {
 	}
 }
 
-void InstanceDrawable::draw(Matrix *, float) { // line 1243
+// called from cdc::Scene::RenderWithoutCellTracing for example
+void InstanceDrawable::draw(Matrix *matrix, float) { // line 1243
+
+	// When the render model uses bones, the matrices will be taken from
+	// the transform component, else the matrix argument will be used.
+	// It's provided from SceneEntity::m_matrix, which in turn is populated
+	// from the first matrix of the transform component via UpdateInstances.
 
 	if (m_renderModelInstances.empty())
 		return; // HACK
@@ -133,11 +139,10 @@ void InstanceDrawable::draw(Matrix *, float) { // line 1243
 	cdc::RenderModelInstance *rmi = m_renderModelInstances[meshComponent.GetCurrentRenderModelIndex()];
 
 	if (model && rmi) {
-		cdc::Matrix *matrix = m_instance->GetTransformComponent().m_matrix;
 		// if (skydome) {
 		//	...
 		// } else {
-		PrepareMatrixState(matrix, model, rmi, false);
+		PrepareMatrixState(matrix, model, rmi, false); // matrix is only used for 0 bones case
 		// }
 		rmi->recordDrawables(m_pMatrixState);
 	}
@@ -164,14 +169,11 @@ void InstanceDrawable::PrepareMatrixState(Matrix *matrix, dtp::Model *model, Ren
 			// auto *poseData = static_cast<cdc::PCDX11MatrixState*>(m_pMatrixState)->poseData;
 			// auto *pMatrix = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));
 			// *pMatrix = *matrix;
-			CalcSkeletonMatrices(model, matrix, boneCount, m_pMatrixState);
+			CalcSkeletonMatrices(model, m_instance->GetTransformComponent().m_matrix, boneCount, m_pMatrixState);
 		} else {
 			auto *poseData = static_cast<cdc::PCDX11MatrixState*>(m_pMatrixState)->poseData;
 			auto *pMatrix = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));
-			if (m_instance->GetTransformComponent().GetNotAnimated())
-				*pMatrix = matrix[0];
-			else
-				*pMatrix = matrix[-1]; // HACK
+			*pMatrix = *matrix;
 		}
 	}
 }

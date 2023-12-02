@@ -1,6 +1,7 @@
 #include "InstncG2.h"
 #include "cdcAnim/AnimComponentV2.h"
 #include "cdcMath/Math.h"
+#include "cdcWorld/cdcWorldTypes.h"
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/InstanceManager.h"
 
@@ -82,10 +83,16 @@ void G2Instance_SetTransformsToIdentity(Instance *instance) { // line 667
 	instanceMatrix = instanceMatrix * rotationMatrix;
 
 	auto& transformComponent = instance->GetTransformComponent();
-	if (transformComponent.GetNotAnimated())
-		transformComponent.m_matrix[0] = instanceMatrix;
-	else
+	if (!transformComponent.GetNotAnimated())
 		transformComponent.m_matrix[-1] = instanceMatrix;
+
+	transformComponent.m_matrix[0] = instanceMatrix;
+
+	uint32_t numSegments = instance->GetMeshComponent().GetModel()->GetNumSegments();
+	for (int i=1; i<numSegments; i++)
+		transformComponent.m_matrix[i] = instanceMatrix;
+
+	// these matrices are read by CalcSkeletonMatrices via InstanceDrawable::PrepareMatrixState
 }
 
 }
