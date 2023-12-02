@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <cstdint>
 #include "SceneLayer.h"
 #include "cdcScene/IScene.h"
@@ -80,7 +81,8 @@ static void UpdateInstances() { // 2052
 		if (i->sceneEntity) {
 			SceneEntity::UpdateState us;
 			us.updateFlags = 8; // update the matrix
-			us.matrix = *i->GetTransformComponent().m_matrix;
+			auto& transformComponent = i->GetTransformComponent();
+			us.matrix = transformComponent.m_matrix[0];
 			i->sceneEntity->ApplyUpdateState(&us);
 		}
 

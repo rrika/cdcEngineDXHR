@@ -9,7 +9,7 @@ class AnimPose {
 public:
 	// uint32_t dword0;
 	// uint32_t dword4;
-	AnimBuffer *buffer; // 8
+	AnimBuffer *buffer=nullptr; // 8
 	// uint32_t dwordC;
 	bool additive; // 10
 	// uint32_t dword10;

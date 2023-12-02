@@ -56,7 +56,8 @@ void AnimFragmentNode::PrePhysics(AnimContextData *data) {
 				if (fragment->mKeyCount == 1)
 					DecompressPose(data);
 				else
-					DecompressFrame(data);
+					DecompressPose(data);
+					//DecompressFrame(data);
 			} else {
 				// TODO
 			}

@@ -19,7 +19,7 @@ struct AnimSegment {
 };
 
 struct AnimBuffer {
-	AnimSegment *segments;
+	AnimSegment *segments = nullptr;
 	uint32_t numSegments;
 	// Vector3 rootTrans;
 	// Quat rootQuatLog;

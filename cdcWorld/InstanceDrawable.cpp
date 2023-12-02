@@ -37,8 +37,8 @@ void MeshComponent::SetModel(uint32_t index, dtp::Model *baseModel) {
 
 	// how many matrices are needed
 	uint32_t numMatrices = model->GetNumSegments();
-	if ((transform.m_flags & 4 /*m_flagNotAnimated*/) == 0)
-		numMatrices += model->numVirtSegments;
+	if (transform.GetNotAnimated() == false)
+		numMatrices += 1 + model->numVirtSegments;
 
 	// allocate / reallocate as necessary
 	if (transform.m_matrix) {
@@ -47,8 +47,8 @@ void MeshComponent::SetModel(uint32_t index, dtp::Model *baseModel) {
 
 		} else {
 			uint32_t numBaseMatrices = baseModel->GetNumSegments();
-			if ((transform.m_flags & 4 /*m_flagNotAnimated*/) == 0)
-				numBaseMatrices += baseModel->numVirtSegments;
+			if (transform.GetNotAnimated() == false)
+				numBaseMatrices += 1 + baseModel->numVirtSegments;
 
 			m_currentRenderModel = index;
 			m_currentBaseModel = index;
@@ -58,7 +58,10 @@ void MeshComponent::SetModel(uint32_t index, dtp::Model *baseModel) {
 			}
 		}
 	} else {
-		transform.m_matrix = new cdc::Matrix[numMatrices];
+		transform.matrixBuffer = new cdc::Matrix[numMatrices];
+		transform.m_matrix = transform.matrixBuffer;
+		if (transform.GetNotAnimated() == false)
+			transform.m_matrix++; // m_matrix[-1] is now a valid location
 
 		// TODO
 
@@ -148,7 +151,7 @@ bool InstanceDrawable::GetBoundingSphere(Vector *pCenter, float *pRadius) {
 bool InstanceDrawable::GetBoundingBox(Vector *pMin, Vector *pMax) {
 	// HACK
 	MeshComponent& meshComponent = m_instance->GetMeshComponent();
-	cdc::RenderModelInstance *rmi = m_renderModelInstances[meshComponent.GetCurrentRenderModelIndex()];
+	cdc::RenderModelInstance *rmi = m_renderModelInstances.at(meshComponent.GetCurrentRenderModelIndex());
 	cdc::RenderMesh const *rm = rmi->GetRenderMesh();
 	return rm->getBoundingBox(*(Vector3*)pMin, *(Vector3*)pMax);
 }
@@ -158,7 +161,11 @@ void InstanceDrawable::PrepareMatrixState(Matrix *matrix, dtp::Model *model, Ren
 		auto boneCount = rmi->GetRenderMesh()->getBoneCount();
 		m_pMatrixState->resize(boneCount);
 		if (boneCount) {
+			auto *poseData = static_cast<cdc::PCDX11MatrixState*>(m_pMatrixState)->poseData;
+			auto *pMatrix = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));
+			*pMatrix = *matrix;
 			CalcSkeletonMatrices(model, matrix, boneCount, m_pMatrixState);
+			*pMatrix = identity4x4;
 		} else {
 			auto *poseData = static_cast<cdc::PCDX11MatrixState*>(m_pMatrixState)->poseData;
 			auto *pMatrix = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));

@@ -45,6 +45,7 @@ void G2Instance_BuildTransforms(Instance *instance) { // line 326
 }
 
 void G2Instance_RebuildTransforms(Instance *instance) { // line 386/404
+	// matrices are allocated in MeshComponent::SetModel
 	// instance->GetTransformComponent().InvalidateDrawableMatrix();
 	Matrix *matrices = instance->GetTransformComponent().m_matrix;
 	if (matrices) {
@@ -80,7 +81,11 @@ void G2Instance_SetTransformsToIdentity(Instance *instance) { // line 667
 	cdc::Matrix rotationMatrix; rotationMatrix.Build_XYZOrder(rotation.vec128);
 	instanceMatrix = instanceMatrix * rotationMatrix;
 
-	instance->GetTransformComponent().m_matrix[0] = instanceMatrix;
+	auto& transformComponent = instance->GetTransformComponent();
+	if (transformComponent.GetNotAnimated())
+		transformComponent.m_matrix[0] = instanceMatrix;
+	else
+		transformComponent.m_matrix[-1] = instanceMatrix;
 }
 
 }

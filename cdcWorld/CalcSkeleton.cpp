@@ -5,6 +5,7 @@
 
 namespace cdc {
 
+// called from InstanceDrawable::PrepareMatrixState
 void CalcSkeletonMatrices(dtp::Model *model, Matrix *src, uint32_t boneCount, IMatrixState *dst) {
 	auto *poseData = static_cast<cdc::PCDX11MatrixState*>(dst)->poseData;
 	auto *pMatrix = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));
@@ -12,6 +13,10 @@ void CalcSkeletonMatrices(dtp::Model *model, Matrix *src, uint32_t boneCount, IM
 	Segment *segments = model->GetSegmentList();
 	uint32_t numSegments = model->GetNumSegments();
 	uint32_t lesserCount = numSegments < boneCount-1 ? numSegments : boneCount-1;
+
+	for (uint32_t i=0; i<boneCount; i++)
+		pMatrix[i] = identity4x4; // src[-1];
+	return;
 
 	static Vector rest_pose[256];
 	rest_pose[0] = segments->pivot;

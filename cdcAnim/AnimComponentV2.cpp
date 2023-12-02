@@ -53,6 +53,9 @@ dtp::AnimGraphExt *AnimComponentV2::getExt(uint32_t index) {
 }
 
 void AnimComponentV2::BuildTransforms() {
+	if (!poseNode)
+		return;
+
 	poseNode->pose.AllocSegs(model->oldNumSegments, instance, 1);
 	poseNode->pose.ClearSegValues(1.0);
 	PrePhysics();
@@ -100,8 +103,19 @@ void AnimComponentV2::BuildSegTransformForRoot(Matrix& a, Matrix& b) {
 
 void AnimComponentV2::BuildSegTransforms() {
 	Segment *modelSegments = model->GetSegmentList();
-	uint32_t parent0 = modelSegments[0].parent;
+	int32_t parent0 = int32_t(modelSegments[0].parent); // index -1 is valid
 	BuildSegTransformForRoot(matrices[0], matrices[parent0]);
+
+	AnimBuffer *buffer = poseNode->pose.buffer;
+	AnimSegment *animSegments = buffer ? buffer->segments : nullptr;
+	uint32_t numSegments = model->oldNumSegments;
+	for (int i=1; i<numSegments; i++) {
+		MathUtil::QuatLogToMatrix(&matrices[i], (Quat const*)&animSegments[i].rot);
+		matrices[i].m[3][0] = animSegments[i].trans.x;
+		matrices[i].m[3][1] = animSegments[i].trans.y;
+		matrices[i].m[3][2] = animSegments[i].trans.z;
+		matrices[i] = matrices[modelSegments[i].parent] * matrices[i];
+	}
 }
 
 
