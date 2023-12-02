@@ -47,7 +47,7 @@ struct AnimFragment {
 	uint8_t mSectionCount; // 37 (TODO: confirm)
 	uint8_t mExtraChannelCount; // 38
 	uint32_t dword3C;
-	uint32_t dword40;
+	uint32_t mHasSubtractedFrame;
 	uint16_t *mExtraChannelLengthPtr; // 44
 	float *mExtraChannelDataPtr; // 48
 	uint32_t dword4C;

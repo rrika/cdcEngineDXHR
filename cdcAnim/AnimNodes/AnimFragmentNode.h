@@ -11,7 +11,7 @@ class AnimComponentV2;
 class AnimFragmentNode : public AnimPipelineNode {
 	AnimFragment *fragment; // 60
 
-	float elapsedTime;
+	float elapsedTime = 0.0f;
 	uint32_t animID; // 6C
 	uint32_t boneMapHash; // 70
 	BoneMap *boneMap = nullptr; // 74
