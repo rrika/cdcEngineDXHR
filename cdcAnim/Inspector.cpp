@@ -3,6 +3,7 @@
 #include "Inspector.h"
 #include "3rdParty/imgui/imgui.h"
 #include "cdcAnim/AnimComponentV2.h"
+#include "cdcAnim/AnimDecoder.h"
 #include "cdcAnim/AnimFragment.h"
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Object.h"
@@ -87,14 +88,19 @@ static void buildUI(UIActions& uiact, dtp::AnimStateGraph::State *state, dtp::An
 	ImGui::Unindent();
 }
 
-void animTrackUI(bool fmt16, void *offsetTable, uint16_t *lengthTable) {
-	if (fmt16) {
-		auto *offsets = (int16_t*)offsetTable;
-		ImGui::Text("  [0] = %d", offsets[0]);
-	} else {
-		auto *offsets = (float*)offsetTable;
-		ImGui::Text("  [0] = %f", offsets[0]);
-	}
+static float cbShortArray(void* data, int idx) {
+	auto *offsets = (int16_t*)data;
+	return offsets[idx] / 4096.f;
+}
+
+static float cbLinear16(void* data, int idx) {
+	auto *decoder = (AnimDecoder*)data;
+	return decoder->GetValues(true, idx);
+}
+
+static float cbLinear32(void* data, int idx) {
+	auto *decoder = (AnimDecoder*)data;
+	return decoder->GetValues(false, idx);
 }
 
 void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
@@ -133,19 +139,21 @@ void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
 			for (int j=0; j<8; j++) {
 				if ((mask >> j) & 1) {
 					uint16_t mode = lengths[0];
-					const char *modes[] = { "tabulated", "constant", "piece-wise linear", "zero" };
-					ImGui::Text(" channel %c %s", "ijklxyzw"[j], modes[mode]);
+					static const char *modes[] = { "tabulated", "constant", "piece-wise linear", "zero" };
+					ImGui::Text(" channel %c %s", "ijklxyzw"[j], mode < 4 ? modes[mode] : "invalid mode");
 					if (mode == 0) { // tabulated
 						uint16_t fmt16 = lengths[1];
 						if (fmt16) {
 							auto *offsets = (int16_t*)values;
-							for (int k=0; k<fragment->mKeyCount; k++)
-								ImGui::Text("  [%d] = %d", k, offsets[k]);
+							//for (int k=0; k<fragment->mKeyCount; k++)
+							//	ImGui::Text("  [%d] = %d", k, offsets[k]);
+							ImGui::PlotLines("Lines", &cbShortArray, (void*)offsets, fragment->mKeyCount); // , 0, 0, -1.0f, 1.0f, ImVec2(0, 80.0f));
 							values += sizeof(uint16_t) * ((fragment->mKeyCount+1) & ~1);
 						} else {
 							auto *offsets = (float*)values;
-							for (int k=0; k<fragment->mKeyCount; k++)
-								ImGui::Text("  [%d] = %f", k, offsets[k]);
+							//for (int k=0; k<fragment->mKeyCount; k++)
+							//	ImGui::Text("  [%d] = %f", k, offsets[k]);
+							ImGui::PlotLines("Lines", offsets, fragment->mKeyCount); // , 0, 0, -1.0f, 1.0f, ImVec2(0, 80.0f));
 							values += sizeof(float) * fragment->mKeyCount;
 						}
 						lengths += 2;
@@ -160,7 +168,13 @@ void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
 						uint16_t fmt = lengths[1];
 						uint16_t numEntries = lengths[2];
 						ImGui::Text("  %s length %d", fmts[fmt], numEntries);
-						animTrackUI(fmt, /*offsetTable=*/values, /*lengthTable=*/lengths+3);
+						AnimDecoder decoder;
+						decoder.SetChannel(fmt, values, (uint8_t*)(lengths+3));
+						if (fmt) {
+							ImGui::PlotLines("Lines", &cbLinear16, (void*)&decoder, fragment->mKeyCount);
+						} else {
+							ImGui::PlotLines("Lines", &cbLinear32, (void*)&decoder, fragment->mKeyCount);
+						}
 						if (fmt) {
 							values += sizeof(uint16_t) * ((numEntries+1) & ~1);
 						} else {

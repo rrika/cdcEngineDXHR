@@ -131,5 +131,10 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			}
 			ImGui::EndListBox();
 		}
+
+		auto numSegments = currentModel->GetNumSegments();
+		Segment *segments = currentModel->GetSegmentList();
+		for (int i=0; i<numSegments; i++)
+			ImGui::Text("segment %d parent %d", i, segments[i].parent);
 	}
 }

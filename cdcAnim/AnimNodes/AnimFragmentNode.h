@@ -15,7 +15,7 @@ class AnimFragmentNode : public AnimPipelineNode {
 	uint32_t animID; // 6C
 	uint32_t boneMapHash; // 70
 	BoneMap *boneMap = nullptr; // 74
-	AnimDecoder *decoders; // 7C
+	AnimDecoder *decoders = nullptr; // 7C
 
 	void SetAnimData(uint16_t);
 

@@ -192,6 +192,8 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex,
 	int16_t keyA = keyIndex ? keyIndex-1 : 0;
 	int16_t keyB = keyIndex >= keyCount ? keyIndex-1 : keyIndex;
 
+	//printf("fragment %x keyCount %d\n", fragment->mAnimID, keyCount);
+
 	BoneSet allBones {1.0f, 0, 249};
 	BoneSet *boneSet = data->boneSet;
 	if (!boneSet)
@@ -210,6 +212,7 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex,
 	char *values = (char*)(fragment->mValueDataPtr + 1);
 
 	for (uint32_t i=0; i<fragment->mSegmentCount; i++) {
+
 		// BoneMap *boneMap;
 		int16_t boneIndex = boneMap->channelToBoneIndex[i];
 		bool skip = boneIndex == -1 || (boneUsage /* && bitset check */ );
@@ -221,7 +224,7 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex,
 		rot_trans[1] = {0.0f, 0.0f, 0.0f, 0.0f};
 		rot_trans[2] = {0.0f, 0.0f, 0.0f, 0.0f};
 		rot_trans[3] = {0.0f, 0.0f, 0.0f, 0.0f};
-		printf("channel %d segment %d\n", i, boneIndex);
+		//printf("channel %d segment %d\n", i, boneIndex);
 		if (boneIndex != -1 && fragment->mHasSubtractedFrame == false) {
 			Segment *segment = &data->model->GetSegmentList()[boneIndex];
 			rot_trans[1] = {segment->pivot};
@@ -240,13 +243,15 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex,
 			uint32_t numMode1 = 0;
 			uint32_t numTotal = 0;
 
+			//printf("segment %d values %p lengths %p has %x\n", i, values, lengths, mask);
+
 			while (mask) {
 				if (mask & 1) {
 					uint16_t mode = lengths[0];
 					numTotal++;
 					if (mode == 0) { // tabulated
 						uint16_t fmt16 = lengths[1];
-						printf("mode 0 componentIndex %d keyA %d keyB %d\n", componentIndex, keyA, keyB);
+						//printf("mode 0 componentIndex %d keyA %d keyB %d\n", componentIndex, keyA, keyB);
 						if (fmt16) {
 							auto *offsets = (int16_t*)values;
 							rot_trans[0].vec128[componentIndex] = float(offsets[keyA]) / 4096.0f;
@@ -261,7 +266,7 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex,
 						lengths += 2;
 
 					} else if (mode == 1) { // constant
-						printf("mode 1 componentIndex %d keyA %d keyB %d\n", componentIndex, keyA, keyB);
+						//printf("mode 1 componentIndex %d keyA %d keyB %d\n", componentIndex, keyA, keyB);
 						numMode1++;
 
 						float value = *(float*)values;
@@ -272,9 +277,10 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex,
 						lengths++;
 
 					} else if (mode == 2) { // piece-wise linear
-						printf("mode 2 componentIndex %d keyA %d keyB %d\n", componentIndex, keyA, keyB);
+						//printf("mode 2 componentIndex %d keyA %d keyB %d\n", componentIndex, keyA, keyB);
 						uint16_t fmt = lengths[1];
 						uint16_t numEntries = lengths[2];
+						//printf("numEntries %d values @ %p\n", numEntries, values);
 
 						AnimDecoder& dec = decoders[decoderIndex];
 						dec.SetChannel(fmt != 0, (char*)values, (uint8_t*)lengths);
@@ -319,8 +325,8 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex,
 				rot = rot_trans[0];
 				trans = rot_trans[1];
 			} else {
-				rot = rot_trans[0];
-				trans = rot_trans[1];
+				rot = {rot_trans[0] + (rot_trans[2] + - rot_trans[0]) * fractionalTime};
+				trans = {rot_trans[1] + (rot_trans[3] + - rot_trans[1]) * fractionalTime};
 			}
 
 			AnimBuffer *buffer = data->pose->buffer;
@@ -340,7 +346,7 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex,
 			// AdvanceToNextTrack(&masks, &lengths, &values, keyCount);
 		}
 	}
-	printf("\n");
+	//printf("\n");
 }
 
 }

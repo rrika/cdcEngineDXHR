@@ -1,3 +1,4 @@
+#include <cstdio>
 #include "AnimDecoder.h"
 
 namespace cdc {
@@ -60,6 +61,15 @@ float AnimDecoder::GetValues(bool fixedPoint, int32_t targetKey) {
 	if (targetKey == mLastKey)
 		return mLastResult;
 
+	uint16_t keyCount = ((uint16_t*)mLengthTable)[-1];
+	if (keyCount > 20)
+		keyCount = 20;
+	uint32_t sumOfLengths = 0;
+	for (int i=0; i<keyCount; i++)
+		sumOfLengths += mLengthTable[i];
+	if (targetKey >= sumOfLengths)
+		targetKey = sumOfLengths-1;
+
 	mLastResult = mCurBase + mCurRangeOffset;
 	mLastKey = mCurKey;
 	if (targetKey < mCurKey) // need rewind?
@@ -75,11 +85,16 @@ float AnimDecoder::GetValues(bool fixedPoint, int32_t targetKey) {
 		int16_t *pOffset = (int16_t*)mCurOffset;
 
 		if (targetKey - total > *pLength) {
+			// printf("%d+%d < %d:", (int)total, (int)*pLength, (int)targetKey);
+			// fflush(stdout);
 
 			do { // skip complete segment
+				// printf(" %d/%d", (int)*pLength, (int)*pOffset);
 				total += *pLength++;
 				offset += *pOffset++;
 			} while (targetKey - total > *pLength);
+
+			// printf(" :%d <= %d <= %d+%d\n", (int)total, (int)targetKey, (int)total, (int)*pLength);
 
 			mCurOffset = (char*)pOffset;
 			mCurLength = pLength;
