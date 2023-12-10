@@ -3,25 +3,114 @@
 #include "cdc/dtp/objectproperties/intro.h"
 #include "cdcAnim/AnimFragment.h"
 #include "cdcAnim/Inspector.h"
+#include "rendering/CommonMaterial.h"
+#include "rendering/MaterialData.h"
 #include "cdcResource/ResolveSection.h"
 #include "cdcSound/SoundPlex.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcWorld/Instance.h"
+
 #include "cdcWorld/Object.h"
 #include "game/DeferredRenderingObject.h"
 #include "game/LensFlareAndCoronaID.h"
+#include "UIActions.h"
 
-void buildUI(DeferredRenderingExtraData *extra) {
+void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
+	// material
+	if (extra->material)
+		if (ImGui::SmallButton("show override material"))
+			uiact.select(extra->material);
+
+	// scale
 	ImGui::Text("scale mode %d",
 		extra->scaleModeE1);
+	if (extra->scaleModeE1 == 1)
+		ImGui::SliderFloat("Scale", extra->scale, 0, 10000.f);
+	else
+		ImGui::SliderFloat3("Scale", extra->scale, 0, 10000.f);
+
+	// packed[...]
+	const char *labels_packed[] = {"packed[0]", "packed[1]", "packed[2]", "packed[3]"};
+	uint8_t v[4]; uint8_t minmax[] = {0, 255};
+	for (uint32_t i=0; i<4; i++) {
+		memcpy(v, &extra->packedVectors[i].bytes, 4);
+		ImGui::SliderScalarN(labels_packed[i], ImGuiDataType_U8, v, 4, minmax+0, minmax+1, "%u");
+		memcpy(&extra->packedVectors[i].bytes, v, 4);
+	}
+
+	// plain[...]
+	const char *labels_plain[] = {"plain[0]", "plain[1]", "plain[2]", "plain[3]"};
+	for (uint32_t i=0; i<4; i++) {
+		ImGui::SliderFloat4(labels_plain[i], extra->plainVectors[i].vec128, 0.f, 10.f);
+	}
+
+	// params
+	const char *modes[] = {
+		"packed[0]",
+		"packed[1]",
+		"packed[2]",
+		"packed[3]",
+		"plain[0]",
+		"plain[1]",
+		"plain[2]",
+		"plain[3]",
+		"scale", // 8
+		"inverse scale", // 9
+		"object to world (row 0)", // 10
+		"object to world (row 1)",
+		"object to world (row 2)",
+		"object to world (row 3)",
+		"world to camera (row 0)",
+		"world to camera (row 1)",
+		"world to camera (row 2)",
+		"world to camera (row 3)",
+		"camera to view (row 0)",
+		"camera to view (row 1)",
+		"camera to view (row 2)",
+		"camera to view (row 3)",
+		"world to object (row 0)", // 22
+		"world to object (row 1)",
+		"world to object (row 2)",
+		"world to object (row 3)",
+		"camera to world (row 0)",
+		"camera to world (row 1)",
+		"camera to world (row 2)",
+		"camera to world (row 3)",
+		"view to camera (row 0)",
+		"view to camera (row 1)",
+		"view to camera (row 2)",
+		"view to camera (row 3)",
+		"not implemented 34",
+		"not implemented 35",
+		"unused" // 36
+	};
+	const char *spaces[] = {
+		"object",
+		"world",
+		"camera", // maybe call this view space
+		"view"    // and this clip space
+	};
+	const char *transformMode[] = {
+		"pos (mat4x4)",
+		"dir (mat3x3)",
+		"[not implemented]"
+	};
 	for (uint32_t i=0; i<8; i++) {
 		auto& param = extra->params[i];
-		ImGui::Text("param %d mode %d",
-			i, param.mode);
+		ImGui::Text("param %d mode %2d %s",
+			i, param.mode, modes[param.mode]);
+		if (param.matrixP != 4 && param.matrixQ != 4)
+			ImGui::Text("  transform %s %s -> %s",
+				transformMode[param.multiplyMode],
+				spaces[param.matrixP],
+				spaces[param.matrixQ]);
 	}
 }
 
-void buildUI(LensFlareAndCoronaExtraData *extra) {
+void buildUI(UIActions& uiact, LensFlareAndCoronaExtraData *extra) {
+	if (extra->material)
+		if (ImGui::SmallButton("show override material"))
+			uiact.select(extra->material);
 	ImGui::Text("matrix mode %d",
 		extra->matrixMode);
 	for (uint32_t i=0; i<8; i++) {
@@ -43,11 +132,11 @@ void buildUI(UIActions& uiact, dtp::Intro *intro) {
 
 		if (objFamily == 0x50) {
 			auto *extraData = (DeferredRenderingExtraData*) intro->extraData1;
-			buildUI(extraData);
+			buildUI(uiact, extraData);
 
 		} else if (objFamily == 0x5b) {
 			auto *extraData = (LensFlareAndCoronaExtraData*) intro->extraData1;
-			buildUI(extraData);
+			buildUI(uiact, extraData);
 		}
 	}
 }
@@ -100,8 +189,14 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			"Sound 1"
 		};
 		for (uint32_t i=0; i<dtpData->numSounds; i++)
-			if (ImGui::SmallButton(i < 2 ? names[i] : "Sound"))
-				cdc::SOUND_StartPaused(dtpData->sounds[i].m_plex, /*delay=*/ 0.0f);
+			if (ImGui::SmallButton(i < 2 ? names[i] : "Sound")) {
+				cdc::SoundHandle sh = cdc::SOUND_StartPaused(dtpData->sounds[i].m_plex, /*delay=*/ 0.0f);
+				cdc::SoundTypes::Controls3d& c3d = sh->controls3d;
+				c3d.playbackType = 0x101; // 3D sound
+				c3d.position[0] = instance->position.x;
+				c3d.position[1] = instance->position.y;
+				c3d.position[2] = instance->position.z;
+			}
 	}
 	if (instance->animComponentV2 && ImGui::CollapsingHeader("AnimComponentV2", ImGuiTreeNodeFlags_DefaultOpen)) {
 		buildUI(uiact, instance->animComponentV2);

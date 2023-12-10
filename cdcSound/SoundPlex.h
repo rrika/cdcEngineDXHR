@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <list>
 #include <string>
 #include "cdcSound.h"
@@ -88,4 +89,4 @@ SoundHandle SOUND_StartPaused(
 
 }
 
-void buildUI(dtp::SoundPlex *snd, std::string indent="");
+void buildUI(dtp::SoundPlex *snd, std::function<void(cdc::SoundHandle)>* onPlay, std::string indent="");

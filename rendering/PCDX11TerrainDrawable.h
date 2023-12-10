@@ -34,7 +34,7 @@ public:
 	TerrainChunk **m_ppGeoms; // 1C
 	uint32_t m_numGeoms; // 20
 	uint32_t m_flags; // 24
-	float m_opacity; // 28
+	float m_opacity = 1.0f; // 28
 	Matrix *m_pLocalToWorld; // 2C
 	Vector4 *m_pInstanceParams; // 30
 	uint32_t m_lightConstantBufferData; // 34 (PCDX11IrradianceState)

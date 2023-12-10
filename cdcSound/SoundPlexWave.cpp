@@ -17,6 +17,8 @@ SoundPlexWave::SoundPlexWave(
 	if (wave && wave->sample) {	
 		// TODO
 		m_voice = Voice::s_voiceCollection.Create(wave->sample);
+		// TODO
+		static_cast<VoiceImpl*>(m_voice)->SetControls(controls, controls3d);
 	}
 }
 
@@ -55,7 +57,7 @@ void SoundPlexWave::End(SoundPlexWave::EndType end) {
 		case k4:
 		case k5:
 		case k6:
-			delete m_voice; // call VoiceImpl::~VoiceImpl
+			delete static_cast<VoiceImpl*>(m_voice); // call VoiceImpl::~VoiceImpl
 			m_voice = nullptr;
 		default:
 			return;

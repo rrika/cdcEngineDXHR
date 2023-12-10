@@ -29,6 +29,7 @@ PCDX11ModelDrawable::PCDX11ModelDrawable(
 	ModelBatch *meshSub,
 	PrimGroup *primGroup,
 	PersistentPGData *tab0Ext128,
+	float sortZ,
 	PoseData *poseData,
 	float opacity,
 	uint8_t flags)
@@ -42,6 +43,7 @@ PCDX11ModelDrawable::PCDX11ModelDrawable(
 	opacity(opacity)
 { // hack
 	typeID = kDrawableTypeIDModel;
+	this->sortZ = sortZ;
 	flags34 = (primGroup[0].triangleCount << 8) | flags;
 
 	auto lightManager = static_cast<PCDX11LightManager*>(renderModel->renderDevice->lightManager);
@@ -325,6 +327,10 @@ void PCDX11ModelDrawable::buildUI(uint32_t funcSetIndex, UIActions& uiact) {
 	}
 	ImGui::Text("submaterial: %d", subMatIndex);
 	ImGui::Text("funcSetIndex %d", funcSetIndex);
+	ImVec4 white {1.0f, 1.0f, 1.0f, 1.0f};
+	ImVec4 red {1.0f, 0.0f, 0.0f, 1.0f};
+	ImGui::TextColored(subMat->vsBufferNumRows ? red : white, "vs cb rows:  %d", subMat->vsBufferNumRows);
+	ImGui::TextColored(subMat->psBufferNumRows ? red : white, "ps cb rows:  %d", subMat->psBufferNumRows);
 #endif
 }
 

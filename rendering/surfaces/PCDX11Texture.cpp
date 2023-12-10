@@ -165,6 +165,9 @@ void PCDX11Texture::asyncCreate(/* TODO: one argument */) {
 	printf("async create texture %d x %d fmt=%08x (%d)\n", textureBlob->width, textureBlob->height,
 		textureBlob->format, decodeFormat(textureBlob->format));
 
+	this->wrapMode = textureBlob->flags & 7;
+	this->shape = (TextureClass)textureBlob->textureClass;
+
 	// D3D11_TEXTURE2D_DESC textureDesc = {};
 	D3D11_TEXTURE2D_DESC& textureDesc = hackTextureDesc;
 	textureDesc = D3D11_TEXTURE2D_DESC {};

@@ -43,7 +43,11 @@ public:
 
 class VoiceImpl : public Voice {
 public:
+	void SetControls(
+		SoundTypes::Controls *controls,
+		SoundTypes::Controls3d *controls3d);
 	UpdateCode Update();
+	float Update3D(float& directOcclusion, float& reverbOcclusion);
 	FMOD_RESULT EndCallback();
 	FMOD_RESULT VirtualCallback(bool);
 	~VoiceImpl();
@@ -51,6 +55,7 @@ public:
 	cdc::SList<VoiceImpl*>::iterator it; // 4
 	FMOD::Channel *m_channel; // 8
 	Sample *m_sample; // C
+	SoundTypes::Controls3d *m_controls3d = nullptr; // 20
 	bool m_bPreventVol0Virtual = false; // 25
 	bool m_bStoppedFMOD = false; // 26
 };

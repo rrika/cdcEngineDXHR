@@ -22,7 +22,7 @@ namespace cdc {
 
 FMOD::System *gFMOD;
 
-int SND_Init() { // 504
+int SND_Init() { // line 504
 	FMOD_RESULT result;
 	// TODO
 	result = FMOD_System_Create((FMOD_SYSTEM**)&gFMOD);
@@ -47,7 +47,7 @@ int SND_Init() { // 504
 	return 1;
 }
 
-void SND_GetNextDSPClock(uint32_t clock[2]) { // 776
+void SND_GetNextDSPClock(uint32_t clock[2]) { // line 776
 	gFMOD->getDSPClock(&clock[0], &clock[1]);
 	uint32_t bufferLength;
 	int32_t numBuffer;
@@ -57,13 +57,29 @@ void SND_GetNextDSPClock(uint32_t clock[2]) { // 776
 	clock[1] = nlo;
 }
 
-void SND_SystemTimer(float seconds) { // 846
+void SND_SystemTimer(float seconds) { // line 846
 	// if (...) return;
 	static float t = 0.0f;
 	t += seconds;
 	t -= 0.016666668f;
 
 	gFMOD->update();
+}
+
+void SND_SetFMODModeFlag(FMOD::Channel *channel, FMOD_MODE flags) { // line 916
+	FMOD_MODE mode;
+	channel->getMode(&mode);
+	if (flags & 0x00000007)
+		mode &= 0xFFFFFFF8;
+	if (flags & 0x000C0000)
+		mode &= 0xFFF3FFFF;
+	if (flags & 0x04300000)
+		mode &= 0xFBCFFFFF;
+	if (flags & 0x00000018)
+		mode &= 0xFFFFFFE7;
+	if (flags & 0x00000060)
+		mode &= 0xFFFFFF9F;
+	channel->setMode(mode | flags);
 }
 
 }

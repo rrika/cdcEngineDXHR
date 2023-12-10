@@ -3,7 +3,7 @@
 #include "cdcMath/Math.h"
 #include "PackedVector.h"
 
-namespace cdc { class CommonMaterial; }
+namespace cdc { class CommonMaterial; class TextureMap; }
 
 struct DeferredRenderingInstanceParam {
 	uint8_t mode;
@@ -14,12 +14,9 @@ struct DeferredRenderingInstanceParam {
 
 struct DeferredRenderingExtraData {
 	uint8_t gap0[4];
-	PackedBytesAndScale packedVectors[4];
-	cdc::Vector plainVectors[4];
-	uint32_t dword64;
-	uint32_t dword68;
-	uint32_t dword6C;
-	uint32_t dword70;
+	PackedBytesAndScale packedVectors[4]; // 4
+	cdc::Vector plainVectors[4]; // 24
+	cdc::TextureMap *texture[4]; // 64
 	uint8_t gap74[4];
 	float scale[3]; // 78
 	float float84;

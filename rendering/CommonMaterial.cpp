@@ -1,5 +1,6 @@
 #include "CommonMaterial.h"
 #include "MaterialData.h"
+#include "Types.h"
 
 namespace cdc {
 
@@ -60,17 +61,60 @@ void CommonMaterial::InitInstanceData(MaterialInstanceData *instData, TextureMap
 	}
 }
 
-void CommonMaterial::SetRenderPasses() { // HACK
-	uint32_t mask;
+void CommonMaterial::SetRenderPasses() {
+	uint32_t maskA = ~( // ~0x52CB
+		(1 << kPassIndexDepth) |
+		(1 << kPassIndexComposite) |
+		// (1 << kPassIndexOpaque) |
+		(1 << kPassIndexTranslucent) |
+		// (1 << kPassIndexFullScreenFX) |
+		// (1 << kPassIndexPostFSX) |
+		(1 << kPassIndexAlphaBloomFSX) |
+		(1 << kPassIndexPredator) |
+		// (1 << kPassIndex8) |
+		(1 << kPassIndexShadow) |
+		// (1 << kPassIndexDepthDependent) |
+		(1 << kPassIndexNormal) |
+		// (1 << kPassIndexDeferredShading) |
+		(1 << kPassIndexNonNormalDepth));
 
-	if (materialBlob->blendStateC & 1)
-		mask = 0x0008; // translucent
-	else
-		mask = 0x1002;  // normals & composite
+	maskA = (1 << kPassIndexDeferredShading); // HACK
 
-	mask |= 0x2000; // deferred lighting
+	uint32_t maskB = maskA;
 
-	m_renderPassesMaskFading = m_renderPassesMask = mask;
+	if (materialBlob->dword18 & 2)
+		maskB &= ~(1 << kPassIndexAlphaBloomFSX); // ~0x528B
+
+	if (materialBlob->dword1C & 0x40000000)
+		maskA &= ~(1 << kPassIndexShadow); // ~0x50CBu
+
+	if (materialBlob->dword18 & 0x400) {
+		maskB |= 1 << kPassIndexDepth;
+		maskB |= 1 << kPassIndexNonNormalDepth;
+	}
+
+	uint32_t maskBlend, maskElse;
+
+	if (materialBlob->dword1C & 2) {
+		maskBlend = maskElse = maskB | (1 << kPassIndexPredator);
+
+	} else {
+		maskElse = maskA;
+		maskElse |= 1 << kPassIndexDepth;
+		maskElse |= 1 << kPassIndexComposite;
+		if (materialBlob->subMat4C[7]) // has submaterial for normals
+			maskElse |= 1 << kPassIndexNormal;
+		else
+			maskElse |= 1 << kPassIndexNonNormalDepth;
+
+		maskBlend = maskB | (1 << kPassIndexTranslucent);
+	}
+
+	uint32_t fadeBlendMode = GetFadeBlendMode();
+
+	// can't figure out the precise correspondence to SetRenderPassMask calls
+	m_renderPassesMaskFading = (fadeBlendMode & 1) ? maskBlend : maskElse;
+	m_renderPassesMask = (materialBlob->blendStateC & 1) ? maskBlend : maskElse;
 }
 
 }

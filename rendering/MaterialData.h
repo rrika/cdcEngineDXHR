@@ -25,7 +25,7 @@ struct MaterialBlobSub { // = cdc::PassData
 	uint32_t dword10;
 
 	uint8_t psByte14;
-	uint8_t psRefIndexEndB;
+	uint8_t psRefIndexCountB;
 	uint8_t psRefIndexEndA;
 	uint8_t psRefIndexBeginB;
 	MaterialTexRef *psTextureRef;
@@ -33,7 +33,7 @@ struct MaterialBlobSub { // = cdc::PassData
 	char *psBufferData;
 
 	uint8_t vsByte24;
-	uint8_t vsRefIndexEndB; // 25
+	uint8_t vsRefIndexCountB; // 25
 	uint8_t vsRefIndexEndA; // 26
 	uint8_t vsRefIndexBeginB; // 27
 	MaterialTexRef *vsTextureRef; // 28

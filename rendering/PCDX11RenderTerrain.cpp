@@ -93,6 +93,9 @@ void PCDX11RenderTerrain::BuildDrawables(PCDX11TerrainState *terrainState) {
 				flags,
 				terrainState);
 
+			if (group->flags & 0x8000) // HACK
+				continue;
+
 			uint32_t renderPasses =
 				group->renderPasses &
 				group->m_pMaterial->GetRenderPassMask(false);
@@ -188,15 +191,15 @@ void PCDX11RenderTerrain::resConstruct() {
 			(1 << kPassIndexNonNormalDepth);
 
 		// HACK: only these two are implemented right now
-		group->renderPasses = // 0x100A
+		group->renderPasses = // 0x300A
 			(1 << kPassIndexTranslucent) |
 			(1 << kPassIndexComposite) |
 			(1 << kPassIndexNormal) |
 			(1 << kPassIndexDeferredShading);
 
-		if (group->flags & 1)
-			group->renderPasses = (1 << kPassIndexShadow); // 0x200
 		if (group->flags & 2)
+			group->renderPasses = (1 << kPassIndexShadow); // 0x200
+		if (group->flags & 4)
 			group->renderPasses &= ~(1 << kPassIndexShadow); // ~0x200
 	}
 

@@ -97,8 +97,8 @@ void PCDX11Material::setupVertexResources(
 		}
 	}
 
-	// assign refIndexBeginB..refIndexEndB from submaterial or MaterialInstanceData
-	for (uint32_t i = subMat->vsRefIndexBeginB; i < subMat->vsRefIndexEndB; i++) {
+	// assign refIndexBeginB..+refIndexCountB from submaterial or MaterialInstanceData
+	for (uint32_t i = subMat->vsRefIndexBeginB; i < subMat->vsRefIndexBeginB + subMat->vsRefIndexCountB; i++) {
 		auto extTextures = (PCDX11Texture**)matInstance;
 		auto fi = texref[i].fallbackIndex & 0x1F;
 		PCDX11Texture* tex = extTextures[fi - 1];
@@ -160,8 +160,8 @@ void PCDX11Material::setupPixelResources(
 		}
 	}
 
-	// assign refIndexBeginB..refIndexEndB from submaterial or MaterialInstanceData
-	for (uint32_t i = subMat->psRefIndexBeginB; i < subMat->psRefIndexEndB; i++) {
+	// assign refIndexBeginB..+refIndexCountB from submaterial or MaterialInstanceData
+	for (uint32_t i = subMat->psRefIndexBeginB; i < subMat->psRefIndexBeginB + subMat->psRefIndexCountB; i++) {
 		auto extTextures = subExt->pInstanceTextures;
 		auto fi = texref[i].fallbackIndex & 0x1F;
 		PCDX11Texture *tex = static_cast<PCDX11Texture*>(extTextures[fi - 1]);
@@ -645,7 +645,7 @@ PCDX11StreamDecl *PCDX11Material::SetupNormalMapPass(
 	bool materialRenderTwice = bool(matDword18 & 0x800);
 	bool materialCullFront = bool(matDword18 & 0x2000);
 
-	if (materialDoubleSided || (matInstanceDoubleSided && !materialRenderTwice)) // double-check this
+	if ((materialDoubleSided || matInstanceDoubleSided) && !materialRenderTwice)
 		stateManager->setCullMode(CullMode::none, frontCounterClockwise);
 	else if (materialCullFront)
 		stateManager->setCullMode(CullMode::front, frontCounterClockwise);
@@ -683,9 +683,9 @@ PCDX11StreamDecl *PCDX11Material::SetupNormalMapPass(
 		stateManager->setRenderTargetWriteMask(renderTargetWriteMask & 7);
 
 		// set pixel shader
-		uint32_t pixelIndex = 0;
-		if ((materialBlob->blendStateC & 0x07000000) == 0x07000000)
-			pixelIndex = 4;
+		uint32_t pixelIndex = 0; // without discard
+		if ((materialBlob->blendStateC & 0x07000000) != 0x07000000)
+			pixelIndex = 4; // with discard
 
 		auto pixelLib = static_cast<PCDX11ShaderLib*>(subMaterial->shaderPixel);
 		if (!pixelLib)

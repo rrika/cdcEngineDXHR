@@ -134,6 +134,27 @@ void PCDX11RenderModel::resConstruct() {
 				tab0Ext128Byte[i].sub10.streamDecls24[j] = nullptr;
 
 			tab0Ext128Byte[i].hide = false; // HACK
+
+			tab0Ext16Byte[i].mask8 = 0xffffffff;
+			uint8_t f = primGroups[i].flags | (mesh->flags.depthLayer ? 2 : 0);
+			if (f & 2)
+				tab0Ext16Byte[i].mask8 &= ~(1 << kPassIndex8);
+			if (f & 1) // probably shadow only
+				tab0Ext16Byte[i].mask8 &= ~(// 0x50CB
+					(1 << kPassIndexDepth) |
+					(1 << kPassIndexComposite) |
+					// (1 << kPassIndexOpaque) |
+					(1 << kPassIndexTranslucent) |
+					// (1 << kPassIndexFullScreenFX) |
+					// (1 << kPassIndexPostFSX) |
+					(1 << kPassIndexAlphaBloomFSX) |
+					(1 << kPassIndexPredator) |
+					// (1 << kPassIndex8) |
+					// (1 << kPassIndexShadow) |
+					// (1 << kPassIndexDepthDependent) |
+					(1 << kPassIndexNormal) |
+					// (1 << kPassIndexDeferredShading) | /* things look nicer when pure shadow casters don't run on this pass */
+					(1 << kPassIndexNonNormalDepth));
 		}
 	}
 }

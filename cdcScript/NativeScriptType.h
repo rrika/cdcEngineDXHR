@@ -32,7 +32,7 @@ public:
 	}
 
 	void InitFunction(int32_t index, CallbackCallFunction *nativeFunc) {
-		type->blob->functions[index].nativeFunc = nativeFunc;
+		type->blob->m_functions[index].nativeFunc = nativeFunc;
 	}
 };
 

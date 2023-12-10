@@ -33,6 +33,7 @@ public:
 		ModelBatch *meshSub,
 		PrimGroup *primGroup,
 		PersistentPGData *tab0Ext128,
+		float sortZ,
 		PoseData *poseData,
 		float opacity,
 		uint8_t flags);

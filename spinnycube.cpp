@@ -4,6 +4,7 @@
 #include <functional>
 #include <iterator>
 #include <memory>
+#include <variant>
 #include "config.h" // for ENABLE_IMGUI and ENABLE_D3DCOMPILER
 
 #include <windows.h>
@@ -80,11 +81,13 @@
 #include "cdcResource/WaveSection.h"
 #include "cdcScript/Decompiler.h"
 #include "cdcScript/ScriptType.h"
-#include "cdcSound/MultiplexStream.h"
 #include "cdcScene/IMFTypes.h"
 #include "cdcScene/IScene.h"
 #include "cdcScene/SceneCellGroup.h" // for SceneCellGroup to ISceneCellGroup cast
 #include "cdcScene/SceneEntity.h"
+#include "cdcSound/Microphone.h"
+#include "cdcSound/MultiplexStream.h"
+#include "cdcSound/sfxmarker.h"
 #include "cdcSound/SoundPlex.h"
 #include "cdcWorld/Inspector.h"
 #include "cdcWorld/Instance.h"
@@ -123,6 +126,25 @@ void howDoYouHandleAllOfThis() {
 
 	((cdc::MultiplexStreamImpl*)neverAskedForThis)->hackSample->Play();
 	subtitleIndex = 7497;
+}
+
+cdc::Vector halton[512];
+
+void InitHalton(unsigned component, unsigned b) {
+	unsigned n = 0, d = 1;
+	for (unsigned i=0; i<512; i++) {
+		unsigned x = d - n;
+		if (x == 1) {
+			n = 1;
+			d *= b;
+		} else {
+			unsigned y = d / b;
+			while (x <= y)
+				y /= b;
+			n = (b + 1) * y - x;
+		}
+		halton[i].vec128[component] = float(n) / d;
+	}
 }
 
 class ImGuiDrawable : public cdc::IRenderDrawable {
@@ -209,7 +231,7 @@ struct DRMExplorer {
 									if (ImGui::SmallButton("Play soundplex")) {
 										cdc::SOUND_StartPaused(plex, /*delay=*/ 0.0f);
 									}
-									buildUI(plex, /*indent=*/ "    ");
+									buildUI(plex, nullptr, /*indent=*/ "    ");
 								}
 								ImGui::PopID();
 
@@ -217,7 +239,7 @@ struct DRMExplorer {
 							if (section.type == 8) { // Script
 								if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->getWrapped(section.id)) {
 									ImGui::SameLine();
-									ImGui::Text(" %s", ty->blob->name);
+									ImGui::Text(" %s", ty->blob->m_nativeScriptName);
 									ImGui::SameLine();
 									ImGui::PushID(section.id);
 									if (ImGui::SmallButton("Decompile")) {
@@ -251,6 +273,7 @@ struct SpinnyUIActions : public UIActions {
 	dtp::IMFRef *selectedIMFRef = nullptr;
 	Instance *selectedInstance = nullptr;
 
+	void *selectedMovable = nullptr;
 
 	void select(cdc::IRenderTerrain *renderTerrain) override {
 		selectedModel = nullptr;
@@ -280,9 +303,11 @@ struct SpinnyUIActions : public UIActions {
 	}
 	void select(dtp::IMFRef *imfRef) override {
 		selectedIMFRef = imfRef;
+		selectedMovable = (void*)imfRef;
 	}
 	void select(Instance *instance) override {
 		selectedInstance = instance;
+		selectedMovable = (void*)instance;
 	}
 };
 
@@ -294,6 +319,13 @@ int spinnyCube(HWND window,
 
 	localstr_set_language(language_english, language_default);
 	registerPopupHandler();
+
+	InitHalton(0, 2);
+	InitHalton(1, 3);
+	InitHalton(2, 5);
+
+	for (unsigned i=0; i<32; i++)
+		printf("halton[%d] = %f %f %f\n", i, halton[i].x, halton[i].y, halton[i].z);
 
 	std::unique_ptr<cdc::PCMouseKeyboard> mouseKeyboard(cdc::PCMouseKeyboard::create(window));
 	auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
@@ -560,6 +592,7 @@ int spinnyCube(HWND window,
 	bool showScaleformStringsWindow = false;
 	bool showAnimationsWindow = true;
 	bool showIntroButtons = true;
+	bool showIntroButtonsIMF = true;
 	bool editorMode = false;
 	std::vector<std::pair<void*, cdc::CommonScene*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
@@ -572,6 +605,7 @@ int spinnyCube(HWND window,
 		(cdc::ScriptType*)cdc::g_resolveSections[8]->getWrapped(0x154a7); // pc-w/globaloutershell.drm section 0xb7
 	ScaleformMovieInstance mainMenuInstance(&mainMenuMovie);
 	NsMainMenuMovieController mainMenuMovieController(mainMenuScriptType);
+	cdc::GCPtr<NsMainMenuMovieController> keepControllerAlive(&mainMenuMovieController); // garbage collected else
 
 	// unsure how this link is established in the game
 	mainMenuInstance.m_controllerArray.push_back(&mainMenuMovieController);
@@ -808,6 +842,10 @@ int spinnyCube(HWND window,
 		scene->viewMatrix = viewMatrix;
 		cdc::OrthonormalInverse3x4(&renderViewport.viewMatrix, viewMatrix);
 
+		cdc::g_microphone.m_viewMatrix = viewMatrix;
+		cdc::g_microphone.m_position = cameraPos;
+		cdc::SFXMARKER_ProcessAllMarkers();
+
 		cdc::CullingFrustum cullingFrustum;
 		cullingFrustum.Set(renderViewport);
 
@@ -865,6 +903,13 @@ int spinnyCube(HWND window,
 					auto *deferredExtraData = (DeferredRenderingExtraData*)extraData;
 					hackCalcInstanceParams(deferredExtraData, &instanceMatrix, rmi->ext->instanceParams);
 
+					// patch textures (even though this render model is shared between instances)
+					cdc::PersistentPGData *ppg = rmi->getPersistentPGData();
+					if (deferredExtraData->texture[0]) ppg->sub10.pInstanceTextures[0] = deferredExtraData->texture[0];
+					if (deferredExtraData->texture[1]) ppg->sub10.pInstanceTextures[1] = deferredExtraData->texture[1];
+					if (deferredExtraData->texture[2]) ppg->sub10.pInstanceTextures[2] = deferredExtraData->texture[2];
+					if (deferredExtraData->texture[3]) ppg->sub10.pInstanceTextures[3] = deferredExtraData->texture[3];
+
 				} else if (objFamily == 0x5b) {
 					rmi->baseMask = 0x100A; // normals, composite, translucent, for now
 					auto *lensFlareExtraData = (LensFlareAndCoronaExtraData*)extraData;
@@ -895,17 +940,22 @@ int spinnyCube(HWND window,
 				selectedRmiDrawable->draw(&instanceMatrix, 0.0f);
 		};
 
+		struct ButtonItem {
+			dtp::Intro *intro = nullptr;
+			cdc::IRenderTerrain *renderTerrain = nullptr;
+			Instance *instance = nullptr;
+			dtp::IMFRef *imfRef = nullptr;
+		};
+
 		struct FloatingButton {
 			cdc::Vector4 pos;
 			std::string label;
-			dtp::Intro *intro;
-			cdc::IRenderTerrain *renderTerrain;
-			Instance *instance;
+			ButtonItem item;
 		};
 
 		std::vector<FloatingButton> fbs {
-			// {{modelTranslation.x, modelTranslation.y, modelTranslation.z, 1}, "alc_beer_bottle_a", nullptr, nullptr, nullptr},
-			// {{0, 0, 0, 1}, "origin", nullptr, nullptr, nullptr}
+			// {{modelTranslation.x, modelTranslation.y, modelTranslation.z, 1}, "alc_beer_bottle_a", {}},
+			// {{0, 0, 0, 1}, "origin", {}}
 		};
 
 		// all the other objects
@@ -943,9 +993,7 @@ int spinnyCube(HWND window,
 					fbs.push_back(FloatingButton{
 						{intro.position[0], intro.position[1], intro.position[2], 1},
 						name,
-						&intro,
-						nullptr,
-						nullptr
+						{.intro=&intro}
 					});
 
 				if (object->numModels == 0)
@@ -983,6 +1031,15 @@ int spinnyCube(HWND window,
 						cdc::FileRequest::NORMAL);
 					cdc::archiveFileSystem_default->processAll();
 				}
+				if (showIntroButtonsIMF && ref.m_imfDRMName && strrchr(ref.m_imfDRMName, '\\'))
+					fbs.push_back(FloatingButton{
+						{ref.m_transform.m[3][0],
+						 ref.m_transform.m[3][1],
+						 ref.m_transform.m[3][2],
+						 1},
+						strrchr(ref.m_imfDRMName, '\\')+1,
+						{.imfRef=&ref}
+					});
 				if (isLoaded(ref.m_pResolveObject) || ref.m_imfDRMName == nullptr) {
 					//printf("%d %04x %s ", i, ref.dtpID, ref.m_imfDRMName);
 					dtp::IntermediateMesh *im = cdc::GetIMFPointerFromId(ref.dtpID);
@@ -1045,9 +1102,7 @@ int spinnyCube(HWND window,
 				fbs.push_back(FloatingButton{
 						{nodes->center[0], nodes->center[1], nodes->center[2], 1},
 						"[render terrain]",
-						nullptr,
-						renderTerrain,
-						nullptr
+						{.renderTerrain=renderTerrain}
 					});
 				static_cast<cdc::PCDX11RenderTerrain*>(renderTerrain)->hackDraw(rti, &instanceMatrix);
 			}
@@ -1092,7 +1147,14 @@ int spinnyCube(HWND window,
 				if (cell->renderMesh && drawCellBoxes) {
 					auto *cellRMIDrawable = new RMIDrawableBase(cell->renderMesh);
 					recycleRMI.emplace_back(cellRMIDrawable);
-					static_cast<cdc::PCDX11RenderModelInstance*>(cellRMIDrawable->rmi)->baseMask = 0x1002; // normals & composite
+					auto *rmi = static_cast<cdc::PCDX11RenderModelInstance*>(cellRMIDrawable->rmi);
+					rmi->baseMask = 0x1002; // normals & composite
+					rmi->ext->instanceParams[0] = { // assign a distinguishable color for this cell
+						halton[i].x,
+						halton[i].y,
+						halton[i].z,
+						1.0f
+					};
 					cellRMIDrawable->draw(&cdc::identity4x4, 0.0f);
 				}
 			}
@@ -1151,6 +1213,8 @@ int spinnyCube(HWND window,
 				// editorMode on:  hide cdc::Scene, render cdc::Intros directly
 				if (ImGui::MenuItem("Editor mode", nullptr, editorMode)) { editorMode = !editorMode; }
 				if (ImGui::MenuItem("Intro Buttons", nullptr, showIntroButtons)) { showIntroButtons = !showIntroButtons; }
+				if (ImGui::MenuItem("Intro Buttons IMF", nullptr, showIntroButtonsIMF)) { showIntroButtonsIMF = !showIntroButtonsIMF; }
+				if (ImGui::MenuItem("Disable SFX", nullptr, cdc::neverInsideSfxPerimeter)) { cdc::neverInsideSfxPerimeter = !cdc::neverInsideSfxPerimeter; }
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Language")) {
@@ -1231,7 +1295,7 @@ int spinnyCube(HWND window,
 				projPos.z /= projPos.w;
 
 				if (viewPos.z >= 0 && viewPos.z < 5000.0f)
-					fbs2.push_back({projPos, (std::string&&) fb.label, fb.intro, fb.renderTerrain, fb.instance});
+					fbs2.push_back({projPos, (std::string&&) fb.label, fb.item});
 			}
 
 			std::sort(fbs2.begin(), fbs2.end(), [](FloatingButton const &a, FloatingButton const &b) {
@@ -1259,25 +1323,32 @@ int spinnyCube(HWND window,
 				char name[128];
 				// this ensures that objects at the same position are packed into the same window
 				snprintf(name, 128, "fb%f,%f,%f", fb.pos.x, fb.pos.y, fb.pos.z);
-				/*if (fb.intro)
-					snprintf(name, 64, "fbx%x", (uint32_t)fb.intro);
-				else if (fb.instance)
-					snprintf(name, 64, "fbx%x", (uint32_t)fb.instance);
+				auto& fbit = fb.item;
+				/*if (fbit.intro)
+					snprintf(name, 64, "fbx%x", (uint32_t)fbit.intro);
+				else if (fbit.renderTerrain)
+					snprintf(name, 64, "fbx%x", (uint32_t)fbit.renderTerrain);
+				else if (fbit.instance)
+					snprintf(name, 64, "fbx%x", (uint32_t)fbit.instance);
+				else if (fbit.imfRef)
+					snprintf(name, 64, "fbx%x", (uint32_t)fbit.imfRef);
 				else
 					snprintf(name, 64, "fb%d", i++);*/
 				if (ImGui::Begin(name, &open, window_flags)) {
 					ImGui::PushID((void*)(
-						uintptr_t(fb.intro) |
-						uintptr_t(fb.renderTerrain) |
-						uintptr_t(fb.instance)));
+						uintptr_t(fbit.intro) |
+						uintptr_t(fbit.renderTerrain) |
+						uintptr_t(fbit.instance) |
+						uintptr_t(fbit.imfRef)));
 					if (ImGui::Button(fb.label.c_str())) {
-						if (fb.intro)
-							uiact.select(fb.intro);
-						else if (fb.renderTerrain)
-							uiact.select(fb.renderTerrain);
-						else if (fb.instance) {
-							uiact.select(fb.instance);
-						}
+						if (fbit.intro)
+							uiact.select(fbit.intro);
+						else if (fbit.renderTerrain)
+							uiact.select(fbit.renderTerrain);
+						else if (fbit.instance)
+							uiact.select(fbit.instance);
+						else if (fbit.imfRef)
+							uiact.select(fbit.imfRef);
 					}
 					ImGui::PopID();
 				}
@@ -1331,6 +1402,7 @@ int spinnyCube(HWND window,
 			ImGui::PushID("model or terrain");
 			if (uiact.selectedModel) {
 				auto *model = static_cast<cdc::PCDX11RenderModel*>(uiact.selectedModel);
+				auto *nppg = model->getTab0Ext16();
 				auto *ppg = model->getTab0Ext128();
 				ImGui::Text("# model batches = %d", model->numModelBatches);
 				ImGui::Text("# prim groups = %d", model->numPrimGroups);
@@ -1343,8 +1415,9 @@ int spinnyCube(HWND window,
 						ImGui::Text("  group %d", pg);
 						cdc::PrimGroup *group = &model->primGroups[pg];
 						ImGui::SameLine();
-						ImGui::Text(": %d tris", group->triangleCount);
-						ImGui::SameLine();
+						ImGui::Text(": flags %02x passMask", group->flags); ImGui::SameLine();
+						UIPassMask(nppg[pg].mask8); ImGui::SameLine();
+						ImGui::Text(" %d tris", group->triangleCount); ImGui::SameLine();
 						if (ImGui::SmallButton("vertexdecl/material")) {
 							uiact.select(batch);
 							uiact.select((cdc::VertexDecl*)batch->format);
@@ -1361,6 +1434,7 @@ int spinnyCube(HWND window,
 				uint32_t numGroups = terrain->m_pResourceData->pHeader->numGroups;
 				ImGui::Text("# groups = %d", numGroups);
 				for (uint32_t i = 0; i < numGroups; i++) {
+					ImGui::PushID(i);
 					cdc::RenderTerrainGroup *group = &terrain->m_pGroups[i];
 					ImGui::Text("group %d passes %08x", i, group->renderPasses);
 					ImGui::SameLine();
@@ -1369,6 +1443,11 @@ int spinnyCube(HWND window,
 						uiact.select(group_vb->pVertexDecl);
 						uiact.select(group->m_pMaterial);
 					}
+					bool hidden = group->flags & 0x8000; // HACK
+					ImGui::SameLine();
+					if (ImGui::SmallButton(hidden ? "show" : "hide"))
+						group->flags ^= 0x8000;
+					ImGui::PopID();
 				}
 			}
 			ImGui::PopID();
@@ -1378,11 +1457,17 @@ int spinnyCube(HWND window,
 				// auto *material = static_cast<cdc::PCDX11Material*>(uiact.selectedMaterial);
 				auto *material = static_cast<cdc::CommonMaterial*>(uiact.selectedMaterial);
 				ImGui::Text("material %p", material);
-				ImGui::Text("  mask %08x/%08x",
-					material->GetRenderPassMask(/*fading=*/false),
-					material->GetRenderPassMask(/*fading=*/true));
-				ImGui::Text("  blendMode %08x rtmask %01x",
-					material->GetBlendMode(), material->materialBlob->renderTargetWriteMask);
+
+				ImGui::Text("  mask "); ImGui::SameLine();
+				UIPassMask(material->GetRenderPassMask(/*fading=*/false)); ImGui::SameLine();
+				ImGui::Text("/"); ImGui::SameLine();
+				UIPassMask(material->GetRenderPassMask(/*fading=*/true));
+
+				ImGui::Text("  blendMode"); ImGui::SameLine();
+				UIBlendMode(material->GetBlendMode(), material->materialBlob->renderTargetWriteMask); ImGui::SameLine();
+				ImGui::Text("rtmask %01x",
+					material->materialBlob->renderTargetWriteMask);
+
 				for (uint32_t i = 0; i < 16; i++) {
 					ImGui::PushID(i);
 					auto *submat = material->GetMaterialData()->subMat4C[i];
@@ -1418,14 +1503,14 @@ int spinnyCube(HWND window,
 				uint8_t psRefIndexEnd = 0;
 				psRefIndexEnd = std::max<uint8_t>(psRefIndexEnd, submat->psRefIndexEndA);
 				psRefIndexEnd = std::max<uint8_t>(psRefIndexEnd, submat->psRefIndexBeginB);
-				psRefIndexEnd = std::max<uint8_t>(psRefIndexEnd, submat->psRefIndexEndB);
+				psRefIndexEnd = std::max<uint8_t>(psRefIndexEnd, submat->psRefIndexBeginB + submat->psRefIndexCountB);
 				cdc::MaterialTexRef *texref = submat->psTextureRef;
 
 				ImGui::Indent();
 				for (uint32_t i = 0; i < psRefIndexEnd; i++) {
 					bool g0 = i < submat->psRefIndexEndA;
 					bool g1 = i >= submat->psRefIndexEndA && i < submat->psRefIndexBeginB;
-					bool g2 = i >= submat->psRefIndexBeginB && i < submat->psRefIndexEndB;
+					bool g2 = i >= submat->psRefIndexBeginB && i < submat->psRefIndexBeginB + submat->psRefIndexCountB;
 					ImGui::Text("texref %d: slot %d %s %p %p",
 						i,
 						texref[i].slotIndex,
@@ -1441,6 +1526,9 @@ int spinnyCube(HWND window,
 					}
 				}
 				ImGui::Unindent();
+
+				ImGui::Text("vs cb4 %d..%d", submat->vsBufferFirstRow, submat->vsBufferFirstRow + submat->vsBufferNumRows);
+				ImGui::Text("ps cb4 %d..%d", submat->psBufferFirstRow, submat->psBufferFirstRow + submat->psBufferNumRows);
 
 				static bool weirdFlag = false;
 				ImGui::Checkbox("???", &weirdFlag);
@@ -1486,6 +1574,18 @@ int spinnyCube(HWND window,
 			if (!showModelWindow)
 				uiact.select((cdc::RenderMesh*)nullptr);
 		}
+
+		ImGuiIO& io = ImGui::GetIO();
+		ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+		auto manipulate = [&](cdc::Matrix& m) {
+			ImGuizmo::Manipulate(
+				(float*)viewMatrix.m,
+				(float*)scene->projectMatrix.m,
+				ImGuizmo::TRANSLATE,
+				ImGuizmo::WORLD,
+				(float*)m.m);
+		};
+
 		if (uiact.selectedIntro) {
 			bool showWindow = true;
 			ImGui::Begin("Intro", &showWindow);
@@ -1496,12 +1596,48 @@ int spinnyCube(HWND window,
 				uiact.select((dtp::Intro*)nullptr);
 		}
 		if (uiact.selectedIMFRef) {
+			if (uiact.selectedIMFRef == uiact.selectedMovable)
+				manipulate(uiact.selectedIMFRef->m_transform);
+
 			bool showWindow = true;
 			ImGui::Begin("IMFRef", &showWindow);
 			ImGui::Text("%p", uiact.selectedIMFRef);
+			ImGui::Text("debug name: %s", uiact.selectedIMFRef->m_debugName);
 			ImGui::End();
 			if (!showWindow)
 				uiact.select((dtp::IMFRef*)nullptr);
+		}
+		if (uiact.selectedInstance) {
+			if (uiact.selectedInstance == uiact.selectedMovable) {
+				if (false)
+					manipulate(*uiact.selectedInstance->GetTransformComponent().m_matrix);
+				else {
+					dtp::Model *model = uiact.selectedInstance->GetMeshComponent().GetModel();
+					uint32_t numMatrices = model ? model->GetNumSegments() : 1;
+
+					ImGuiIO& io = ImGui::GetIO();
+					ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+					for (uint32_t i=0; i<numMatrices; i++) {
+						ImGui::PushID(i);
+						ImGuizmo::Manipulate(
+							(float*)viewMatrix.m,
+							(float*)scene->projectMatrix.m,
+							ImGuizmo::TRANSLATE,
+							ImGuizmo::WORLD,
+							(float*)uiact.selectedInstance->GetTransformComponent().m_matrix[i].m);
+						ImGui::PopID();
+					}
+				}
+				if (auto *instanceDrawable = uiact.selectedInstance->instanceDrawable)
+					static_cast<cdc::InstanceDrawable*>(instanceDrawable)->AddToDirtyList();
+			}
+
+			bool showWindow = true;
+			ImGui::Begin("Instance", &showWindow);
+			buildUI(uiact, uiact.selectedInstance);
+			ImGui::End();
+			if (!showWindow)
+				uiact.select((Instance*)nullptr);
 		}
 		if (uiact.selectedScriptType) {
 			bool showWindow = true;
@@ -1510,33 +1646,6 @@ int spinnyCube(HWND window,
 			ImGui::End();
 			if (!showWindow)
 				uiact.select((cdc::ScriptType*)nullptr);
-		}
-		if (uiact.selectedInstance) {
-
-			dtp::Model *model = uiact.selectedInstance->GetMeshComponent().GetModel();
-			uint32_t numMatrices = model ? model->GetNumSegments() : 1;
-
-			ImGuiIO& io = ImGui::GetIO();
-			ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
-			for (uint32_t i=0; i<numMatrices; i++) {
-				ImGui::PushID(i);
-				ImGuizmo::Manipulate(
-					(float*)viewMatrix.m,
-					(float*)scene->projectMatrix.m,
-					ImGuizmo::TRANSLATE,
-					ImGuizmo::WORLD,
-					(float*)uiact.selectedInstance->GetTransformComponent().m_matrix[i].m);
-				ImGui::PopID();
-			}
-			if (auto *instanceDrawable = uiact.selectedInstance->instanceDrawable)
-				static_cast<cdc::InstanceDrawable*>(instanceDrawable)->AddToDirtyList();
-
-			bool showWindow = true;
-			ImGui::Begin("Instance", &showWindow);
-			buildUI(uiact, uiact.selectedInstance);
-			ImGui::End();
-			if (!showWindow)
-				uiact.select((Instance*)nullptr);
 		}
 		if (showDRMWindow) {
 			drmexplorer.draw(uiact, &showDRMWindow);
@@ -1610,10 +1719,39 @@ int spinnyCube(HWND window,
 						cameraPos.z = marker->position.z;
 					}
 					ImGui::PopID();
-					if (false)
+					if (true)
+						if (marker->soundHandles[0].isSet()) {
+							ImGui::SameLine();
+							if (ImGui::SmallButton("Stop")) {
+								marker->soundHandles[0]->End((cdc::SoundTypes::EndType)0);
+							}
+						}
+						ImGui::Indent();
+						for (uint32_t j=0; j < marker->numTriggers; j++) {
+							auto& trigger = marker->triggers[j];
+							if (trigger.condition == 0)
+								ImGui::Text("trigger %d: Init", j);
+							else {
+								ImGui::Text("trigger %d: %s radius=%f dist=%f breached=%d count=%d",
+									j, trigger.condition == 1 ? "Enter" : "Exit",
+									trigger.conditionData.radius,
+									trigger.conditionData.lastDistance,
+									(int)trigger.conditionData.bBreached,
+									(int)trigger.conditionData.nCountFired);
+							}
+						}
+						ImGui::Unindent();
 						for (uint32_t j=0; j < marker->numSounds; j++) {
 							dtp::SoundPlex *plex = marker->soundData[j];
-							buildUI(plex, /*indent=*/ "    ");
+							std::function<void(cdc::SoundHandle)> onPlay = [&](cdc::SoundHandle sh) {
+								auto& c3d = sh->controls3d;
+								c3d.playbackType = 0x101;
+								c3d.position[0] = marker->position.x;
+								c3d.position[1] = marker->position.y;
+								c3d.position[2] = marker->position.z;
+								marker->soundHandles[0] = sh;
+							};
+							buildUI(plex, &onPlay, /*indent=*/ "    ");
 						}
 				}
 				ImGui::PopID();

@@ -33,6 +33,8 @@ public:
 	operator T*() const; // line 647
 	T *operator->() const; // line 653
 	T *operator*() const; // line 660
+
+	bool isSet() const { return !!m_handle; } // HACK
 };
 
 class RCObject { // line 141
@@ -88,7 +90,7 @@ private:
 	friend void InitHandlePool(uint32_t count);
 	friend bool IsHandlePoolValid();
 
-	HandleData() : m_object(nullptr), m_refCount(9) {} // line 297
+	HandleData() : m_object(nullptr), m_refCount(0) {} // line 297
 	HandleData(HandleData const&); // line 298
 	HandleData& operator=(HandleData const&); // line 299
 
@@ -115,8 +117,10 @@ public:
 inline HandleOwner::HandleOwner() : m_handle(0) {} // line 345
 
 inline HandleOwner::~HandleOwner() { // ?
-	if (m_handle)
+	if (m_handle) {
+		HandleData::s_handles[m_handle].m_object = nullptr;
 		HandleData::s_handles[m_handle].RemReference();
+	}
 }
 
 inline void HandleOwner::CreateHandle(void *object) { // line 364
@@ -223,8 +227,8 @@ inline Handle<T>::~Handle() { // line 589
 		m_handle->RemReference();
 }
 
-// template <typename T>
-// inline Handle<T>::Handle(Handle const&); // line 596
+template <typename T>
+inline Handle<T>::Handle(Handle const& other) : Handle(other.Get()) {} // line 596
 
 template <typename T>
 inline Handle<T>& Handle<T>::operator=(Handle const& other) { // line 604
