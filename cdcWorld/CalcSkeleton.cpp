@@ -1,3 +1,4 @@
+#include <cstring>
 #include "CalcSkeleton.h"
 #include "cdcMath/MatrixInlines.h"
 #include "rendering/PCDX11MatrixState.h"
@@ -12,15 +13,18 @@ void CalcSkeletonMatrices(dtp::Model *model, Matrix *src, uint32_t boneCount, IM
 
 	Segment *segments = model->GetSegmentList();
 	uint32_t numSegments = model->GetNumSegments();
-	uint32_t lesserCount = numSegments < boneCount-1 ? numSegments : boneCount-1;
+	uint32_t lesserCount = numSegments < boneCount ? numSegments : boneCount; // was boneCount-1
 
+	// accumulate the rest pose from the segment pivots
 	static Vector rest_pose[256];
+	memset(rest_pose, 0, sizeof(rest_pose));
 	rest_pose[0] = segments->pivot;
 	for (uint32_t i=1; i<lesserCount; i++)
 		rest_pose[i] = rest_pose[segments[i].parent] + segments[i].pivot;
 
 	static Vector3 pose[256];
-	for (uint32_t i=1; i<lesserCount; i++)
+	memset(pose, 0, sizeof(pose));
+	for (uint32_t i=0; i<lesserCount; i++) // was iterating from 1..
 		pose[i] = src[i] * Vector3{-rest_pose[i]};
 
 	for (uint32_t i=0; i<numSegments; i++) {

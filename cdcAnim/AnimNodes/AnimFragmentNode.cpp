@@ -1,6 +1,8 @@
+#include <cmath>
 #include "AnimFragmentNode.h"
 #include "cdcAnim/AnimGraphFactory.h"
 #include "cdcAnim/AnimPose.h"
+#include "cdcMath/VectorInlines.h"
 #include "cdcSys/Assert.h"
 #include "cdcWorld/cdcWorldTypes.h"
 
@@ -184,6 +186,15 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data) {
 	data->pose->additive = true; // why
 }
 
+static bool AlmostZero(Vector& v) {
+	float limit = 1.f/0x4000;
+	if (-limit < v.x && v.x < limit)
+		if (-limit < v.y && v.y < limit)
+			if (-limit < v.z && v.z < limit)
+				return true;
+	return false;
+}
+
 void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex, float fractionalTime) {
 	EnsureIDMap(data->model);
 
@@ -216,6 +227,12 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex,
 		// BoneMap *boneMap;
 		int16_t boneIndex = boneMap->channelToBoneIndex[i];
 		bool skip = boneIndex == -1 || (boneUsage /* && bitset check */ );
+
+		data->pose->buffer->segments[boneIndex].masks = masks;
+		data->pose->buffer->segments[boneIndex].offsets = values;
+		data->pose->buffer->segments[boneIndex].lengths = lengths;
+		data->pose->buffer->segments[boneIndex].index = i;
+		data->pose->buffer->segments[boneIndex].time = keyIndex;
 
 		float weight;
 		Vector3 rot_trans[6];
@@ -284,7 +301,7 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex,
 
 						AnimDecoder& dec = decoders[decoderIndex];
 						dec.SetChannel(fmt != 0, (char*)values, (uint8_t*)lengths);
-						dec.GetValues(fmt != 0, keyIndex-1, keyIndex,
+						dec.GetValues(fmt != 0, keyA, keyB,
 							rot_trans[0].vec128[componentIndex],
 							rot_trans[2].vec128[componentIndex]);
 
@@ -293,7 +310,7 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex,
 						} else {
 							values += sizeof(float) * numEntries;
 						}
-						lengths += 3 + (numEntries+1)/2;
+						lengths = (uint16_t*)(uintptr_t(lengths) + 5 + (numEntries|1));
 						decoderIndex++;
 
 					} else { // zero
@@ -325,8 +342,21 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex,
 				rot = rot_trans[0];
 				trans = rot_trans[1];
 			} else {
-				rot = {rot_trans[0] + (rot_trans[2] + - rot_trans[0]) * fractionalTime};
+				const float twoPi = 6.2831855f;
+				Vector3& rotA = rot_trans[0];
+				Vector3& rotB = rot_trans[2];
+				Vector rotDelta = (rotB + - rotA) * (1.f / twoPi);
+				float dot = Dot3(rotDelta, rotDelta);
+				if (dot > 0.25) {
+					if (AlmostZero(rotA)) {
+						rotA = {rotB.Normalize3() * (1.f / twoPi)};
+					} else {
+						rotA = rotA - Vector3{rotA.Normalize3()} * (twoPi * (sqrtf(dot)+0.5f));
+					}
+				}
+
 				trans = {rot_trans[1] + (rot_trans[3] + - rot_trans[1]) * fractionalTime};
+				rot = {rot_trans[0] + (rot_trans[2] + - rot_trans[0]) * fractionalTime};
 			}
 
 			AnimBuffer *buffer = data->pose->buffer;

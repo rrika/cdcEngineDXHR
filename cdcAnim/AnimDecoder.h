@@ -16,7 +16,9 @@ class AnimDecoder {
 	float mCurRangeOffset; // 1C
 	float mInvLength;      // 20
 	float mLastResult;     // 24
+
 public:
+	int32_t mSumOfLengths; // HACK
 	AnimDecoder();
 	void SetChannel(bool fixedPoint, char *pValue, uint8_t *pLength);
 	void ResetOffsets(bool fixedPoint);

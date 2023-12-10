@@ -5,6 +5,7 @@
 #include "cdcAnim/AnimComponentV2.h"
 #include "cdcAnim/AnimDecoder.h"
 #include "cdcAnim/AnimFragment.h"
+#include "cdcAnim/AnimPoseNode.h"
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Object.h"
 #include "cdc/dtp/animnodes/fragment.h"
@@ -116,7 +117,7 @@ void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
 	ImGui::Text("mExtraChannelCount %d", fragment->mExtraChannelCount);
 
 	ImGui::Indent();
-	if (false) { // decode pose
+	if (fragment->mKeyCount == 1) { // decode pose
 		uint16_t *masks = fragment->mSegKeyListPtr + 1;
 		float *values = fragment->mValueDataPtr + 1;
 		for (int i=0; i < fragment->mSegmentCount; i++) {
@@ -140,7 +141,11 @@ void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
 				if ((mask >> j) & 1) {
 					uint16_t mode = lengths[0];
 					static const char *modes[] = { "tabulated", "constant", "piece-wise linear", "zero" };
-					ImGui::Text(" channel %c %s", "ijklxyzw"[j], mode < 4 ? modes[mode] : "invalid mode");
+					ImGui::Text(" channel %c %s @ %p %p",
+						"ijklxyzw"[j],
+						mode < 4 ? modes[mode] : "invalid mode",
+						(void*)values,
+						(void*)lengths);
 					if (mode == 0) { // tabulated
 						uint16_t fmt16 = lengths[1];
 						if (fmt16) {
@@ -167,9 +172,10 @@ void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
 						const char *fmts[] = { "f32", "i16" };
 						uint16_t fmt = lengths[1];
 						uint16_t numEntries = lengths[2];
-						ImGui::Text("  %s length %d", fmts[fmt], numEntries);
+						ImGui::Text("  %s #points %d", fmts[fmt], numEntries);
 						AnimDecoder decoder;
 						decoder.SetChannel(fmt, values, (uint8_t*)(lengths+3));
+						ImGui::Text("  sum of lengths %d", decoder.mSumOfLengths);
 						if (fmt) {
 							ImGui::PlotLines("Lines", &cbLinear16, (void*)&decoder, fragment->mKeyCount);
 						} else {
@@ -180,7 +186,7 @@ void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
 						} else {
 							values += sizeof(float) * numEntries;
 						}
-						lengths += 3 + numEntries/2;
+						lengths = (uint16_t*)(uintptr_t(lengths) + 5 + (numEntries|1));
 					} else { // zero
 						// empty
 					}
@@ -206,5 +212,35 @@ void buildUI(UIActions& uiact, AnimComponentV2 *ac) {
 	for (uint32_t i=0; i<objectDtpData->hasAnimGraph; i++) {
 		auto& root = objectDtpData->pAnimGraph[i]; 
 		buildUI(uiact, root.graph, root.ext);
+	}
+	if (ac->poseNode) {
+		if (AnimBuffer *buffer = ac->poseNode->pose.buffer) {
+			AnimSegment *animSegments = buffer->segments;
+			ImGui::Text("anim segments");
+			ImGui::Indent();
+			for (uint32_t i=0; i<buffer->numSegments; i++) {
+				AnimSegment s = animSegments[i];
+				ImGui::Text("[%d] %f %f %f %f : %f %f %f",
+					i,
+					s.rot.x,
+					s.rot.y,
+					s.rot.z,
+					s.rot.w,
+					s.trans.x,
+					s.trans.y,
+					s.trans.z
+				);
+				ImGui::Text("    %p %p %p %d %d",
+					s.masks,
+					s.offsets,
+					s.lengths,
+					s.index,
+					s.time
+				);
+			}
+			ImGui::Unindent();
+		}
+	} else {
+		ImGui::Text("no pose node");
 	}
 }

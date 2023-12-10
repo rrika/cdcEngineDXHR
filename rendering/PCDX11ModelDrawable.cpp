@@ -410,8 +410,11 @@ bool PCDX11ModelDrawable::setMatrices(
 				m[14] = vector[2];
 				m[15] = vector[3];
 			}
+			for (uint32_t i = meshSub->commonCb3_numMatrices; i < 42; i++) {
+				*(Matrix*)&matrixStagingBuffer[16 * i] = identity4x4;
+			}
 			auto &skinningBuffer = stateManager->accessCommonCB(3);
-			skinningBuffer.assignRow(0, matrixStagingBuffer, 4 * meshSub->commonCb3_numMatrices);
+			skinningBuffer.assignRow(0, matrixStagingBuffer, 4 * 42); // meshSub->commonCb3_numMatrices);
 		}
 	}
 

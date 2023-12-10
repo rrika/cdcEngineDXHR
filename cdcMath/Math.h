@@ -15,6 +15,7 @@ public:
 	};
 
 	void SafeNormalize3();
+	Vector Normalize3();
 };
 
 class Quat : public Vector {};

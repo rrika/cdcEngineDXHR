@@ -16,6 +16,13 @@ namespace cdc {
 struct AnimSegment {
 	Vector3 rot;
 	Vector3 trans;
+	
+	// HACK, when was this segment written?
+	void *masks = nullptr;
+	void *offsets = nullptr;
+	void *lengths = nullptr;
+	uint32_t index = 0;
+	uint32_t time = 0;
 };
 
 struct AnimBuffer {

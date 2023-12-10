@@ -28,6 +28,15 @@ void AnimDecoder::SetChannel(bool fixedPoint, char *pValue, uint8_t *pLength) {
 		mCurRangeOffset = 0.0f;
 		mLastResult = 0.0f;
 
+		// HACK
+		uint16_t keyCount = ((uint16_t*)mLengthTable)[-1];
+		if (keyCount > 100)
+			keyCount = 100;
+		uint32_t sumOfLengths = 0;
+		for (int i=0; i<keyCount; i++)
+			sumOfLengths += mLengthTable[i];
+		mSumOfLengths = sumOfLengths;
+
 		ResetOffsets(fixedPoint);
 	}
 }
@@ -61,14 +70,11 @@ float AnimDecoder::GetValues(bool fixedPoint, int32_t targetKey) {
 	if (targetKey == mLastKey)
 		return mLastResult;
 
-	uint16_t keyCount = ((uint16_t*)mLengthTable)[-1];
-	if (keyCount > 20)
-		keyCount = 20;
-	uint32_t sumOfLengths = 0;
-	for (int i=0; i<keyCount; i++)
-		sumOfLengths += mLengthTable[i];
-	if (targetKey >= sumOfLengths)
-		targetKey = sumOfLengths-1;
+	// HACk
+	if (targetKey >= mSumOfLengths)
+		targetKey = mSumOfLengths-1;
+	if (mSumOfLengths > 2000 && targetKey > 100)
+		targetKey = 100;
 
 	mLastResult = mCurBase + mCurRangeOffset;
 	mLastKey = mCurKey;
@@ -85,8 +91,8 @@ float AnimDecoder::GetValues(bool fixedPoint, int32_t targetKey) {
 		int16_t *pOffset = (int16_t*)mCurOffset;
 
 		if (targetKey - total > *pLength) {
-			// printf("%d+%d < %d:", (int)total, (int)*pLength, (int)targetKey);
-			// fflush(stdout);
+			// printf("%d ... %d+%d < %d:", mSumOfLengths, (int)total, (int)*pLength, (int)targetKey);
+			fflush(stdout);
 
 			do { // skip complete segment
 				// printf(" %d/%d", (int)*pLength, (int)*pOffset);
@@ -94,7 +100,7 @@ float AnimDecoder::GetValues(bool fixedPoint, int32_t targetKey) {
 				offset += *pOffset++;
 			} while (targetKey - total > *pLength);
 
-			// printf(" :%d <= %d <= %d+%d\n", (int)total, (int)targetKey, (int)total, (int)*pLength);
+			// printf(" :%d <= %d <= %d+%d ... %d\n", (int)total, (int)targetKey, (int)total, (int)*pLength, mSumOfLengths);
 
 			mCurOffset = (char*)pOffset;
 			mCurLength = pLength;
@@ -111,11 +117,15 @@ float AnimDecoder::GetValues(bool fixedPoint, int32_t targetKey) {
 		float *pOffset = (float*)mCurOffset;
 
 		if (targetKey - total > *pLength) {
+			// printf("%d ... %d+%d < %d:", mSumOfLengths, (int)total, (int)*pLength, (int)targetKey);
 
 			do { // skip complete segment
+				// printf(" %d/%d", (int)*pLength, (int)*pOffset);
 				total += *pLength++;
 				base += *pOffset++;
 			} while (targetKey - total > *pLength);
+
+			// printf(" :%d <= %d <= %d+%d ... %d\n", (int)total, (int)targetKey, (int)total, (int)*pLength, mSumOfLengths);
 
 			mCurOffset = (char*)pOffset;
 			mCurLength = pLength;

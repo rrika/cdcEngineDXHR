@@ -1,6 +1,7 @@
 #include "Inspector.h"
 #include "3rdParty/imgui/imgui.h"
 #include "cdc/dtp/objectproperties/intro.h"
+#include "cdcAnim/AnimFragment.h"
 #include "cdcAnim/Inspector.h"
 #include "cdcResource/ResolveSection.h"
 #include "cdcSound/SoundPlex.h"
@@ -72,6 +73,13 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			auto *animSection = cdc::g_resolveSections[2];
 			if (cdc::AnimFragment *anim = (cdc::AnimFragment*)animSection->getWrapped(animSection->getDomainId(animID))) {
 				buildUI(uiact, anim);
+				if (auto *model = instance->GetMeshComponent().GetModel()) {
+					for (uint32_t i=0; i<anim->mSegmentCount; i++) {
+						uint16_t boneID = anim->mBoneIDsDataPtr[i];
+						int16_t boneIndex = model->GetBoneIndexFromID(boneID);
+						ImGui::Text("segment %d boneID %d boneIndex %d", i, boneID, boneIndex);
+					}
+				}
 			}
 		}
 		ImGui::Text("dtpData->hasAnimGraph        %08X", dtpData->hasAnimGraph);
