@@ -32,7 +32,7 @@ void MeshComponent::SetModel(uint32_t index) {
 
 void MeshComponent::SetModel(uint32_t index, dtp::Model *baseModel) {
 	dtp::Model **models = m_instance->GetModels();
-	dtp::Model *model = models[m_currentRenderModel];
+	dtp::Model *model = models[index];
 	auto& transform = m_instance->GetTransformComponent();
 
 	// how many matrices are needed
@@ -58,6 +58,7 @@ void MeshComponent::SetModel(uint32_t index, dtp::Model *baseModel) {
 			}
 		}
 	} else {
+		transform.m_numMatrices = numMatrices;
 		transform.matrixBuffer = new cdc::Matrix[numMatrices];
 		transform.m_matrix = transform.matrixBuffer;
 		if (transform.GetNotAnimated() == false)

@@ -228,11 +228,13 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex,
 		int16_t boneIndex = boneMap->channelToBoneIndex[i];
 		bool skip = boneIndex == -1 || (boneUsage /* && bitset check */ );
 
-		data->pose->buffer->segments[boneIndex].masks = masks;
-		data->pose->buffer->segments[boneIndex].offsets = values;
-		data->pose->buffer->segments[boneIndex].lengths = lengths;
-		data->pose->buffer->segments[boneIndex].index = i;
-		data->pose->buffer->segments[boneIndex].time = keyIndex;
+		if (boneIndex != -1) {
+			data->pose->buffer->segments[boneIndex].masks = masks;
+			data->pose->buffer->segments[boneIndex].offsets = values;
+			data->pose->buffer->segments[boneIndex].lengths = lengths;
+			data->pose->buffer->segments[boneIndex].index = i;
+			data->pose->buffer->segments[boneIndex].time = keyIndex;
+		}
 
 		float weight;
 		Vector3 rot_trans[6];

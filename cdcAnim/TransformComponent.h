@@ -21,6 +21,9 @@ public:
 	int8_t m_rootMatrix = 0; // 31
 	uint8_t m_flags = 0; // C3, read by MeshComponent::SetModel
 
+	// HACK
+	uint32_t m_numMatrices = 0;
+
 public:
 	TransformComponent() = default;
 
