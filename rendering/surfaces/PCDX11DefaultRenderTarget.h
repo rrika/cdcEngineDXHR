@@ -23,11 +23,11 @@ public:
 	PCDX11RenderTexture *getRenderTexture() override { return &renderTexture; }
 	uint32_t getWidth() override { return renderTexture.getWidth(); }
 	uint32_t getHeight() override { return renderTexture.getHeight(); }
-	void freeResource() override {
+	void EvictNow() override {
 		if ((flags14 & 4) == 0)
 			renderTexture.resFree();
 	}
-	void registerAtScene(void *ptr) override { /*TODO*/ }
+	void Evict(uint32_t passIndex) override { /*TODO*/ }
 	void method_14() override { /*empty*/ }
 
 	uint32_t method_24(uint32_t, uint32_t) override;

@@ -30,8 +30,8 @@ public:
 	PCDX11RenderTexture *getRenderTexture() override { return renderTarget->getRenderTexture(); }
 	uint32_t getWidth() override { return width10; }
 	uint32_t getHeight() override { return height14; }
-	void freeResource() override { /*empty*/ }
-	void registerAtScene(void *) override { /*empty*/ }
+	void EvictNow() override { /*empty*/ }
+	void Evict(uint32_t) override { /*empty*/ }
 	void method_14() override { /*empty*/ }
 	// inherit bool method_18() { return false; };
 	// inherit void method_1C() {};

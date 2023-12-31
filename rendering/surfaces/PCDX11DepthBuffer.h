@@ -21,11 +21,11 @@ public:
 	TextureMap *getRenderTexture() override { return &renderTexture; };
 	uint32_t getWidth() override { return renderTexture.getWidth(); };
 	uint32_t getHeight() override { return renderTexture.getHeight(); };
-	void freeResource() override {
+	void EvictNow() override {
 		if ((flagsC & 4) == 0)
 			renderTexture.resFree();
 	};
-	void registerAtScene(void *ptr) override { /*TODO*/ };
+	void Evict(uint32_t passIndex) override { /*TODO*/ };
 	void method_14() override { /*TODO*/ };
 
 	void copyFromTexture(IDepthBuffer*) { /* empty, see call from PCDX11Scene::draw */ }
