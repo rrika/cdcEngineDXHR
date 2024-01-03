@@ -5,7 +5,7 @@
 
 namespace cdc {
 
-F_STDCALL FMOD_RESULT FmodChannelCallback(FMOD_CHANNEL *channel, FMOD_CHANNEL_CALLBACKTYPE type, void *commanddata1, void *commanddata2) { // line 159
+FMOD_RESULT F_STDCALL FmodChannelCallback(FMOD_CHANNEL *channel, FMOD_CHANNEL_CALLBACKTYPE type, void *commanddata1, void *commanddata2) { // line 159
 	void *userdata = nullptr;
 	FMOD_Channel_GetUserData(channel, &userdata);
 	auto *voice = (VoiceImpl*) userdata;

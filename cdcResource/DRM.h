@@ -45,6 +45,7 @@ struct DRMSectionHeader { // cdc::SectionInfo
 	uint32_t languageBits;
 };
 
+static_assert(sizeof(void*) == 4, "only 32-bit build is supported");
 static_assert(sizeof(DRMSectionHeader) == 20);
 
 struct DRMHeader {
