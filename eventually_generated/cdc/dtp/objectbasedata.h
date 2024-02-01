@@ -40,9 +40,8 @@ struct ObjectBaseData {
 	uint8_t f2C[4];
 	uint16_t word30;
 	uint8_t f32[6];
-	uint16_t word38;
-	uint8_t f3A[2];
-	uint32_t dword3C;
+	uint32_t numAnims; // 38
+	dtp::AnimEntry *animations; // 3C
 	uint16_t word40;
 	uint16_t word42;
 	uint32_t dword44;
@@ -106,5 +105,7 @@ struct ObjectBaseData {
 	uint32_t dword128;
 	uint32_t hasDeferredLightMaybe;
 };
+
+static_assert(sizeof(ObjectBaseData) == 0x130);
 
 }
