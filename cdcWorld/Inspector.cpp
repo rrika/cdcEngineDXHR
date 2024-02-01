@@ -7,9 +7,9 @@
 #include "rendering/MaterialData.h"
 #include "cdcResource/ResolveSection.h"
 #include "cdcSound/SoundPlex.h"
-#include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcWorld/Instance.h"
+#include "cdcWorld/Object.h"
 #include "UIActions.h"
 
 void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {

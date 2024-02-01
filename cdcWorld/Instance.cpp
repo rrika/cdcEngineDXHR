@@ -1,8 +1,8 @@
-#include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h"
 #include "Instance.h"
 #include "InstanceDrawable.h"
 #include "InstanceManager.h"
+#include "Object.h"
 
 using namespace cdc;
 

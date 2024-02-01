@@ -1,7 +1,7 @@
 #include "InstanceDrawable.h"
-#include "cdcObjects/Object.h"
 #include "cdcWorld/cdcWorldTypes.h" // for dtp::Model
 #include "cdcWorld/Instance.h"
+#include "cdcWorld/Object.h"
 #include "rendering/CommonRenderDevice.h"
 #include "rendering/Culling/BasicPrimitives.h"
 #include "rendering/Culling/BasicPrimitives_inlines.h" // for SetFromMinMax

@@ -41,7 +41,6 @@
 #include "input/PCMouseKeyboard.h"
 #include "cdcLocale/localstr.h"
 #include "cdcMath/Math.h" // for cdc::Matrix
-#include "cdcObjects/Object.h"
 #include "cdcObjects/ObjectManager.h" // for buildObjectsUI
 #include "postprocessing/PPManager.h"
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
@@ -93,6 +92,7 @@
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/InstanceDrawable.h"
 #include "cdcWorld/InstanceManager.h"
+#include "cdcWorld/Object.h"
 #include "cdcWorld/RMIDrawableBase.h"
 #include "cdcWorld/stream.h" // for buildUnitsUI
 #include "cdcWorld/StreamUnit.h"
