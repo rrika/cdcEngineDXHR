@@ -44,7 +44,7 @@ public:
 	void getBoundingSphere(float*, float*) const override { /*TODO*/ }
 	bool getBoundingBox(Vector3&, Vector3&) const override;
 	void getLodDistances(float*, float*) override { /*TODO*/ }
-	uint32_t getBoneCount() override { /*TODO*/ return 0; }
+	uint32_t getBoneCount() const override { return mesh ? mesh->boneCountMaybe : 0; }
 	void mesh2C() override { /*TODO*/ }
 	NonPersistentPGData *getTab0Ext16() override { /*TODO*/ return tab0Ext16Byte; }
 	PersistentPGData *getTab0Ext128() override { /*TODO*/ return tab0Ext128Byte; }
