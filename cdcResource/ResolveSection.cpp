@@ -1,5 +1,6 @@
 #include "ResolveSection.h"
 
+#include "AnimationSection.h"
 #include "DTPDataSection.h"
 #include "GenericSection.h"
 #include "MaterialSection.h"
@@ -15,6 +16,7 @@ cdc::ResolveSection *g_resolveSections[16] = {nullptr};
 
 void ResolveSection::Create() {
 	g_resolveSections[0] = new cdc::GenericSection();
+	g_resolveSections[2] = new cdc::AnimationSection();
 	g_resolveSections[5] = new cdc::RenderResourceSection();
 	g_resolveSections[6] = new cdc::WaveSection();
 	g_resolveSections[7] = new DTPDataSection();
