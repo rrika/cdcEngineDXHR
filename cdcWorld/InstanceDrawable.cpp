@@ -108,7 +108,7 @@ void InstanceDrawable::GetBoundingVolume(BasicCullingVolume *volume) {
 	}
 }
 
-void InstanceDrawable::draw(Matrix *, float) {
+void InstanceDrawable::draw(Matrix *matrix, float) {
 
 	if (m_renderModelInstances.empty())
 		return; // HACK
@@ -119,19 +119,11 @@ void InstanceDrawable::draw(Matrix *, float) {
 	cdc::RenderModelInstance *rmi = m_renderModelInstances[meshComponent.GetCurrentRenderModelIndex()];
 
 	if (model && rmi) {
-		// HACK
-		cdc::Matrix *matrix = m_instance->GetTransformComponent().m_matrix;
-
-		m_pMatrixState->resize(0);
-		auto *poseData = static_cast<cdc::PCDX11MatrixState*>(m_pMatrixState)->poseData;
-		auto *pMatrix = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));
-		float *pVector = poseData->getVector(0);
-		*pMatrix = *matrix;
-		pVector[0] = pMatrix->m[0][3];
-		pVector[1] = pMatrix->m[1][3];
-		pVector[2] = pMatrix->m[2][3];
-		pVector[3] = 1.0f;
-
+		// if (skydome) {
+		//	...
+		// } else {
+		PrepareMatrixState(matrix, model, rmi, false); // matrix is only used for 0 bones case
+		// }
 		rmi->recordDrawables(m_pMatrixState);
 	}
 }
@@ -147,6 +139,19 @@ bool InstanceDrawable::GetBoundingBox(Vector *pMin, Vector *pMax) {
 	cdc::RenderModelInstance *rmi = m_renderModelInstances[meshComponent.GetCurrentRenderModelIndex()];
 	cdc::RenderMesh const *rm = rmi->GetRenderMesh();
 	return rm->getBoundingBox(*(Vector3*)pMin, *(Vector3*)pMax);
+}
+
+void InstanceDrawable::PrepareMatrixState(Matrix *matrix, dtp::Model *model, RenderModelInstance *rmi, bool force) { // line 1880
+	// HACK
+	m_pMatrixState->resize(0);
+	auto *poseData = static_cast<cdc::PCDX11MatrixState*>(m_pMatrixState)->poseData;
+	auto *pMatrix = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));
+	float *pVector = poseData->getVector(0);
+	*pMatrix = *matrix;
+	pVector[0] = pMatrix->m[0][3];
+	pVector[1] = pMatrix->m[1][3];
+	pVector[2] = pMatrix->m[2][3];
+	pVector[3] = 1.0f;
 }
 
 void InstanceDrawable::AddToDirtyList() { // 2038

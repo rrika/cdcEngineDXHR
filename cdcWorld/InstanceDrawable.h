@@ -59,6 +59,7 @@ public:
 	bool GetBoundingSphere(Vector *pCenter, float *pRadius) override;
 	bool GetBoundingBox(Vector *pMin, Vector *pMax) override;
 
+	void PrepareMatrixState(Matrix*, dtp::Model*, RenderModelInstance*, bool force);
 	void AddToDirtyList();
 	void RemoveFromDirtyList();
 };
