@@ -88,7 +88,7 @@ void PCDX11RenderModel::resConstruct() {
 	}
 
 	for (uint32_t i = 0; i<numModelBatches; i++) {
-		auto *sub1 = &modelBatches[i];
+		ModelBatch *sub1 = &modelBatches[i];
 		sub1->vertices += (uintptr_t)mesh;
 		sub1->format += (uintptr_t)mesh;
 		auto *layout = (VertexDecl*)sub1->format;
@@ -99,7 +99,7 @@ void PCDX11RenderModel::resConstruct() {
 			(void*)sub1->vertices);
 		printf("%d:%d indices\n", i, sub1->numVertices);
 		if (mesh->flags.hasBones)
-			sub1->matrixGatherOffsets += (uintptr_t)mesh;
+			sub1->matrixGatherOffsets = (uint32_t*)((uintptr_t)mesh + (uintptr_t)sub1->matrixGatherOffsets);
 	}
 
 	// process indices
