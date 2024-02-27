@@ -16,5 +16,6 @@ public:
 			return CreateInstance2();
 	}
 
+	static Instance *s_chain; // single chain for now
 	static std::vector<Instance*> s_instances;
 };
