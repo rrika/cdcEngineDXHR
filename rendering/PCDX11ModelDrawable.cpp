@@ -22,6 +22,8 @@ namespace cdc {
 
 // use of this global variable makes this class thread-unsafe
 static float matrixStagingBuffer[42 * 16];
+static const bool assignAllMatrices = false; // HACK
+static const bool acceptOutOfBoundMatrices = true; // HACK
 
 PCDX11ModelDrawable::PCDX11ModelDrawable(
 	PCDX11RenderModel *renderModel,
@@ -375,13 +377,16 @@ bool PCDX11ModelDrawable::setMatrices(
 	PCDX11ModelDrawable *prevDrawable,
 	bool hasBones)
 {
+	// poseData is prepared by CalcSkeletonMatrices through
+	// InstanceDrawable::PrepareMatrixState for example.
 	ModelBatch *prevModelBatch = prevDrawable ? prevDrawable->meshSub : nullptr;
 	PoseData *prevPoseData = prevDrawable ? prevDrawable->poseData : nullptr;
 	if (hasBones) {
 		if (meshSub != prevModelBatch || poseData != prevPoseData) {
 			for (uint32_t i = 0; i < meshSub->commonCb3_numMatrices; i++) {
-				// uint32_t j = meshSub->matrixGatherOffsets[i];
-				uint32_t j = 0; // HACK
+				uint32_t j = meshSub->matrixGatherOffsets[i];
+				if (j >= poseData->numMatrices && acceptOutOfBoundMatrices)
+					j = 0; // HACK: read matrix 0 again
 				float *matrix = poseData->getMatrix(j);
 				float *vector = poseData->getVector(j);
 
@@ -395,7 +400,7 @@ bool PCDX11ModelDrawable::setMatrices(
 				m[0] = matrix[0];
 				m[1] = matrix[4];
 				m[2] = matrix[8];
-				m[3] = matrix[12]; // translation x (unless, I made a mistake)
+				m[3] = matrix[12]; // translation x
 
 				m[4] = matrix[1];
 				m[5] = matrix[5];
@@ -407,14 +412,21 @@ bool PCDX11ModelDrawable::setMatrices(
 				m[10] = matrix[10];
 				m[11] = matrix[14]; // translation z
 
-				// last row is different
+				// last row is different, these values seem to be uninitialized and ignored
 				m[12] = vector[0];
 				m[13] = vector[1];
 				m[14] = vector[2];
 				m[15] = vector[3];
 			}
 			auto &skinningBuffer = stateManager->accessCommonCB(3);
-			skinningBuffer.assignRow(0, matrixStagingBuffer, 4 * meshSub->commonCb3_numMatrices);
+			if (assignAllMatrices) {
+				// HACK: fill with copies of matrix 0
+				for (uint32_t i = meshSub->commonCb3_numMatrices; i < 42; i++) {
+					*(Matrix*)&matrixStagingBuffer[16 * i] = *(Matrix*)&matrixStagingBuffer[0];
+				}
+				skinningBuffer.assignRow(0, matrixStagingBuffer, 4 * 42);
+			} else
+				skinningBuffer.assignRow(0, matrixStagingBuffer, 4 * meshSub->commonCb3_numMatrices);
 		}
 	}
 
