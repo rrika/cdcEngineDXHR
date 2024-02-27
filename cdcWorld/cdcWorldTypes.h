@@ -1,10 +1,20 @@
 #pragma once
 #include <cstdint>
-#include <cdcMath/Math.h>
+#include "cdcMath/Math.h"
 
 namespace cdc { class RenderMesh; }
 
-struct Segment;
+struct HInfo;
+
+struct Segment {
+	uint32_t pad0[8];
+	cdc::Vector pivot; // 20
+	uint32_t pad30[2];
+	uint32_t parent; // 38
+	HInfo *hInfo;
+};
+
+static_assert(sizeof(Segment) == 0x40);
 
 struct SegmentList { // line 507
 	int32_t numSegments; // 0
