@@ -80,7 +80,14 @@ static void UpdateInstances() { // 2052
 		if (i->sceneEntity) {
 			SceneEntity::UpdateState us;
 			us.updateFlags = 8; // update the matrix
-			us.matrix = *i->GetTransformComponent().m_matrix;
+
+			// m_matrix[-1] is populated with the entity transform
+			// m_matrix[0] is derived from it
+			//   either as a copy of [-1] in G2Instance_SetTransformsToIdentity
+			//   or by application of animation segments in G2Instance_RebuildTransforms
+
+			auto& transformComponent = i->GetTransformComponent();
+			us.matrix = transformComponent.m_matrix[0];
 			i->sceneEntity->ApplyUpdateState(&us);
 		}
 

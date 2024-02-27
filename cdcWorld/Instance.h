@@ -52,6 +52,9 @@ public:
 
 	cdc::IDrawable *instanceDrawable = nullptr; // 23C
 
+	bool enableOverridePose = true; // HACK
+	std::vector<cdc::Matrix> overridePose; // HACK
+
 public:
 	static Instance *IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, bool force); // line 1672
 	static Instance *IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, /*GCPtr<...>*/NsInstance *scriptObject, bool force); // line 1679
@@ -72,4 +75,7 @@ public:
 	cdc::TransformComponent& GetTransformComponent() { return transformComponent; }
 	cdc::ObjectComponent& GetObjectComponent() { return objectComponent; }
 	cdc::MeshComponent& GetMeshComponent() { return meshComponent; }
+
+	void InitEditorPose(dtp::Model *model); // HACK
+	void BuildEditorTransforms(cdc::Matrix *matrix); // HACK
 };

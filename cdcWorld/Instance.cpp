@@ -138,3 +138,28 @@ dtp::Model **Instance::GetModels() {
 
 	return object->models;
 }
+
+void Instance::InitEditorPose(dtp::Model *model) {
+	uint32_t numSegments = model->oldNumSegments;
+	Segment const *modelSegments = model->GetSegmentList();
+
+	overridePose.resize(numSegments);
+	for (uint32_t i=0; i<numSegments; i++) {
+		Vector pivot = modelSegments[i].pivot;
+		Matrix& m = overridePose[i];
+		m = identity4x4;
+		m.m[3][0] = pivot.x;
+		m.m[3][1] = pivot.y;
+		m.m[3][2] = pivot.z;
+	}
+}
+
+// see also AnimBuildTransforms
+void Instance::BuildEditorTransforms(Matrix *matrices) {
+	dtp::Model *model = meshComponent.GetModel();
+	uint32_t numSegments = model->oldNumSegments;
+	Segment const *modelSegments = model->GetSegmentList();
+
+	for (uint32_t i=0; i<numSegments; i++)
+		matrices[i] = matrices[modelSegments[i].parent] * overridePose[i];
+}

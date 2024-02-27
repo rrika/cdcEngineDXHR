@@ -66,10 +66,14 @@ void G2Instance_RebuildTransforms(Instance *instance) { // line 386/404
 	// instance->GetTransformComponent().InvalidateDrawableMatrix();
 	Matrix *matrices = instance->GetTransformComponent().m_matrix;
 	if (matrices) {
-		/*if (AnimComponentV2 *ac2 = instance->animComponentV2) {
+
+		if (instance->enableOverridePose) {
+			instance->BuildEditorTransforms(matrices);
+
+		} /* else if (AnimComponentV2 *ac2 = instance->animComponentV2) {
 			ac2->matrices = matrices;
 			ac2->BuildTransforms();
-		}*/
+		} */
 		G2Instance_PostRebuildTransforms(instance);
 	}
 }

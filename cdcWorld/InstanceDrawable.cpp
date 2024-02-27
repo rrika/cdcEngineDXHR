@@ -68,6 +68,9 @@ void MeshComponent::SetModel(uint32_t index, dtp::Model *baseModel) {
 		transform.m_rootMatrix = 0;
 	else
 		transform.m_rootMatrix = 1;
+
+	// HACK
+	m_instance->InitEditorPose(model);
 }
 
 

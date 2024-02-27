@@ -1596,7 +1596,49 @@ int spinnyCube(HWND window,
 		}
 		if (uiact.selectedInstance) {
 			if (uiact.selectedInstance == uiact.selectedMovable) {
-				manipulate(*uiact.selectedInstance->GetTransformComponent().m_matrix);
+				Instance *instance = uiact.selectedInstance;
+				auto& tc = instance->GetTransformComponent();
+				cdc::Matrix *matrices = tc.m_matrix;
+				dtp::Model *model = uiact.selectedInstance->GetMeshComponent().GetModel();
+				uint32_t numMatrices = model ? model->GetNumSegments() : 1;
+				if (tc.GetNotAnimated() || numMatrices <= 1)
+					manipulate(matrices[0]);
+				else {
+					// translation gizmo
+					cdc::Matrix delta;
+					ImGuizmo::SetID(0);
+					ImGuizmo::Manipulate(
+						(float*)viewMatrix.m,
+						(float*)scene->projectMatrix.m,
+						ImGuizmo::TRANSLATE,
+						ImGuizmo::WORLD,
+						(float*)matrices[-1].m,
+						(float*)delta.m);
+					if (delta != cdc::identity4x4) {
+						instance->position.x += delta.m[3][0];
+						instance->position.y += delta.m[3][1];
+						instance->position.z += delta.m[3][2];
+					}
+
+					// rotation gizmos
+					for (uint32_t i=0; i<numMatrices; i++) {
+						ImGuizmo::SetID(i+1);
+						ImGuizmo::Manipulate(
+							(float*)viewMatrix.m,
+							(float*)scene->projectMatrix.m,
+							ImGuizmo::ROTATE,
+							ImGuizmo::LOCAL,
+							(float*)matrices[i].m,
+							(float*)delta.m);
+
+						if (instance->enableOverridePose && delta != cdc::identity4x4) {
+							auto j = model->GetSegmentList()[i].parent;
+							cdc::Matrix parentInverse;
+							cdc::OrthonormalInverse3x4(&parentInverse, matrices[j]);
+							instance->overridePose[i] = parentInverse * matrices[i];
+						}
+					}
+				}
 				if (auto *instanceDrawable = uiact.selectedInstance->instanceDrawable)
 					static_cast<cdc::InstanceDrawable*>(instanceDrawable)->AddToDirtyList();
 			}
