@@ -23,7 +23,13 @@ void G2Instance_SetTransformsToIdentity(Instance *instance) {
 	cdc::Matrix rotationMatrix; rotationMatrix.Build_XYZOrder(rotation.vec128);
 	instanceMatrix = instanceMatrix * rotationMatrix;
 
-	instance->GetTransformComponent().m_matrix[0] = instanceMatrix;
+	auto& transformComponent = instance->GetTransformComponent();
+	if (!transformComponent.GetNotAnimated())
+		transformComponent.m_matrix[-1] = instanceMatrix;
+
+	transformComponent.m_matrix[0] = instanceMatrix;
+
+	// these matrices are read by CalcSkeletonMatrices via InstanceDrawable::PrepareMatrixState
 }
 
 }
