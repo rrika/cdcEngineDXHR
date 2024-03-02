@@ -1,5 +1,6 @@
 #include "InstanceDrawable.h"
 #include "cdcWorld/cdcWorldTypes.h" // for dtp::Model
+#include "cdcWorld/CalcSkeleton.h"
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Object.h"
 #include "rendering/CommonRenderDevice.h"
@@ -111,7 +112,13 @@ void InstanceDrawable::GetBoundingVolume(BasicCullingVolume *volume) {
 	}
 }
 
-void InstanceDrawable::draw(Matrix *matrix, float) {
+// called from cdc::Scene::RenderWithoutCellTracing for example
+void InstanceDrawable::draw(Matrix *matrix, float) { // line 1243
+
+	// When the render model uses bones, the matrices will be taken from
+	// the transform component, else the matrix argument will be used.
+	// It's provided from SceneEntity::m_matrix, which in turn is populated
+	// from the first matrix of the transform component via UpdateInstances.
 
 	if (m_renderModelInstances.empty())
 		return; // HACK
@@ -139,22 +146,27 @@ bool InstanceDrawable::GetBoundingSphere(Vector *pCenter, float *pRadius) {
 bool InstanceDrawable::GetBoundingBox(Vector *pMin, Vector *pMax) {
 	// HACK
 	MeshComponent& meshComponent = m_instance->GetMeshComponent();
-	cdc::RenderModelInstance *rmi = m_renderModelInstances[meshComponent.GetCurrentRenderModelIndex()];
+	cdc::RenderModelInstance *rmi = m_renderModelInstances.at(meshComponent.GetCurrentRenderModelIndex());
 	cdc::RenderMesh const *rm = rmi->GetRenderMesh();
 	return rm->getBoundingBox(*(Vector3*)pMin, *(Vector3*)pMax);
 }
 
 void InstanceDrawable::PrepareMatrixState(Matrix *matrix, dtp::Model *model, RenderModelInstance *rmi, bool force) { // line 1880
-	// HACK
-	m_pMatrixState->resize(0);
-	auto *poseData = static_cast<cdc::PCDX11MatrixState*>(m_pMatrixState)->poseData;
-	auto *pMatrix = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));
-	float *pVector = poseData->getVector(0);
-	*pMatrix = *matrix;
-	pVector[0] = pMatrix->m[0][3];
-	pVector[1] = pMatrix->m[1][3];
-	pVector[2] = pMatrix->m[2][3];
-	pVector[3] = 1.0f;
+	if (true || force) {
+		auto boneCount = rmi->GetRenderMesh()->getBoneCount();
+		m_pMatrixState->resize(boneCount);
+		if (boneCount) {
+			auto *inMatrices = m_instance->GetTransformComponent().m_matrix;
+			auto *poseData = static_cast<cdc::PCDX11MatrixState*>(m_pMatrixState)->poseData;
+			auto *outMatrices = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));
+			outMatrices[0] = inMatrices[0];
+			CalcSkeletonMatrices(model, inMatrices, boneCount, m_pMatrixState);
+		} else {
+			auto *poseData = static_cast<cdc::PCDX11MatrixState*>(m_pMatrixState)->poseData;
+			auto *pMatrix = reinterpret_cast<cdc::Matrix*>(poseData->getMatrix(0));
+			*pMatrix = *matrix;
+		}
+	}
 }
 
 void InstanceDrawable::AddToDirtyList() { // 2038
