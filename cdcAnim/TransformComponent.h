@@ -18,6 +18,9 @@ public:
 	uint8_t m_flags = 0; // C3, read by MeshComponent::SetModel
 public:
 	TransformComponent() = default;
+
+	void SetNotAnimated(bool x) { m_flags = (m_flags & ~4) | (x ? 4 : 0); }
+	bool GetNotAnimated() { return m_flags & 4; }
 };
 
 }

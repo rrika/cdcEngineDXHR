@@ -31,7 +31,7 @@ void MeshComponent::SetModel(uint32_t index, dtp::Model *baseModel) {
 
 	// how many matrices are needed
 	uint32_t numMatrices = model->GetNumSegments();
-	if ((transform.m_flags & 4 /*m_flagNotAnimated*/) == 0)
+	if (transform.GetNotAnimated() == false)
 		numMatrices += model->numVirtSegments;
 
 	// allocate / reallocate as necessary
@@ -41,7 +41,7 @@ void MeshComponent::SetModel(uint32_t index, dtp::Model *baseModel) {
 
 		} else {
 			uint32_t numBaseMatrices = baseModel->GetNumSegments();
-			if ((transform.m_flags & 4 /*m_flagNotAnimated*/) == 0)
+			if (transform.GetNotAnimated() == false)
 				numBaseMatrices += baseModel->numVirtSegments;
 
 			m_currentRenderModel = index;
