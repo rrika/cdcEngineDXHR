@@ -64,6 +64,27 @@ void Instance::InitCommonComponents(bool initEffects, bool unknown) { // line 28
 	// this runs after DefaultInit
 
 	// TODO
+
+	if (objectFamilyId != /*UberObject*/ 2) {
+		// UberObjects create their own components in
+		//   ObjectComponent::InstanceInit (called below)
+		//   UBEROBJECT_DX3_Init
+		//   UberObjectComposite_DX3
+		//   CreateSections
+		//   CreateSectionInstance
+		//   UBEROBJECT_BirthSectionInstance
+
+		if (object->numAnims + object->numPatterns > 0) {
+			dtp::ObjectBaseData *dtpData = object->dtpData;
+			if (dtpData->hasAnimGraph || dtpData->numHostedAnimGraphs) {
+				// animComponentV2 = new AnimComponentV2(this);
+				// animComponentV2->Init(meshComponent.GetBaseModel());
+			}
+		}
+	}
+
+	// TODO
+
 	if (unknown)
 		objectComponent.SetProcessFunctions();
 	objectComponent.SetInstance(this);

@@ -10,7 +10,8 @@ target_sources(dxhr PRIVATE
 	RMIDrawableBase.cpp
 	SceneLayer.cpp
 	stream.cpp
-	StreamUnit.cpp)
+	StreamUnit.cpp
+	UserDataComponent.cpp)
 
 if (ENABLE_IMGUI)
 	target_sources(dxhr PRIVATE
