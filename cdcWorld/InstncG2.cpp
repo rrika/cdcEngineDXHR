@@ -2,6 +2,7 @@
 #include "cdcMath/Math.h"
 #include "cdcWorld/cdcWorldTypes.h"
 #include "cdcWorld/Instance.h"
+#include "cdcWorld/InstanceManager.h"
 
 namespace cdc {
 
@@ -22,8 +23,64 @@ static void NonAnimatedRebuild(Matrix *matrices, dtp::Model *model) { // guessed
 	}
 }
 
+void G2Instance_BuildAllTransforms() { // guessed name
+	// HACK
+	G2Instance_BuildTransformsForList(InstanceManager::s_chain);
+}
+
+void G2Instance_BuildTransformsForList(Instance *instance) { // line 176
+	for (; instance; instance = instance->next) {
+		// if (instance == ...) break;
+		G2Instance_BuildTransforms(instance);
+	}
+}
+
+bool G2Instance_NeedsBuildTransforms(Instance *instance) { // line 218
+	// TODO
+	return true;
+}
+
+static void G2Instance_CollectBoneUsage(Instance *instance) {
+
+}
+
+void G2Instance_BuildTransforms(Instance *instance) { // line 326
+	if (true) { // TODO
+		if (G2Instance_NeedsBuildTransforms(instance)) {
+			// this is in a separate function in DXHR
+			// instance->GetTransformComponent().SwapMatrixPools();
+			// instance->GetTransformComponent().InvalidateDrawableMatrix();
+			G2Instance_RebuildTransforms(instance);
+			G2Instance_CollectBoneUsage(instance);
+		} else if (false) {
+			G2Instance_CollectBoneUsage(instance);
+		}
+		// for (Instance *child = instance->linkChild; child; child = child->nextSibling)
+		// 	if (child.GetHierarchyComponent().SomeFunction())
+		// 		G2Instance_BuildTransforms(child);
+	}
+}
+
+void G2Instance_RebuildTransforms(Instance *instance) { // line 386/404
+	// matrices are allocated in MeshComponent::SetModel
+	// instance->GetTransformComponent().InvalidateDrawableMatrix();
+	Matrix *matrices = instance->GetTransformComponent().m_matrix;
+	if (matrices) {
+		/*if (AnimComponentV2 *ac2 = instance->animComponentV2) {
+			ac2->matrices = matrices;
+			ac2->BuildTransforms();
+		}*/
+		G2Instance_PostRebuildTransforms(instance);
+	}
+}
+
+
+void G2Instance_PostRebuildTransforms(Instance *instance) { // line 534
+
+}
+
 // HACK
-void G2Instance_SetTransformsToIdentity(Instance *instance) {
+void G2Instance_SetTransformsToIdentity(Instance *instance) { // line 667
 
 	if (instance->GetNumModels() == 0)
 		return;

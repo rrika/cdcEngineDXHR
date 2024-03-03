@@ -90,6 +90,7 @@
 #include "cdcSound/SoundPlex.h"
 #include "cdcWorld/Inspector.h"
 #include "cdcWorld/Instance.h"
+#include "cdcWorld/InstncG2.h"
 #include "cdcWorld/InstanceDrawable.h"
 #include "cdcWorld/InstanceManager.h"
 #include "cdcWorld/Object.h"
@@ -819,6 +820,7 @@ int spinnyCube(HWND window,
 		cameraManager.update();
 		viewMatrix = *cameraManager.getMatrix(); // wow, it's nothing
 
+		cdc::G2Instance_BuildAllTransforms(); // this will evaluate animations
 		SceneLayer::Update(); // this will create SceneEntities for Instances that don't have any yet
 
 		cdc::PCDX11RenderTarget *tempRenderTarget = nullptr;
