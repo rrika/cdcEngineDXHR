@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <unordered_map>
 #include "ObjectIncludes.h"
 
 struct UIActions;
@@ -45,7 +46,7 @@ struct ObjectManager {
 	// uint32_t dword08;
 	// uint32_t dword0C;
 	// uint32_t dword10;
-	// ObjectManagerSub14 *firstSub14;
+	std::unordered_map<int32_t, ObjectFamily> m_familyMap; // TODO: correct container type
 	ObjectList *objectList = nullptr;
 	// uint32_t numNames;
 	// ObjectManagerNamedEntry names[32];
@@ -54,6 +55,18 @@ struct ObjectManager {
 	InitFunc *uninit; // 4A8, GameAdditionalUninit
 
 	ObjectManager();
+
+	void RegisterObjectFamily(
+		int32_t fId,
+		InitFunc *fInit,
+		InitFunc *fUninit,
+		ProcessFunc *fProcess,
+		CollideFunc *fCollide,
+		CollideFunc *fAdditionalCollide,
+		QueryFunc *fQuery,
+		MessageFunc *fMessage,
+		DebugDrawFunc *fDebugDraw,
+		void *unknown);
 };
 
 extern ObjectManager *g_objectManager;

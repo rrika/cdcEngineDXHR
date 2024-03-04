@@ -29,6 +29,32 @@ ObjectManager::ObjectManager() {
 	memset(objects, 0, sizeof(objects));
 }
 
+void ObjectManager::RegisterObjectFamily(
+	int32_t fId,
+	InitFunc *fInit,
+	InitFunc *fUninit,
+	ProcessFunc *fProcess,
+	CollideFunc *fCollide,
+	CollideFunc *fAdditionalCollide,
+	QueryFunc *fQuery,
+	MessageFunc *fMessage,
+	DebugDrawFunc *fDebugDraw,
+	void *unknown)
+{
+	// TODO
+	m_familyMap[fId] = {
+		fInit,
+		fUninit,
+		fProcess,
+		fCollide,
+		fAdditionalCollide,
+		fQuery,
+		fMessage,
+		fDebugDraw,
+		unknown
+	};
+}
+
 ObjectManager *g_objectManager = nullptr;
 
 void ensureObjectManager() {
