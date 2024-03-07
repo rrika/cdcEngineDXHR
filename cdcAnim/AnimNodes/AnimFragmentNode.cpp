@@ -27,7 +27,7 @@ void AnimFragmentNode::Update(void*) {
 	// TODO
 }
 
-void AnimFragmentNode::PrePhysics(AnimGraphNodeMethod18Args *) {
+void AnimFragmentNode::PrePhysics(AnimContextData *data) {
 	// TODO
 }
 

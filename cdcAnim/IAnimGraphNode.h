@@ -6,7 +6,7 @@ class Instance;
 
 namespace cdc {
 
-struct AnimGraphNodeMethod18Args {
+struct AnimContextData {
 	// TODO
 };
 
@@ -33,7 +33,7 @@ public:
 	virtual float GetNextSyncPoint(void*) = 0;                        //  C
 	virtual void GetSyncInfo(void*, float *elapsedOut, float *durationOut) = 0; // 10
 	virtual void Update(void*) = 0;                                   // 14
-	virtual void PrePhysics(AnimGraphNodeMethod18Args *) = 0;         // 18
+	virtual void PrePhysics(AnimContextData *data) = 0;               // 18
 	virtual IAnimGraphNode *GetOutput(uint32_t index) = 0;            // 1C
 	virtual uint32_t GetNumOutputs() = 0;                             // 20
 	virtual void SetOutput(uint32_t index, IAnimGraphNode *node) = 0; // 24

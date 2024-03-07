@@ -44,7 +44,7 @@ void AnimPipelineNode::Update(void *a) {
 			input->Update(a);
 }
 
-void AnimPipelineNode::PrePhysics(AnimGraphNodeMethod18Args *args) {
+void AnimPipelineNode::PrePhysics(AnimContextData *args) {
 	for (auto input : inputs)
 		if (input)
 			input->PrePhysics(args);
