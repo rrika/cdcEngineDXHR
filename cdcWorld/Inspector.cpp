@@ -185,9 +185,17 @@ void buildUI(UIActions& uiact, Instance *instance) {
 				c3d.position[2] = instance->position.z;
 			}
 	}
-	// if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
-	// 	// TODO
-	// }
+	if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
+		cdc::TransformComponent& tc = instance->GetTransformComponent();
+		ImGui::Text("matrix %p", tc.m_matrix);
+		if (tc.m_matrix) {
+			for (uint32_t rowIndex=0; rowIndex<4; rowIndex++) {
+				float *row = tc.m_matrix->m[rowIndex];
+				ImGui::Text("%-5.3f %-5.3f %-5.3f %-5.3f",
+					row[0], row[1], row[2], row[3]);
+			}
+		}
+	}
 	// if (ImGui::CollapsingHeader("ObjectComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
 	// 	// TODO
 	// }
