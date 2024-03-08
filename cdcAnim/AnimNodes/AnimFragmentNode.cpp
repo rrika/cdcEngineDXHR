@@ -1,6 +1,6 @@
 #include "AnimFragmentNode.h"
-// #include "cdcAnim/AnimPose.h"
-// #include "cdcWorld/cdcWorldTypes.h"
+#include "cdcAnim/AnimPose.h"
+#include "cdcWorld/cdcWorldTypes.h"
 
 namespace cdc {
 
@@ -66,7 +66,65 @@ void AnimFragmentNode::EnsureIDMap(dtp::Model *model) {
 
 void AnimFragmentNode::DecompressPose(AnimContextData *data) {
 	EnsureIDMap(data->model);
-	// TODO
+
+	BoneSet allBones {1.0f, 0, 249};
+	BoneSet *boneSet = data->boneSet;
+	if (!boneSet)
+		boneSet = &allBones;
+
+	bool cleared = data->pose->clearedByFragment;
+	float combinedWeight = boneSet->weight * data->weight;
+	uint16_t *masks = fragment->mSegKeyListPtr + 1;
+	float *values = fragment->mValueDataPtr + 1;
+
+	for (uint32_t i=0; i<fragment->mSegmentCount; i++) {
+		int16_t boneIndex = boneMap->channelToBoneIndex[i];
+
+		float weight;
+		Vector3 rot_trans[2];
+		Vector3& rot = rot_trans[0];
+		Vector3& trans = rot_trans[1];
+		if (boneIndex == -1) {
+			weight = 0.0f;
+		} else {
+			if (boneIndex < boneSet->firstBone || boneIndex > boneSet->lastBone) {
+				// TODO: boneSet = ...
+				combinedWeight = boneSet->weight * data->weight;
+			}
+
+			if (fragment->mHasSubtractedFrame) {
+				trans = {0.0f, 0.0f, 0.0f, 0.0f};
+
+			} else {
+				Segment *segments = data->model->GetSegmentList();
+				trans = {segments[boneIndex].pivot};
+			}
+
+			rot = {0.0f, 0.0f, 0.0f, 0.0f};
+			weight = combinedWeight;
+		}
+
+		float *rotc = rot.vec128;
+		uint8_t mask = uint8_t(*masks++);
+		while (mask) {
+			if (mask & 1)
+				*rotc = *values++;
+			rotc++;
+			mask >>= 1;
+		}
+
+		if (boneIndex != -1) {
+			AnimBuffer *buffer = data->pose->buffer;
+			AnimSegment *segments = buffer->segments;
+			if (cleared) {
+				segments[boneIndex].rot += rot;
+				segments[boneIndex].trans += trans;
+			} else {
+				segments[boneIndex].rot = rot;
+				segments[boneIndex].trans = trans;
+			}
+		}
+	}
 }
 
 void AnimFragmentNode::DecompressFrame(AnimContextData *data) {
