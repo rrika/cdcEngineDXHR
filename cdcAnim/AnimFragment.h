@@ -2,6 +2,12 @@
 #include <cstdint>
 #include "cdcMath/Math.h"
 
+namespace dtp {
+
+struct Model;
+
+}
+
 namespace cdc {
 
 struct AnimSegment {
@@ -20,6 +26,13 @@ struct BoneSet {
 	float weight;
 	int16_t firstBone;
 	int16_t lastBone;
+};
+
+struct BoneMap { // not to be confused with dtp::BoneMap
+	uint32_t animID; // from cdc::AnimFragment
+	uint32_t boneMapHash; // from dtp::Model
+	int16_t channelToBoneIndex[250];
+	uint32_t bitset[8];
 };
 
 struct AnimFragment {
@@ -42,4 +55,7 @@ struct AnimFragment {
 };
 
 static_assert(sizeof(AnimFragment) == 0x60);
+
+BoneMap *GenerateIDMaps(AnimFragment *fragment, dtp::Model *model);
+
 }

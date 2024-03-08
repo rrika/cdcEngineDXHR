@@ -7,6 +7,10 @@ namespace cdc {
 class AnimFragmentNode : public AnimPipelineNode {
 	AnimFragment *fragment; // 60
 
+	uint32_t animID; // 6C
+	uint32_t boneMapHash; // 70
+	BoneMap *boneMap = nullptr; // 74
+
 	void SetAnimData(uint16_t);
 
 public:
@@ -23,6 +27,7 @@ public:
 	// virtual void fun5C(...) { ... } // 5C
 	// virtual void fun60(...) { ... } // 60
 
+	void EnsureIDMap(dtp::Model *model);
 	void DecompressPose(AnimContextData*);
 	void DecompressFrame(AnimContextData*);
 };

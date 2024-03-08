@@ -1,4 +1,6 @@
 #include "AnimFragmentNode.h"
+// #include "cdcAnim/AnimPose.h"
+// #include "cdcWorld/cdcWorldTypes.h"
 
 namespace cdc {
 
@@ -49,11 +51,26 @@ void AnimFragmentNode::PrePhysics(AnimContextData *data) {
 	}
 }
 
+void AnimFragmentNode::EnsureIDMap(dtp::Model *model) {
+	// TODO: keep these maps in a hashmap
+	if (boneMap &&
+		animID == boneMap->animID &&
+		boneMapHash == boneMap->boneMapHash)
+		return;
+
+	if (boneMap)
+		delete boneMap;
+	boneMap = GenerateIDMaps(fragment, model);
+	
+}
+
 void AnimFragmentNode::DecompressPose(AnimContextData *data) {
+	EnsureIDMap(data->model);
 	// TODO
 }
 
 void AnimFragmentNode::DecompressFrame(AnimContextData *data) {
+	EnsureIDMap(data->model);
 	// TODO
 }
 

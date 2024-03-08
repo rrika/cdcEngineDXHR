@@ -1,6 +1,7 @@
 target_sources(dxhr PRIVATE
 	AnimComponentV2.cpp
 	AnimDecoder.cpp
+	AnimFragment.cpp
 	AnimPipelineNode.cpp
 	AnimPose.cpp
 	AnimNodes/AnimFragmentNode.cpp)
