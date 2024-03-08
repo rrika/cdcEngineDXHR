@@ -1,8 +1,13 @@
 #include "AnimComponentV2.h"
 #include "cdcAnim/AnimFragment.h"
+#include "cdcAnim/AnimNodes/AnimFragmentNode.h"
 #include "cdcAnim/IAnimGraphNode.h" // for cdc::AnimContextData
+#include "cdcKit/Animation/anitracker.h"
 #include "cdcMath/MathUtil.h"
+#include "cdcMath/VectorInlines.h"
 #include "cdcWorld/cdcWorldTypes.h" // for dtp::Model*
+#include "cdcWorld/Instance.h"
+#include "cdcWorld/Object.h"
 
 namespace cdc {
 
@@ -17,6 +22,23 @@ AnimComponentV2::AnimComponentV2(Instance *instance) :
 void AnimComponentV2::Init(dtp::Model *model) {
 	// TODO
 	this->model = model;
+
+	if (true) { // HACK
+		Object *object = instance->object;
+		AnimFragment *fragment = nullptr;
+		if (object->numAnims > 0) {
+			uint32_t animID = object->animations[0].animID;
+			int32_t i = ANITRACKER_FindAnimation(animID);
+			if (i != -1)
+				fragment = (AnimFragment*)aniTracker[i].animationData;
+		}
+
+		if (fragment) {
+			graphOutput = new AnimFragmentNode(this, fragment);
+			// poseNode = CreatePoseNode();
+			// poseNode->SetInput(0, graphOutput);
+		}
+	}
 }
 
 void AnimComponentV2::BuildTransforms() {

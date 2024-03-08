@@ -1,15 +1,16 @@
 #pragma once
-#include "../AnimFragment.h"
-#include "../AnimPipelineNode.h"
+#include "cdcAnim/AnimFragment.h"
+#include "cdcAnim/AnimPipelineNode.h"
 
 namespace cdc {
 
 class AnimFragmentNode : public AnimPipelineNode {
-	// TODO
+	AnimFragment *fragment; // 60
 
 	void SetAnimData(uint16_t);
 
 public:
+	AnimFragmentNode(AnimComponentV2 *ac, AnimFragment *fragment);
 	void Activate(Instance*, float) override;
 	void Deactivate(Instance*) override;
 	float GetNextSyncPoint(void*) override;
@@ -21,6 +22,9 @@ public:
 	// void fun58(...) override;
 	// virtual void fun5C(...) { ... } // 5C
 	// virtual void fun60(...) { ... } // 60
+
+	void DecompressPose(AnimContextData*);
+	void DecompressFrame(AnimContextData*);
 };
 
 }
