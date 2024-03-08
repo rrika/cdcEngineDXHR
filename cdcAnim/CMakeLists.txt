@@ -4,6 +4,7 @@ target_sources(dxhr PRIVATE
 	AnimFragment.cpp
 	AnimPipelineNode.cpp
 	AnimPose.cpp
+	AnimPoseNode.cpp
 	AnimNodes/AnimFragmentNode.cpp)
 
 if (ENABLE_IMGUI)
