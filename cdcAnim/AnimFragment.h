@@ -16,6 +16,12 @@ struct AnimBuffer {
 	// Quat rootQuatLog;
 };
 
+struct BoneSet {
+	float weight;
+	int16_t firstBone;
+	int16_t lastBone;
+};
+
 struct AnimFragment {
 	char pad[48];
 	int16_t mAnimID; // 30

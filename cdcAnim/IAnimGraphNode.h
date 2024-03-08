@@ -6,8 +6,17 @@ class Instance;
 
 namespace cdc {
 
+class AnimPose;
+
 struct AnimContextData {
-	// TODO
+	Instance *instance; // 0
+	dtp::Model *model; // 4
+	BoneSet *boneSet; // 8
+	float weight; // C
+	AnimPose *pose; // 10
+	// uint8_t byte14;
+	// uint8_t byte15;
+	// uint16_t word16;
 };
 
 class IAnimGraphNode {
