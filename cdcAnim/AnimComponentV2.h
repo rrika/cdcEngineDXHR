@@ -8,10 +8,13 @@ class Instance;
 namespace cdc {
 
 class IAnimGraphNode;
+struct BoneSet;
 struct Matrix;
 
 class AnimComponentV2 {
+	static BoneSet s_allBones;
 public:
+	IAnimGraphNode *graphOutput = nullptr; // 0
 	AnimPose pose; // HACK
 	dtp::Model *model = nullptr; // 20
 	Instance *instance; // 24
@@ -21,6 +24,7 @@ public:
 	AnimComponentV2(Instance *instance);
 	void Init(dtp::Model *model);
 	void BuildTransforms();
+	void PrePhysics();
 	void BuildSegTransformForRoot(Matrix&, Matrix&);
 	void BuildSegTransforms();
 };

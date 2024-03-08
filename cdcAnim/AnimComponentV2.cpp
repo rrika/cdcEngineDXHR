@@ -1,9 +1,12 @@
 #include "AnimComponentV2.h"
 #include "cdcAnim/AnimFragment.h"
+#include "cdcAnim/IAnimGraphNode.h" // for cdc::AnimContextData
 #include "cdcMath/MathUtil.h"
 #include "cdcWorld/cdcWorldTypes.h" // for dtp::Model*
 
 namespace cdc {
+
+BoneSet AnimComponentV2::s_allBones {1.0, 0, 249};
 
 AnimComponentV2::AnimComponentV2(Instance *instance) :
 	instance(instance)
@@ -14,14 +17,27 @@ AnimComponentV2::AnimComponentV2(Instance *instance) :
 void AnimComponentV2::Init(dtp::Model *model) {
 	// TODO
 	this->model = model;
-	pose.AllocSegs(model->oldNumSegments, instance, 0);
-	pose.ClearSegValues(1.0f);
 }
-
 
 void AnimComponentV2::BuildTransforms() {
 	// TODO
+	pose.AllocSegs(model->oldNumSegments, instance, 1);
+	pose.ClearSegValues(1.0);
+	PrePhysics();
+	// TODO
 	BuildSegTransforms();
+}
+
+void AnimComponentV2::PrePhysics() {
+	if (graphOutput) { // TODO
+		AnimContextData data;
+		data.instance = instance;
+		data.model = model;
+		data.boneSet = &s_allBones;
+		data.weight = 1.0f;
+		data.pose = &pose; // HACK
+		graphOutput->PrePhysics(&data); // HACK, should be called on PoseNode
+	}
 }
 
 void AnimComponentV2::BuildSegTransformForRoot(Matrix& a, Matrix& b) {
