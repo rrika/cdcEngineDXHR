@@ -1,4 +1,5 @@
 #include "AnimFragmentNode.h"
+#include "cdcAnim/AnimDecoder.h"
 #include "cdcAnim/AnimPose.h"
 #include "cdcKit/Animation/anitracker.h"
 #include "cdcWorld/cdcWorldTypes.h"
@@ -53,6 +54,9 @@ void AnimFragmentNode::Update(void*) {
 void AnimFragmentNode::PrePhysics(AnimContextData *data) {
 	if (data->weight >= 0.00001) {
 		if (data->weight != 0.0) {
+
+			EnsureDecoders(); // this should happen in Activate, but here is fine too
+
 			if (fragment) { // AnimFragment
 				if (fragment->mKeyCount == 1)
 					DecompressPose(data);
@@ -76,6 +80,17 @@ void AnimFragmentNode::EnsureIDMap(dtp::Model *model) {
 		delete boneMap;
 	boneMap = GenerateIDMaps(fragment, model);
 	
+}
+
+void AnimFragmentNode::EnsureDecoders() {
+	if (decoders || fragment == nullptr || fragment->mKeyCount == 0)
+		return;
+
+	uint32_t decoderCount = 6;
+	if (fragment->mExtraChannelCount > 0)
+		decoderCount++;
+
+	decoders = new AnimDecoder[decoderCount];
 }
 
 void AnimFragmentNode::DecompressPose(AnimContextData *data) {

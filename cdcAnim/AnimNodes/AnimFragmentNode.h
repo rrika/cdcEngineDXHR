@@ -4,12 +4,16 @@
 
 namespace cdc {
 
+class AnimComponentV2;
+class AnimDecoder;
+
 class AnimFragmentNode : public AnimPipelineNode {
 	AnimFragment *fragment; // 60
 
 	uint32_t animID; // 6C
 	uint32_t boneMapHash; // 70
 	BoneMap *boneMap = nullptr; // 74
+	AnimDecoder *decoders; // 7C
 
 	bool loop = true;
 
@@ -31,6 +35,7 @@ public:
 	// virtual void fun60(...) { ... } // 60
 
 	void EnsureIDMap(dtp::Model *model);
+	void EnsureDecoders();
 	void DecompressPose(AnimContextData*);
 	void DecompressFrame(AnimContextData*);
 };
