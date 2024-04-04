@@ -13,7 +13,7 @@ public:
 	// inherit method8
 
 	// virtual void methodC();
-	// virtual void method10();
+	virtual UberObjectSection *createSection(Instance *instance, dtp::UberObjectProp::SectionProp *info, uint32_t index); // 10
 	// virtual void method14();
 	// virtual void method18();
 	// virtual void method1C();
@@ -21,6 +21,8 @@ public:
 
 class UberObjectSection_DX3 : public UberObjectSection {
 public:
+	UberObjectSection_DX3(Instance *instance, UberObjectComposite_DX3 *composite, dtp::UberObjectProp::SectionProp *info, uint32_t index);
+
 	// void method4() override;
 	// void method8() override;
 

@@ -11,3 +11,12 @@ UberObjectComposite_DX3::UberObjectComposite_DX3(Instance *instance) :
 	CreateSections(instance);
 }
 
+UberObjectSection *UberObjectComposite_DX3::createSection(Instance *instance, dtp::UberObjectProp::SectionProp *info, uint32_t index) {
+	return new UberObjectSection_DX3(instance, this, info, index);
+}
+
+UberObjectSection_DX3::UberObjectSection_DX3(Instance *instance, UberObjectComposite_DX3 *composite, dtp::UberObjectProp::SectionProp *info, uint32_t index) :
+	UberObjectSection(instance, composite, info, index)
+{
+	// TODO
+}
