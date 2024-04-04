@@ -1320,17 +1320,26 @@ int spinnyCube(HWND window,
 				ImVec2 window_pos_pivot = {0.5f, 0.5f};
 				ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
 				bool open=true;
-				char name[64];
+				char name[128];
+				// this ensures that objects at the same position are packed into the same window
+				snprintf(name, 128, "fb%f,%f,%f", fb.pos.x, fb.pos.y, fb.pos.z);
 				auto& fbit = fb.item;
-				if (fbit.intro)
-					snprintf(name, 64, "fbx%x", (uint32_t)fbit.intro);
+				/*if (fbit.intro)
+					snprintf(name, 128, "fbx%x", (uint32_t)fbit.intro);
+				else if (fbit.renderTerrain)
+					snprintf(name, 128, "fbx%x", (uint32_t)fbit.renderTerrain);
 				else if (fbit.instance)
-					snprintf(name, 64, "fbx%x", (uint32_t)fbit.instance);
+					snprintf(name, 128, "fbx%x", (uint32_t)fbit.instance);
 				else if (fbit.imfRef)
-					snprintf(name, 64, "fbx%x", (uint32_t)fbit.imfRef);
+					snprintf(name, 128, "fbx%x", (uint32_t)fbit.imfRef);
 				else
-					snprintf(name, 64, "fb%d", i++);
+					snprintf(name, 128, "fb%d", i++);*/
 				if (ImGui::Begin(name, &open, window_flags)) {
+					ImGui::PushID((void*)(
+						uintptr_t(fbit.intro) |
+						uintptr_t(fbit.renderTerrain) |
+						uintptr_t(fbit.instance) |
+						uintptr_t(fbit.imfRef)));
 					if (ImGui::Button(fb.label.c_str())) {
 						if (fbit.intro)
 							uiact.select(fbit.intro);
@@ -1341,6 +1350,7 @@ int spinnyCube(HWND window,
 						else if (fbit.imfRef)
 							uiact.select(fbit.imfRef);
 					}
+					ImGui::PopID();
 				}
 				ImGui::End();
 			}
