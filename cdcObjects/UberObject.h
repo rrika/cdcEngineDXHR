@@ -7,6 +7,7 @@
 // but Tomb Raider later moved it to cdcObjects/ which makes more sense IMO.
 
 class Instance;
+class UberObjectSection;
 
 Instance *UBEROBJECT_BirthSectionInstance(Instance *parent, uint32_t modelIndex, uint32_t id);
 
@@ -25,7 +26,7 @@ public:
 	// virtual void method4();
 	// virtual void method8();
 	// virtual void methodC();
-	// virtual void method10();
+	virtual UberObjectSection *createSection(Instance *instance, dtp::UberObjectProp::SectionProp *info, uint32_t index); // 10
 	// virtual void method14();
 	// virtual void method18();
 	// virtual void method1C();

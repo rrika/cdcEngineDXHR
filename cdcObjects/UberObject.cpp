@@ -79,8 +79,13 @@ Instance *UberObjectComposite::CreateSectionInstance(Instance *instance, dtp::Ub
 	if (child) {
 		// TODO
 		cdc::G2Instance_SetTransformsToIdentity(child);
+		createSection(instance, info, index); // virtual call
 	}
 	return child;
+}
+
+UberObjectSection *UberObjectComposite::createSection(Instance *instance, dtp::UberObjectProp::SectionProp *info, uint32_t index) {
+	return new UberObjectSection(instance, this, info, index);
 }
 
 UberObjectSection::UberObjectSection(Instance *instance, UberObjectComposite *composite, dtp::UberObjectProp::SectionProp *info, uint32_t index) {
