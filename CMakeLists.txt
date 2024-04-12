@@ -47,7 +47,7 @@ if (NATIVE_BUILD)
 		GIT_REPOSITORY https://github.com/doitsujin/dxvk.git
 		GIT_TAG v2.2
 		PATCH_COMMAND patch -f -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/dxvk-meson.patch || true
-		CONFIGURE_COMMAND meson setup <SOURCE_DIR> --cross-file ${CMAKE_CURRENT_SOURCE_DIR}/dxvk-build-linux32.txt -Dcpp_std=c++17
+		CONFIGURE_COMMAND meson setup <SOURCE_DIR> --cross-file ${CMAKE_CURRENT_SOURCE_DIR}/dxvk-build-linux32.txt -Dcpp_std=c++20
 		BUILD_COMMAND ninja src/d3d11/libdxvk_d3d11.so
 		INSTALL_COMMAND "")
 
@@ -66,7 +66,7 @@ if (NATIVE_BUILD)
 	target_link_libraries(dxhr PRIVATE
 		dxvk_d3d11 SDL2)
 	set_target_properties(dxhr PROPERTIES
-		CXX_STANDARD 17)
+		CXX_STANDARD 20)
 
 	target_link_directories(dxhr PRIVATE
 		3rdParty/fmod)
@@ -88,7 +88,7 @@ elseif (MSVC)
 
 	set_target_properties(dxhr PROPERTIES
 		OUTPUT_NAME dxhr
-		CXX_STANDARD 17)
+		CXX_STANDARD 20)
 
 	target_sources(dxhr PRIVATE
 		res/resources.rc)
@@ -131,7 +131,7 @@ else()
 	endif()
 	set_target_properties(dxhr PROPERTIES
 		OUTPUT_NAME dxhr.exe
-		CXX_STANDARD 17)
+		CXX_STANDARD 20)
 	target_sources(dxhr PRIVATE
 		res/resources.rc)
 
