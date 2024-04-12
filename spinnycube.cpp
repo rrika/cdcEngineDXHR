@@ -1530,9 +1530,9 @@ int spinnyCube(HWND window,
 					ImGui::TableHeadersRow();
 					ImGui::TableNextRow();
 					ImGui::TableSetColumnIndex(0);
-					if (auto *vertexDecl = uiact.selectedVertexDecl) {
-						D3D11_INPUT_ELEMENT_DESC elems[vertexDecl->numAttr];
-						MakeD3DVertexElements(elems, vertexDecl->attrib, vertexDecl->numAttr, false);
+					if (auto* vertexDecl = uiact.selectedVertexDecl) {
+						std::vector<D3D11_INPUT_ELEMENT_DESC> elems(vertexDecl->numAttr);
+						MakeD3DVertexElements(elems.data(), vertexDecl->attrib, vertexDecl->numAttr, false);
 						for (uint32_t i = 0; i < vertexDecl->numAttr; i++)
 							ImGui::Text("%08x %s %d",
 								vertexDecl->attrib[i].attribKind,
