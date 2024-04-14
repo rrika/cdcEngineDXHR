@@ -84,10 +84,80 @@ Instance *UberObjectComposite::CreateSectionInstance(Instance *instance, dtp::Ub
 	return child;
 }
 
+bool UberObjectComposite::checkCondition(dtp::UberObjectProp::QueryProp&) {
+	// TODO
+	return true;
+}
+
+void UberObjectComposite::commandByName(uint32_t key) {
+	auto *prop = (dtp::UberObjectProp *)instance->objectData;
+	auto cm = prop->commandMapList;
+	for (uint32_t i=0; i<prop->numCommandMaps; i++)
+		if (cm[i].key == key)
+			return commandByIndex(cm[i].commandIndex);
+}
+
+void UberObjectComposite::commandByIndex(int index) {
+	// check in-range
+	auto *prop = (dtp::UberObjectProp *)instance->objectData;
+	if (index < 0 || index >= prop->numCommands)
+		return;
+
+	// all conditions fulfilled?
+	dtp::UberObjectProp::Command *command = &prop->commandList[index];
+	for (uint32_t i=0; i<command->numConditions; i++)
+		if (auto *cond = command->conditions[i])
+			if (checkCondition(*cond) == false)
+				return;
+
+
+	// perform all consequences
+	for (uint32_t i=0; i<command->numConsequences; i++) {
+		auto *conseq = command->consequences[i];
+		auto target = conseq->targetIndex;
+		if (target < 0 || target >= numSections)
+			continue;
+		if (sectionList[target] == 0x7FFFFFFF)
+			continue;
+		Instance *targetInstance = InstanceManager::Find(sectionList[target]);
+		if (UserDataComponent *u = targetInstance->userDataComponent)
+			if (auto uos = static_cast<UberObjectSection*>(u->userData))
+				if (uos->magic == 0xF0012345)
+					uos->method4(conseq);
+	}
+}
+
+bool UberObjectComposite::methodC(dtp::UberObjectProp::Unknown& entry, int x, void *y) {
+	for (uint32_t i=0; i<entry.numConditions; i++)
+		if (auto *cond = entry.conditions[i])
+			if (checkCondition(cond) == false)
+				return false;
+	if (!instance)
+		return false;
+	// TODO: call NsUberObjectBase::scriptMethod6(UberObjectEvent {objListIndex, x, instanceType, y->dword18});
+	return true;
+}
+
 UberObjectSection *UberObjectComposite::createSection(Instance *instance, dtp::UberObjectProp::SectionProp *info, uint32_t index) {
 	return new UberObjectSection(instance, this, info, index);
 }
 
 UberObjectSection::UberObjectSection(Instance *instance, UberObjectComposite *composite, dtp::UberObjectProp::SectionProp *info, uint32_t index) {
 	// TODO
+}
+
+void UberObjectSection::method4(dtp::UberObjectProp::Consequence& conseq) {
+	// TODO
+	switch (conseq.kind) {
+	case 1:
+		// TODO
+	case 2:
+		// TODO
+	case 3:
+		// TODO
+	case 4:
+		// TODO
+	default:
+		break;
+	}
 }
