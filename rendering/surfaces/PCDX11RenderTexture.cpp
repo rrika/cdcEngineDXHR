@@ -30,6 +30,10 @@ PCDX11RenderTexture::PCDX11RenderTexture(
 	UpdateAbsoluteSize();
 }
 
+PCDX11RenderTexture::~PCDX11RenderTexture() {
+	PCDX11RenderTexture::resFree();
+}
+
 void PCDX11RenderTexture::UpdateAbsoluteSize() {
 	if (flags & 8) { // relative size
 		uint32_t referenceWidth, referenceHeight;
