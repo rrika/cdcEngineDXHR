@@ -20,3 +20,24 @@ UberObjectSection_DX3::UberObjectSection_DX3(Instance *instance, UberObjectCompo
 {
 	// TODO
 }
+
+void UberObjectSection_DX3::method4(dtp::UberObjectProp::Consequence& conseq) {
+	// TODO
+	switch (conseq.kind) {
+	case 5:
+		// TODO
+	case 6:
+		// TODO
+	case 7:
+		// TODO
+	case 8:
+		// TODO
+	case 9:
+		// TODO
+	case 10:
+		// TODO
+	default:
+		UberObjectSection::method4(conseq);
+		break;
+	}
+}
