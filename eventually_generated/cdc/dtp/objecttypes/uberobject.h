@@ -1,11 +1,73 @@
 #pragma once
 #include <cstdint>
+#include <cstddef>
 
 namespace dtp {
 
 struct UberObjectProp {
+	struct FlagMatcher {
+		uint32_t bitIndex;
+		bool invert;
+	};
+
+	struct Transition {
+		uint32_t dword0;
+		uint32_t dword4;
+		uint32_t dword8;
+		uint32_t dwordC;
+		uint32_t dword10;
+		uint32_t dword14;
+		uint32_t dword18;
+		uint32_t dword1C;
+		uint8_t gap20[8];
+		Transition *ptr28;
+		uint32_t randIntCutoff; // 2C
+		uint32_t dword30;
+		uint32_t numFlagMatchers; // 34
+		FlagMatcher *flagMatchers; // 38
+		uint8_t randFlags; // 3C
+	};
+
+	struct SectionSub18 {
+		uint32_t kind;
+		uint32_t dword4;
+		uint32_t pad[13];
+	};
+
+	struct SectionSub28 {
+		uint32_t dword0;
+		uint32_t dword4;
+		SectionSub18 rest;
+	};
+
+	struct SectionSub {
+		uint32_t dword0;
+		uint32_t dword4;
+		uint32_t dword8;
+
+		uint32_t countC;
+		Transition **sub10;
+
+		uint32_t count14;
+		SectionSub18 *sub18; // enter
+
+		uint32_t count1C;
+		SectionSub18 *sub20; // exit
+
+		uint32_t count24;
+		SectionSub28 *sub28; // enter
+
+		uint32_t count2C;
+		SectionSub28 *sub30; // exit
+	};
 	struct SectionProp {
-		uint8_t pad[0x28];
+		uint8_t pad0[0xC];
+		uint32_t numSubs; // C
+		SectionSub *sub; // 10
+		uint32_t numTransitions; // 14
+		Transition *transitions; // 18
+		uint32_t initialState; // 1C
+		uint8_t pad20[8];
 		uint8_t modelIndex; // 28
 		uint8_t pad29[0x2F0-0x29];
 	};
@@ -28,7 +90,7 @@ struct UberObjectProp {
 		uint32_t key;
 		uint32_t commandIndex;
 	};
-	struct Unknown {
+	struct Unknown { // maintenance maybe
 		uint32_t dword0;
 		uint32_t numConditions; // 4
  		QueryProp **conditions; // 8
@@ -64,7 +126,55 @@ struct UberObjectProp {
 	QueryProp *queryList; // 34
 };
 
+struct TvSegment {
+	uint32_t dtpIndex;
+	uint32_t dword4;
+};
+
+struct Program {
+	uint32_t one;
+	uint32_t numSegments;
+	TvSegment *segments;
+};
+
+struct DoorCon {
+	bool bool0;
+	uint32_t introId;
+};
+
+struct IntroDataUberObject {
+	uint32_t type;
+	uint8_t gap4[20];
+	uint32_t *commandIndices; // 18
+	uint8_t gap1C[4];
+	uint32_t *effects20;
+	uint8_t numCommandIndices; // 24
+	uint8_t byte25;
+	uint8_t numEffects26;
+	uint8_t enable27;
+	uint32_t dword28;
+	uint8_t byte2C;
+	DoorCon *doorCon;
+	uint8_t gap34[52];
+	uint32_t *connections; // 68
+	uint32_t dword6C;
+	uint8_t gap70[8];
+	uint32_t dword78;
+	uint32_t dword7C;
+	uint32_t dword80;
+	uint32_t dword84;
+	uint32_t *defaultPrograms; // 88
+	uint8_t gap8C[76];
+	uint8_t numConnections; // D8
+	uint8_t byteD9;
+	uint8_t gapDA[4];
+	uint8_t byteDE;
+	uint8_t byteDF;
+	uint8_t numDefaultPrograms; // E0
+};
+
 static_assert(sizeof(UberObjectProp::SectionProp) == 0x2F0);
 static_assert(sizeof(UberObjectProp::Consequence) == 0x44);
+static_assert(sizeof(IntroDataUberObject) == 0xE4);
 
 }

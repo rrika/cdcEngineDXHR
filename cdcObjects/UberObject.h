@@ -6,12 +6,16 @@
 // There is a string .\game\Objects\UberObject.cpp in DXHRDC.exe suggesting this file should go there,
 // but Tomb Raider later moved it to cdcObjects/ which makes more sense IMO.
 
+struct UIActions;
 class Instance;
 class UberObjectSection;
 
 Instance *UBEROBJECT_BirthSectionInstance(Instance *parent, uint32_t modelIndex, uint32_t id);
 
 class UberObjectComposite : public ObjState {
+public:
+	uint32_t magic = 0xFEA51B1E; // 50
+private:
 	Instance *instance; // 54
 	bool createdSections = false; // 5D
 	uint32_t sectionsIntroUniqueID = ~0u; // 60
@@ -37,6 +41,8 @@ public:
 class UberObjectSection : public ObjState {
 public:
 	uint32_t magic = 0xF0012345; // 50
+	dtp::UberObjectProp::SectionProp *sectionProp; // 5C
+	int32_t currentState = -1; // 6C
 
 public:
 	UberObjectSection(Instance *instance, UberObjectComposite *composite, dtp::UberObjectProp::SectionProp *info, uint32_t index);
@@ -45,7 +51,7 @@ public:
 	virtual void method4(dtp::UberObjectProp::Consequence& conseq);
 	// virtual void method8();
 	// virtual void methodC();
-	// virtual void method10();
+	// virtual void setState(uint32_t, bool); // 10
 	// virtual void method14();
 	// virtual void method18();
 	// virtual void write(BinaryWriter&); // 1C
@@ -54,3 +60,7 @@ public:
 	// virtual void method28();
 	// virtual void method2C();
 };
+
+#if ENABLE_IMGUI
+void buildUI(UIActions&, dtp::UberObjectProp*);
+#endif
