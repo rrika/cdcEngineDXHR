@@ -13,6 +13,8 @@
 #include "../imgui/imgui.h"
 #include "cdcResource/ResolveSection.h"
 #include "cdcWorld/Object.h"
+#include "cdc/dtp/objecttypes/uberobject.h"
+#include "UberObject.h"
 #endif
 
 #ifndef _WIN32
@@ -297,6 +299,12 @@ uint32_t buildUI(UIActions& uiact, cdc::Object *obj) {
 			uiact.select(mesh);
 		ImGui::PopID();
 	}
+
+	if (objFamily == 2) {
+		auto *uberProp = (dtp::UberObjectProp*) objProp;
+		buildUI(uiact, uberProp);
+	}
+
 #endif
 	return objFamily;
 }

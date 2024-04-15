@@ -5,12 +5,53 @@
 #include "game/LensFlareAndCoronaID.h"
 #include "rendering/CommonMaterial.h"
 #include "rendering/MaterialData.h"
+#include "cdcResource/DTPDataSection.h"
 #include "cdcResource/ResolveSection.h"
 #include "cdcSound/SoundPlex.h"
 #include "cdcObjects/ObjectManager.h"
+#include "cdcObjects/UberObject.h"
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Object.h"
 #include "UIActions.h"
+
+void buildUI(UIActions& uiact, dtp::IntroDataUberObject *extra) {
+	if (extra->doorCon)
+		ImGui::Text("door connection to %d/0x%x %d", extra->doorCon->introId, extra->doorCon->introId, extra->doorCon->bool0);
+	ImGui::Text("%d connections", extra->numConnections);
+	for (uint32_t i=0; i<extra->numConnections; i++) {
+		uint32_t *c = extra->connections + (3*i);
+		ImGui::Text("%d instance %d command %d",
+			c[0], c[1], c[2]);
+	}
+	ImGui::Text("%d startup commands", extra->numCommandIndices);
+	for (uint32_t i=0; i<extra->numCommandIndices; i++)
+		ImGui::Text("command %d", extra->commandIndices[i]);
+
+	ImGui::Text("%d default programs", extra->numDefaultPrograms);
+	for (uint32_t i=0; i<extra->numDefaultPrograms; i++) {
+		uint32_t programDtp = extra->defaultPrograms[i];
+		ImGui::Text("program %d: %x", i, programDtp);
+		if (auto *program = static_cast<dtp::Program*>(DTPDataSection::getPointer(programDtp))) {
+			ImGui::Indent();
+			for (uint32_t j=0; j<program->numSegments; j++) {
+				ImGui::Text("dtpIndex %x", program->segments[j].dtpIndex);
+				struct Dummy0 { uint32_t soundPlexDtp; };
+				struct Dummy1 { uint32_t dword0; Dummy0 *ptr; };
+				struct Dummy2 { Dummy1 *ptr; };
+				struct Dummy3 { uint32_t pad0[3]; Dummy2 *ptr; };
+				auto *dummy3  = static_cast<Dummy3*>(DTPDataSection::getPointer(program->segments[j].dtpIndex));
+				uint32_t soundPlexDtp = dummy3->ptr->ptr->ptr->soundPlexDtp;
+				ImGui::Text("soundPlexDtp %x", soundPlexDtp);
+				auto *soundPlex = static_cast<dtp::SoundPlex*>(DTPDataSection::getPointer(soundPlexDtp));
+				if (soundPlex) {
+					std::function<void(cdc::SoundHandle)> ignore = [](cdc::SoundHandle){};
+					buildUI(soundPlex, &ignore);
+				}
+			}
+			ImGui::Unindent();
+		}
+	}
+}
 
 void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
 	// material
@@ -127,7 +168,11 @@ void buildUI(UIActions& uiact, dtp::Intro *intro) {
 	if (cdc::Object *object = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(intro->objectListIndex))) {
 		uint32_t objFamily = buildUI(uiact, object);
 
-		if (objFamily == 0x50) {
+		if (objFamily == 2) {
+			auto *extraData = (dtp::IntroDataUberObject*) intro->extraData1;
+			buildUI(uiact, extraData);
+
+		} else if (objFamily == 0x50) {
 			auto *extraData = (DeferredRenderingExtraData*) intro->extraData1;
 			buildUI(uiact, extraData);
 
@@ -168,6 +213,35 @@ void buildUI(UIActions& uiact, Instance *instance) {
 				c3d.position[1] = instance->position.y;
 				c3d.position[2] = instance->position.z;
 			}
+	}
+
+	UberObjectComposite *uberObjectComposite = nullptr;
+	UberObjectSection *uberObjectSection = nullptr;
+	if (UserDataComponent *u = instance->userDataComponent) {
+	 	uberObjectComposite = static_cast<UberObjectComposite*>(u->userData);
+		if (uberObjectComposite->magic != 0xFEA51B1E)
+			uberObjectComposite = nullptr;
+
+	 	uberObjectSection = static_cast<UberObjectSection*>(u->userData);
+		if (uberObjectSection->magic != 0xF0012345)
+			uberObjectSection = nullptr;
+	}
+	if (uberObjectComposite && ImGui::CollapsingHeader("UberObjectComposite", ImGuiTreeNodeFlags_DefaultOpen)) {
+		// TODO
+	}
+	if (uberObjectSection && ImGui::CollapsingHeader("UberObjectSection", ImGuiTreeNodeFlags_DefaultOpen)) {
+		const char *names[] = {
+			"State 0",
+			"State 1"
+		};
+		if (ImGui::BeginListBox("##states")) {
+			for (uint32_t i=0; i<uberObjectSection->sectionProp->numSubs; i++) {
+				const bool is_selected = i == uberObjectSection->currentState;
+				if (ImGui::Selectable(i < 2 ? names[i] : "State", is_selected))
+					/*TODO*/;
+			}
+			ImGui::EndListBox();
+		}
 	}
 	// if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
 	// 	// TODO

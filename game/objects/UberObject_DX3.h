@@ -28,7 +28,7 @@ public:
 
 	// inherit methodC
 
-	// void method10() override;
+	// void setState(uint32_t, bool) override; // 10
 	// void method14() override;
 	// void method18() override;
 	// void write(BinaryWriter&) override; // 1C
