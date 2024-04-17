@@ -79,7 +79,7 @@ static void UpdateInstances() { // 2052
 
 		if (i->sceneEntity) {
 			SceneEntity::UpdateState us;
-			us.updateFlags = 8; // update the matrix
+			us.updateFlags = SceneEntity::UpdateState::kMatrix /*8*/;
 
 			// m_matrix[-1] is populated with the entity transform
 			// m_matrix[0] is derived from it
@@ -88,6 +88,15 @@ static void UpdateInstances() { // 2052
 
 			auto& transformComponent = i->GetTransformComponent();
 			us.matrix = transformComponent.m_matrix[0];
+
+			if (id->QueryNoDraw()) {
+				us.updateFlags |= SceneEntity::UpdateState::kEnabled /*1*/;
+				us.enabled = false;
+			} else {
+				us.updateFlags |= SceneEntity::UpdateState::kEnabled /*1*/;
+				us.enabled = true;
+			}
+
 			i->sceneEntity->ApplyUpdateState(&us);
 		}
 

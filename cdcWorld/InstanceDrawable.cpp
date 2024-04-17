@@ -90,6 +90,26 @@ InstanceDrawable::InstanceDrawable(Instance *instance) :
 	AddToDirtyList();
 }
 
+void InstanceDrawable::EnableNoDraw() {
+	bool before = QueryNoDraw();
+	flags |= 4;
+	bool after = QueryNoDraw();
+	if (before != after)
+		AddToDirtyList();
+}
+
+void InstanceDrawable::DisableNoDraw() {
+	bool before = QueryNoDraw();
+	flags &= ~4;
+	bool after = QueryNoDraw();
+	if (before != after)
+		AddToDirtyList();
+}
+
+bool InstanceDrawable::QueryNoDraw() const {
+	return (flags & 0xF4) != 0;
+}
+
 void InstanceDrawable::GetBoundingVolume(BasicCullingVolume *volume) {
 
 	Vector center, min, max;

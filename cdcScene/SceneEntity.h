@@ -15,6 +15,7 @@ public:
 	Scene *scene; // 4
 	uint32_t entityIndex; // 8
 	Matrix matrix; // 20
+	bool enabled = true; // 64
 	IDrawable *drawable = nullptr; // 6C
 	SceneCellGroup *sceneCellGroup = nullptr; // 70
 	BasicCullingVolume cullingVolume; // F0

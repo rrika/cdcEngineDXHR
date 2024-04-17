@@ -46,6 +46,8 @@ UberObjectComposite::UberObjectComposite(Instance *instance, bool deferSectionIn
 	this->instance = instance;
 	// TODO
 
+	((cdc::InstanceDrawable*)instance->instanceDrawable)->EnableNoDraw();
+
 	numSections = prop->numSections;
 	sectionList = new int32_t[numSections];
 	for (uint32_t i=0; i<numSections; i++)

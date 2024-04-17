@@ -54,6 +54,9 @@ public:
 	static InstanceDrawable *s_pLastDirty;
 
 	InstanceDrawable(Instance *i);
+	void EnableNoDraw();
+	void DisableNoDraw();
+	bool QueryNoDraw() const;
 
 	void GetBoundingVolume(cdc::BasicCullingVolume*) override;
 	void draw(cdc::Matrix *, float) override;
