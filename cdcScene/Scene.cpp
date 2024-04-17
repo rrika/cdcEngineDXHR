@@ -97,7 +97,7 @@ void Scene::RenderWithoutCellTracing(RenderViewport& viewport) { // line 1399
 	// TODO
 	for (SceneEntity *entity: m_entities) {
 		// TODO
-		if (entity->drawable &&
+		if (entity->drawable && entity->enabled &&
 			Intersects(entity->cullingVolume, cullingFrustum))
 			entity->drawable->draw(&entity->matrix, /*TODO*/ 0.0f);
 	}

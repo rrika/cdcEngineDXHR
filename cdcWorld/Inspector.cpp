@@ -7,6 +7,7 @@
 #include "rendering/MaterialData.h"
 #include "cdcResource/DTPDataSection.h"
 #include "cdcResource/ResolveSection.h"
+#include "cdcScene/SceneEntity.h"
 #include "cdcSound/SoundPlex.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcObjects/UberObject.h"
@@ -15,6 +16,10 @@
 #include "UIActions.h"
 
 void buildUI(UIActions& uiact, dtp::IntroDataUberObject *extra) {
+	if (!extra) {
+		ImGui::Text("no extra data");
+		return;
+	}
 	if (extra->doorCon)
 		ImGui::Text("door connection to %d/0x%x %d", extra->doorCon->introId, extra->doorCon->introId, extra->doorCon->bool0);
 	ImGui::Text("%d connections", extra->numConnections);
@@ -163,10 +168,10 @@ void buildUI(UIActions& uiact, LensFlareAndCoronaExtraData *extra) {
 	ImGui::Text("material %p", extra->material);
 }
 
-void buildUI(UIActions& uiact, dtp::Intro *intro) {
+void buildUI(UIActions& uiact, dtp::Intro *intro, Instance *instance) {
 	auto *objectSection = cdc::g_resolveSections[11];
 	if (cdc::Object *object = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(intro->objectListIndex))) {
-		uint32_t objFamily = buildUI(uiact, object);
+		uint32_t objFamily = buildUI(uiact, object, instance);
 
 		if (objFamily == 2) {
 			auto *extraData = (dtp::IntroDataUberObject*) intro->extraData1;
@@ -189,11 +194,12 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			instance->position.x,
 			instance->position.y,
 			instance->position.z);
-		ImGui::Text("SceneEntity      %p", instance->sceneEntity);
-		ImGui::Text("InstanceDrawable %p", instance->instanceDrawable);
+		ImGui::Text("SceneEntity      %p (enabled=%d)", instance->sceneEntity, instance->sceneEntity ?  instance->sceneEntity->enabled : 2);
+		ImGui::Text("InstanceDrawable %p (nodraw=%d)", instance->instanceDrawable, ((cdc::InstanceDrawable*)instance->instanceDrawable)->QueryNoDraw());
 	}
 	if (ImGui::CollapsingHeader("Intro", ImGuiTreeNodeFlags_DefaultOpen)) {
-		buildUI(uiact, instance->intro);
+		ImGui::Text("uniqueID %d/0x%x", instance->intro->uniqueID, instance->intro->uniqueID);
+		buildUI(uiact, instance->intro, instance);
 	}
 	if (instance->intro == nullptr && ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
 		buildUI(uiact, instance->object);
@@ -230,15 +236,14 @@ void buildUI(UIActions& uiact, Instance *instance) {
 		// TODO
 	}
 	if (uberObjectSection && ImGui::CollapsingHeader("UberObjectSection", ImGuiTreeNodeFlags_DefaultOpen)) {
-		const char *names[] = {
-			"State 0",
-			"State 1"
-		};
+		char buffer[10];
 		if (ImGui::BeginListBox("##states")) {
-			for (uint32_t i=0; i<uberObjectSection->sectionProp->numSubs; i++) {
+			for (uint32_t i=0; i<uberObjectSection->sectionProp->numStates; i++) {
 				const bool is_selected = i == uberObjectSection->currentState;
-				if (ImGui::Selectable(i < 2 ? names[i] : "State", is_selected))
-					/*TODO*/;
+				snprintf(buffer, sizeof(buffer), "State %d", i);
+				if (ImGui::Selectable(buffer, is_selected)) {
+					uberObjectSection->setState(i, false);
+				}
 			}
 			ImGui::EndListBox();
 		}

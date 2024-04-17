@@ -17,6 +17,7 @@ void SceneEntity::ApplyUpdateState(UpdateState *updateState) {
 	// but TransformVolumeAndPivot can't move the culling volume away from origin
 
 	if (updateState->updateFlags & UpdateState::kEnabled) {
+		enabled = updateState->enabled;
 		// TODO
 	}
 

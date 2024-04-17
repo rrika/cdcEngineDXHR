@@ -36,6 +36,7 @@ public:
 	cdc::Euler rotation; // 30
 	// scale is in transformComponent
 
+	Instance *owner = nullptr;
 	void *objectData; // 4C
 
 	dtp::Model **modelsOverride = nullptr; // 5C
@@ -81,4 +82,6 @@ public:
 
 	void InitEditorPose(dtp::Model *model); // HACK
 	void BuildEditorTransforms(cdc::Matrix *matrix); // HACK
+	bool IsUsable(); // HACK
+	void Use(); // HACK
 };

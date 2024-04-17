@@ -22,7 +22,7 @@ public:
 		uint32_t updateFlags;
 		bool enabled;
 		IDrawable *drawable;
-		SceneCellGroup *cellGroup;
+		ISceneCellGroup *cellGroup;
 		Matrix matrix;
 		uint32_t moveState;
 	};
