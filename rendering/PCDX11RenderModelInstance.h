@@ -28,6 +28,7 @@ public:
 	void resMethod10() override { /*empty*/ };
 
 	PCDX11RenderModel const *GetRenderMesh() const override { return static_cast<PCDX11RenderModel*>(renderMesh); } // 18, covariant here for our convenience
+	void setMaterial(uint32_t, IMaterial*) override; // 28
 	void recordDrawables(IMatrixState*) override; // 84
 
 private:

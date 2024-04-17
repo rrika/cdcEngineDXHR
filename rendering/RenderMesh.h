@@ -79,7 +79,7 @@ struct PrimGroup {
 	uint32_t triangleCount; // 14
 	uint32_t dword18;
 	uint32_t flags; // 1C
-	uint32_t dword20;
+	uint32_t dword20; // used by material assignment function to select
 	uint32_t dword24;
 	IMaterial *material; // 28, index patched to pointer
 	uint32_t dword2C; // index into fourBase, patched to pointer

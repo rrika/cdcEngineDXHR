@@ -1405,7 +1405,7 @@ int spinnyCube(HWND window,
 						ImGui::Text("  group %d", pg);
 						cdc::PrimGroup *group = &model->primGroups[pg];
 						ImGui::SameLine();
-						ImGui::Text(": flags %02x passMask", group->flags); ImGui::SameLine();
+						ImGui::Text(": flags %02x dword20 %08x passMask", group->flags, group->dword20); ImGui::SameLine();
 						UIPassMask(nppg[pg].mask8); ImGui::SameLine();
 						ImGui::Text(" %d tris", group->triangleCount); ImGui::SameLine();
 						if (ImGui::SmallButton("vertexdecl/material")) {
