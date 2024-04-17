@@ -1774,10 +1774,10 @@ int spinnyCube(HWND window,
 				for (uint32_t i=0; i < admd->numObjects; i++) {
 					auto &intro = admd->objects[i];
 					auto oid = intro.objectListIndex;
-					auto name = oid >= cdc::g_objectManager->objectList->count
-						? "???": cdc::g_objectManager->objectList->entries[oid].name;
-					ImGui::Text("  [%3d] intro %s (%d) %f",
-						i, name, oid, intro.scale[0]);
+					auto name =oid >= cdc::g_objectManager->objectList->count
+						? "???" : cdc::objectName(intro.objectListIndex);
+					ImGui::Text("  [%3d] intro %s (%d) %d/0x%x",
+						i, name, oid, intro.uniqueID, intro.uniqueID);
 					ImGui::PushID(i);
 					ImGui::SameLine();
 					if (ImGui::SmallButton("Teleport to")) {

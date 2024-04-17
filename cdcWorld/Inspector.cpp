@@ -148,6 +148,7 @@ void buildUI(UIActions& uiact, Instance *instance) {
 		ImGui::Text("InstanceDrawable %p", instance->instanceDrawable);
 	}
 	if (ImGui::CollapsingHeader("Intro", ImGuiTreeNodeFlags_DefaultOpen)) {
+		ImGui::Text("uniqueID %d/0x%x", instance->intro->uniqueID, instance->intro->uniqueID);
 		buildUI(uiact, instance->intro);
 	}
 	if (instance->intro == nullptr && ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
