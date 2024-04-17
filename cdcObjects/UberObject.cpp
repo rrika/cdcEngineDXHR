@@ -1,5 +1,8 @@
+#include <cstdio>
 #include "config.h"
 #include "cdcAnim/AnimComponentV2.h"
+#include "cdcSound/SoundPlex.h"
+#include "cdcResource/DTPDataSection.h"
 #include "cdcWorld/Object.h"
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/InstanceManager.h"
@@ -8,6 +11,7 @@
 #include "UberObject.h"
 
 #if ENABLE_IMGUI
+#include "cdcResource/ResolveSection.h"
 #include "../imgui/imgui.h"
 #endif
 
@@ -34,6 +38,7 @@ Instance *UBEROBJECT_BirthSectionInstance(Instance *parent, uint32_t modelIndex,
 
 	// TODO
 
+	instance->owner = parent;
 	dtp::ObjectBaseData *dtpData = instance->object->dtpData;
 	if (dtpData->hasAnimGraph || dtpData->numHostedAnimGraphs) {
 		dtp::Model *model = instance->GetModels()[modelIndex];
@@ -96,6 +101,36 @@ bool UberObjectComposite::checkCondition(dtp::UberObjectProp::QueryProp&) {
 	return true;
 }
 
+void UberObjectComposite::notifyEntry(UberObjectSection *section, uint32_t state) {
+	// TODO: call methodC
+	printf("notifyEntry %d\n", state);
+}
+
+void UberObjectComposite::notifyExit(UberObjectSection *section, uint32_t state) {
+	// TODO: call methodC
+	printf("notifyExit %d\n", state);
+}
+
+void UberObjectComposite::notifyTransition(UberObjectSection *section, uint32_t transition) {
+	// TODO: call methodC
+	printf("notifyTransition %d\n", transition);
+}
+
+void UberObjectComposite::notifyInterruption(UberObjectSection *section, uint32_t transition) {
+	// TODO: call methodC
+	printf("notifyInterruption %d\n", transition);
+}
+
+UberObjectComposite *UberObjectComposite::GetComposite(Instance *instance) {
+	// confirm this
+	if (auto *ud = instance->userDataComponent)
+		if (auto *composite = static_cast<UberObjectComposite*>(ud->userData))
+			if (composite->magic == 0xFEA51B1E)
+				return composite;
+
+	return nullptr;
+}
+
 void UberObjectComposite::commandByName(uint32_t key) {
 	auto *prop = (dtp::UberObjectProp *)instance->objectData;
 	auto cm = prop->commandMapList;
@@ -149,10 +184,77 @@ UberObjectSection *UberObjectComposite::createSection(Instance *instance, dtp::U
 	return new UberObjectSection(instance, this, info, index);
 }
 
-UberObjectSection::UberObjectSection(Instance *instance, UberObjectComposite *composite, dtp::UberObjectProp::SectionProp *info, uint32_t index) {
+UberObjectSection::UberObjectSection(Instance *instance, UberObjectComposite *composite, dtp::UberObjectProp::SectionProp *info, uint32_t index) :
+	instance(instance)
+{
 	// TODO
 	sectionProp = info;
 	UserDataComponent::CreateIfNeeded(instance)->userData = this;
+	currentState = info->initialState;
+	entryActions(false);
+}
+
+void UberObjectSection::entryActions(bool b) {
+	auto& state = sectionProp->states[currentState];
+	if (state.numEntry || state.numCondEntry)
+		runActionsLists(
+			state.entry, state.numEntry,
+			state.condEntry, state.numCondEntry,
+			b);
+	UberObjectComposite::GetComposite(instance->owner)->notifyEntry(this, currentState);
+}
+
+void UberObjectSection::exitActions(bool b) {
+	auto& state = sectionProp->states[currentState];
+	if (state.numExit || state.numCondExit)
+		runActionsLists(
+			state.exit, state.numExit,
+			state.condExit, state.numCondExit,
+			b);
+	UberObjectComposite::GetComposite(instance->owner)->notifyExit(this, currentState);
+}
+
+void UberObjectSection::runActionsLists(
+	dtp::UberObjectProp::Action *actions, uint32_t numActions,
+	dtp::UberObjectProp::CondAction *condActions, uint32_t numCondActions,
+	bool b
+) {
+	// HACK
+	for (uint32_t i=0; i<numActions; i++)
+		doAction(actions[i]);
+	for (uint32_t i=0; i<numCondActions; i++)
+		doAction(condActions[i].action);
+	(void) b;
+}
+
+dtp::UberObjectProp::Transition *UberObjectSection::GetUseTransition() {
+	if (currentState < 0)
+		return nullptr;
+	auto& state = sectionProp->states[currentState];
+	for (uint32_t i=0; i < state.numTransitions; i++) {
+		auto tr = state.transitions[i];
+		if (tr->dword18 == 19)
+			return tr;
+	}
+	return nullptr;
+}
+
+bool UberObjectSection::IsUsable() {
+	return GetUseTransition() != nullptr;
+}
+
+void UberObjectSection::Use() {
+	setState(GetUseTransition()->nextState, false);
+}
+
+UberObjectSection *UberObjectSection::GetSection(Instance *instance) {
+	// confirm this
+	if (auto *ud = instance->userDataComponent)
+		if (auto *section = static_cast<UberObjectSection*>(ud->userData))
+			if (section->magic == 0xF0012345)
+				return section;
+
+	return nullptr;
 }
 
 void UberObjectSection::method4(dtp::UberObjectProp::Consequence& conseq) {
@@ -171,8 +273,41 @@ void UberObjectSection::method4(dtp::UberObjectProp::Consequence& conseq) {
 	}
 }
 
+void UberObjectSection::setState(uint32_t nextState, bool b) {
+	// HACK
+	if (currentState >= 0 && currentState < sectionProp->numStates)
+		exitActions(false);
+	currentState = nextState;
+	entryActions(b);
+}
+
+void UberObjectSection::doAction(dtp::UberObjectProp::Action& action) { // method 18
+	printf("action %d\n", action.kind);
+	switch (action.kind) {
+		case 61: {
+			auto *mtpu = (dtp::MaterialTextureParamUpdate*) &action.dword4;
+			if (mtpu->assignInstanceParam)
+				/*TODO*/;
+			if (mtpu->assignTexture)
+				/*TODO*/;
+			if (mtpu->assignMaterial) {
+				auto *rmi = ((cdc::InstanceDrawable*)instance->instanceDrawable)->getModelInstance();
+				auto *material = (cdc::IMaterial*)cdc::g_resolveSections[10]->GetBasePointer(mtpu->materialId);
+				rmi->setMaterial(mtpu->materialPrimGroupSelector, material);
+			}
+			break;
+		}
+		case 28: {
+			if (auto *soundPlex = static_cast<dtp::SoundPlex*>(DTPDataSection::getPointer(action.dword4)))
+				cdc::SOUND_StartPaused(soundPlex, /*delay=*/ 0.0f);
+
+			break;
+		}
+	}
+}
+
 #if ENABLE_IMGUI
-static void buildUI(UIActions& uiact, dtp::UberObjectProp::SectionSub18& sub18) {
+static void buildUI(UIActions& uiact, dtp::UberObjectProp::Action& sub18, Instance *instance=nullptr) {
 	switch (sub18.kind) {
 	case 2:
 	case 3:
@@ -205,7 +340,26 @@ static void buildUI(UIActions& uiact, dtp::UberObjectProp::SectionSub18& sub18) 
 	}
 	case 61: {
 		ImGui::SameLine();
-		ImGui::Text("drawable setup");
+		auto *mtpu = (dtp::MaterialTextureParamUpdate*) &sub18.dword4;
+		if (instance) {
+			ImGui::PushID(&sub18);
+			if (ImGui::SmallButton("drawable updates")) {
+				auto *rmi = ((cdc::InstanceDrawable*)instance->instanceDrawable)->getModelInstance();
+				auto *material = (cdc::IMaterial*)cdc::g_resolveSections[10]->GetBasePointer(mtpu->materialId);
+				rmi->setMaterial(mtpu->materialPrimGroupSelector, material);
+			}
+			ImGui::PopID();
+		} else {
+			ImGui::Text("drawable updates");
+		}
+		ImGui::Indent();
+		if (mtpu->assignInstanceParam)
+			ImGui::Text("assignInstanceParam %d", mtpu->instanceParamIndex);
+		if (mtpu->assignTexture)
+			ImGui::Text("assignTexture %d %d %x", mtpu->texturePrimGroupSelector, mtpu->textureSlot, mtpu->textureId);
+		if (mtpu->assignMaterial)
+			ImGui::Text("assignMaterial %d %x", mtpu->materialPrimGroupSelector, mtpu->materialId);
+		ImGui::Unindent();
 		break;
 	}
 	case 0: {
@@ -215,7 +369,12 @@ static void buildUI(UIActions& uiact, dtp::UberObjectProp::SectionSub18& sub18) 
 	}
 	case 28: {
 		ImGui::SameLine();
-		ImGui::Text("sound related (dtp %x)", sub18.dword4);
+		ImGui::Text("play soundplex %x", sub18.dword4);
+		auto *soundPlex = static_cast<dtp::SoundPlex*>(DTPDataSection::getPointer(sub18.dword4));
+		if (soundPlex) {
+			std::function<void(cdc::SoundHandle)> ignore = [](cdc::SoundHandle){};
+			buildUI(soundPlex, &ignore);
+		}
 		break;
 	}
 	case 33: {
@@ -256,7 +415,7 @@ static void buildUI(UIActions& uiact, dtp::UberObjectProp::QueryProp *query) {
 	ImGui::Text("Condition");
 }
 
-static void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, dtp::UberObjectProp::Consequence& conseq) {
+static void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, dtp::UberObjectProp::Consequence& conseq, Instance *instance=nullptr) {
 	ImGui::Text("consequence for %d:",
 		conseq.targetSection);
 		ImGui::SameLine();
@@ -270,7 +429,7 @@ static void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, dtp::UberOb
 		uint32_t gti = *(uint32_t*)(&conseq.pad[0]);
 		dtp::UberObjectProp::SectionProp *sectionProp = &uberProp->sectionList[conseq.targetSection];
 		auto& trans = sectionProp->transitions[gti];
-		ImGui::Text("trigger transition %d towards %d", gti, trans.dword4);
+		ImGui::Text("trigger transition %d towards %d", gti, trans.nextState);
 		break;
 	}
 	case 3: {
@@ -290,9 +449,9 @@ static void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, dtp::UberOb
 		break;
 	}
 	case 6: {
-		auto *sub18 = (dtp::UberObjectProp::SectionSub18*)conseq.pad;
+		auto *sub18 = (dtp::UberObjectProp::Action*)conseq.pad;
 		ImGui::Text("sub18 %d", sub18->kind);
-		buildUI(uiact, *sub18);
+		buildUI(uiact, *sub18, instance);
 		break;
 	}
 	case 7: {
@@ -310,46 +469,41 @@ static void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, dtp::UberOb
 	}
 }
 
-void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp) {
+void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, Instance *instance) {
 	ImGui::Indent();
 	for (uint32_t i=0; i < uberProp->numSections; i++) {
 		auto& section = uberProp->sectionList[i];
 		ImGui::Text("Section %d: modelIndex=%d initialState=%d", i, section.modelIndex, section.initialState);
 		ImGui::Indent();
-		for (uint32_t j=0; j < section.numSubs; j++) {
-			auto& sub = section.sub[j];
-			ImGui::Text("State %d: %x %x %x countC %d count14 %d count1C %d count24 %d count2C %d", j,
-				sub.dword0,
-				sub.dword4,
-				sub.dword8,
-				sub.countC,
-				sub.count14,
-				sub.count1C,
-				sub.count24,
-				sub.count2C);
+		for (uint32_t j=0; j < section.numStates; j++) {
+			auto& state = section.states[j];
+			ImGui::Text("State %d: %x %x %x", j,
+				state.dword0,
+				state.dword4,
+				state.dword8);
 			ImGui::Indent();
-			for (uint32_t k=0; k < sub.countC; k++) {
-				auto& sub10 = *sub.sub10[k];
+			for (uint32_t k=0; k < state.numTransitions; k++) {
+				auto& tr = *state.transitions[k];
 				ImGui::Text("transition[%d] -> state %d %d %d", k,
-					sub10.dword4,
-					sub10.dword18,
-					sub10.dword1C);
+					tr.nextState,
+					tr.dword18,
+					tr.dword1C);
 			}
-			for (uint32_t k=0; k < sub.count14; k++) {
-				ImGui::Text("enter[%d] %d", k, sub.sub18[k].kind);
-				buildUI(uiact, sub.sub18[k]);
+			for (uint32_t k=0; k < state.numEntry; k++) {
+				ImGui::Text("entry[%d] %d", k, state.entry[k].kind);
+				buildUI(uiact, state.entry[k], instance);
 			}
-			for (uint32_t k=0; k < sub.count1C; k++) {
-				ImGui::Text("exit[%d] %d", k, sub.sub20[k].kind);
-				buildUI(uiact, sub.sub20[k]);
+			for (uint32_t k=0; k < state.numExit; k++) {
+				ImGui::Text("exit[%d] %d", k, state.exit[k].kind);
+				buildUI(uiact, state.exit[k], instance);
 			}
-			for (uint32_t k=0; k < sub.count24; k++) {
-				ImGui::Text("cond enter[%d] %d", k, sub.sub28[k].rest.kind);
-				buildUI(uiact, sub.sub28[k].rest);
+			for (uint32_t k=0; k < state.numCondEntry; k++) {
+				ImGui::Text("cond entry[%d] %d", k, state.condEntry[k].action.kind);
+				buildUI(uiact, state.condEntry[k].action, instance);
 			}
-			for (uint32_t k=0; k < sub.count2C; k++) {
-				ImGui::Text("cond exit[%d] %d", k, sub.sub30[k].rest.kind);
-				buildUI(uiact, sub.sub30[k].rest);
+			for (uint32_t k=0; k < state.numCondExit; k++) {
+				ImGui::Text("cond exit[%d] %d", k, state.condExit[k].action.kind);
+				buildUI(uiact, state.condExit[k].action, instance);
 			}
 			ImGui::Unindent();
 		}
@@ -367,7 +521,7 @@ void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp) {
 			buildUI(uiact, cmd.conditions[j]);
 		}
 		for (uint32_t j=0; j < cmd.numConsequences; j++) {
-			buildUI(uiact, uberProp, cmd.consequences[j]);
+			buildUI(uiact, uberProp, cmd.consequences[j], instance);
 		}
 		ImGui::Unindent();
 	}

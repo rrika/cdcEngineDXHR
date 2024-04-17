@@ -51,6 +51,7 @@
 #include "cdcMath/Math.h" // for cdc::Matrix
 #include "cdcMath/VectorInlines.h"
 #include "cdcObjects/ObjectManager.h" // for buildObjectsUI
+#include "cdcObjects/UberObject.h"
 #include "postprocessing/PPManager.h"
 #include "cdcRender/buffers/PCDX11ConstantBufferPool.h"
 #include "cdcRender/buffers/PCDX11IndexBuffer.h"
@@ -1477,7 +1478,7 @@ int spinnyCube(HWND window,
 			ImGui::End();
 		}
 
-		if (!mouseLook && showIntroButtons) {
+		if (!mouseLook) {
 
 			std::vector<FloatingButton> fbs2;
 
@@ -1514,19 +1515,38 @@ int spinnyCube(HWND window,
 				ImVec2 window_pos_pivot = {0.5f, 0.5f};
 				ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
 				bool open=true;
-				char name[64];
+				char name[128];
+				// this ensures that objects at the same position are packed into the same window
+				snprintf(name, 128, "fb%f,%f,%f", fb.pos.x, fb.pos.y, fb.pos.z);
 				auto& fbit = fb.item;
 				if (ImGui::Begin(name, &open, window_flags)) {
-					if (ImGui::Button(fb.label.c_str())) {
-						if (fbit.intro)
-							uiact.select(fbit.intro);
-						else if (fbit.renderTerrain)
-							uiact.select(fbit.renderTerrain);
-						else if (fbit.instance)
-							uiact.select(fbit.instance);
-						else if (fbit.imfRef)
-							uiact.select(fbit.imfRef);
+					ImGui::PushID((void*)(
+						uintptr_t(fbit.intro) |
+						uintptr_t(fbit.renderTerrain) |
+						uintptr_t(fbit.instance) |
+						uintptr_t(fbit.imfRef)));
+					/*if (fbit.instance && UberObjectComposite::GetComposite(fbit.instance))
+						;
+					else*/ if (showIntroButtons) {
+						if (ImGui::Button(fb.label.c_str())) {
+							if (fbit.intro)
+								uiact.select(fbit.intro);
+							else if (fbit.renderTerrain)
+								uiact.select(fbit.renderTerrain);
+							else if (fbit.instance)
+								uiact.select(fbit.instance);
+							else if (fbit.imfRef)
+								uiact.select(fbit.imfRef);
+						}
+					} else {
+						if (fbit.instance && fbit.instance->IsUsable()) {
+							if (ImGui::Button("Use")) {
+								uiact.select(fbit.instance);
+								fbit.instance->Use();
+							}
+						}
 					}
+					ImGui::PopID();
 				}
 				ImGui::End();
 			}

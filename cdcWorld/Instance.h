@@ -39,6 +39,7 @@ public:
 	cdc::Euler rotation; // 30
 	// scale is in transformComponent
 
+	Instance *owner = nullptr;
 	void *objectData; // 4C
 
 	cdc::GCPtr<NsInstance> m_scriptObject; // 58
@@ -92,6 +93,8 @@ public:
 
 	void InitEditorPose(dtp::Model *model); // HACK
 	void BuildEditorTransforms(cdc::Matrix *matrix); // HACK
+	bool IsUsable(); // HACK
+	void Use(); // HACK
 };
 
 void INSTANCE_parabola_update_vel_acc(Instance *instance, cdc::Vector& position, float time);

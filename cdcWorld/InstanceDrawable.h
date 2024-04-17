@@ -61,6 +61,7 @@ public:
 	static InstanceDrawable *s_pLastDirty;
 
 	InstanceDrawable(Instance *i);
+	cdc::RenderModelInstance *getModelInstance();
 	void EnableNoDraw();
 	void DisableNoDraw();
 	bool QueryNoDraw() const;

@@ -322,7 +322,7 @@ void buildObjectsUI(UIActions& uiact) {
 
 }
 
-uint32_t buildUI(UIActions& uiact, cdc::Object *obj) {
+uint32_t buildUI(UIActions& uiact, cdc::Object *obj, Instance *instance) {
 	struct ObjProp {
 		uint16_t version;
 		uint16_t family;
@@ -435,7 +435,7 @@ uint32_t buildUI(UIActions& uiact, cdc::Object *obj) {
 
 	if (objFamily == 2) {
 		auto *uberProp = (dtp::UberObjectProp*) objProp;
-		buildUI(uiact, uberProp);
+		buildUI(uiact, uberProp, instance);
 	}
 
 #endif

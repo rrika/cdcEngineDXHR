@@ -99,6 +99,11 @@ InstanceDrawable::InstanceDrawable(Instance *instance) :
 	AddToDirtyList();
 }
 
+cdc::RenderModelInstance *InstanceDrawable::getModelInstance() {
+	MeshComponent& meshComponent = m_instance->GetMeshComponent();
+	return m_renderModelInstances[meshComponent.GetCurrentRenderModelIndex()];
+}
+
 void InstanceDrawable::EnableNoDraw() {
 	bool before = QueryNoDraw();
 	flags |= 4;

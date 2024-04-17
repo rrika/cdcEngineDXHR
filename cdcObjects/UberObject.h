@@ -28,6 +28,13 @@ public:
 	Instance *CreateSectionInstance(Instance *instance, dtp::UberObjectProp::SectionProp *info, uint32_t index);
 	bool checkCondition(dtp::UberObjectProp::QueryProp&);
 
+	void notifyEntry(UberObjectSection*, uint32_t stateIndex);
+	void notifyExit(UberObjectSection*, uint32_t stateIndex);
+	void notifyTransition(UberObjectSection*, uint32_t transitionIndex);
+	void notifyInterruption(UberObjectSection*, uint32_t transitionIndex);
+
+	static UberObjectComposite *GetComposite(Instance*);
+
 	virtual ~UberObjectComposite() = default;
 	virtual void commandByName(uint32_t); // 4
 	virtual void commandByIndex(int); // 8
@@ -41,19 +48,33 @@ public:
 class UberObjectSection : public ObjState {
 public:
 	uint32_t magic = 0xF0012345; // 50
+	Instance *instance; // 58
 	dtp::UberObjectProp::SectionProp *sectionProp; // 5C
 	int32_t currentState = -1; // 6C
 
 public:
 	UberObjectSection(Instance *instance, UberObjectComposite *composite, dtp::UberObjectProp::SectionProp *info, uint32_t index);
 
+	void entryActions(bool);
+	void exitActions(bool);
+	void runActionsLists(
+		dtp::UberObjectProp::Action *actions, uint32_t numActions,
+		dtp::UberObjectProp::CondAction *condActions, uint32_t numCondActions,
+		bool);
+
+	dtp::UberObjectProp::Transition *GetUseTransition();
+	bool IsUsable();
+	void Use();
+
+	static UberObjectSection *GetSection(Instance*);
+
 	virtual ~UberObjectSection() = default;
 	virtual void method4(dtp::UberObjectProp::Consequence& conseq);
 	// virtual void method8();
 	// virtual void methodC();
-	// virtual void setState(uint32_t, bool); // 10
+	virtual void setState(uint32_t, bool); // 10
 	// virtual void method14();
-	// virtual void method18();
+	virtual void doAction(dtp::UberObjectProp::Action& action);
 	// virtual void write(BinaryWriter&); // 1C
 	// virtual void read(BinaryReader&); // 20
 	// virtual void method24();
@@ -62,5 +83,5 @@ public:
 };
 
 #if ENABLE_IMGUI
-void buildUI(UIActions&, dtp::UberObjectProp*);
+void buildUI(UIActions&, dtp::UberObjectProp*, Instance *instance=nullptr);
 #endif

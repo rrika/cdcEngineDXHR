@@ -1,6 +1,7 @@
 #include "cdcAnim/AnimComponentV2.h"
 #include "cdcNative/game/NsInstance.h"
 #include "cdcObjects/ObjectManager.h"
+#include "cdcObjects/UberObject.h"
 #include "cdcResource/ResolveSection.h"
 #include "cdcResource/ScriptSection.h"
 #include "cdcScript/ScriptType.h"
@@ -296,6 +297,17 @@ void Instance::BuildEditorTransforms(Matrix *matrices) {
 
 	for (uint32_t i=0; i<numSegments; i++)
 		matrices[i] = matrices[modelSegments[i].parent] * overridePose[i];
+}
+
+bool Instance::IsUsable() {
+	if (auto *section = UberObjectSection::GetSection(this))
+		return section->IsUsable();
+	return false;
+}
+
+void Instance::Use() {
+	if (auto *section = UberObjectSection::GetSection(this))
+		section->Use();
 }
 
 void INSTANCE_parabola_update_vel_acc(Instance *instance, Vector& position, float time) {

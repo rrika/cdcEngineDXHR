@@ -4,6 +4,22 @@
 
 namespace dtp {
 
+struct MaterialTextureParamUpdate {
+	bool assignInstanceParam; // 0
+	uint32_t instanceParamIndex; // 4
+	uint32_t instanceParamFormat; // 8
+	uint32_t instanceParamData[4]; // C
+
+	bool assignTexture; // 1C
+	uint32_t texturePrimGroupSelector; // 20
+	uint32_t textureSlot; // 24
+	uint32_t textureId; // 28
+
+	bool assignMaterial; // 2C
+	uint32_t materialPrimGroupSelector; // 30
+	uint32_t materialId; // 34
+};
+
 struct UberObjectProp {
 	struct FlagMatcher {
 		uint32_t bitIndex;
@@ -12,7 +28,7 @@ struct UberObjectProp {
 
 	struct Transition {
 		uint32_t dword0;
-		uint32_t dword4;
+		uint32_t nextState;
 		uint32_t dword8;
 		uint32_t dwordC;
 		uint32_t dword10;
@@ -28,42 +44,42 @@ struct UberObjectProp {
 		uint8_t randFlags; // 3C
 	};
 
-	struct SectionSub18 {
+	struct Action {
 		uint32_t kind;
 		uint32_t dword4;
 		uint32_t pad[13];
 	};
 
-	struct SectionSub28 {
+	struct CondAction {
 		uint32_t dword0;
 		uint32_t dword4;
-		SectionSub18 rest;
+		Action action;
 	};
 
-	struct SectionSub {
+	struct StateProp {
 		uint32_t dword0;
 		uint32_t dword4;
 		uint32_t dword8;
 
-		uint32_t countC;
-		Transition **sub10;
+		uint32_t numTransitions;
+		Transition **transitions;
 
-		uint32_t count14;
-		SectionSub18 *sub18; // enter
+		uint32_t numEntry;
+		Action *entry;
 
-		uint32_t count1C;
-		SectionSub18 *sub20; // exit
+		uint32_t numExit;
+		Action *exit;
 
-		uint32_t count24;
-		SectionSub28 *sub28; // enter
+		uint32_t numCondEntry;
+		CondAction *condEntry;
 
-		uint32_t count2C;
-		SectionSub28 *sub30; // exit
+		uint32_t numCondExit;
+		CondAction *condExit;
 	};
 	struct SectionProp {
 		uint8_t pad0[0xC];
-		uint32_t numSubs; // C
-		SectionSub *sub; // 10
+		uint32_t numStates; // C
+		StateProp *states; // 10
 		uint32_t numTransitions; // 14
 		Transition *transitions; // 18
 		uint32_t initialState; // 1C

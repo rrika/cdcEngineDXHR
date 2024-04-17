@@ -83,4 +83,4 @@ void buildObjectsUI(UIActions& uiact);
 
 }
 
-uint32_t buildUI(UIActions& uiact, cdc::Object *obj); // return object family
+uint32_t buildUI(UIActions& uiact, cdc::Object *obj, Instance *instance=nullptr); // return object family
