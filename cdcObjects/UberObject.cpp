@@ -184,6 +184,10 @@ UberObjectSection *UberObjectComposite::createSection(Instance *instance, dtp::U
 	return new UberObjectSection(instance, this, info, index);
 }
 
+void UberObjectComposite::Update() {
+	// TODO
+}
+
 UberObjectSection::UberObjectSection(Instance *instance, UberObjectComposite *composite, dtp::UberObjectProp::SectionProp *info, uint32_t index) :
 	instance(instance)
 {
@@ -225,6 +229,29 @@ void UberObjectSection::runActionsLists(
 	for (uint32_t i=0; i<numCondActions; i++)
 		doAction(condActions[i].action);
 	(void) b;
+}
+
+void UberObjectSection::process() {
+	Update();
+	nonVirtualUpdate();
+}
+
+void UberObjectSection::nonVirtualUpdate() {
+	// TODO
+	float timeDelta = 0.0333f; // instance_getTimeDelta(instance);
+	takeAutomaticTransitions();
+	timeInState += timeDelta;
+}
+
+void UberObjectSection::takeAutomaticTransitions() {
+	dtp::UberObjectProp::StateProp& state = sectionProp->states[currentState];
+	for (uint32_t i=0; i < state.numTransitions; i++) {
+		auto tr = state.transitions[i];
+		if (shouldTakeTransition(*tr)) {
+			// doTransition(*tr);
+			setState(tr->nextState, false);
+		}
+	}
 }
 
 dtp::UberObjectProp::Transition *UberObjectSection::GetUseTransition() {
@@ -278,7 +305,35 @@ void UberObjectSection::setState(uint32_t nextState, bool b) {
 	if (currentState >= 0 && currentState < sectionProp->numStates)
 		exitActions(false);
 	currentState = nextState;
+	timeInState = 0.0f;
 	entryActions(b);
+}
+
+bool UberObjectSection::shouldTakeTransition(dtp::UberObjectProp::Transition& transition) {
+	// TODO
+	switch (transition.dword18) {
+	case 1: {
+		float timeout = *(float*)&transition.dword1C - 0.001;
+		return timeInState < timeout;
+	}
+	case 2:
+		// TODO
+		return false;
+	case 4:
+		return false; // to prevent mysterious transitions for now
+		return true;
+	case 11:
+		// TODO
+		return false;
+	case 13:
+		// TODO
+		return false;
+	case 14:
+		// TODO
+		return false;
+	default:
+		return false;
+	}
 }
 
 void UberObjectSection::doAction(dtp::UberObjectProp::Action& action) { // method 18
@@ -304,6 +359,10 @@ void UberObjectSection::doAction(dtp::UberObjectProp::Action& action) { // metho
 			break;
 		}
 	}
+}
+
+void UberObjectSection::Update() {
+	// TODO
 }
 
 #if ENABLE_IMGUI
@@ -458,6 +517,15 @@ static void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, dtp::UberOb
 		uint32_t signalIndex = *(uint32_t*)(&conseq.pad[0]);
 		ImGui::Text("send signal %d", signalIndex);
 		break;
+	}
+	case 8: {
+		auto *c8 = (dtp::Conseq8*)(&conseq.pad[0]);
+		ImGui::Text("conseq8 %d steps", c8->numSteps);
+		ImGui::Indent();
+		for (uint32_t i=0; i<c8->numSteps; i++) {
+			ImGui::Text("step %d type %d", i, c8->steps[i].stepAny.type);
+		}
+		ImGui::Unindent();
 	}
 	case 9: {
 		ImGui::Text("disturbance (TODO)");

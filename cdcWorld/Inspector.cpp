@@ -300,6 +300,7 @@ void buildUI(UIActions& uiact, Instance *instance) {
 		// TODO
 	}
 	if (uberObjectSection && ImGui::CollapsingHeader("UberObjectSection", ImGuiTreeNodeFlags_DefaultOpen)) {
+		ImGui::Text("time in state: %f", uberObjectSection->timeInState);
 		char buffer[10];
 		if (ImGui::BeginListBox("##states")) {
 			for (uint32_t i=0; i<uberObjectSection->sectionProp->numStates; i++) {

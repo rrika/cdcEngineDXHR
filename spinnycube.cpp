@@ -959,6 +959,13 @@ int spinnyCube(HWND window,
 		cdc::g_microphone.m_position = cameraPos;
 		cdc::SFXMARKER_ProcessAllMarkers();
 
+		for (auto i = InstanceManager::s_chain; i; i=i->next) {
+			if (auto *composite = UberObjectComposite::GetComposite(i))
+				composite->Update();
+			if (auto *section = UberObjectSection::GetSection(i))
+				section->process();
+		}
+
 		cdc::CullingFrustum cullingFrustum;
 		cullingFrustum.Set(renderViewport);
 

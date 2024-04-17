@@ -40,7 +40,7 @@ public:
 	virtual void commandByIndex(int); // 8
 	virtual bool methodC(dtp::UberObjectProp::Unknown& entry, int, void*);
 	virtual UberObjectSection *createSection(Instance *instance, dtp::UberObjectProp::SectionProp *info, uint32_t index); // 10
-	// virtual void method14();
+	virtual void Update();
 	// virtual void write(BinaryWriter&); // 18
 	// virtual void read(BinaryReader&); // 1C
 };
@@ -51,6 +51,7 @@ public:
 	Instance *instance; // 58
 	dtp::UberObjectProp::SectionProp *sectionProp; // 5C
 	int32_t currentState = -1; // 6C
+	float timeInState = 0.0f; // 7C
 
 public:
 	UberObjectSection(Instance *instance, UberObjectComposite *composite, dtp::UberObjectProp::SectionProp *info, uint32_t index);
@@ -61,6 +62,9 @@ public:
 		dtp::UberObjectProp::Action *actions, uint32_t numActions,
 		dtp::UberObjectProp::CondAction *condActions, uint32_t numCondActions,
 		bool);
+	void process();
+	void nonVirtualUpdate();
+	void takeAutomaticTransitions();
 
 	dtp::UberObjectProp::Transition *GetUseTransition();
 	bool IsUsable();
@@ -73,13 +77,13 @@ public:
 	// virtual void method8();
 	// virtual void methodC();
 	virtual void setState(uint32_t, bool); // 10
-	// virtual void method14();
+	virtual bool shouldTakeTransition(dtp::UberObjectProp::Transition& transition);
 	virtual void doAction(dtp::UberObjectProp::Action& action);
 	// virtual void write(BinaryWriter&); // 1C
 	// virtual void read(BinaryReader&); // 20
 	// virtual void method24();
 	// virtual void method28();
-	// virtual void method2C();
+	virtual void Update();
 };
 
 #if ENABLE_IMGUI

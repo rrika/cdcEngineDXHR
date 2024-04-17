@@ -20,6 +20,106 @@ struct MaterialTextureParamUpdate {
 	uint32_t materialId; // 34
 };
 
+struct Conseq8StepAny {
+	uint32_t type;
+};
+
+struct Conseq8Step0 {
+	uint32_t type;
+	// TODO
+};
+
+struct Conseq8Step1 {
+	uint32_t type;
+	uint32_t sectionIndex;
+	// TODO
+};
+
+struct Conseq8Step2 {
+	uint32_t type;
+	// TODO
+};
+
+struct Conseq8Step3 {
+	uint32_t type;
+	float float4;
+};
+
+struct Conseq8Step4 {
+	uint32_t type;
+	// TODO
+};
+
+struct Conseq8Step5 {
+	uint32_t type;
+	uint32_t commandIndex;
+};
+
+struct Conseq8Step6 {
+	uint32_t type;
+	float float4;
+	// TODO
+};
+
+struct Conseq8Step7 {
+	uint32_t type;
+};
+
+struct Conseq8Step8 {
+	uint32_t type;
+	uint32_t sectionIndex;
+	uint32_t renderModelIndex;
+	// TODO
+};
+
+struct Conseq8Step9 {
+	uint32_t type;
+	uint32_t sectionIndex;
+	// TODO
+};
+
+struct Conseq8Step10 {
+	uint32_t type;
+	uint32_t passIndex;
+};
+
+struct Conseq8Step11 {
+	uint32_t type;
+	uint32_t passIndex;
+};
+
+struct Conseq8Step12 {
+	uint32_t type;
+	// TODO
+};
+
+union Conseq8Step {
+	Conseq8StepAny stepAny;
+	Conseq8Step0 step0;
+	Conseq8Step1 step1;
+	Conseq8Step2 step2;
+	Conseq8Step3 step3;
+	Conseq8Step4 step4;
+	Conseq8Step5 step5;
+	Conseq8Step6 step6;
+	Conseq8Step7 step7;
+	Conseq8Step8 step8;
+	Conseq8Step9 step9;
+	Conseq8Step10 step10;
+	Conseq8Step11 step11;
+	Conseq8Step12 step12;
+};
+
+struct Conseq8 {
+	uint32_t dword0;
+	uint32_t dword4;
+	uint32_t dword8;
+	uint32_t dwordC;
+	uint32_t numSteps; // 10
+	Conseq8Step *steps; // 14
+	bool bool18;
+};
+
 struct UberObjectProp {
 	struct FlagMatcher {
 		uint32_t bitIndex;
