@@ -43,6 +43,7 @@ public:
 
 	std::vector<cdc::RenderModelInstance*> m_renderModelInstances; // C
 	cdc::IMatrixState *m_pMatrixState; // 24
+	uint8_t flags = 0; // 38
 protected:
 	InstanceDrawable *m_pPrevDirty = nullptr;
 	InstanceDrawable *m_pNextDirty = nullptr;

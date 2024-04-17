@@ -174,6 +174,10 @@ void InstanceDrawable::PrepareMatrixState(Matrix *matrix, dtp::Model *model, Ren
 
 void InstanceDrawable::AddToDirtyList() { // 2038
 	// dirty list is processed by SceneLayer::Update/UpdateInstances
+	if (flags & 8)
+		return;
+	flags |= 8;
+
 	m_pPrevDirty = s_pLastDirty;
 	m_pNextDirty = nullptr;
 	if (s_pLastDirty) {
@@ -187,6 +191,10 @@ void InstanceDrawable::AddToDirtyList() { // 2038
 }
 
 void InstanceDrawable::RemoveFromDirtyList() { // 2052
+	if (!(flags & 8))
+		return;
+	flags &= ~8;
+
 	if (m_pPrevDirty)
 		m_pPrevDirty->m_pNextDirty = m_pNextDirty;
 	else
