@@ -15,6 +15,7 @@ Instance *UBEROBJECT_BirthSectionInstance(Instance *parent, uint32_t modelIndex,
 class UberObjectComposite : public ObjState {
 public:
 	uint32_t magic = 0xFEA51B1E; // 50
+	Instance **sectionInstances = nullptr; // HACK
 private:
 	Instance *instance; // 54
 	bool createdSections = false; // 5D
@@ -52,6 +53,7 @@ public:
 	dtp::UberObjectProp::SectionProp *sectionProp; // 5C
 	int32_t currentState = -1; // 6C
 	float timeInState = 0.0f; // 7C
+	uint32_t stateFlags = 0; // 88
 
 public:
 	UberObjectSection(Instance *instance, UberObjectComposite *composite, dtp::UberObjectProp::SectionProp *info, uint32_t index);
@@ -65,6 +67,10 @@ public:
 	void process();
 	void nonVirtualUpdate();
 	void takeAutomaticTransitions();
+	void takeTransition15(uint32_t);
+	void takeTransition18(uint32_t);
+	void takeTransitionIfPresent(uint32_t);
+	void takeTransition(dtp::UberObjectProp::Transition&);
 
 	dtp::UberObjectProp::Transition *GetUseTransition();
 	bool IsUsable();
