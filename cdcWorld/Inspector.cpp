@@ -297,7 +297,34 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			uberObjectSection = nullptr;
 	}
 	if (uberObjectComposite && ImGui::CollapsingHeader("UberObjectComposite", ImGuiTreeNodeFlags_DefaultOpen)) {
-		// TODO
+		auto *prop = (dtp::UberObjectProp*) instance->object->data;
+		char buffer[12];
+		for (uint32_t i=0; i < prop->numCommands; i++) {
+			snprintf(buffer, sizeof(buffer), "Command %d", i);
+			if (ImGui::Button(buffer)) {
+				uberObjectComposite->commandByIndex(i);
+			}
+		}
+		bool usable = false;
+		for (uint32_t i=0; i < prop->numSections; i++) {
+			auto *section = UberObjectSection::GetSection(uberObjectComposite->sectionInstances[i]);
+			if (section->IsUsable())
+				usable = true;
+			ImGui::Text("section %i state %i", i, section->currentState);
+			ImGui::CheckboxFlags("flag0", &section->stateFlags, 1);
+			ImGui::CheckboxFlags("flag1", &section->stateFlags, 2);
+			ImGui::CheckboxFlags("flag2", &section->stateFlags, 4);
+			ImGui::CheckboxFlags("flag3", &section->stateFlags, 8);
+			ImGui::CheckboxFlags("flag4", &section->stateFlags, 16);
+			ImGui::CheckboxFlags("flag5", &section->stateFlags, 32);
+			ImGui::CheckboxFlags("flag6", &section->stateFlags, 64);
+			ImGui::CheckboxFlags("flag7", &section->stateFlags, 128);
+		}
+		if (usable && ImGui::Button("Use"))
+			for (uint32_t i=0; i < prop->numSections; i++) {
+				auto *section = UberObjectSection::GetSection(uberObjectComposite->sectionInstances[i]);
+				section->Use();
+			}
 	}
 	if (uberObjectSection && ImGui::CollapsingHeader("UberObjectSection", ImGuiTreeNodeFlags_DefaultOpen)) {
 		ImGui::Text("time in state: %f", uberObjectSection->timeInState);

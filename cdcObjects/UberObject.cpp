@@ -1,6 +1,7 @@
 #include <cstdio>
 #include "config.h"
 #include "cdcAnim/AnimComponentV2.h"
+#include "cdcObjects/ObjectManager.h"
 #include "cdcSound/SoundPlex.h"
 #include "cdcResource/DTPDataSection.h"
 #include "cdcWorld/Object.h"
@@ -60,8 +61,11 @@ UberObjectComposite::UberObjectComposite(Instance *instance, bool deferSectionIn
 
 	numSections = prop->numSections;
 	sectionList = new int32_t[numSections];
-	for (uint32_t i=0; i<numSections; i++)
+	sectionInstances = new Instance*[numSections];
+	for (uint32_t i=0; i<numSections; i++) {
 		sectionList[i] = 0x7FFFFFFF;
+		sectionInstances[i] = nullptr;
+	}
 
 	if (!deferSectionInit)
 		CreateSections(instance);
@@ -81,6 +85,7 @@ void UberObjectComposite::CreateSections(Instance *instance) {
 		for (uint32_t i=0; i<numSections; i++) {
 			Instance *child = CreateSectionInstance(instance, &prop->sectionList[i], i);
 			sectionList[i] = child ? child->introUniqueID : 0x7FFFFFFF;
+			sectionInstances[i] = child;
 		}
 	}
 }
@@ -162,10 +167,11 @@ void UberObjectComposite::commandByIndex(int index) {
 		if (sectionList[target] == 0x7FFFFFFF)
 			continue;
 		// Instance *targetInstance = Instance::Find(sectionList[target]);
-		// if (UserDataComponent *u = targetInstance->userDataComponent)
-		// 	if (auto uos = static_cast<UberObjectSection*>(u->userData))
-		// 		if (uos->magic == 0xF0012345)
-		// 			uos->method4(*conseq);
+		Instance *targetInstance = sectionInstances[target]; // HACK (still necessary?)
+		if (UserDataComponent *u = targetInstance->userDataComponent)
+			if (auto uos = static_cast<UberObjectSection*>(u->userData))
+				if (uos->magic == 0xF0012345)
+					uos->method4(*conseq);
 	}
 }
 
@@ -247,11 +253,42 @@ void UberObjectSection::takeAutomaticTransitions() {
 	dtp::UberObjectProp::StateProp& state = sectionProp->states[currentState];
 	for (uint32_t i=0; i < state.numTransitions; i++) {
 		auto tr = state.transitions[i];
-		if (shouldTakeTransition(*tr)) {
-			// doTransition(*tr);
-			setState(tr->nextState, false);
-		}
+		if (shouldTakeTransition(*tr))
+			return takeTransition(*tr);
 	}
+}
+
+void UberObjectSection::takeTransition15(uint32_t key) {
+	dtp::UberObjectProp::StateProp& state = sectionProp->states[currentState];
+	for (uint32_t i=0; i < state.numTransitions; i++) {
+		auto tr = state.transitions[i];
+		if (tr->dword18 == 15 && tr->dword1C == key)
+			return takeTransition(*tr);
+	}
+}
+
+void UberObjectSection::takeTransition18(uint32_t key) {
+	dtp::UberObjectProp::StateProp& state = sectionProp->states[currentState];
+	for (uint32_t i=0; i < state.numTransitions; i++) {
+		auto tr = state.transitions[i];
+		if (tr->dword18 == 18 && tr->dword1C == key)
+			return takeTransition(*tr);
+	}
+}
+
+void UberObjectSection::takeTransitionIfPresent(uint32_t transitionIndex) {
+	dtp::UberObjectProp::Transition& trWanted = sectionProp->transitions[transitionIndex];
+	dtp::UberObjectProp::StateProp& state = sectionProp->states[currentState];
+	for (uint32_t i=0; i < state.numTransitions; i++) {
+		auto tr = state.transitions[i];
+		if (tr == &trWanted)
+			return takeTransition(*tr);
+	}
+}
+
+void UberObjectSection::takeTransition(dtp::UberObjectProp::Transition& tr) {
+	// TODO
+	setState(tr.nextState, false);
 }
 
 dtp::UberObjectProp::Transition *UberObjectSection::GetUseTransition() {
@@ -286,15 +323,23 @@ UberObjectSection *UberObjectSection::GetSection(Instance *instance) {
 
 void UberObjectSection::method4(dtp::UberObjectProp::Consequence& conseq) {
 	// TODO
+	uint32_t arg = *(uint32_t*)(&conseq.pad[0]);
 	switch (conseq.kind) {
 	case 1:
-		// TODO
+		return setState(arg, false);
 	case 2:
-		// TODO
+		return takeTransitionIfPresent(arg);
 	case 3:
-		// TODO
+		return takeTransition15(arg);
 	case 4:
-		// TODO
+		return takeTransition18(arg);
+	case 5: {
+		uint32_t polarity = conseq.pad[4];
+		if (polarity)
+			stateFlags |= 1u<<arg;
+		else
+			stateFlags &= ~(1u<<arg);
+	}
 	default:
 		break;
 	}
@@ -314,7 +359,7 @@ bool UberObjectSection::shouldTakeTransition(dtp::UberObjectProp::Transition& tr
 	switch (transition.dword18) {
 	case 1: {
 		float timeout = *(float*)&transition.dword1C - 0.001;
-		return timeInState < timeout;
+		return timeInState >= timeout;
 	}
 	case 2:
 		// TODO
@@ -339,6 +384,23 @@ bool UberObjectSection::shouldTakeTransition(dtp::UberObjectProp::Transition& tr
 void UberObjectSection::doAction(dtp::UberObjectProp::Action& action) { // method 18
 	printf("action %d\n", action.kind);
 	switch (action.kind) {
+		case 12: {
+			UberObjectComposite::GetComposite(instance->owner)->commandByIndex(action.dword4);
+			break;
+		}
+		case 28: {
+			if (auto *soundPlex = static_cast<dtp::SoundPlex*>(DTPDataSection::getPointer(action.dword4)))
+				cdc::SOUND_StartPaused(soundPlex, /*delay=*/ 0.0f);
+
+			break;
+		}
+		case 33: {
+			if (action.dword4)
+				((cdc::InstanceDrawable*)instance->instanceDrawable)->DisableNoDraw();
+			else
+				((cdc::InstanceDrawable*)instance->instanceDrawable)->EnableNoDraw();
+			break;
+		}
 		case 61: {
 			auto *mtpu = (dtp::MaterialTextureParamUpdate*) &action.dword4;
 			if (mtpu->assignInstanceParam)
@@ -352,12 +414,6 @@ void UberObjectSection::doAction(dtp::UberObjectProp::Action& action) { // metho
 			}
 			break;
 		}
-		case 28: {
-			if (auto *soundPlex = static_cast<dtp::SoundPlex*>(DTPDataSection::getPointer(action.dword4)))
-				cdc::SOUND_StartPaused(soundPlex, /*delay=*/ 0.0f);
-
-			break;
-		}
 	}
 }
 
@@ -366,42 +422,130 @@ void UberObjectSection::Update() {
 }
 
 #if ENABLE_IMGUI
-static void buildUI(UIActions& uiact, dtp::UberObjectProp::Action& sub18, Instance *instance=nullptr) {
-	switch (sub18.kind) {
+static void buildUI(UIActions& uiact, dtp::UberObjectProp::Action& action, Instance *instance=nullptr) {
+	switch (action.kind) {
+	case 0: {
+		ImGui::SameLine();
+		ImGui::Text("nothing?");
+		break;
+	}
+	case 1: {
+		ImGui::SameLine();
+		ImGui::Text("set render model %d", action.dword4);
+		break;
+	}
 	case 2:
 	case 3:
 	case 4: {
-		uint16_t animId = *(uint16_t*)(6+(uint8_t*)&sub18);
+		uint16_t animId = *(uint16_t*)(6+(uint8_t*)&action);
 		ImGui::SameLine();
 		ImGui::Text("set animation %d", animId);
 		break;
 	}
+	case 5: {
+		ImGui::SameLine();
+		ImGui::Text("delete this");
+		break;
+	}
+	case 6: {
+		ImGui::SameLine();
+		ImGui::Text("enable no collide");
+		break;
+	}
+	case 7:
+	case 8: {
+		ImGui::SameLine();
+		ImGui::Text("collide related %d", action.kind);
+		break;
+	}
+	case 12: {
+		ImGui::SameLine();
+		ImGui::Text("run command %d", action.dword4);
+		break;
+	}
+	case 16: {
+		ImGui::SameLine();
+		ImGui::Text("take transition 15 %d in all instances", action.dword4);
+		break;
+	}
+	case 25: {
+		ImGui::SameLine();
+		ImGui::Text("fx related %d", action.dword4);
+		break;
+	}
+	case 28: {
+		ImGui::SameLine();
+		ImGui::Text("play soundplex %x", action.dword4);
+		auto *soundPlex = static_cast<dtp::SoundPlex*>(DTPDataSection::getPointer(action.dword4));
+		if (soundPlex) {
+			std::function<void(cdc::SoundHandle)> ignore = [](cdc::SoundHandle){};
+			buildUI(soundPlex, &ignore);
+		}
+		break;
+	}
+	case 29: {
+		ImGui::SameLine();
+		ImGui::Text("start sound %d", action.dword4);
+		break;
+	}
+	case 30: {
+		ImGui::SameLine();
+		ImGui::Text("stop sound %d", action.dword4);
+		break;
+	}
+	case 33: {
+		ImGui::SameLine();
+		ImGui::Text("set visibility? %d", action.dword4);
+		break;
+	}
+	case 34: {
+		uint32_t sectionIndex = *(uint32_t*)(4+(uint8_t*)&action);
+		uint32_t bitIndex = *(uint32_t*)(8+(uint8_t*)&action);
+		uint16_t polarity = *(12+(uint8_t*)&action);
+		ImGui::SameLine();
+		ImGui::Text("in section %d %s flag %d", sectionIndex, polarity ? "set" : "clear", bitIndex);
+		break;
+	}
+
+	// dx3-specific
+
+	case 35: {
+		float *f = (float*)(4+(uint8_t*)&action);
+		ImGui::SameLine();
+		ImGui::Text("if no obstacle %f %f %f %f %f %f",
+			f[0], f[1], f[2],
+			f[3], f[4], f[5]);
+		break;
+	}
+	case 36: {
+		ImGui::SameLine();
+		ImGui::Text("destroy path finding obstacles");
+		break;
+	}
+	case 37:
+	case 38:
+	case 39:
+	case 40: {
+		ImGui::SameLine();
+		ImGui::Text("scaleform related %d", action.kind);
+		break;
+	}
 	case 54: {
-		uint16_t animIndex = *(uint16_t*)(20+(uint8_t*)&sub18);
+		uint16_t animIndex = *(uint16_t*)(20+(uint8_t*)&action);
 		ImGui::SameLine();
 		ImGui::Text("set audio duration for animation in slot %d", animIndex);
 		break;
 	}
 	case 55: {
 		ImGui::SameLine();
-		ImGui::Text("send signal %d", sub18.dword4);
-		break;
-	}
-	case 12: {
-		ImGui::SameLine();
-		ImGui::Text("run command %d", sub18.dword4);
-		break;
-	}
-	case 25: {
-		ImGui::SameLine();
-		ImGui::Text("fx related %d", sub18.dword4);
+		ImGui::Text("send signal %d", action.dword4);
 		break;
 	}
 	case 61: {
 		ImGui::SameLine();
-		auto *mtpu = (dtp::MaterialTextureParamUpdate*) &sub18.dword4;
+		auto *mtpu = (dtp::MaterialTextureParamUpdate*) &action.dword4;
 		if (instance) {
-			ImGui::PushID(&sub18);
+			ImGui::PushID(&action);
 			if (ImGui::SmallButton("drawable updates")) {
 				auto *rmi = ((cdc::InstanceDrawable*)instance->instanceDrawable)->getModelInstance();
 				auto *material = (cdc::IMaterial*)cdc::g_resolveSections[10]->GetBasePointer(mtpu->materialId);
@@ -419,26 +563,6 @@ static void buildUI(UIActions& uiact, dtp::UberObjectProp::Action& sub18, Instan
 		if (mtpu->assignMaterial)
 			ImGui::Text("assignMaterial %d %x", mtpu->materialPrimGroupSelector, mtpu->materialId);
 		ImGui::Unindent();
-		break;
-	}
-	case 0: {
-		ImGui::SameLine();
-		ImGui::Text("nothing?");
-		break;
-	}
-	case 28: {
-		ImGui::SameLine();
-		ImGui::Text("play soundplex %x", sub18.dword4);
-		auto *soundPlex = static_cast<dtp::SoundPlex*>(DTPDataSection::getPointer(sub18.dword4));
-		if (soundPlex) {
-			std::function<void(cdc::SoundHandle)> ignore = [](cdc::SoundHandle){};
-			buildUI(soundPlex, &ignore);
-		}
-		break;
-	}
-	case 33: {
-		ImGui::SameLine();
-		ImGui::Text("set visibility? %d", sub18.dword4);
 		break;
 	}
 	case 77: {
@@ -466,12 +590,58 @@ static void buildUI(UIActions& uiact, dtp::UberObjectProp::Action& sub18, Instan
 		ImGui::Text("default tv queue");
 		break;
 	}
+	case 90: {
+		ImGui::SameLine();
+		ImGui::Text("%s static portals", action.dword4 ? "enable" : "disable");
+		break;
+	}
 	default: break;
 	}
 }
 
 static void buildUI(UIActions& uiact, dtp::UberObjectProp::QueryProp *query) {
 	ImGui::Text("Condition");
+}
+
+static void buildUI(UIActions& uiact, dtp::Conseq8 *c8) {
+	ImGui::Text("conseq8 %d steps", c8->numSteps);
+	ImGui::Indent();
+	for (uint32_t i=0; i<c8->numSteps; i++) {
+		auto& step = c8->steps[i];
+		ImGui::Text("step %d type %d", i, step.stepAny.type);
+		ImGui::SameLine();
+		switch (step.stepAny.type) {
+		case 0: ImGui::Text("nothing"); break;
+		case 1: ImGui::Text("set anim"); break;
+		case 2: ImGui::Text("TODO %f %f %d",
+			step.step2.float4,
+			step.step2.float8,
+			step.step2.byteC); break;
+		case 3: ImGui::Text("assign float120=%f",
+			step.step3.float4); break;
+		case 4: ImGui::Text("on section %d set state %d",
+			step.step4.sectionIndex,
+			step.step4.stateIndex); break;
+		case 5: ImGui::Text("run command %d",
+			step.step5.commandIndex); break;
+		case 6: ImGui::Text("after %fs spawn %s(%d)",
+			30.f * step.step6.float4,
+			cdc::objectName(step.step6.spawnInfo->objListIndex),
+			step.step6.spawnInfo->objListIndex); break;
+		case 7: ImGui::Text("physics related"); break;
+		case 8: ImGui::Text("on section %d set render model %d",
+			step.step8.sectionIndex,
+			step.step8.renderModelIndex); break;
+		case 9: ImGui::Text("physics related"); break;
+		case 10: ImGui::Text("clear mesh flag %d",
+			step.step10.passIndex); break;
+		case 11: ImGui::Text("set mesh flag %d",
+			step.step11.passIndex); break;
+		case 12: ImGui::Text("fx related"); break;
+		default: ImGui::Text("out-of-bounds"); break;
+		}
+	}
+	ImGui::Unindent();
 }
 
 static void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, dtp::UberObjectProp::Consequence& conseq, Instance *instance=nullptr) {
@@ -508,9 +678,9 @@ static void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, dtp::UberOb
 		break;
 	}
 	case 6: {
-		auto *sub18 = (dtp::UberObjectProp::Action*)conseq.pad;
-		ImGui::Text("sub18 %d", sub18->kind);
-		buildUI(uiact, *sub18, instance);
+		auto *action = (dtp::UberObjectProp::Action*)conseq.pad;
+		ImGui::Text("action %d", action->kind);
+		buildUI(uiact, *action, instance);
 		break;
 	}
 	case 7: {
@@ -520,12 +690,8 @@ static void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, dtp::UberOb
 	}
 	case 8: {
 		auto *c8 = (dtp::Conseq8*)(&conseq.pad[0]);
-		ImGui::Text("conseq8 %d steps", c8->numSteps);
-		ImGui::Indent();
-		for (uint32_t i=0; i<c8->numSteps; i++) {
-			ImGui::Text("step %d type %d", i, c8->steps[i].stepAny.type);
-		}
-		ImGui::Unindent();
+		buildUI(uiact, c8);
+		break;
 	}
 	case 9: {
 		ImGui::Text("disturbance (TODO)");
@@ -552,10 +718,21 @@ void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, Instance *instance
 			ImGui::Indent();
 			for (uint32_t k=0; k < state.numTransitions; k++) {
 				auto& tr = *state.transitions[k];
-				ImGui::Text("transition[%d] -> state %d %d %d", k,
-					tr.nextState,
-					tr.dword18,
-					tr.dword1C);
+				switch (tr.dword18) {
+				case 1: {
+					float timeout = *(float*)&tr.dword1C;
+					ImGui::Text("transition[%d] -> state %d after %f", k,
+						tr.nextState,
+						timeout);
+					break;
+				}
+				default:
+					ImGui::Text("transition[%d] -> state %d %d %d", k,
+						tr.nextState,
+						tr.dword18,
+						tr.dword1C);
+					break;
+				}
 			}
 			for (uint32_t k=0; k < state.numEntry; k++) {
 				ImGui::Text("entry[%d] %d", k, state.entry[k].kind);
@@ -575,6 +752,10 @@ void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, Instance *instance
 			}
 			ImGui::Unindent();
 		}
+		for (uint32_t i=0; i < section.numConseq8; i++) {
+			auto *conseq8 = section.conseq8List[i];
+			buildUI(uiact, conseq8);
+		}
 		ImGui::Unindent();
 	}
 	for (uint32_t i=0; i < uberProp->numCommandMaps; i++) {
@@ -583,7 +764,7 @@ void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, Instance *instance
 	}
 	for (uint32_t i=0; i < uberProp->numCommands; i++) {
 		auto& cmd = uberProp->commandList[i];
-		ImGui::Text("Command %08x", cmd.dword0);
+		ImGui::Text("Command %d", i);
 		ImGui::Indent();
 		for (uint32_t j=0; j < cmd.numConditions; j++) {
 			buildUI(uiact, cmd.conditions[j]);

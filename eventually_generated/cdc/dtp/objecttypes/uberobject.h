@@ -20,8 +20,17 @@ struct MaterialTextureParamUpdate {
 	uint32_t materialId; // 34
 };
 
+struct SpawnInfo {
+	uint16_t objListIndex; // 0
+	uint8_t byte2;
+	uint32_t dword4;
+	uint32_t count8;
+	uint32_t *dwordC;
+};
+
 struct Conseq8StepAny {
 	uint32_t type;
+	uint32_t pad[5];
 };
 
 struct Conseq8Step0 {
@@ -37,7 +46,9 @@ struct Conseq8Step1 {
 
 struct Conseq8Step2 {
 	uint32_t type;
-	// TODO
+	float float4;
+	float float8;
+	uint8_t byteC;
 };
 
 struct Conseq8Step3 {
@@ -47,7 +58,8 @@ struct Conseq8Step3 {
 
 struct Conseq8Step4 {
 	uint32_t type;
-	// TODO
+	uint32_t sectionIndex;
+	uint32_t stateIndex;
 };
 
 struct Conseq8Step5 {
@@ -58,7 +70,7 @@ struct Conseq8Step5 {
 struct Conseq8Step6 {
 	uint32_t type;
 	float float4;
-	// TODO
+	SpawnInfo *spawnInfo;
 };
 
 struct Conseq8Step7 {
@@ -185,7 +197,10 @@ struct UberObjectProp {
 		uint32_t initialState; // 1C
 		uint8_t pad20[8];
 		uint8_t modelIndex; // 28
-		uint8_t pad29[0x2F0-0x29];
+		uint8_t pad29[0x50-0x29];
+		uint32_t numConseq8; // 50
+		Conseq8 **conseq8List; // 54
+		uint8_t pad58[0x2F0-0x58];
 	};
 	struct QueryProp {
 
