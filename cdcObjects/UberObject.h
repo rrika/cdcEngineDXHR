@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include "config.h"
 #include "cdcObjects/Objects.h"
 #include "cdc/dtp/objecttypes/uberobject.h"
 
@@ -81,7 +82,7 @@ public:
 	virtual ~UberObjectSection() = default;
 	virtual void method4(dtp::UberObjectProp::Consequence& conseq);
 	// virtual void method8();
-	// virtual void methodC();
+	// virtual void animCallback(); // C
 	virtual void setState(uint32_t, bool); // 10
 	virtual bool shouldTakeTransition(dtp::UberObjectProp::Transition& transition);
 	virtual void doAction(dtp::UberObjectProp::Action& action);
@@ -93,5 +94,6 @@ public:
 };
 
 #if ENABLE_IMGUI
+void buildUI(UIActions&, dtp::UberObjectProp*, dtp::UberObjectProp::Command*, Instance*);
 void buildUI(UIActions&, dtp::UberObjectProp*, Instance *instance=nullptr);
 #endif

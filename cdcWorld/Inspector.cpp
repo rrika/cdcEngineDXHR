@@ -2,6 +2,7 @@
 #include "3rdParty/imgui/imgui.h"
 #include "cdc/dtp/objectproperties/intro.h"
 #include "cdcAnim/Inspector.h"
+#include "cdcLocale/localstr.h"
 #include "cdcRender/CommonMaterial.h"
 #include "cdcRender/MaterialData.h"
 #include "cdcResource/DTPDataSection.h"
@@ -56,6 +57,21 @@ void buildUI(UIActions& uiact, dtp::IntroDataUberObject *extra) {
 			}
 			ImGui::Unindent();
 		}
+	}
+	for (uint32_t i=0; i<extra->numLoot; i++) {
+		auto *loot = &extra->loot[i];
+		ImGui::Text("loot %d on section %d", i, loot->sectionIndex);
+		ImGui::Indent();
+		for (uint32_t j=0; j<loot->numItems; j++) {
+			auto itemDtpIndex = loot->items[j].itemDtpIndex;
+			auto count = 0; // TODO
+			auto *item = static_cast<dtp::Item*>(DTPDataSection::getPointer(itemDtpIndex));
+			if (item)
+				ImGui::Text("%d x %d %s", count, itemDtpIndex, localstr_get(item->nameIndex));
+			else
+				ImGui::Text("%d x %d (unavailable)", count, itemDtpIndex);
+		}
+		ImGui::Unindent();
 	}
 }
 
@@ -303,6 +319,12 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			snprintf(buffer, sizeof(buffer), "Command %d", i);
 			if (ImGui::Button(buffer)) {
 				uberObjectComposite->commandByIndex(i);
+			}
+			if (ImGui::IsItemHovered()) {
+				ImGui::BeginTooltip();
+				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 20.0f);
+				buildUI(uiact, prop, &prop->commandList[i], instance);
+				ImGui::EndTooltip();
 			}
 		}
 		bool usable = false;

@@ -288,6 +288,8 @@ void UberObjectSection::takeTransitionIfPresent(uint32_t transitionIndex) {
 
 void UberObjectSection::takeTransition(dtp::UberObjectProp::Transition& tr) {
 	// TODO
+	if (tr.animIndex != 0xffff)
+		instance->animComponentV2->TriggerStateTransition(0, tr.animIndex, false);
 	setState(tr.nextState, false);
 }
 
@@ -365,7 +367,6 @@ bool UberObjectSection::shouldTakeTransition(dtp::UberObjectProp::Transition& tr
 		// TODO
 		return false;
 	case 4:
-		return false; // to prevent mysterious transitions for now
 		return true;
 	case 11:
 		// TODO
@@ -384,6 +385,16 @@ bool UberObjectSection::shouldTakeTransition(dtp::UberObjectProp::Transition& tr
 void UberObjectSection::doAction(dtp::UberObjectProp::Action& action) { // method 18
 	printf("action %d\n", action.kind);
 	switch (action.kind) {
+		case 2:
+		case 3:
+		case 4: {
+			uint16_t anim = *(uint16_t*)(6+(uint8_t*)&action);
+			bool loop = action.kind != 2;
+			if (instance->animComponentV2)
+				instance->animComponentV2->TriggerStateTransition(0, anim, loop);
+			else
+				/*TODO*/;
+		}
 		case 12: {
 			UberObjectComposite::GetComposite(instance->owner)->commandByIndex(action.dword4);
 			break;
@@ -600,7 +611,30 @@ static void buildUI(UIActions& uiact, dtp::UberObjectProp::Action& action, Insta
 }
 
 static void buildUI(UIActions& uiact, dtp::UberObjectProp::QueryProp *query) {
-	ImGui::Text("Condition");
+	ImGui::Text("Condition: ");
+	ImGui::SameLine();
+	if (query->invert) {
+		ImGui::SameLine();
+		ImGui::Text("not (");
+	}
+	for (uint32_t i=0; i<query->count; i++) {
+		if (i > 0) {
+			ImGui::SameLine();
+			ImGui::Text(query->disjunction ? "OR" : "AND");
+			ImGui::SameLine();
+		}
+		auto& sub = query->subs[i];
+		switch (sub.dword4) {
+		case 1: ImGui::Text("s%d.state == %d", sub.sectionIndex, sub.dwordC); break;
+		case 2: ImGui::Text("s%d.alive", sub.sectionIndex); break;
+		case 3: ImGui::Text("s%d.flag%d is %s", sub.sectionIndex, sub.dword8, sub.dwordC ? "cleared" : "set"); break;
+		default: ImGui::Text("unknown%d", sub.dword4); break;
+		}
+	}
+	if (query->invert) {
+		ImGui::SameLine();
+		ImGui::Text(")");
+	}
 }
 
 static void buildUI(UIActions& uiact, dtp::Conseq8 *c8) {
@@ -703,17 +737,81 @@ static void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, dtp::UberOb
 	}
 }
 
+void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, dtp::UberObjectProp::Command *cmd, Instance *instance) {
+	for (uint32_t j=0; j < cmd->numConditions; j++) {
+		buildUI(uiact, cmd->conditions[j]);
+	}
+	for (uint32_t j=0; j < cmd->numConsequences; j++) {
+		buildUI(uiact, uberProp, cmd->consequences[j], instance);
+	}
+}
+
 void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, Instance *instance) {
 	ImGui::Indent();
 	for (uint32_t i=0; i < uberProp->numSections; i++) {
 		auto& section = uberProp->sectionList[i];
 		ImGui::Text("Section %d: modelIndex=%d initialState=%d", i, section.modelIndex, section.initialState);
 		ImGui::Indent();
+		{
+			auto area = ImVec2(ImGui::GetContentRegionAvail().x, 270);
+			ImGui::BeginChild("ChildL", area, false);
+			area.x -= 16;
+			area.y -= 16;
+			float ix, iy, ax, ay;
+			ix = ax = section.states[0].float0;
+			iy = ay = section.states[0].float4;
+			for (uint32_t j=1; j < section.numStates; j++) {
+				ix = std::min(ix, section.states[j].float0);
+				ax = std::max(ax, section.states[j].float0);
+				iy = std::min(iy, section.states[j].float4);
+				ay = std::max(ay, section.states[j].float4);
+			}
+			ImDrawList* draw_list = ImGui::GetWindowDrawList();
+			const ImVec2 anchor = ImGui::GetCursorScreenPos();
+			auto t = [=](ImVec2 p, bool screenSpace=false) { return ImVec2 {
+				(p.x-ix) / (ax-ix) * area.x + (screenSpace ? anchor.x : 0),
+				(p.y-iy) / (ay-iy) * area.y + (screenSpace ? anchor.y : 0)
+			}; };
+			for (uint32_t j=0; j < section.numStates; j++) {
+				auto& state = section.states[j];
+				ImVec2 here = t({
+					state.float0,
+					state.float4}, true);
+
+				for (uint32_t k=0; k < state.numTransitions; k++) {
+					auto& tr = *state.transitions[k];
+					ImVec2 there = t({
+						section.states[tr.nextState].float0,
+						section.states[tr.nextState].float4}, true);
+					draw_list->AddLine(here, there, ImGui::GetColorU32(ImGuiCol_Text));
+				}
+			}
+			for (uint32_t j=0; j < section.numStates; j++) {
+				auto& state = section.states[j];
+				ImVec2 here = t({
+					state.float0,
+					state.float4}, false);
+				ImGui::SetCursorPos(here);
+
+				Instance *compositeI = instance->owner ? instance->owner : instance;
+				Instance *sectionI = UberObjectComposite::GetComposite(compositeI)->sectionInstances[i];
+				bool active = UberObjectSection::GetSection(sectionI)->currentState == j;
+				if (!active)
+    				ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
+    			char label[10];
+    			snprintf(label, 10, "%d", j);
+    			if (ImGui::SmallButton(label))
+    				UberObjectSection::GetSection(sectionI)->setState(j, false/*TODO*/);
+				if (!active)
+					ImGui::PopStyleColor();
+			}
+			ImGui::EndChild();
+		}
 		for (uint32_t j=0; j < section.numStates; j++) {
 			auto& state = section.states[j];
-			ImGui::Text("State %d: %x %x %x", j,
-				state.dword0,
-				state.dword4,
+			ImGui::Text("State %d: %f %f %x", j,
+				state.float0,
+				state.float4,
 				state.dword8);
 			ImGui::Indent();
 			for (uint32_t k=0; k < state.numTransitions; k++) {
@@ -726,12 +824,33 @@ void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, Instance *instance
 						timeout);
 					break;
 				}
+				case 46: {
+					char *name = *(char**)&tr.dword1C;
+					ImGui::Text("transition[%d] -> state %d 46 \"%s\"", k,
+						tr.nextState,
+						name);
+					break;
+				}
 				default:
 					ImGui::Text("transition[%d] -> state %d %d %d", k,
 						tr.nextState,
 						tr.dword18,
 						tr.dword1C);
 					break;
+				}
+				if (tr.animIndex != 0xffff) {
+					ImGui::SameLine();
+					ImVec4 red {1.0f, 0.0f, 0.0f, 1.0f};
+					ImGui::TextColored(red, "with anim %d", tr.animIndex);
+				}
+				if (tr.dword18 == 11) {
+					ImGui::Indent();
+					auto queryIndex = tr.dword1C;
+					if (queryIndex < uberProp->numQueries)
+						buildUI(uiact, &uberProp->queryList[queryIndex]);
+					else
+						ImGui::Text("query index %d out of bounds", queryIndex);
+					ImGui::Unindent();
 				}
 			}
 			for (uint32_t k=0; k < state.numEntry; k++) {
@@ -766,12 +885,7 @@ void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, Instance *instance
 		auto& cmd = uberProp->commandList[i];
 		ImGui::Text("Command %d", i);
 		ImGui::Indent();
-		for (uint32_t j=0; j < cmd.numConditions; j++) {
-			buildUI(uiact, cmd.conditions[j]);
-		}
-		for (uint32_t j=0; j < cmd.numConsequences; j++) {
-			buildUI(uiact, uberProp, cmd.consequences[j], instance);
-		}
+		buildUI(uiact, uberProp, &cmd, instance);
 		ImGui::Unindent();
 	}
 	for (uint32_t i=0; i < uberProp->numUnknown; i++) {

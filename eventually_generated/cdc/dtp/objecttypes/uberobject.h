@@ -148,7 +148,8 @@ struct UberObjectProp {
 		uint32_t dword18;
 		uint32_t dword1C;
 		uint8_t gap20[8];
-		Transition *ptr28;
+		uint16_t animTy; // 28 (dtp::AnimReference)
+		uint16_t animIndex; // 2A
 		uint32_t randIntCutoff; // 2C
 		uint32_t dword30;
 		uint32_t numFlagMatchers; // 34
@@ -169,8 +170,8 @@ struct UberObjectProp {
 	};
 
 	struct StateProp {
-		uint32_t dword0;
-		uint32_t dword4;
+		float float0;
+		float float4;
 		uint32_t dword8;
 
 		uint32_t numTransitions;
@@ -202,8 +203,18 @@ struct UberObjectProp {
 		Conseq8 **conseq8List; // 54
 		uint8_t pad58[0x2F0-0x58];
 	};
+	struct QueryPropSub {
+		uint32_t sectionIndex;
+		uint32_t dword4;
+		uint32_t dword8;
+		uint32_t dwordC;
+	};
 	struct QueryProp {
-
+		uint32_t dword0;
+		bool invert; // 4
+		uint32_t disjunction; // 8
+		uint32_t count; // C
+		QueryPropSub *subs; // 10
 	};
 	struct Consequence {
 		uint32_t targetSection;
@@ -273,6 +284,40 @@ struct DoorCon {
 	uint32_t introId;
 };
 
+struct Item {
+	uint32_t dword0;
+	void *ptr4;
+	uint32_t dword8;
+	void *ptrC;
+	uint32_t dword10;
+	uint32_t dword14;
+	uint32_t dword18;
+	uint32_t dword1C;
+	uint16_t nameIndex; // 20
+	uint16_t descIndex; // 22
+	uint8_t width; // 24
+	uint8_t height; // 25
+	uint32_t stackHeight; // 28
+};
+
+struct LootItem {
+	uint32_t itemDtpIndex; // 0
+	uint32_t dword4; // 4
+	uint32_t dword8;
+	uint32_t dwordC;
+	uint32_t dword10;
+	uint32_t dword14;
+	uint32_t dword18;
+	uint32_t dword1C;
+	uint32_t dword20;
+};
+
+struct Loot {
+	uint32_t sectionIndex;
+	uint32_t numItems;
+	LootItem *items;
+};
+
 struct IntroDataUberObject {
 	uint32_t type;
 	uint8_t gap4[20];
@@ -288,7 +333,7 @@ struct IntroDataUberObject {
 	DoorCon *doorCon;
 	uint8_t gap34[52];
 	uint32_t *connections; // 68
-	uint32_t dword6C;
+	Loot *loot;
 	uint8_t gap70[8];
 	uint32_t dword78;
 	uint32_t dword7C;
@@ -297,7 +342,7 @@ struct IntroDataUberObject {
 	uint32_t *defaultPrograms; // 88
 	uint8_t gap8C[76];
 	uint8_t numConnections; // D8
-	uint8_t byteD9;
+	uint8_t numLoot;
 	uint8_t gapDA[4];
 	uint8_t byteDE;
 	uint8_t byteDF;
