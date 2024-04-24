@@ -6,6 +6,7 @@
 #if ENABLE_IMGUI
 #include <cstdio>
 #include "imgui/imgui.h"
+#include "cdcAnim/Inspector.h"
 #endif
 
 namespace cdc {
@@ -74,7 +75,12 @@ void ANITRACKER_BuildUI(UIActions& uiact) {
 	for (uint32_t i=0; i<4000 && encountered < gNumLoadedAnimations; i++) {
 		if (sAnimRefCounts[i] != 0) {
 			encountered++;
-			ImGui::Text("fragment %04x", sAnimIDs[i]);
+			char label[20];
+			snprintf(label, 20, "fragment %04x", sAnimIDs[i]);
+			if (ImGui::TreeNode(label)) {
+				buildUI(uiact, aniTracker[i].animationData);
+				ImGui::TreePop();
+			}
 		}
 	}
 #endif

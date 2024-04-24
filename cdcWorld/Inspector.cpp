@@ -1,8 +1,7 @@
 #include "Inspector.h"
 #include "3rdParty/imgui/imgui.h"
 #include "cdc/dtp/objectproperties/intro.h"
-#include "game/DeferredRenderingObject.h"
-#include "game/LensFlareAndCoronaID.h"
+#include "cdcAnim/Inspector.h"
 #include "rendering/CommonMaterial.h"
 #include "rendering/MaterialData.h"
 #include "cdcResource/ResolveSection.h"
@@ -10,6 +9,8 @@
 #include "cdcObjects/ObjectManager.h"
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Object.h"
+#include "game/DeferredRenderingObject.h"
+#include "game/LensFlareAndCoronaID.h"
 #include "UIActions.h"
 
 void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
@@ -146,6 +147,20 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			instance->position.z);
 		ImGui::Text("SceneEntity      %p", instance->sceneEntity);
 		ImGui::Text("InstanceDrawable %p", instance->instanceDrawable);
+
+		cdc::Object *object = instance->object;
+		for (uint32_t i=0; i<object->numAnims; i++) {
+			ImGui::Text("anim [%3d]                   %04x %04x %08x %08x", i,
+				object->animations[i].animID,
+				object->animations[i].word2,
+				object->animations[i].dword4,
+				object->animations[i].dword8);
+			auto animID = object->animations[i].animID;
+			auto *animSection = cdc::g_resolveSections[2];
+			if (cdc::AnimFragment *anim = (cdc::AnimFragment*)animSection->getWrapped(animSection->getDomainId(animID))) {
+				buildUI(uiact, anim);
+			}
+		}
 	}
 	if (ImGui::CollapsingHeader("Intro", ImGuiTreeNodeFlags_DefaultOpen)) {
 		ImGui::Text("uniqueID %d/0x%x", instance->intro->uniqueID, instance->intro->uniqueID);
