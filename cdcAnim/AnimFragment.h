@@ -1,7 +1,20 @@
 #pragma once
 #include <cstdint>
+#include "cdcMath/Math.h"
 
 namespace cdc {
+
+struct AnimSegment {
+	Vector3 rot;
+	Vector3 trans;
+};
+
+struct AnimBuffer {
+	AnimSegment *segments = nullptr;
+	uint32_t numSegments;
+	// Vector3 rootTrans;
+	// Quat rootQuatLog;
+};
 
 struct AnimFragment {
 	char pad[48];
