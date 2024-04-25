@@ -1624,23 +1624,24 @@ int spinnyCube(HWND window,
 					}
 
 					// rotation gizmos
-					for (uint32_t i=0; i<numMatrices; i++) {
-						ImGuizmo::SetID(i+1);
-						ImGuizmo::Manipulate(
-							(float*)viewMatrix.m,
-							(float*)scene->projectMatrix.m,
-							ImGuizmo::ROTATE,
-							ImGuizmo::LOCAL,
-							(float*)matrices[i].m,
-							(float*)delta.m);
+					if (instance->enableOverridePose)
+						for (uint32_t i=0; i<numMatrices; i++) {
+							ImGuizmo::SetID(i+1);
+							ImGuizmo::Manipulate(
+								(float*)viewMatrix.m,
+								(float*)scene->projectMatrix.m,
+								ImGuizmo::ROTATE,
+								ImGuizmo::LOCAL,
+								(float*)matrices[i].m,
+								(float*)delta.m);
 
-						if (instance->enableOverridePose && delta != cdc::identity4x4) {
-							auto j = model->GetSegmentList()[i].parent;
-							cdc::Matrix parentInverse;
-							cdc::OrthonormalInverse3x4(&parentInverse, matrices[j]);
-							instance->overridePose[i] = parentInverse * matrices[i];
+							if (delta != cdc::identity4x4) {
+								auto j = model->GetSegmentList()[i].parent;
+								cdc::Matrix parentInverse;
+								cdc::OrthonormalInverse3x4(&parentInverse, matrices[j]);
+								instance->overridePose[i] = parentInverse * matrices[i];
+							}
 						}
-					}
 				}
 				if (auto *instanceDrawable = uiact.selectedInstance->instanceDrawable)
 					static_cast<cdc::InstanceDrawable*>(instanceDrawable)->AddToDirtyList();
