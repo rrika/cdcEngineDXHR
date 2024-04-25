@@ -10,10 +10,11 @@ class AnimDecoder;
 class AnimFragmentNode : public AnimPipelineNode {
 	AnimFragment *fragment; // 60
 
+	float elapsedTime = 0.0f;
 	uint32_t animID; // 6C
 	uint32_t boneMapHash; // 70
 	BoneMap *boneMap = nullptr; // 74
-	AnimDecoder *decoders; // 7C
+	AnimDecoder *decoders = nullptr; // 7C
 
 	bool loop = true;
 
@@ -37,7 +38,9 @@ public:
 	void EnsureIDMap(dtp::Model *model);
 	void EnsureDecoders();
 	void DecompressPose(AnimContextData*);
+	void CalcTargetKeyAndTimeOffset(uint32_t& targetKey, float& timeOffset);
 	void DecompressFrame(AnimContextData*);
+	void DecompressFrame(AnimContextData*, uint32_t frameIndex, float fractionalTime);
 };
 
 }

@@ -16,6 +16,14 @@ void Vector::SafeNormalize3() {
     }
 }
 
+Vector Vector::Normalize3() {
+    // HACK
+    float d = x*x + y*y + z*z;
+    d = sqrt(d);
+    d = 1.0f/d;
+    return {x*d, y*d, z*d, w*d};
+}
+
 void Matrix::Build_XYZOrder(float *angles) { // Matrix.cpp:283
     *this = identity4x4;
     RotZ(sin(angles[2]), cos(angles[2]));
