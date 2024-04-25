@@ -15,6 +15,9 @@ public:
 	};
 
 	void SafeNormalize3();
+	bool IsZero2() const;
+	bool IsZero3() const;
+	bool IsZero4() const;
 };
 
 class Quat : public Vector {};
