@@ -57,7 +57,7 @@ public:
 	UserDataComponent *userDataComponent = nullptr; // 2E0
 	cdc::AnimComponentV2 *animComponentV2 = nullptr; // 2F8
 
-	bool enableOverridePose = true; // HACK
+	bool enableOverridePose = false; // HACK
 	std::vector<cdc::Matrix> overridePose; // HACK
 
 public:

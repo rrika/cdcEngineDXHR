@@ -1,4 +1,5 @@
 #include "InstncG2.h"
+#include "cdcAnim/AnimComponentV2.h"
 #include "cdcMath/Math.h"
 #include "cdcWorld/cdcWorldTypes.h"
 #include "cdcWorld/Instance.h"
@@ -70,10 +71,10 @@ void G2Instance_RebuildTransforms(Instance *instance) { // line 386/404
 		if (instance->enableOverridePose) {
 			instance->BuildEditorTransforms(matrices);
 
-		} /* else if (AnimComponentV2 *ac2 = instance->animComponentV2) {
+		} else if (AnimComponentV2 *ac2 = instance->animComponentV2) {
 			ac2->matrices = matrices;
 			ac2->BuildTransforms();
-		} */
+		}
 		G2Instance_PostRebuildTransforms(instance);
 	}
 }

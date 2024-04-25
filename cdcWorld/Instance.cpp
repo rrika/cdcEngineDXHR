@@ -175,6 +175,9 @@ void Instance::InitEditorPose(dtp::Model *model) {
 		m.m[3][1] = pivot.y;
 		m.m[3][2] = pivot.z;
 	}
+
+	if (animComponentV2)
+		animComponentV2->Init(model); // HACK
 }
 
 // see also AnimBuildTransforms
