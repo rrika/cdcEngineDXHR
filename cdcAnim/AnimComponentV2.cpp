@@ -1,6 +1,7 @@
 #include "AnimComponentV2.h"
 #include "cdcAnim/AnimFragment.h"
 #include "cdcAnim/AnimNodes/AnimFragmentNode.h"
+#include "cdcAnim/AnimPoseNode.h"
 #include "cdcAnim/IAnimGraphNode.h" // for cdc::AnimContextData
 #include "cdcKit/Animation/anitracker.h"
 #include "cdcMath/MathUtil.h"
@@ -35,16 +36,22 @@ void AnimComponentV2::Init(dtp::Model *model) {
 
 		if (fragment) {
 			graphOutput = new AnimFragmentNode(this, fragment);
-			// poseNode = CreatePoseNode();
-			// poseNode->SetInput(0, graphOutput);
+			poseNode = CreatePoseNode();
+			poseNode->SetInput(0, graphOutput);
 		}
 	}
 }
 
+AnimPoseNode *AnimComponentV2::CreatePoseNode() {
+	return new AnimPoseNode(this, true);
+}
+
 void AnimComponentV2::BuildTransforms() {
-	// TODO
-	pose.AllocSegs(model->oldNumSegments, instance, 1);
-	pose.ClearSegValues(1.0);
+	if (!poseNode)
+		return;
+
+	poseNode->pose.AllocSegs(model->oldNumSegments, instance, 1);
+	poseNode->pose.ClearSegValues(1.0);
 	PrePhysics();
 	// TODO
 	BuildSegTransforms();
@@ -57,8 +64,7 @@ void AnimComponentV2::PrePhysics() {
 		data.model = model;
 		data.boneSet = &s_allBones;
 		data.weight = 1.0f;
-		data.pose = &pose; // HACK
-		graphOutput->PrePhysics(&data); // HACK, should be called on PoseNode
+		poseNode->PrePhysics(&data);
 	}
 }
 
@@ -67,7 +73,7 @@ void AnimComponentV2::TriggerStateTransition(uint32_t trigger, uint32_t hackAnim
 }
 
 void AnimComponentV2::BuildSegTransformForRoot(Matrix& a, Matrix& b) {
-	AnimBuffer *buffer = pose.buffer;
+	AnimBuffer *buffer = poseNode->pose.buffer;
 	AnimSegment *segments = buffer ? buffer->segments : nullptr;
 	if (!segments || segments[0].trans.IsZero3() && segments[0].rot.IsZero3()) {
 		a = b;
@@ -89,7 +95,7 @@ void AnimComponentV2::BuildSegTransforms() {
 	int32_t parent0 = int32_t(modelSegments[0].parent); // index -1 is valid
 	BuildSegTransformForRoot(matrices[0], matrices[parent0]);
 
-	AnimBuffer *buffer = pose.buffer;
+	AnimBuffer *buffer = poseNode->pose.buffer;
 	AnimSegment *animSegments = buffer ? buffer->segments : nullptr;
 	uint32_t numSegments = model->oldNumSegments;
 	for (int i=1; i<numSegments; i++) {

@@ -7,6 +7,7 @@ class Instance;
 
 namespace cdc {
 
+class AnimPoseNode;
 class IAnimGraphNode;
 struct BoneSet;
 struct Matrix;
@@ -15,7 +16,7 @@ class AnimComponentV2 {
 	static BoneSet s_allBones;
 public:
 	IAnimGraphNode *graphOutput = nullptr; // 0
-	AnimPose pose; // HACK
+	AnimPoseNode *poseNode = nullptr; // 4
 	dtp::Model *model = nullptr; // 20
 	Instance *instance; // 24
 	Matrix *matrices = nullptr; // 2C, assigned by G2Instance_RebuildTransforms
@@ -23,6 +24,7 @@ public:
 
 	AnimComponentV2(Instance *instance);
 	void Init(dtp::Model *model);
+	AnimPoseNode *CreatePoseNode();
 	void BuildTransforms();
 	void PrePhysics();
 	void TriggerStateTransition(uint32_t trigger, uint32_t hackAnimIndex, bool hackLoop);

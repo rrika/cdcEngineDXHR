@@ -138,7 +138,7 @@ void buildUI(UIActions& uiact, AnimComponentV2 *ac) {
 			ac->TriggerStateTransition(0, i, true);
 	}
 	char label[6];
-	cdc::AnimBuffer &buffer = *ac->pose.buffer;
+	cdc::AnimBuffer &buffer = *ac->poseNode->pose.buffer;
 	for (uint32_t i=1; i<buffer.numSegments; i++) {
 		snprintf(label, 6, "pos%d", i);
 		ImGui::SliderFloat3(label, buffer.segments[i].trans.vec128, -200.f, 200.f);
