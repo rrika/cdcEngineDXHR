@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <cstdio>
 #include "Inspector.h"
 #include "3rdParty/imgui/imgui.h"
 #include "cdcAnim/AnimComponentV2.h"
@@ -127,5 +128,12 @@ void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
 }
 
 void buildUI(UIActions& uiact, AnimComponentV2 *ac) {
-	ImGui::Text("todo");
+	char label[6];
+	cdc::AnimBuffer &buffer = *ac->pose.buffer;
+	for (uint32_t i=1; i<buffer.numSegments; i++) {
+		snprintf(label, 6, "pos%d", i);
+		ImGui::SliderFloat3(label, buffer.segments[i].trans.vec128, -200.f, 200.f);
+		snprintf(label, 6, "rot%d", i);
+		ImGui::SliderFloat3(label, buffer.segments[i].rot.vec128, -2.f, 2.f);
+	}
 }
