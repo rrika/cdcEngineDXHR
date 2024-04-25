@@ -62,6 +62,10 @@ void AnimComponentV2::PrePhysics() {
 	}
 }
 
+void AnimComponentV2::TriggerStateTransition(uint32_t trigger, uint32_t hackAnimIndex, bool hackLoop) {
+	static_cast<AnimFragmentNode*>(graphOutput)->SetAnimData(hackAnimIndex, hackLoop);
+}
+
 void AnimComponentV2::BuildSegTransformForRoot(Matrix& a, Matrix& b) {
 	AnimBuffer *buffer = pose.buffer;
 	AnimSegment *segments = buffer ? buffer->segments : nullptr;

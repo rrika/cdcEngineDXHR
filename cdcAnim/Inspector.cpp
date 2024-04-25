@@ -6,6 +6,8 @@
 #include "cdcAnim/AnimDecoder.h"
 #include "cdcAnim/AnimFragment.h"
 #include "cdcAnim/AnimPoseNode.h"
+#include "cdcWorld/Instance.h"
+#include "cdcWorld/Object.h"
 
 using namespace cdc;
 
@@ -128,6 +130,13 @@ void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
 }
 
 void buildUI(UIActions& uiact, AnimComponentV2 *ac) {
+	auto *object = ac->instance->object;
+	for (uint32_t i=0; i<object->numAnims; i++) {
+		char label[10];
+		snprintf(label, 10, "Anim %d", i);
+		if (ImGui::SmallButton(label))
+			ac->TriggerStateTransition(0, i, true);
+	}
 	char label[6];
 	cdc::AnimBuffer &buffer = *ac->pose.buffer;
 	for (uint32_t i=1; i<buffer.numSegments; i++) {

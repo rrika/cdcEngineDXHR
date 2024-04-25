@@ -11,7 +11,10 @@ class AnimFragmentNode : public AnimPipelineNode {
 	uint32_t boneMapHash; // 70
 	BoneMap *boneMap = nullptr; // 74
 
-	void SetAnimData(uint16_t);
+	bool loop = true;
+
+public:
+	void SetAnimData(uint16_t, bool);
 
 public:
 	AnimFragmentNode(AnimComponentV2 *ac, AnimFragment *fragment);

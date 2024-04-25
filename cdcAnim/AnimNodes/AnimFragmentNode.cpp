@@ -1,6 +1,9 @@
 #include "AnimFragmentNode.h"
 #include "cdcAnim/AnimPose.h"
+#include "cdcKit/Animation/anitracker.h"
 #include "cdcWorld/cdcWorldTypes.h"
+#include "cdcWorld/Instance.h"
+#include "cdcWorld/Object.h"
 
 namespace cdc {
 
@@ -11,8 +14,19 @@ AnimFragmentNode::AnimFragmentNode(AnimComponentV2 *ac, AnimFragment *fragment) 
 	// TODO
 }
 
-void AnimFragmentNode::SetAnimData(uint16_t anim) {
+void AnimFragmentNode::SetAnimData(uint16_t anim, bool loop) {
 	// TODO
+	if (anim == 0xffff)
+		return;
+	this->loop = loop;
+	auto *object = animComponent->instance->object;
+	uint32_t animID = object->animations[anim].animID;
+	if (animID) {
+		int32_t i = ANITRACKER_FindAnimation(animID);
+		fragment = (AnimFragment*)aniTracker[i].animationData;
+	} else {
+		fragment = nullptr;
+	}
 }
 
 void AnimFragmentNode::Activate(Instance*, float) {

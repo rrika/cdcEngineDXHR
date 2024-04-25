@@ -25,6 +25,7 @@ public:
 	void Init(dtp::Model *model);
 	void BuildTransforms();
 	void PrePhysics();
+	void TriggerStateTransition(uint32_t trigger, uint32_t hackAnimIndex, bool hackLoop);
 	void BuildSegTransformForRoot(Matrix&, Matrix&);
 	void BuildSegTransforms();
 };
