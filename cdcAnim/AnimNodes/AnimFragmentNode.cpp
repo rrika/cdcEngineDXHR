@@ -74,8 +74,14 @@ void AnimFragmentNode::PrePhysics(AnimContextData *data) {
 	}
 
 	elapsedTime += 1000/60.f;
+	float end = fragment->mTimePerKey * fragment->mKeyCount;
 	if (elapsedTime >= fragment->mTimePerKey * fragment->mKeyCount)
-		elapsedTime -= fragment->mTimePerKey * fragment->mKeyCount;
+	{
+		if (loop)
+			elapsedTime -= fragment->mTimePerKey * fragment->mKeyCount;
+		else
+			elapsedTime = end;
+	}
 }
 
 void AnimFragmentNode::EnsureIDMap(dtp::Model *model) {

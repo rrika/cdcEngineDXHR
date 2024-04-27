@@ -10,7 +10,7 @@ class AnimDecoder;
 class AnimFragmentNode : public AnimPipelineNode {
 	AnimFragment *fragment; // 60
 
-	float elapsedTime = 0.0f;
+	float elapsedTime = 0.0f; // 68
 	uint32_t animID; // 6C
 	uint32_t boneMapHash; // 70
 	BoneMap *boneMap = nullptr; // 74
