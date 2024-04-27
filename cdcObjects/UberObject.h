@@ -52,8 +52,18 @@ public:
 	uint32_t magic = 0xF0012345; // 50
 	Instance *instance; // 58
 	dtp::UberObjectProp::SectionProp *sectionProp; // 5C
+	dtp::UberObjectProp::Transition *ongoingTransition = nullptr; // 64
+	uint32_t stateAssignmentCounter = 0; // 68
 	int32_t currentState = -1; // 6C
+	dtp::UberObjectProp::Transition *recursivelyRequestedTransition = nullptr; // 70
+	int32_t recursivelyRequestedState = -1; // 74
+	bool isFirstRequest = false; // 78
 	float timeInState = 0.0f; // 7C
+	uint32_t inProgress : 1;       // 80 & 1
+	uint32_t reset : 1;            // 84 & 1
+	uint32_t isUpright : 1;        // 84 & 2
+	uint32_t wasUpright : 1;       // 84 & 4
+	uint32_t inhibit : 1; // 84 & 8
 	uint32_t stateFlags = 0; // 88
 
 public:
@@ -61,6 +71,7 @@ public:
 
 	void entryActions(bool);
 	void exitActions(bool);
+	void exit();
 	void runActionsLists(
 		dtp::UberObjectProp::Action *actions, uint32_t numActions,
 		dtp::UberObjectProp::CondAction *condActions, uint32_t numCondActions,
@@ -68,10 +79,12 @@ public:
 	void process();
 	void nonVirtualUpdate();
 	void takeAutomaticTransitions();
+	void takeDeferredTransition();
 	void takeTransition15(uint32_t);
 	void takeTransition18(uint32_t);
 	void takeTransitionIfPresent(uint32_t);
 	void takeTransition(dtp::UberObjectProp::Transition&);
+	int32_t getTransitionIndex(dtp::UberObjectProp::Transition*);
 
 	dtp::UberObjectProp::Transition *GetUseTransition();
 	bool IsUsable();

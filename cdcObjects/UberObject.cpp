@@ -211,6 +211,7 @@ void UberObjectSection::entryActions(bool b) {
 			state.entry, state.numEntry,
 			state.condEntry, state.numCondEntry,
 			b);
+	timeInState = 0.0f;
 	UberObjectComposite::GetComposite(instance->owner)->notifyEntry(this, currentState);
 }
 
@@ -222,6 +223,12 @@ void UberObjectSection::exitActions(bool b) {
 			state.condExit, state.numCondExit,
 			b);
 	UberObjectComposite::GetComposite(instance->owner)->notifyExit(this, currentState);
+}
+
+void UberObjectSection::exit() {
+	if (currentState >= 0 && currentState < sectionProp->numStates)
+		exitActions(false);
+	currentState = -1;
 }
 
 void UberObjectSection::runActionsLists(
@@ -245,11 +252,24 @@ void UberObjectSection::process() {
 void UberObjectSection::nonVirtualUpdate() {
 	// TODO
 	float timeDelta = 0.0333f; // instance_getTimeDelta(instance);
-	takeAutomaticTransitions();
-	timeInState += timeDelta;
+
+	wasUpright = isUpright;
+	isUpright = true; // TODO
+
+	if (!inhibit) {
+		if (ongoingTransition) {
+			if (!inProgress)
+				setState(ongoingTransition->nextState, false);
+		} else {
+			takeAutomaticTransitions();
+			timeInState += timeDelta;
+		}
+	}
 }
 
 void UberObjectSection::takeAutomaticTransitions() {
+	if (currentState == -1)
+		return;
 	dtp::UberObjectProp::StateProp& state = sectionProp->states[currentState];
 	for (uint32_t i=0; i < state.numTransitions; i++) {
 		auto tr = state.transitions[i];
@@ -259,6 +279,8 @@ void UberObjectSection::takeAutomaticTransitions() {
 }
 
 void UberObjectSection::takeTransition15(uint32_t key) {
+	if (ongoingTransition || reset || inhibit)
+		return;
 	dtp::UberObjectProp::StateProp& state = sectionProp->states[currentState];
 	for (uint32_t i=0; i < state.numTransitions; i++) {
 		auto tr = state.transitions[i];
@@ -268,6 +290,8 @@ void UberObjectSection::takeTransition15(uint32_t key) {
 }
 
 void UberObjectSection::takeTransition18(uint32_t key) {
+	if (ongoingTransition || reset || inhibit)
+		return;
 	dtp::UberObjectProp::StateProp& state = sectionProp->states[currentState];
 	for (uint32_t i=0; i < state.numTransitions; i++) {
 		auto tr = state.transitions[i];
@@ -287,10 +311,66 @@ void UberObjectSection::takeTransitionIfPresent(uint32_t transitionIndex) {
 }
 
 void UberObjectSection::takeTransition(dtp::UberObjectProp::Transition& tr) {
-	// TODO
-	if (tr.animIndex != 0xffff)
-		instance->animComponentV2->TriggerStateTransition(0, tr.animIndex, false);
-	setState(tr.nextState, false);
+	if (isFirstRequest) {
+		while (true) {
+			isFirstRequest = false;
+
+			this->exit();
+			ongoingTransition = &tr;
+			// dword80 = nullptr;
+			// TODO
+			if (tr.animIndex != 0xffff)
+				instance->animComponentV2->TriggerStateTransition(0, tr.animIndex, false);
+			// TODO
+			uint32_t transitionIndex = getTransitionIndex(&tr);
+			UberObjectComposite::GetComposite(instance->owner)->notifyTransition(this, transitionIndex);
+			isFirstRequest = true;
+			if (ongoingTransition == &tr) {
+				// TODO
+				if (!inProgress)
+					setState(ongoingTransition->nextState, false);
+			}
+
+			isFirstRequest = true;
+			if (recursivelyRequestedState != -1) {
+				uint32_t nextState = recursivelyRequestedState;
+				recursivelyRequestedTransition = nullptr;
+				recursivelyRequestedState = -1;
+				setState(nextState, false);
+				return;
+			}
+			else if (!recursivelyRequestedTransition)
+				break;
+		}
+	} else {
+		recursivelyRequestedTransition = &tr;
+		recursivelyRequestedState = -1;
+	}
+}
+
+void UberObjectSection::takeDeferredTransition() {
+	isFirstRequest = true;
+
+	if (recursivelyRequestedState != -1) {
+		uint32_t nextState = recursivelyRequestedState;
+		recursivelyRequestedState = -1;
+		recursivelyRequestedTransition = nullptr;
+		setState(nextState, false);
+
+	} else if (recursivelyRequestedTransition) {
+		auto *transition = recursivelyRequestedTransition;
+		recursivelyRequestedTransition = nullptr;
+		takeTransition(*transition);
+	}
+}
+
+int32_t UberObjectSection::getTransitionIndex(dtp::UberObjectProp::Transition *tr) {
+	if (sectionProp->numTransitions <= 0)
+		return -1;
+	for (uint32_t i=0; i < sectionProp->numTransitions; i++)
+		if (tr == &sectionProp->transitions[i])
+			return i;
+	return 0;
 }
 
 dtp::UberObjectProp::Transition *UberObjectSection::GetUseTransition() {
@@ -348,12 +428,37 @@ void UberObjectSection::method4(dtp::UberObjectProp::Consequence& conseq) {
 }
 
 void UberObjectSection::setState(uint32_t nextState, bool b) {
-	// HACK
-	if (currentState >= 0 && currentState < sectionProp->numStates)
-		exitActions(false);
-	currentState = nextState;
-	timeInState = 0.0f;
-	entryActions(b);
+	if (isFirstRequest) {
+		if (currentState != nextState) {
+			stateAssignmentCounter++;
+			isFirstRequest = false;
+
+			// Exit
+			if (currentState >= 0 && currentState < sectionProp->numStates)
+				exitActions(false);
+
+			// Interrupt
+			if (ongoingTransition) {
+				uint32_t ongoingIndex = getTransitionIndex(ongoingTransition);
+				UberObjectComposite::GetComposite(instance->owner)->notifyInterruption(this, ongoingIndex);
+				ongoingTransition = nullptr;
+			}
+
+			// Enter
+			currentState = nextState;
+			entryActions(b);
+
+			isFirstRequest = true;
+			if (ongoingTransition == nullptr && !inhibit && stateAssignmentCounter < 10)
+				takeAutomaticTransitions();
+			takeDeferredTransition();
+		}
+		stateAssignmentCounter = 0;
+
+	} else {
+		recursivelyRequestedState = nextState;
+		recursivelyRequestedTransition = nullptr;
+	}
 }
 
 bool UberObjectSection::shouldTakeTransition(dtp::UberObjectProp::Transition& transition) {
@@ -749,6 +854,7 @@ void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, dtp::UberObjectPro
 void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, Instance *instance) {
 	ImGui::Indent();
 	for (uint32_t i=0; i < uberProp->numSections; i++) {
+		ImGui::PushID(i);
 		auto& section = uberProp->sectionList[i];
 		ImGui::Text("Section %d: modelIndex=%d initialState=%d", i, section.modelIndex, section.initialState);
 		ImGui::Indent();
@@ -809,6 +915,7 @@ void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, Instance *instance
 		}
 		for (uint32_t j=0; j < section.numStates; j++) {
 			auto& state = section.states[j];
+			ImGui::PushID(j);
 			ImGui::Text("State %d: %f %f %x", j,
 				state.float0,
 				state.float4,
@@ -822,6 +929,54 @@ void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, Instance *instance
 					ImGui::Text("transition[%d] -> state %d after %f", k,
 						tr.nextState,
 						timeout);
+					break;
+				}
+				case 5:
+				case 6:
+				{
+					ImGui::Text("transition[%d] -> state %d %d (joint related) %d", k,
+						tr.nextState,
+						tr.dword18,
+						tr.dword1C);
+					break;
+				}
+				case 7: {
+					ImGui::Text("transition[%d] -> state %d collision with impulse %f", k,
+						tr.nextState,
+						*(float*)&tr.dword1C);
+					break;
+				}
+				case 8: {
+					ImGui::Text("transition[%d] -> state %d collision with force? %f", k,
+						tr.nextState,
+						*(float*)&tr.dword1C);
+					break;
+				}
+				case 9: {
+					ImGui::Text("transition[%d] -> state %d collision with force %f", k,
+						tr.nextState,
+						*(float*)&tr.dword1C);
+					break;
+				}
+				case 10: {
+					ImGui::Text("transition[%d] -> state %d collision with torque %f", k,
+						tr.nextState,
+						*(float*)&tr.dword1C);
+					break;
+				}
+				case 12:
+				{
+					ImGui::Text("transition[%d] -> state %d %d (joint related) %d", k,
+						tr.nextState,
+						tr.dword18,
+						tr.dword1C);
+					break;
+				}
+				case 19: {
+					char *name = *(char**)&tr.dword1C;
+					ImGui::Text("transition[%d] -> state %d [use] %d", k,
+						tr.nextState,
+						tr.dword1C);
 					break;
 				}
 				case 46: {
@@ -842,6 +997,10 @@ void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, Instance *instance
 					ImGui::SameLine();
 					ImVec4 red {1.0f, 0.0f, 0.0f, 1.0f};
 					ImGui::TextColored(red, "with anim %d", tr.animIndex);
+				}
+				if (tr.randFlags & 8) {
+					ImGui::SameLine();
+					ImGui::Text("(%d chance)", tr.randIntCutoff);
 				}
 				if (tr.dword18 == 11) {
 					ImGui::Indent();
@@ -870,12 +1029,14 @@ void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, Instance *instance
 				buildUI(uiact, state.condExit[k].action, instance);
 			}
 			ImGui::Unindent();
+			ImGui::PopID();
 		}
 		for (uint32_t i=0; i < section.numConseq8; i++) {
 			auto *conseq8 = section.conseq8List[i];
 			buildUI(uiact, conseq8);
 		}
 		ImGui::Unindent();
+		ImGui::PopID();
 	}
 	for (uint32_t i=0; i < uberProp->numCommandMaps; i++) {
 		auto& cmdmap = uberProp->commandMapList[i];
