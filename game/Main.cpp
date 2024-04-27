@@ -22,6 +22,7 @@
 #include "cdcWorld/Object.h"
 #include "cdcWorld/SceneLayer.h"
 #include "cdcWorld/stream.h"
+#include "DX3Player.h"
 #include "Main.h"
 
 using namespace cdc;
@@ -103,6 +104,10 @@ void loadDatabases() {
 void Init_NativeScripts();
 
 void MAIN_DoMainInit() {
+	// TODO
+
+	PlayerPair::init();
+
 	// TODO
 
 	GarbageCollector::Create();

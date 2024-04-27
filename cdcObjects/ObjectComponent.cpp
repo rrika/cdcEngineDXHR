@@ -1,4 +1,5 @@
 #include "game/objects/UberObject_DX3.h"
+#include "game/DX3Player.h"
 #include "ObjectComponent.h"
 #include "ObjectManager.h"
 #include "cdcWorld/GameTracker.h"
@@ -23,10 +24,12 @@ bool ObjectComponent::InstanceInit(bool unknown) {
 	}
 	g_objectManager->preInit(m_instance, &gameTrackerX); // calls GameAdditionalPreInit
 	G2Instance_SetTransformsToIdentity(m_instance);
-	// TODO: call the object family's init function
-	//       right now I'm just hardcoding the init for UberObjects (family 2) though
+	// TODO: call the object family's init function. right now I'm just hardcoding
+	//       the init for UberObjects (family 2) and the player (family 3) though
 	if (m_familyId == 2)
 		UBEROBJECT_DX3_Init(m_instance, &gameTrackerX);
+	if (m_familyId == 3)
+		Player::Init(m_instance, &gameTrackerX);
 	// TODO
 	g_objectManager->postInit(m_instance, &gameTrackerX);// calls GameAdditionalPostInit
 	// TODO
