@@ -2,6 +2,7 @@
 #include <cstdint>
 #include "config.h"
 #include "cdcObjects/Objects.h"
+#include "cdcSave/BinaryReaderWriter.h"
 #include "cdc/dtp/objecttypes/uberobject.h"
 
 // There is a string .\game\Objects\UberObject.cpp in DXHRDC.exe suggesting this file should go there,
@@ -59,11 +60,14 @@ public:
 	int32_t recursivelyRequestedState = -1; // 74
 	bool isFirstRequest = false; // 78
 	float timeInState = 0.0f; // 7C
-	uint32_t inProgress : 1;       // 80 & 1
-	uint32_t reset : 1;            // 84 & 1
-	uint32_t isUpright : 1;        // 84 & 2
-	uint32_t wasUpright : 1;       // 84 & 4
-	uint32_t inhibit : 1; // 84 & 8
+
+	uint32_t inProgress:1 = false;  // 80 & 1
+
+	uint32_t reset:1      = false;  // 84 & 1
+	uint32_t isUpright:1  = true;  // 84 & 2
+	uint32_t wasUpright:1 = true;  // 84 & 4
+	uint32_t inhibit:1    = false; // 84 & 8
+
 	uint32_t stateFlags = 0; // 88
 
 public:
@@ -85,11 +89,15 @@ public:
 	void takeTransitionIfPresent(uint32_t);
 	void takeTransition(dtp::UberObjectProp::Transition&);
 	int32_t getTransitionIndex(dtp::UberObjectProp::Transition*);
+	bool evalTransitionCondition(dtp::UberObjectProp::Transition&);
+	bool evalTransitionConditionRand(dtp::UberObjectProp::Transition&);
+	void resetIfRequested();
 
 	dtp::UberObjectProp::Transition *GetUseTransition();
 	bool IsUsable();
 	void Use();
 
+	static UberObjectComposite *GetComposite(Instance*);
 	static UberObjectSection *GetSection(Instance*);
 
 	virtual ~UberObjectSection() = default;
@@ -99,8 +107,8 @@ public:
 	virtual void setState(uint32_t, bool); // 10
 	virtual bool shouldTakeTransition(dtp::UberObjectProp::Transition& transition);
 	virtual void doAction(dtp::UberObjectProp::Action& action);
-	// virtual void write(BinaryWriter&); // 1C
-	// virtual void read(BinaryReader&); // 20
+	virtual void write(BinaryWriter&); // 1C
+	virtual void read(BinaryReader&); // 20
 	// virtual void method24();
 	// virtual void method28();
 	virtual void Update();

@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cstdlib>
 #include "config.h"
 #include "cdcAnim/AnimComponentV2.h"
 #include "cdcObjects/ObjectManager.h"
@@ -373,6 +374,30 @@ int32_t UberObjectSection::getTransitionIndex(dtp::UberObjectProp::Transition *t
 	return 0;
 }
 
+bool UberObjectSection::evalTransitionCondition(dtp::UberObjectProp::Transition& tr) {
+	for (uint32_t i=0; i<tr.numFlagMatchers; i++) {
+		auto& m = tr.flagMatchers[i];
+		if (((stateFlags >> m.bitIndex) & 1) != tr.expected)
+			return false;
+	}
+	return true;
+}
+
+bool UberObjectSection::evalTransitionConditionRand(dtp::UberObjectProp::Transition& tr) {
+	if (evalTransitionCondition(tr) == false)
+		return false;
+	if (tr.randFlags & 8)
+		return (rand() % 100) < tr.randIntCutoff;
+	return true;
+}
+
+void UberObjectSection::resetIfRequested() {
+	if (reset) {
+		reset = false;
+		setState(sectionProp->initialState);
+	}
+}
+
 dtp::UberObjectProp::Transition *UberObjectSection::GetUseTransition() {
 	if (currentState < 0)
 		return nullptr;
@@ -391,6 +416,12 @@ bool UberObjectSection::IsUsable() {
 
 void UberObjectSection::Use() {
 	setState(GetUseTransition()->nextState, false);
+}
+
+UberObjectComposite *UberObjectSection::GetComposite(Instance *instance) {
+	return instance->owner
+		? UberObjectComposite::GetComposite(instance->owner)
+		: nullptr;
 }
 
 UberObjectSection *UberObjectSection::GetSection(Instance *instance) {
@@ -531,6 +562,14 @@ void UberObjectSection::doAction(dtp::UberObjectProp::Action& action) { // metho
 			break;
 		}
 	}
+}
+
+void UberObjectSection::write(BinaryWriter&) {
+	// TODO
+}
+
+void UberObjectSection::read(BinaryReader&) {
+	// TODO
 }
 
 void UberObjectSection::Update() {

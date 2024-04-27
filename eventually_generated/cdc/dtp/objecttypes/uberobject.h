@@ -135,7 +135,7 @@ struct Conseq8 {
 struct UberObjectProp {
 	struct FlagMatcher {
 		uint32_t bitIndex;
-		bool invert;
+		bool expected;
 	};
 
 	struct Transition {
