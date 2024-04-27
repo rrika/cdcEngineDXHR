@@ -13,6 +13,7 @@
 #include "cdcSound/sfxmarker.h"
 #include "cdcWorld/Instance.h"
 #include "cdc/dtp/objectproperties/sfxmarker.h"
+#include "game/dtp/objecttypes/globalplayerinfo.h"
 
 #if ENABLE_IMGUI
 #include "../game/Gameloop.h"
@@ -24,6 +25,7 @@ using namespace cdc;
 StreamUnit StreamTracker[80] = {};
 
 extern char buildType[16];
+extern GlobalPlayerInfo *globalPlayerInfo;
 
 struct ObjListEntry {
 	char name[128];
@@ -202,8 +204,26 @@ StreamUnit *STREAM_LevelLoadAndInit(const char *baseAreaName) { // 2855
 
 	// TODO
 
-	// HACK: exact way of instantiating differs
+	// HACK: substitute player.drm for jensen_trenchcoat.drm or such
 	dtp::ADMD *admd = streamUnit->level->admdData;
+	for (uint32_t i = 0; i < admd->numObjects; i++) {
+		auto *intro = &admd->objects[i];
+		if (intro->objectListIndex == 0x12) { // player.drm
+			char *extraData = (char*)intro->extraData1;
+			if (*(uint32_t*)extraData == 0x40B) {
+				uint32_t jensenIndex = *(uint32_t*)(extraData+0x2C);
+				uint32_t total = globalPlayerInfo->numJensens;
+				uint16_t newIndex = globalPlayerInfo->jensens[jensenIndex];
+				if (newIndex) {
+					intro->objectListIndex = newIndex; // jensen_trenchcoat.drm, jensen_dlc.drm, etc.
+					requestObjectNormal(newIndex);
+				}
+			}
+		}
+	}
+	cdc::getDefaultFileSystem()->processAll();
+
+	// HACK: exact way of instantiating differs
 	for (uint32_t i = 0; i < admd->numObjects; i++) {
 		Instance::IntroduceInstance(&admd->objects[i], streamUnit->StreamUnitID, /*force=*/ false);
 	}

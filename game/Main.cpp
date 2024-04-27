@@ -3,6 +3,7 @@
 #include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h"
 #include "game/Gameloop.h"
+#include "game/dtp/objecttypes/globalplayerinfo.h"
 #include "game/objects/objects.h"
 #include "game/ui/ui.h"
 #include "cdcGameShell/cdcGameShell.h"
@@ -35,6 +36,7 @@ const char *cinematicPrefix;
 void *objectiveDatabase;
 void *logicActionResourceDatabase;
 void *tutorialDatabase;
+GlobalPlayerInfo *globalPlayerInfo;
 
 void SetupBuildDir(const char *prefix) {
 	char streamdir[256];
@@ -75,9 +77,8 @@ void loadDatabases() {
 	uint32_t globalDatabaseId = objectIdByName("GlobalDatabase");
 	requestObjectNormal(globalDatabaseId);
 
-	// this seems to crash
-	// uint32_t globalPlayerInfoId = objectIdByName("GlobalPlayerInfo");
-	// requestObjectNormal(globalPlayerInfoId);
+	uint32_t globalPlayerInfoId = objectIdByName("GlobalPlayerInfo");
+	requestObjectNormal(globalPlayerInfoId);
 
 	uint32_t globalDLCInfoId = objectIdByName("GlobalDLCInfo");
 	if (globalDLCInfoId)
@@ -94,6 +95,9 @@ void loadDatabases() {
 
 	ObjectTracker *ort_globalDatabase = getByObjectListIndex(globalDatabaseId);
 	globalDatabase = (GlobalDatabase*)ort_globalDatabase->objBlob->data;
+
+	ObjectTracker *ort_globalPlayerInfo = getByObjectListIndex(globalPlayerInfoId);
+	globalPlayerInfo = (GlobalPlayerInfo*)ort_globalPlayerInfo->objBlob->data;
 }
 
 void Init_NativeScripts();
