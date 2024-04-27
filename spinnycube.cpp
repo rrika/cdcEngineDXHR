@@ -1396,6 +1396,7 @@ int spinnyCube(HWND window,
 				auto *ppg = model->getTab0Ext128();
 				ImGui::Text("# model batches = %d", model->numModelBatches);
 				ImGui::Text("# prim groups = %d", model->numPrimGroups);
+				ImGui::Text("# bones = %d", model->getBoneCount());
 				uint32_t pg = 0;
 				for (uint32_t i = 0; i < model->numModelBatches; i++) {
 					cdc::ModelBatch *batch = &model->modelBatches[i];

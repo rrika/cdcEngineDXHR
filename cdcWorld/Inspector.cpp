@@ -209,6 +209,9 @@ void buildUI(UIActions& uiact, Instance *instance) {
 		uint32_t numModels = instance->GetNumModels();
 		dtp::Model **models = instance->GetModels();
 
+		ImGui::Text("# segments = %d", currentModel->GetNumSegments());
+		ImGui::Text("# virtual segments = %d", currentModel->numVirtSegments);
+
 		const char *names[] = {
 			"Model 0",
 			"Model 1"

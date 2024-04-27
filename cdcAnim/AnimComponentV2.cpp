@@ -98,12 +98,17 @@ void AnimComponentV2::BuildSegTransforms() {
 	AnimBuffer *buffer = poseNode->pose.buffer;
 	AnimSegment *animSegments = buffer ? buffer->segments : nullptr;
 	uint32_t numSegments = model->oldNumSegments;
+	uint32_t numSegments2 = model->GetNumSegments();
 	for (int i=1; i<numSegments; i++) {
 		MathUtil::QuatLogToMatrix(&matrices[i], (Quat const*)&animSegments[i].rot);
 		matrices[i].m[3][0] = animSegments[i].trans.x;
 		matrices[i].m[3][1] = animSegments[i].trans.y;
 		matrices[i].m[3][2] = animSegments[i].trans.z;
 		matrices[i] = matrices[modelSegments[i].parent] * matrices[i];
+	}
+	// HACK for as long as we don't have a proper cloth sim
+	for (int i=numSegments; i<numSegments2; i++) {
+		matrices[i] = matrices[1];
 	}
 }
 
