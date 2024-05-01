@@ -19,7 +19,9 @@ struct Intro {
 	uint8_t field43;
 	void *extraData1; // 44
 	uint32_t field48;
-	char field_4C[12];
+	uint32_t field4C;
+	uint32_t m_scriptTypeID; // 50
+	uint32_t field54;
 	uint32_t field58_extraData2;
 	cdc::CellStreamGroupData *sceneCellIdent;
 	char field_60[16];

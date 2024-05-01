@@ -275,15 +275,6 @@ uint32_t buildUI(UIActions& uiact, cdc::Object *obj) {
 		if (ImGui::SmallButton("Hide")) hide = true;
 	}
 
-	if (uint32_t scriptTypeID = obj->dtpData->m_scriptTypeID) {
-		ImGui::SameLine();
-		if (ImGui::SmallButton("Type")) {
-			auto *scriptSection = cdc::g_resolveSections[8];
-			if (cdc::ScriptType *scriptType = (cdc::ScriptType*)scriptSection->getWrapped(scriptSection->getDomainId(scriptTypeID)))
-				uiact.select(scriptType);
-		}
-	}
-
 	for (uint32_t j = 0; j < obj->numModels; j++) {
 		auto *mesh = obj->models[j]->renderMesh;
 		if (!mesh)
@@ -296,6 +287,17 @@ uint32_t buildUI(UIActions& uiact, cdc::Object *obj) {
 		if (ImGui::SmallButton(label))
 			uiact.select(mesh);
 		ImGui::PopID();
+	}
+
+	if (uint32_t scriptTypeID = obj->dtpData->m_scriptTypeID) {
+		ImGui::SameLine();
+		char label[20];
+		snprintf(label, 20, "Type %x", scriptTypeID);
+		if (ImGui::SmallButton(label)) {
+			auto *scriptSection = cdc::g_resolveSections[8];
+			if (cdc::ScriptType *scriptType = (cdc::ScriptType*)scriptSection->getWrapped(scriptSection->getDomainId(scriptTypeID)))
+				uiact.select(scriptType);
+		}
 	}
 #endif
 	return objFamily;

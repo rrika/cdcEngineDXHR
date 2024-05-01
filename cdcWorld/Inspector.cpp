@@ -125,8 +125,20 @@ void buildUI(UIActions& uiact, LensFlareAndCoronaExtraData *extra) {
 
 void buildUI(UIActions& uiact, dtp::Intro *intro) {
 	auto *objectSection = cdc::g_resolveSections[11];
+
 	if (cdc::Object *object = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(intro->objectListIndex))) {
 		uint32_t objFamily = buildUI(uiact, object);
+
+		if (uint32_t scriptTypeID = intro->m_scriptTypeID) {
+			ImGui::SameLine();
+			char label[20];
+			snprintf(label, 20, "Type %x", scriptTypeID);
+			if (ImGui::SmallButton(label)) {
+				auto *scriptSection = cdc::g_resolveSections[8];
+				if (cdc::ScriptType *scriptType = (cdc::ScriptType*)scriptSection->getWrapped(scriptSection->getDomainId(scriptTypeID)))
+					uiact.select(scriptType);
+			}
+		}
 
 		if (objFamily == 0x50) {
 			auto *extraData = (DeferredRenderingExtraData*) intro->extraData1;
