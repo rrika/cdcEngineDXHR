@@ -52,16 +52,6 @@ void ScriptSection::HandleResourceEnd(uint32_t domainId, void *drmSectionHeader)
 
 void ScriptSection::construct(uint32_t domainId, void *) {
 	s_loader.Link();
-
-	// HACK
-	ScriptType *ty = FindScript(domainId);
-	auto *nt = ScriptManager::s_instance->GetNativeScriptType(
-		ty->blob->m_nativeScriptPackageName,
-		ty->blob->m_nativeScriptName);
-
-	if (nt) {
-		nt->InitType(ty);
-	}
 }
 
 void *ScriptSection::GetBasePointer(uint32_t domainId) {

@@ -74,19 +74,22 @@ struct ScriptTypeStreamData { // 692
 	// TODO
 	uint8_t     padding[0x2C-0x1C];
 	// TODO
-	SArray<DataMember> m_members; // 2C
-	uint32_t           padding30;
-	Prototype         *m_prototypes; // 34
-	SArray<Function>   m_functions; // 38
-	VTableArray        m_vtables; // 3C
+	SArray<DataMember>  m_members; // 2C
+	uint32_t            padding30;
+	Prototype          *m_prototypes; // 34
+	SArray<Function>    m_functions; // 38
+	VTableArray         m_vtables; // 3C
+	SArray<ScriptType*> scriptTypeImports; // 48
+	uint16_t m_depth; // 4C
+	uint16_t m_packageName; // 4E
 };
 
-static_assert(sizeof(ScriptTypeStreamData) == 0x48);
+static_assert(sizeof(ScriptTypeStreamData) == 0x50);
 
 class ScriptType : public RCObject { // 749
 public:
 	ScriptTypeStreamData* blob;
-	NativeScriptType* nativeScriptType;
+	NativeScriptType* nativeScriptType = nullptr;
 public:
 	ScriptType(uint32_t size) {
 		blob = (ScriptTypeStreamData*) new char[size];
