@@ -90,7 +90,7 @@ void *ResolveObject::getRootWrapped() {
 	if (rootSection == ~0u)
 		return nullptr;
 	SectionRecord::Entry &entry = m_pRecord->m_pEntry[rootSection];
-	return g_resolveSections[entry.contentType]->getWrapped(entry.domainID);
+	return g_resolveSections[entry.contentType]->GetBasePointer(entry.domainID);
 }
 
 void ResolveObject::markForRetry(uint32_t missingDeps, ResolveReceiver *rr) {

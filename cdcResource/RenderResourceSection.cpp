@@ -5,11 +5,11 @@
 
 namespace cdc {
 
-uint32_t RenderResourceSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
+uint32_t RenderResourceSection::StartResource(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
 	return ~0;
 }
 
-uint32_t RenderResourceSection::allocate(uint32_t sectionId, uint32_t sectionSubType, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
+uint32_t RenderResourceSection::StartResource(uint32_t sectionId, uint32_t sectionSubType, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
 	auto &entry = resources[sectionId];
 
 	if (entry.refCount != 0) {
@@ -27,13 +27,13 @@ uint32_t RenderResourceSection::allocate(uint32_t sectionId, uint32_t sectionSub
 	}
 }
 
-void RenderResourceSection::fill(uint32_t sectionId, void* src, uint32_t size, uint32_t offset) {
+void RenderResourceSection::HandleResourceData(uint32_t sectionId, void* src, uint32_t size, uint32_t offset) {
 	RenderResource *res = resources[sectionId].resource;
 	if (sectionId == 0x1F6E)
 		return; // huh, interesting
 
 	if (res == nullptr) // HACK
-		printf("TODO: res is nullptr in RenderResourceSection::fill for sectionId %x\n", sectionId);
+		printf("TODO: res is nullptr in RenderResourceSection::HandleResourceData for sectionId %x\n", sectionId);
 	else
 		res->resFill(src, size, offset);
 }
@@ -52,13 +52,13 @@ void RenderResourceSection::construct(uint32_t id, void *) {
 }
 
 
-void* RenderResourceSection::getWrapped(uint32_t sectionId) {
+void* RenderResourceSection::GetBasePointer(uint32_t sectionId) {
 	if (auto it = resources.find(sectionId); it != resources.end())
 		return (void*)it->second.resource;
 	return nullptr;
 }
 
-void* RenderResourceSection::getBlob(uint32_t sectionId) {
+void* RenderResourceSection::GetResolveBasePointer(uint32_t sectionId) {
 	RenderResource *res = resources[sectionId].resource;
 
 	if (!res) // HACK
@@ -67,7 +67,7 @@ void* RenderResourceSection::getBlob(uint32_t sectionId) {
 	return (void*)res->resGetBuffer();
 }
 
-uint32_t RenderResourceSection::getDomainId(uint32_t sectionId) {
+uint32_t RenderResourceSection::FindResource(uint32_t sectionId) {
 	if (auto it = resources.find(sectionId); it != resources.end())
 		return sectionId;
 	else

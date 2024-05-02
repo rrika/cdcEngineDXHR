@@ -209,7 +209,7 @@ struct DRMExplorer {
 							if (section.type == 5) { // RenderResource
 								ImGui::Text("    ");
 								ImGui::SameLine();
-								auto *resource = (cdc::RenderResource*)cdc::g_resolveSections[5]->getWrapped(section.id);
+								auto *resource = (cdc::RenderResource*)cdc::g_resolveSections[5]->GetBasePointer(section.id);
 								if (auto tex = dynamic_cast<cdc::PCDX11Texture*>(resource)) {
 									ImGui::Image(
 										tex->createShaderResourceView(), ImVec2(256, 256));
@@ -226,7 +226,7 @@ struct DRMExplorer {
 							if (section.type == 7 && section.allocFlags == 0xD) { // DTP (SoundPlex)
 								ImGui::PushID(section.id);
 								ImGui::SameLine();
-								auto *plex = (dtp::SoundPlex*)cdc::g_resolveSections[7]->getWrapped(section.id);
+								auto *plex = (dtp::SoundPlex*)cdc::g_resolveSections[7]->GetBasePointer(section.id);
 								if (plex) {
 									if (ImGui::SmallButton("Play soundplex")) {
 										cdc::SOUND_StartPaused(plex, /*delay=*/ 0.0f);
@@ -237,7 +237,7 @@ struct DRMExplorer {
 
 							}
 							if (section.type == 8) { // Script
-								if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->getWrapped(section.id)) {
+								if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->GetBasePointer(section.id)) {
 									ImGui::SameLine();
 									ImGui::Text(" %s", ty->blob->m_nativeScriptName);
 									ImGui::SameLine();
@@ -447,24 +447,24 @@ int spinnyCube(HWND window,
 	cdc::archiveFileSystem_default->processAll();
 
 	cdc::ResolveSection *objectSection = cdc::g_resolveSections[11];
-	cdc::Object *bottleObject = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(0x04a8));
+	cdc::Object *bottleObject = (cdc::Object*)objectSection->GetBasePointer(objectSection->FindResource(0x04a8));
 	printf("have bottle object: %p\n", bottleObject);
 
 	// unrelated: get the name of the first map in the game
 	printf("first map is: %s\n", globalDatabase->newGameMap);
 
-	auto bottleTexture = (cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x0396);
+	auto bottleTexture = (cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);
 	bottleTexture->asyncCreate();
 	renderDevice->missingTexture = bottleTexture;
 	printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
 
 	// create the other four textures
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x0395))->asyncCreate();
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x005b))->asyncCreate();
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x0061))->asyncCreate();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0395))->asyncCreate();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x005b))->asyncCreate();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0061))->asyncCreate();
 
-	auto bottleRenderModel_direct = (cdc::PCDX11RenderModel*)cdc::g_resolveSections[12]->getWrapped(0xA301);
+	auto bottleRenderModel_direct = (cdc::PCDX11RenderModel*)cdc::g_resolveSections[12]->GetBasePointer(0xA301);
 	auto bottleRenderModel = (cdc::PCDX11RenderModel*)bottleObject->models[0]->renderMesh;
 
 
@@ -494,16 +494,16 @@ int spinnyCube(HWND window,
 	// s_scn_det_sarifhq_rail_tutorial_barrettintro_det_sarifhq_rail_tutorial.drm/7: Material 12 a4 unk6:7a84 DX11 (7e0 bytes)
 
 
-	cdc::Object *lightObject = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(lightIndex));
+	cdc::Object *lightObject = (cdc::Object*)objectSection->GetBasePointer(objectSection->FindResource(lightIndex));
 	printf("have light object: %p\n", lightObject);
 
 	auto lightRenderModel = (cdc::PCDX11RenderModel*)lightObject->models[0]->renderMesh;
 	printf("have light cdc render model: %p (via object)\n", lightRenderModel);
 
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x0061))->asyncCreate();
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->getWrapped(0x014c))->asyncCreate();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0061))->asyncCreate();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x014c))->asyncCreate();
 
-	auto lightMaterial = (cdc::PCDX11Material*)cdc::g_resolveSections[10]->getWrapped(0x00a4);
+	auto lightMaterial = (cdc::PCDX11Material*)cdc::g_resolveSections[10]->GetBasePointer(0x00a4);
 	printf("have light material (from scenario drm): %p\n", lightMaterial);
 
 	// patch light material
@@ -602,7 +602,7 @@ int spinnyCube(HWND window,
 #endif
 
 	cdc::ScriptType *mainMenuScriptType =
-		(cdc::ScriptType*)cdc::g_resolveSections[8]->getWrapped(0x154a7); // pc-w/globaloutershell.drm section 0xb7
+		(cdc::ScriptType*)cdc::g_resolveSections[8]->GetBasePointer(0x154a7); // pc-w/globaloutershell.drm section 0xb7
 	ScaleformMovieInstance mainMenuInstance(&mainMenuMovie);
 	NsMainMenuMovieController mainMenuMovieController(mainMenuScriptType);
 	cdc::GCPtr<NsMainMenuMovieController> keepControllerAlive(&mainMenuMovieController); // garbage collected else
@@ -984,7 +984,7 @@ int spinnyCube(HWND window,
 				instanceMatrix = instanceMatrix * rotationMatrix;
 				if (intro.objectListIndex == 0)
 					continue;
-				cdc::Object *object = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(intro.objectListIndex));
+				cdc::Object *object = (cdc::Object*)objectSection->GetBasePointer(objectSection->FindResource(intro.objectListIndex));
 				if (!object)
 					continue;
 

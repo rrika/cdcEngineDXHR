@@ -19,7 +19,7 @@ ScriptType *ScriptSection::FindScript(uint32_t domainId) { // 253
 	return it->second.Get(); // this might run RemReference on the HandleData pointer
 }
 
-uint32_t ScriptSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
+uint32_t ScriptSection::StartResource(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
 	if (ScriptType *ty = FindScript(sectionId)) {
  		alreadyLoaded = true;
 		ty->AddReference();
@@ -39,7 +39,7 @@ uint32_t ScriptSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t 
 	return sectionId;
 }
 
-void ScriptSection::fill(uint32_t domainId, void* src, size_t size, size_t offset) {
+void ScriptSection::HandleResourceData(uint32_t domainId, void* src, size_t size, size_t offset) {
 	ScriptType *ty = FindScript(domainId);
 	memcpy(((char*)ty->blob) + offset, src, size);
 	// return size;
@@ -59,17 +59,17 @@ void ScriptSection::construct(uint32_t domainId, void *) {
 	}
 }
 
-void *ScriptSection::getWrapped(uint32_t domainId) {
+void *ScriptSection::GetBasePointer(uint32_t domainId) {
 	return FindScript(domainId);
 }
 
-void *ScriptSection::getBlob(uint32_t domainId) {
+void *ScriptSection::GetResolveBasePointer(uint32_t domainId) {
 	if (ScriptType *ty = FindScript(domainId))
 		return ty->blob;
 	return nullptr;
 }
 
-uint32_t ScriptSection::getDomainId(uint32_t sectionId) {
+uint32_t ScriptSection::FindResource(uint32_t sectionId) {
 	if (FindScript(sectionId))
 		return sectionId;
 	return ~0u;

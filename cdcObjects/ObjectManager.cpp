@@ -295,7 +295,7 @@ uint32_t buildUI(UIActions& uiact, cdc::Object *obj) {
 		snprintf(label, 20, "Type %x", scriptTypeID);
 		if (ImGui::SmallButton(label)) {
 			auto *scriptSection = cdc::g_resolveSections[8];
-			if (cdc::ScriptType *scriptType = (cdc::ScriptType*)scriptSection->getWrapped(scriptSection->getDomainId(scriptTypeID)))
+			if (cdc::ScriptType *scriptType = (cdc::ScriptType*)scriptSection->GetBasePointer(scriptSection->FindResource(scriptTypeID)))
 				uiact.select(scriptType);
 		}
 	}

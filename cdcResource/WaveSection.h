@@ -44,10 +44,10 @@ class WaveSection : public ResolveSection {
 	Wave *lookupEntry(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded);
 
 public:
-	uint32_t realize(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) override; // 0x04
-	void fill(uint32_t id, void* src, uint32_t size, uint32_t offset) override; // 0x18
-	void *getWrapped(uint32_t) override; // 0x30
-	uint32_t getDomainId(uint32_t) override;  // 0x44
+	uint32_t StartResource(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) override; // 0x04
+	void HandleResourceData(uint32_t id, void* src, uint32_t size, uint32_t offset) override; // 0x18
+	void *GetBasePointer(uint32_t) override; // 0x30
+	uint32_t FindResource(uint32_t) override;  // 0x44
 
 	virtual Wave *WaveFind(uint32_t); // 0x64, called from SoundPlexWave::SoundPlexWave
 

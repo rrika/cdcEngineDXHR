@@ -16,12 +16,12 @@ class ScriptSection : public ResolveSection {
 public:
 	ScriptType *FindScript(uint32_t);
 
-	uint32_t realize(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) override; // 0x04
-	void fill(uint32_t id, void* src, uint32_t size, uint32_t offset) override; // 0x18
+	uint32_t StartResource(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) override; // 0x04
+	void HandleResourceData(uint32_t id, void* src, uint32_t size, uint32_t offset) override; // 0x18
 	void construct(uint32_t id, void *drmSectionHeaderMaybe) override; // 0x24
-	void* getWrapped(uint32_t) override; // 0x30
-	void* getBlob(uint32_t) override; // 0x34
-	uint32_t getDomainId(uint32_t) override;  // 0x44
+	void* GetBasePointer(uint32_t) override; // 0x30
+	void* GetResolveBasePointer(uint32_t) override; // 0x34
+	uint32_t FindResource(uint32_t) override;  // 0x44
 };
 
 }

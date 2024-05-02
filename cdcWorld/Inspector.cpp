@@ -126,7 +126,7 @@ void buildUI(UIActions& uiact, LensFlareAndCoronaExtraData *extra) {
 void buildUI(UIActions& uiact, dtp::Intro *intro) {
 	auto *objectSection = cdc::g_resolveSections[11];
 
-	if (cdc::Object *object = (cdc::Object*)objectSection->getWrapped(objectSection->getDomainId(intro->objectListIndex))) {
+	if (cdc::Object *object = (cdc::Object*)objectSection->GetBasePointer(objectSection->FindResource(intro->objectListIndex))) {
 		uint32_t objFamily = buildUI(uiact, object);
 
 		if (uint32_t scriptTypeID = intro->m_scriptTypeID) {
@@ -135,7 +135,7 @@ void buildUI(UIActions& uiact, dtp::Intro *intro) {
 			snprintf(label, 20, "Type %x", scriptTypeID);
 			if (ImGui::SmallButton(label)) {
 				auto *scriptSection = cdc::g_resolveSections[8];
-				if (cdc::ScriptType *scriptType = (cdc::ScriptType*)scriptSection->getWrapped(scriptSection->getDomainId(scriptTypeID)))
+				if (cdc::ScriptType *scriptType = (cdc::ScriptType*)scriptSection->GetBasePointer(scriptSection->FindResource(scriptTypeID)))
 					uiact.select(scriptType);
 			}
 		}
@@ -170,7 +170,7 @@ void buildUI(UIActions& uiact, Instance *instance) {
 					object->animations[i].dword8);
 				auto animID = object->animations[i].animID;
 				auto *animSection = cdc::g_resolveSections[2];
-				if (cdc::AnimFragment *anim = (cdc::AnimFragment*)animSection->getWrapped(animSection->getDomainId(animID))) {
+				if (cdc::AnimFragment *anim = (cdc::AnimFragment*)animSection->GetBasePointer(animSection->FindResource(animID))) {
 					buildUI(uiact, anim);
 				}
 			}

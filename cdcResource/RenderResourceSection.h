@@ -15,13 +15,13 @@ class RenderResourceSection : public ResolveSection {
 	};
 	std::unordered_map<uint32_t, MapEntry> resources;
 public:
-	uint32_t realize(uint32_t sectionId, uint32_t unknown, uint32_t size, bool& alreadyLoaded) override;
-	uint32_t allocate(uint32_t sectionId, uint32_t sectionSubType, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) override;
-	void fill(uint32_t id, void* src, uint32_t size, uint32_t offset) override;
+	uint32_t StartResource(uint32_t sectionId, uint32_t unknown, uint32_t size, bool& alreadyLoaded) override;
+	uint32_t StartResource(uint32_t sectionId, uint32_t sectionSubType, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) override;
+	void HandleResourceData(uint32_t id, void* src, uint32_t size, uint32_t offset) override;
 	void construct(uint32_t id, void *) override;
-	void* getWrapped(uint32_t) override;
-	void* getBlob(uint32_t) override;
-	uint32_t getDomainId(uint32_t) override;
+	void* GetBasePointer(uint32_t) override;
+	void* GetResolveBasePointer(uint32_t) override;
+	uint32_t FindResource(uint32_t) override;
 	~RenderResourceSection() = default;
 };
 

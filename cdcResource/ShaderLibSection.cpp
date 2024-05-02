@@ -4,7 +4,7 @@
 
 namespace cdc {
 
-uint32_t ShaderLibSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
+uint32_t ShaderLibSection::StartResource(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
 	auto &entry = shaders[sectionId];
 
 	if (entry.refCount != 0) {
@@ -21,19 +21,19 @@ uint32_t ShaderLibSection::realize(uint32_t sectionId, uint32_t unknown6, uint32
 	}
 }
 
-void ShaderLibSection::fill(uint32_t sectionId, void* src, uint32_t size, uint32_t offset) {
+void ShaderLibSection::HandleResourceData(uint32_t sectionId, void* src, uint32_t size, uint32_t offset) {
 	auto &entry = shaders[sectionId];
 	bool done = offset + size == entry.size;
 	entry.shaderlib->fill((char*)src, offset, size, done);
 }
 
-void* ShaderLibSection::getWrapped(uint32_t sectionId) {
+void* ShaderLibSection::GetBasePointer(uint32_t sectionId) {
 	if (auto it = shaders.find(sectionId); it != shaders.end())
 		return it->second.shaderlib;
 	return nullptr;
 }
 
-uint32_t ShaderLibSection::getDomainId(uint32_t sectionId) {
+uint32_t ShaderLibSection::FindResource(uint32_t sectionId) {
 	if (auto it = shaders.find(sectionId); it != shaders.end())
 		return sectionId;
 	else

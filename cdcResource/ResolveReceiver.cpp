@@ -33,7 +33,7 @@ static void applyRelocs(
 	if (resolveSection == nullptr)
 		return;
 
-	char *data = (char*)resolveSection->getBlob(sectionDomainIds[sectionIndex]);
+	char *data = (char*)resolveSection->GetResolveBasePointer(sectionDomainIds[sectionIndex]);
 
 	if (!data) { // HACK
 		printf("TODO: can't apply relocs to section that wasn't loaded\n");
@@ -69,7 +69,7 @@ static void applyRelocs(
 
 		ResolveSection *targetResolveSection = resolveSections[sectionHeaders[targetIndex].type];
 		if (!targetResolveSection) continue; // not in original engine
-		char *targetData = (char*)targetResolveSection->getBlob(sectionDomainIds[targetIndex]);
+		char *targetData = (char*)targetResolveSection->GetResolveBasePointer(sectionDomainIds[targetIndex]);
 		if (!targetData) continue; // not in original engine
 		char *patch = data + patchSite;
 		char *target = targetData + targetOffset;
@@ -87,9 +87,9 @@ static void applyRelocs(
 
 		ResolveSection *targetResolveSection = resolveSections[targetTy];
 		if (!targetResolveSection) continue; // not in original engine
-		uint32_t targetDomainId = targetResolveSection->getDomainId(targetSectionId);
+		uint32_t tarFindResource = targetResolveSection->FindResource(targetSectionId);
 
-		memcpy(patch, &targetDomainId, 4);
+		memcpy(patch, &tarFindResource, 4);
 	}
 
 	// type 3 is broken and unused
@@ -105,10 +105,10 @@ static void applyRelocs(
 
 		ResolveSection *targetResolveSection = resolveSections[targetTy];
 		if (!targetResolveSection) continue; // not in original engine
-		uint32_t targetDomainId = targetResolveSection->getDomainId(targetSectionId);
+		uint32_t tarFindResource = targetResolveSection->FindResource(targetSectionId);
 		void *targetData = nullptr;
-		if (targetDomainId != ~0)
-			targetData = targetResolveSection->getWrapped(targetDomainId);
+		if (tarFindResource != ~0)
+			targetData = targetResolveSection->GetBasePointer(tarFindResource);
 		memcpy(patch, &targetData, 4);	
 	}
 }
@@ -256,7 +256,7 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 		auto *resolveSection = sectionHeader.type < 16 ? resolveSections[sectionHeader.type] : nullptr;
 		if (resolveSection && (languageMask & sectionHeader.languageBits) == languageMask) {
 			bool alreadyLoaded = false;
-			uint32_t id = resolveSection->allocate(
+			uint32_t id = resolveSection->StartResource(
 				sectionHeader.id,
 				sectionHeader.allocFlags,
 				sectionHeader.unknown06,
@@ -265,7 +265,7 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 			sectionHeader.unknown05 = !alreadyLoaded; // HACK
 			printf("  section %3d %2d %04x (%04x)\n", i, sectionHeader.type, sectionHeader.id, id);
 			if (!alreadyLoaded) {
-				resolveSection->fill(id, payload, sectionHeader.payloadSize, 0);
+				resolveSection->HandleResourceData(id, payload, sectionHeader.payloadSize, 0);
 			}
 			sectionDomainIds.push_back(id);
 		} else {
@@ -376,7 +376,7 @@ void ResolveReceiver::requestComplete(FileRequest *req) {
 	if (resolveObject->rootSection != ~0u) {
 		auto& rootSection = sectionHeaders[resolveObject->rootSection];
 		if (g_resolveSections[rootSection.type]) // HACK
-			wrapped = g_resolveSections[rootSection.type]->getWrapped(
+			wrapped = g_resolveSections[rootSection.type]->GetBasePointer(
 				resolveObject->m_pRecord->m_pEntry[resolveObject->rootSection].domainID // TODO
 			);
 	}

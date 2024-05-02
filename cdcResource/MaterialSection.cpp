@@ -5,7 +5,7 @@
 
 namespace cdc {
 
-uint32_t MaterialSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
+uint32_t MaterialSection::StartResource(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
 	auto &entry = materials[sectionId];
 
 	if (entry.refCount != 0) {
@@ -24,7 +24,7 @@ uint32_t MaterialSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_
 	}
 }
 
-void MaterialSection::fill(uint32_t sectionId, void* src, size_t size, size_t offset) {
+void MaterialSection::HandleResourceData(uint32_t sectionId, void* src, size_t size, size_t offset) {
 	auto &entry = materials[sectionId];
 	memcpy(entry.blob + offset, src, size);
 }
@@ -35,15 +35,15 @@ void MaterialSection::construct(uint32_t sectionId, void *) {
 	entry.blob = nullptr;
 }
 
-void* MaterialSection::getWrapped(uint32_t sectionId) {
+void* MaterialSection::GetBasePointer(uint32_t sectionId) {
 	return materials[sectionId].material;
 }
 
-void* MaterialSection::getBlob(uint32_t sectionId) {
+void* MaterialSection::GetResolveBasePointer(uint32_t sectionId) {
 	return materials[sectionId].blob;
 }
 
-uint32_t MaterialSection::getDomainId(uint32_t sectionId) {
+uint32_t MaterialSection::FindResource(uint32_t sectionId) {
 	if (auto it = materials.find(sectionId); it != materials.end())
 		return sectionId;
 	else

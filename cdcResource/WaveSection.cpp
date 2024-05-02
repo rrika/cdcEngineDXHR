@@ -26,7 +26,7 @@ Wave *WaveSection::lookupEntry(
 	}
 }
 
-uint32_t WaveSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
+uint32_t WaveSection::StartResource(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
 	auto *entry = lookupEntry(sectionId, unknown6, size, alreadyLoaded);
 	if (!alreadyLoaded && entry->refCount > 1)
 		alreadyLoaded = true;
@@ -34,7 +34,7 @@ uint32_t WaveSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t si
 	return sectionId;
 }
 
-void WaveSection::fill(uint32_t sectionId, void *vsrc, uint32_t size, uint32_t ignoredOffset) {
+void WaveSection::HandleResourceData(uint32_t sectionId, void *vsrc, uint32_t size, uint32_t ignoredOffset) {
 	if (size == 0)
 		return;
 
@@ -107,11 +107,11 @@ void WaveSection::fill(uint32_t sectionId, void *vsrc, uint32_t size, uint32_t i
 	return; // size - bytesLeftToProcess;
 }
 
-void *WaveSection::getWrapped(uint32_t sectionId) {
+void *WaveSection::GetBasePointer(uint32_t sectionId) {
 	return nullptr;
 }
 
-uint32_t WaveSection::getDomainId(uint32_t sectionId) {
+uint32_t WaveSection::FindResource(uint32_t sectionId) {
 	if (entries[sectionId].refCount != 0)
 		return sectionId;
 	else

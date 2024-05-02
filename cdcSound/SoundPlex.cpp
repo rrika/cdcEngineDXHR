@@ -73,7 +73,7 @@ retry:
 	case dtp::SoundPlex::SoundPlexSelector_Reference1: // 1
 	case dtp::SoundPlex::SoundPlexSelector_Reference2: { // 2
 		auto data = *(uint32_t*)snd->m_data;
-		snd = (dtp::SoundPlex*)cdc::g_resolveSections[7]->getWrapped(data); // HACK
+		snd = (dtp::SoundPlex*)cdc::g_resolveSections[7]->GetBasePointer(data); // HACK
 		if (!snd)
 			return nullptr;
 
@@ -257,7 +257,7 @@ void buildUI(dtp::SoundPlex *snd, std::function<void(cdc::SoundHandle)>* onPlay,
 		auto data = *(uint32_t*)snd->m_data;
 		ImGui::SameLine();
 		ImGui::Text("%04x", data);
-		auto *refplex = (dtp::SoundPlex*)cdc::g_resolveSections[7]->getWrapped(data);
+		auto *refplex = (dtp::SoundPlex*)cdc::g_resolveSections[7]->GetBasePointer(data);
 		if (refplex)
 			buildUI(refplex, onPlay, indent + "  ");
 		break;

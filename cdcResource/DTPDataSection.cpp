@@ -3,7 +3,7 @@
 
 DTPDataSection::DTPData *DTPDataSection::dtpData[0x18000];
 
-uint32_t DTPDataSection::allocate(uint32_t sectionId, uint32_t sectionSubType, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
+uint32_t DTPDataSection::StartResource(uint32_t sectionId, uint32_t sectionSubType, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
 	if (sectionId >= 0x18000) {
 		// FatalError("Out of range DTPData ID [%d >= %d]!", sectionId, 0x18000);
 		return ~0u;
@@ -28,7 +28,7 @@ uint32_t DTPDataSection::allocate(uint32_t sectionId, uint32_t sectionSubType, u
 	}
 }
 
-void DTPDataSection::fill(uint32_t id, void* src, uint32_t size, uint32_t offset) {
+void DTPDataSection::HandleResourceData(uint32_t id, void* src, uint32_t size, uint32_t offset) {
 	memcpy(dtpData[id]->data + offset, src, size);
 }
 
@@ -37,11 +37,11 @@ void DTPDataSection::construct(uint32_t id, void *drmSectionHeaderMaybe) {
 	// TODO
 }
 
-void* DTPDataSection::getWrapped(uint32_t id) {
+void* DTPDataSection::GetBasePointer(uint32_t id) {
 	return (void*)dtpData[id]->data;
 }
 
-uint32_t DTPDataSection::getDomainId(uint32_t id) {
+uint32_t DTPDataSection::FindResource(uint32_t id) {
 	if (dtpData[id] && dtpData[id]->refCount > 0)
 		return id;
 	return ~0u;

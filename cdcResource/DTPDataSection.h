@@ -15,13 +15,13 @@ class DTPDataSection : public cdc::ResolveSection {
 
 	static DTPData *dtpData[0x18000];
 public:
-	// inherit realize
-	uint32_t allocate(uint32_t sectionId, uint32_t sectionSubType, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) override; // 0x08
-	void fill(uint32_t id, void* src, uint32_t size, uint32_t offset) override; // 0x18
+	// inherit StartResource
+	uint32_t StartResource(uint32_t sectionId, uint32_t sectionSubType, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) override; // 0x08
+	void HandleResourceData(uint32_t id, void* src, uint32_t size, uint32_t offset) override; // 0x18
 	void construct(uint32_t id, void *drmSectionHeaderMaybe) override; // 0x24
-	void* getWrapped(uint32_t) override; // 0x30
-	// inherit getBlob
-	uint32_t getDomainId(uint32_t) override; // 0x44
+	void* GetBasePointer(uint32_t) override; // 0x30
+	// inherit GetResolveBasePointer
+	uint32_t FindResource(uint32_t) override; // 0x44
 
 	static void *getPointer(uint32_t);
 };

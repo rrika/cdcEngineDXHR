@@ -14,7 +14,7 @@
 
 namespace cdc {
 
-uint32_t ObjectSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
+uint32_t ObjectSection::StartResource(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
 	auto entry = getByObjectListIndex(sectionId);
 	if (!entry) {
 		entry = allocObjectSlot(sectionId, 2);
@@ -32,7 +32,7 @@ uint32_t ObjectSection::realize(uint32_t sectionId, uint32_t unknown6, uint32_t 
 	return entry - objects;
 }
 
-void ObjectSection::fill(uint32_t domainId, void* src, size_t size, size_t offset) {
+void ObjectSection::HandleResourceData(uint32_t domainId, void* src, size_t size, size_t offset) {
 	auto &entry = objects[domainId];
 	memcpy(entry.objBlob + offset, src, size);
 	// return size;
@@ -69,15 +69,15 @@ void ObjectSection::construct(uint32_t domainId, void *) {
 	}
 }
 
-void* ObjectSection::getWrapped(uint32_t domainId) {
+void* ObjectSection::GetBasePointer(uint32_t domainId) {
 	return objects[domainId].objBlob;
 }
 
-void* ObjectSection::getBlob(uint32_t domainId) {
+void* ObjectSection::GetResolveBasePointer(uint32_t domainId) {
 	return objects[domainId].objBlob;
 }
 
-uint32_t ObjectSection::getDomainId(uint32_t sectionId) {
+uint32_t ObjectSection::FindResource(uint32_t sectionId) {
 	for (uint32_t i = 0; i < 604; i++)
 		if (objects[i].state && objects[i].objectListIndex == sectionId)
 			return i;
