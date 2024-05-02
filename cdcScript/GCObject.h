@@ -112,7 +112,7 @@ public:
 	GCPtr() : GCPtrBase() {}
 	GCPtr& operator=(T *other) { Assign(other); return *this; }
 	GCPtr& operator=(GCPtr const& other) { Assign(other.get()); return *this; }
-	T* Get() const { return target; }
+	T* Get() const { return (T*)target; }
 	operator T*() const { return target; }
 };
 
