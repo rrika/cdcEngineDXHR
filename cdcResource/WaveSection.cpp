@@ -107,6 +107,10 @@ void WaveSection::HandleResourceData(uint32_t sectionId, void *vsrc, uint32_t si
 	return; // size - bytesLeftToProcess;
 }
 
+void WaveSection::HandleResourceEnd(uint32_t id, void *drmSectionHeader) {
+	loadingState = 0;
+}
+
 void *WaveSection::GetBasePointer(uint32_t sectionId) {
 	return nullptr;
 }

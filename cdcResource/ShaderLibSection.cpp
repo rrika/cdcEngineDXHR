@@ -27,6 +27,10 @@ void ShaderLibSection::HandleResourceData(uint32_t sectionId, void* src, uint32_
 	entry.shaderlib->fill((char*)src, offset, size, done);
 }
 
+void ShaderLibSection::HandleResourceEnd(uint32_t id, void *drmSectionHeader) {
+	// TODO
+}
+
 void* ShaderLibSection::GetBasePointer(uint32_t sectionId) {
 	if (auto it = shaders.find(sectionId); it != shaders.end())
 		return it->second.shaderlib;

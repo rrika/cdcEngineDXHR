@@ -266,6 +266,7 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 			printf("  section %3d %2d %04x (%04x)\n", i, sectionHeader.type, sectionHeader.id, id);
 			if (!alreadyLoaded) {
 				resolveSection->HandleResourceData(id, payload, sectionHeader.payloadSize, 0);
+				resolveSection->HandleResourceEnd(id, &sectionHeader); // does this need to be outside of this if?
 			}
 			sectionDomainIds.push_back(id);
 		} else {

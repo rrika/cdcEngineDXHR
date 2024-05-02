@@ -32,7 +32,11 @@ void DTPDataSection::HandleResourceData(uint32_t id, void* src, uint32_t size, u
 	memcpy(dtpData[id]->data + offset, src, size);
 }
 
-void DTPDataSection::construct(uint32_t id, void *drmSectionHeaderMaybe) {
+void DTPDataSection::HandleResourceEnd(uint32_t id, void *drmSectionHeader) {
+	// TODO
+}
+
+void DTPDataSection::construct(uint32_t id, void *drmSectionHeader) {
 	dtpData[id]->awaitingConstruction = false;
 	// TODO
 }

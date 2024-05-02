@@ -45,6 +45,11 @@ void ScriptSection::HandleResourceData(uint32_t domainId, void* src, size_t size
 	// return size;
 }
 
+void ScriptSection::HandleResourceEnd(uint32_t domainId, void *drmSectionHeader) {
+	ScriptType *ty = FindScript(domainId);
+	s_loader.LoadScriptType(ty);
+}
+
 void ScriptSection::construct(uint32_t domainId, void *) {
 	s_loader.Link();
 
