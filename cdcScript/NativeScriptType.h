@@ -31,6 +31,8 @@ public:
 		return true;
 	}
 
+	virtual ScriptObject *CreateObject(ScriptType *type) { return nullptr; } // 10
+
 	void InitFunction(int32_t index, CallbackCallFunction *nativeFunc) {
 		type->blob->m_functions[index].nativeFunc = nativeFunc;
 	}

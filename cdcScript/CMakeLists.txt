@@ -4,4 +4,5 @@ target_sources(dxhr PRIVATE
 	GCObject.cpp
 	PackageBinaryLoader.cpp
 	ScriptManager.cpp
-	ScriptObject.cpp)
+	ScriptObject.cpp
+	ScriptType.cpp)

@@ -8,6 +8,7 @@
 namespace cdc {
 
 class NativeScriptType;
+class ScriptObject;
 class ScriptType;
 
 struct DataMember { // line 219
@@ -91,6 +92,8 @@ public:
 	ScriptTypeStreamData* blob;
 	NativeScriptType* nativeScriptType = nullptr;
 public:
+	ScriptObject *CreateObject();
+
 	ScriptType(uint32_t size) {
 		blob = (ScriptTypeStreamData*) new char[size];
 	}
@@ -108,6 +111,8 @@ public:
 	virtual void finalize() { /*TODO*/ }
 
 	ScriptType *getParentType() { return blob->m_superScriptType; }
+
+	ScriptType *getClosestNativeAncestor(); // HACK
 };
 
 }
