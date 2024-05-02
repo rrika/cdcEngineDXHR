@@ -322,6 +322,13 @@ void PCDX11ModelDrawable::buildUI(uint32_t funcSetIndex, UIActions& uiact) {
 	ImGui::Text("primGroup:   %p", primGroup);
 	ImGui::Text("tab0Ext128:  %p", tab0Ext128);
 	ImGui::Text("poseData:    %p", poseData);
+	if (poseData) {
+		for (uint32_t rowIndex=0; rowIndex<4; rowIndex++) {
+			float *row = poseData->getMatrix(0) + 4*rowIndex;
+			ImGui::Text("%-5.3f %-5.3f %-5.3f %-5.3f",
+				row[0], row[1], row[2], row[3]);
+		}
+	}
 	ImGui::Text("lightset:    %p", lightReceiverData);
 	ImGui::Text("lightcbdata: %p", lightConstantBufferData);
 	if (tab0Ext128) {

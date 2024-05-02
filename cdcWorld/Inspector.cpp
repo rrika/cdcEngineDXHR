@@ -159,6 +159,8 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			instance->position.z);
 		ImGui::Text("SceneEntity      %p", instance->sceneEntity);
 		ImGui::Text("InstanceDrawable %p", instance->instanceDrawable);
+		if (instance->instanceDrawable)
+			ImGui::Text("    %s", typeid(*instance->instanceDrawable).name());
 
 		cdc::Object *object = instance->object;
 		if (false)
@@ -224,15 +226,13 @@ void buildUI(UIActions& uiact, Instance *instance) {
 		ImGui::Text("# segments = %d", currentModel->GetNumSegments());
 		ImGui::Text("# virtual segments = %d", currentModel->numVirtSegments);
 
-		const char *names[] = {
-			"Model 0",
-			"Model 1"
-		};
+		char label[10];
 
 		if (ImGui::BeginListBox("##models")) {
 			for (uint32_t i=0; i<numModels; i++) {
-				const bool is_selected = models[i] == currentModel;
-				if (ImGui::Selectable(i < 2 ? names[i] : "Model", is_selected))
+				snprintf(label, 10, "Model %d\n", i);
+				const bool is_selected = i == mc.GetCurrentRenderModelIndex();
+				if (ImGui::Selectable(label, is_selected))
 					mc.SetModel(i);
 			}
 			ImGui::EndListBox();
