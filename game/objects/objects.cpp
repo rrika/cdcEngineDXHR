@@ -1,4 +1,5 @@
 #include "objects.h"
+#include "game/DeferredRenderingObject.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcWorld/Instance.h"
 
@@ -13,7 +14,11 @@ void GameAdditionalPreInit(Instance*, GameTracker*) {
 void GameAdditionalPostInit(Instance *instance, GameTracker*) {
 	uint16_t familyId = instance->GetObjectComponent().m_familyId;
 	switch (familyId) {
-	case 0x50: /*Instance_CreateDeferredRenderingObject(instance);*/ break;
+	case 0x50: { // in subfunction
+		delete instance->instanceDrawable;
+		instance->instanceDrawable = new DeferredRenderingObject::Drawable(instance);
+		break;
+	}
 	case 0x51: /*Instance_CreatePickupInstanceDrawable(instance);*/ break;
 	case 0x54: /*Instance_CreatePlanarSmokeDrawable((int)go);*/ break;
 	case 0x57: /*DeferredOccluderObject::Drawable::Drawable(instance);*/ break;

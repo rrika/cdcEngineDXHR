@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include "cdcMath/Math.h"
+#include "cdcWorld/InstanceDrawable.h"
 #include "PackedVector.h"
 
 namespace cdc { class CommonMaterial; class TextureMap; }
@@ -45,8 +46,11 @@ struct DeferredRenderingExtraData {
 };
 
 struct DeferredRenderingObject {
-	class Drawable /* : InstanceDrawable */ {
+	class Drawable : public cdc::InstanceDrawable {
 	public:
+		Drawable(Instance*);
+		void draw(cdc::Matrix *, float) override;
+
 		static cdc::Vector calcInstanceParamRow(
 			DeferredRenderingInstanceParam param,
 			cdc::Vector *vec0,
