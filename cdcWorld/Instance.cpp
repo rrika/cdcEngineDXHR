@@ -1,5 +1,9 @@
 #include "cdcAnim/AnimComponentV2.h"
 #include "cdcObjects/ObjectManager.h"
+#include "cdcResource/ResolveSection.h"
+#include "cdcResource/ScriptSection.h"
+#include "cdcScript/ScriptObject.h"
+#include "cdcScript/ScriptType.h"
 #include "cdcSys/Assert.h"
 #include "Instance.h"
 #include "InstanceDrawable.h"
@@ -59,7 +63,27 @@ Instance *Instance::IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, /
 
 	// TODO
 
+	uint32_t scriptTypeId = 0;
+	if ((instance->flags & 1) == 0 && intro)
+		scriptTypeId = intro->m_scriptTypeID;
+
+	instance->ScriptAndUberInitCommon(scriptTypeId, /*TODO*/scriptObject, nullptr);
+
+	// TODO
+
 	return instance;
+}
+
+bool Instance::ScriptAndUberInitCommon(uint32_t scriptTypeId, /*GCPtr<...>*/NsInstance *scriptObject, void *unknown) { // line 2793
+	// HACK
+	auto *scriptSection = (cdc::ScriptSection*)cdc::g_resolveSections[8];
+	if (auto *scriptType = scriptSection->FindScript(scriptTypeId)) {
+		auto *scriptObject = /*(NsInstance*)*/scriptType->CreateObject();
+		m_scriptObject = scriptObject;
+		// scriptObject->m_instance = this;
+		return true;
+	}
+	return false;
 }
 
 void Instance::InitCommonComponents(bool initEffects, bool unknown) { // line 2822

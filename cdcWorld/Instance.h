@@ -3,6 +3,7 @@
 #include "cdcAnim/TransformComponent.h"
 #include "cdcMath/Math.h"
 #include "cdcObjects/ObjectComponent.h"
+#include "cdcScript/GCObject.h"
 #include "cdcWorld/InstanceDrawable.h" // for MeshComponent
 #include "cdcWorld/UserDataComponent.h"
 
@@ -10,6 +11,7 @@ namespace cdc {
 	class AnimComponentV2;
 	class IDrawable;
 	class SceneEntity;
+	class ScriptObject;
 	struct Object;
 }
 
@@ -39,6 +41,7 @@ public:
 
 	void *objectData; // 4C
 
+	cdc::GCPtr<cdc::ScriptObject> m_scriptObject; // 58
 	dtp::Model **modelsOverride = nullptr; // 5C
 	uint32_t numOverrideModels = 0; // 60
 	cdc::SceneEntity *sceneEntity = nullptr; // 64
@@ -63,6 +66,7 @@ public:
 public:
 	static Instance *IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, bool force); // line 1672
 	static Instance *IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, /*GCPtr<...>*/NsInstance *scriptObject, bool force); // line 1679
+	bool ScriptAndUberInitCommon(uint32_t scriptTypeId, /*GCPtr<...>*/NsInstance *scriptObject, void *unknown); // line 2793
 	void InitCommonComponents(bool initEffects, bool unknown); // line 2822
 	void DefaultInit( // line 2977
 		cdc::Object *pObject,
