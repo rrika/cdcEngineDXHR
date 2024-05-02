@@ -63,6 +63,7 @@ public:
 	void draw(cdc::Matrix *, float) override;
 	bool GetBoundingSphere(Vector *pCenter, float *pRadius) override;
 	bool GetBoundingBox(Vector *pMin, Vector *pMax) override;
+	~InstanceDrawable();
 
 	void PrepareMatrixState(Matrix*, dtp::Model*, RenderModelInstance*, bool force);
 	void AddToDirtyList();

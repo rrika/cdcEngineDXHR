@@ -179,6 +179,10 @@ bool InstanceDrawable::GetBoundingBox(Vector *pMin, Vector *pMax) {
 	return rm->getBoundingBox(*(Vector3*)pMin, *(Vector3*)pMax);
 }
 
+InstanceDrawable::~InstanceDrawable() {
+	RemoveFromDirtyList();
+}
+
 void InstanceDrawable::PrepareMatrixState(Matrix *matrix, dtp::Model *model, RenderModelInstance *rmi, bool force) { // line 1880
 	if (true || force) {
 		auto boneCount = rmi->GetRenderMesh()->getBoneCount();
