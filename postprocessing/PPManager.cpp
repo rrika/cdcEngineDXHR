@@ -35,7 +35,7 @@ bool PPManager::createScene(
 
 		auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
 		cdc::CommonRenderTarget *aaDst;
-		bool fastblur = true;
+		bool fastblur = false;
 
 		if (rt == rtDest) {
 			auto *tempRenderTarget = renderDevice->dx11_createRenderTarget(
