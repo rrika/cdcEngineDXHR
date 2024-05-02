@@ -1,3 +1,4 @@
+#include "cdcNative/game/NsInstance.h"
 #include "cdcScript/cdcScript.h"
 #include "cdcScript/NativeScriptType.h"
 #include "cdcScript/ScriptManager.h"
@@ -7,6 +8,31 @@
 #include "game/script/game/NsScaleformMovieController.h"
 
 using namespace cdc;
+
+class NsInstance_ScriptType : public NativeScriptType {
+public:
+	NsInstance_ScriptType();
+	bool InitType(ScriptType*) override;
+	ScriptObject *CreateObject(ScriptType *type) override;
+};
+
+NsInstance_ScriptType::NsInstance_ScriptType() : // line 17918
+	NativeScriptType("game/script/game/game", "instance")
+{
+} 
+
+bool NsInstance_ScriptType::InitType(ScriptType *type) { // line 18205
+
+	NativeScriptType::InitType(type);
+	// TODO
+
+	return true;
+}
+
+ScriptObject *NsInstance_ScriptType::CreateObject(ScriptType *type) { // line 18448
+	// TODO: create NeInstance too
+	return new NsInstance(type);
+}
 
 int32_t _NsScaleformMovieController::s_virtual = 0;
 
@@ -171,7 +197,7 @@ void Init_NativeScripts() { // line 44434
 	// scriptManager->RegisterNativeScriptType(new NtHostedAnimStateGraph_ScriptType());
 	// scriptManager->RegisterNativeScriptType(new NtHudGroup_ScriptType());
 	// scriptManager->RegisterNativeScriptType(new NtInputMap_ScriptType());
-	// scriptManager->RegisterNativeScriptType(new NsInstance_ScriptType());
+	scriptManager->RegisterNativeScriptType(new NsInstance_ScriptType());
 	// scriptManager->RegisterNativeScriptType(new NtInstanceRef_ScriptType());
 	// scriptManager->RegisterNativeScriptType(new NtInstanceStatus_ScriptType());
 	// scriptManager->RegisterNativeScriptType(new NtInventoryItem_ScriptType());

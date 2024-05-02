@@ -11,7 +11,6 @@ namespace cdc {
 	class AnimComponentV2;
 	class IDrawable;
 	class SceneEntity;
-	class ScriptObject;
 	struct Object;
 }
 
@@ -41,7 +40,7 @@ public:
 
 	void *objectData; // 4C
 
-	cdc::GCPtr<cdc::ScriptObject> m_scriptObject; // 58
+	cdc::GCPtr<NsInstance> m_scriptObject; // 58
 	dtp::Model **modelsOverride = nullptr; // 5C
 	uint32_t numOverrideModels = 0; // 60
 	cdc::SceneEntity *sceneEntity = nullptr; // 64

@@ -1,8 +1,8 @@
 #include "cdcAnim/AnimComponentV2.h"
+#include "cdcNative/game/NsInstance.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcResource/ResolveSection.h"
 #include "cdcResource/ScriptSection.h"
-#include "cdcScript/ScriptObject.h"
 #include "cdcScript/ScriptType.h"
 #include "cdcSys/Assert.h"
 #include "Instance.h"
@@ -78,9 +78,9 @@ bool Instance::ScriptAndUberInitCommon(uint32_t scriptTypeId, /*GCPtr<...>*/NsIn
 	// HACK
 	auto *scriptSection = (cdc::ScriptSection*)cdc::g_resolveSections[8];
 	if (auto *scriptType = scriptSection->FindScript(scriptTypeId)) {
-		auto *scriptObject = /*(NsInstance*)*/scriptType->CreateObject();
+		auto *scriptObject = (NsInstance*)scriptType->CreateObject();
 		m_scriptObject = scriptObject;
-		// scriptObject->m_instance = this;
+		scriptObject->m_instance = this;
 		return true;
 	}
 	return false;
