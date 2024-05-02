@@ -5,7 +5,7 @@ struct UIActions;
 
 namespace cdc {
 
-class AnimFragment;
+struct AnimFragment;
 
 struct AniTracker {
 	AnimFragment *animationData;
