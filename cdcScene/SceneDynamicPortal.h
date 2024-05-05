@@ -1,5 +1,5 @@
 #pragma once
-#include "IScenePortal.h"
+#include "cdcScene.h"
 
 namespace cdc {
 

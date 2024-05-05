@@ -94,7 +94,7 @@ void SceneEntity::UpdateData(bool reInitCell) { // line 464
 	// HACK
 	auto cell = sceneCellGroup->cellByIndex(0);
 	if (reInitCell) {
-		auto subCell = &cell->subCells[0];
+		auto subCell = &static_cast<SceneCell*>/*TODO*/(cell)->subCells[0];
 		bool alreadyPresent = false;
 		for (auto ent : subCell->entities)
 			if (ent == this)

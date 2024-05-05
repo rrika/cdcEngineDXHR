@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
+#include "cdcScene.h"
 #include "rendering/CommonScene.h"
 #include "rendering/Culling/Primitives.h"
-#include "IScene.h"
 
 namespace cdc {
 
@@ -39,8 +39,8 @@ public:
 	// 43 methods
 	void Render() override;
 	void RenderWithoutCellTracing(RenderViewport& viewport) override;
-	SceneCellGroup *GetCellGroup(uint32_t index) override;
-	SceneEntity *CreateEntity() override;
+	ISceneCellGroup *GetCellGroup(uint32_t index) override;
+	ISceneEntity *CreateEntity() override;
 };
 
 }

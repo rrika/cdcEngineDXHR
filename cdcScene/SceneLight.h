@@ -1,6 +1,6 @@
 #pragma once
 #include "SceneEntity.h"
-#include "ISceneLight.h"
+#include "cdcScene.h"
 
 namespace cdc {
 

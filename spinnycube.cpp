@@ -81,8 +81,8 @@
 #include "cdcResource/WaveSection.h"
 #include "cdcScript/Decompiler.h"
 #include "cdcScript/ScriptType.h"
+#include "cdcScene/cdcScene.h"
 #include "cdcScene/IMFTypes.h"
-#include "cdcScene/IScene.h"
 #include "cdcScene/SceneCellGroup.h" // for SceneCellGroup to ISceneCellGroup cast
 #include "cdcScene/SceneEntity.h"
 #include "cdcSound/Microphone.h"

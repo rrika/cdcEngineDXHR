@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdlib>
-#include "ISceneCell.h"
+#include "cdcScene.h"
 #include "SceneCellContainer.h"
 #include "SceneCellGroup.h"
 #include "SceneSubCell.h"

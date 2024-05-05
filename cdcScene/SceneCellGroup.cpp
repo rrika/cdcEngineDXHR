@@ -1,3 +1,4 @@
+#include "Scene.h"
 #include "SceneCell.h"
 #include "SceneCellGroup.h"
 #include "cdcSceneCookdata.h"
@@ -57,5 +58,25 @@ void SceneCellGroup::allocateCells() {
 		cellPtr = new SceneCell(this);
 	}
 }
+
+IScene *SceneCellGroup::getScene() { return scene1C; }
+
+uint32_t SceneCellGroup::getCellCount() { return cells.size(); }
+
+ISceneCell *SceneCellGroup::cellByIndex(uint32_t index) { return cells[index]; }
+
+ISceneCell *SceneCellGroup::queryPoint(float *point, bool useThisContainer) {
+	return SceneCellContainer::queryPoint(point, useThisContainer);
+}
+
+float *SceneCellGroup::getOrigin() { return origin; }
+
+void SceneCellGroup::setUserData(void *) {
+	// TODO
+}
+
+void SceneCellGroup::setName(const char *newName) { name = newName; }
+
+const char *SceneCellGroup::getName() { return name; }
 
 }

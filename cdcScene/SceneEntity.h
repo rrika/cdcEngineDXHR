@@ -1,5 +1,5 @@
 #pragma once
-#include "ISceneEntity.h"
+#include "cdcScene.h"
 #include "cdcMath/Math.h"
 #include "rendering/Culling/BasicPrimitives.h"
 

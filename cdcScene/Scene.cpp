@@ -18,11 +18,11 @@ Scene::Scene(CommonRenderDevice *renderDevice) : // line 199
 	sceneCellGroups.back()->allocateCells();
 }
 
-SceneCellGroup *Scene::GetCellGroup(uint32_t index) { // line 1540
+ISceneCellGroup *Scene::GetCellGroup(uint32_t index) { // line 1540
 	return sceneCellGroups[index];
 }
 
-SceneEntity *Scene::CreateEntity() { // line 1570
+ISceneEntity *Scene::CreateEntity() { // line 1570
 	return new SceneEntity(this/*, TODO*/);	
 }
 
@@ -38,7 +38,7 @@ void Scene::TraverseForView(/*TODO*/) { // line 648
 	std::unordered_set<SceneEntity*> entities;
 	for (auto group : sceneCellGroups) {
 		for (uint32_t i = 0; i < group->getCellCount(); i++) {
-			auto *cell = group->cellByIndex(i);
+			auto *cell = static_cast<SceneCell*>/*TODO*/(group->cellByIndex(i));
 			for (uint16_t j = 0; j < cell->numSubCells; j++) {
 				auto *subcell = &cell->subCells[j];
 				for (auto ent : subcell->entities)

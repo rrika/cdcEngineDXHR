@@ -1,6 +1,6 @@
 #include <cstdint>
 #include "SceneLayer.h"
-#include "cdcScene/IScene.h"
+#include "cdcScene/cdcScene.h"
 #include "cdcScene/SceneEntity.h"
 #include "cdcScene/SceneManager.h"
 #include "Instance.h"
@@ -58,7 +58,7 @@ void SceneLayer::PostStreamIn(StreamUnit *unit) { // 1443
 }
 
 void SceneLayer::AddInstance(Instance *instance) { // 1998
-	SceneEntity *entity = g_scene->CreateEntity();
+	SceneEntity *entity = static_cast<SceneEntity*>/*TODO*/(g_scene->CreateEntity());
 	// entity->SetEnabled(false);
 	// entity->SetName(instance->object->name)
 	// entity->SetFlags(2, 0);

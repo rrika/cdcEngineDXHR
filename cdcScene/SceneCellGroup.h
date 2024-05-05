@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <vector>
-#include "ISceneCellGroup.h"
+#include "cdcScene.h"
 #include "SceneCellContainer.h"
 
 namespace cdc {
@@ -33,18 +33,14 @@ public:
 	void allocateCells();
 
 	// 22 methods from ISceneCellGroup
-	Scene *getScene() override { return scene1C; } // 4
-	uint32_t getCellCount() override { return cells.size(); } // 8
-	SceneCell *cellByIndex(uint32_t index) override { return cells[index]; } // 10
-	SceneCell *queryPoint(float *point, bool useThisContainer) override { // 14
-		return SceneCellContainer::queryPoint(point, useThisContainer);
-	}
-	float *getOrigin() override { return origin; } // 20
-	void setUserData(void *) override { // 38
-		// TODO
-	}
-	void setName(const char *newName) override { name = newName; } // 48
-	const char *getName() override { return name; } // 4C
+	IScene *getScene();
+	uint32_t getCellCount();
+	ISceneCell *cellByIndex(uint32_t index);
+	ISceneCell *queryPoint(float *point, bool useThisContainer);
+	float *getOrigin();
+	void setUserData(void *);
+	void setName(const char *newName);
+	const char *getName();
 };
 
 }
