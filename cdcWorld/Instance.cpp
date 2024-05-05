@@ -78,10 +78,11 @@ bool Instance::ScriptAndUberInitCommon(uint32_t scriptTypeId, /*GCPtr<...>*/NsIn
 	// HACK
 	auto *scriptSection = (cdc::ScriptSection*)cdc::g_resolveSections[8];
 	if (auto *scriptType = scriptSection->FindScript(scriptTypeId)) {
-		auto *scriptObject = (NsInstance*)scriptType->CreateObject();
-		m_scriptObject = scriptObject;
-		scriptObject->m_instance = this;
-		return true;
+		if (auto *scriptObject = (NsInstance*)scriptType->CreateObject()) {
+			m_scriptObject = scriptObject;
+			scriptObject->m_instance = this;
+			return true;
+		}
 	}
 	return false;
 }
