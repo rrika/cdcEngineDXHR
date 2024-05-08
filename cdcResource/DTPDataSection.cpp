@@ -28,6 +28,15 @@ uint32_t DTPDataSection::StartResource(uint32_t sectionId, uint32_t sectionSubTy
 	}
 }
 
+void DTPDataSection::ReleaseResource(uint32_t id) {
+	DTPData *&dtp = dtpData[id];
+	if (--dtp->refCount == 0) {
+		// TODO
+		delete[] dtp;
+		dtp = nullptr;
+	}
+}
+
 void DTPDataSection::HandleResourceData(uint32_t id, void* src, uint32_t size, uint32_t offset) {
 	memcpy(dtpData[id]->data + offset, src, size);
 }

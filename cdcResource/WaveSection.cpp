@@ -26,12 +26,29 @@ Wave *WaveSection::lookupEntry(
 	}
 }
 
+bool WaveSection::DumpWaveResource(Wave& wave, bool arg2) {
+	// TODO
+	if (wave.sample) {
+		// if (not playing)
+		wave.sample->Release(); // deletes self
+		wave.sample = nullptr;
+		return true;
+	}
+	return false;
+}
+
 uint32_t WaveSection::StartResource(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) {
 	auto *entry = lookupEntry(sectionId, unknown6, size, alreadyLoaded);
 	if (!alreadyLoaded && entry->refCount > 1)
 		alreadyLoaded = true;
 
 	return sectionId;
+}
+
+void WaveSection::ReleaseResource(uint32_t id) {
+	auto &entry = entries[id];
+	if (--entry.refCount == 0)
+		DumpWaveResource(entry, true);
 }
 
 void WaveSection::HandleResourceData(uint32_t sectionId, void *vsrc, uint32_t size, uint32_t ignoredOffset) {

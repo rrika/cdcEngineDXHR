@@ -16,6 +16,7 @@ class ShaderLibSection : public ResolveSection {
 public:
 	uint32_t StartResource(uint32_t sectionId, uint32_t unknown, uint32_t size, bool& alreadyLoaded) override;
 	// inherit StartResource
+	void ReleaseResource(uint32_t id) override;
 	void HandleResourceData(uint32_t id, void* src, uint32_t size, uint32_t offset) override;
 	void HandleResourceEnd(uint32_t id, void *drmSectionHeader) override;
 	void* GetBasePointer(uint32_t) override;

@@ -39,6 +39,11 @@ uint32_t ScriptSection::StartResource(uint32_t sectionId, uint32_t unknown6, uin
 	return sectionId;
 }
 
+void ScriptSection::ReleaseResource(uint32_t id) {
+	// TODO
+	// s_loader.RemoveLink(ty);
+}
+
 void ScriptSection::HandleResourceData(uint32_t domainId, void* src, size_t size, size_t offset) {
 	ScriptType *ty = FindScript(domainId);
 	memcpy(((char*)ty->blob) + offset, src, size);

@@ -1,5 +1,6 @@
 #include "CommonRenderDevice.h"
 #include "CommonRenderTerrain.h" // for cast in CommonRenderDevice::createResource
+#include "RenderExternalResource.h"
 #include "RenderMesh.h" // for cast in CommonRenderDevice::createResource
 #include "renderdevice.h"
 #include "surfaces/TextureMap.h"
@@ -271,6 +272,11 @@ void CommonRenderDevice::freeTemporarySurfaces() {
 		temporarySurfaces[i]->EvictNow();
 }
 	numTemporarySurfaces = 0;
+}
+
+void CommonRenderDevice::DeferredRelease(RenderExternalResource *res) {
+	// HACK
+	delete res;
 }
 
 }

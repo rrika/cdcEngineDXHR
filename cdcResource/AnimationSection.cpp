@@ -9,6 +9,10 @@ uint32_t AnimationSection::StartResource(uint32_t sectionId, uint32_t unknown6, 
 	return ANITRACKER_FindAnimation(sectionId); // if ResolveAnimation returned the index this wouldn't be needed
 }
 
+void AnimationSection::ReleaseResource(uint32_t id) {
+	ANITRACKER_FreeAnimation(id);
+}
+
 void AnimationSection::HandleResourceData(uint32_t handle, void *src, uint32_t size, uint32_t offset) {
 	memcpy(((char*)aniTracker[handle].animationData) + offset, src, size);
 }

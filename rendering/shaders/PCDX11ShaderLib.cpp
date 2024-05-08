@@ -1,5 +1,6 @@
-#include "PCDX11ShaderLib.h"
 #include <cstring>
+#include "PCDX11ShaderLib.h"
+#include "../PCDX11RenderDevice.h"
 
 namespace cdc {
 
@@ -49,6 +50,11 @@ void PCDX11ShaderLib::fill(char *data, uint32_t offset, uint32_t size, bool done
 		delete[] buffer;
 		buffer = nullptr;
 	}
+}
+
+void PCDX11ShaderLib::Release() {
+	// HACK: currently implemented as delete
+	renderDevice->DeferredRelease(static_cast<RenderExternalResource*>(this));
 }
 
 }

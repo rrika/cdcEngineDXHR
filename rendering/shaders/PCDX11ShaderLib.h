@@ -35,7 +35,7 @@ public:
 
 	~PCDX11ShaderLib() override = default;
 	void fill(char *buffer, uint32_t offset, uint32_t size, bool done) override;
-	// TODO: method8
+	void Release() override;
 };
 
 }

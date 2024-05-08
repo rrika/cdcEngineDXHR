@@ -21,6 +21,14 @@ uint32_t ShaderLibSection::StartResource(uint32_t sectionId, uint32_t unknown6, 
 	}
 }
 
+void ShaderLibSection::ReleaseResource(uint32_t id) {
+	auto &entry = shaders[id];
+	if (--entry.refCount == 0) {
+		entry.shaderlib->Release();
+		shaders.erase(id);
+	}
+}
+
 void ShaderLibSection::HandleResourceData(uint32_t sectionId, void* src, uint32_t size, uint32_t offset) {
 	auto &entry = shaders[sectionId];
 	bool done = offset + size == entry.size;

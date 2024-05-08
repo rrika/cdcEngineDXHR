@@ -8,6 +8,10 @@ uint32_t GenericSection::StartResource(uint32_t sectionId, uint32_t unknown6, ui
 	return (uint32_t) new char[size];
 }
 
+void GenericSection::ReleaseResource(uint32_t id) {
+	delete[] (char*)(uintptr_t)id;
+}
+
 void GenericSection::HandleResourceData(uint32_t id, void* src, uint32_t size, uint32_t offset) {
 	char *buffer = (char*)id;
 	memcpy(buffer + offset, src, size);

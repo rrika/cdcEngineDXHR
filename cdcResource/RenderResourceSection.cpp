@@ -27,6 +27,15 @@ uint32_t RenderResourceSection::StartResource(uint32_t sectionId, uint32_t secti
 	}
 }
 
+void RenderResourceSection::ReleaseResource(uint32_t id) {
+	auto &entry = resources[id];
+	if (--entry.refCount == 0) {
+		if (entry.resource)
+			entry.resource->resFree();
+		resources.erase(id);
+	}
+}
+
 void RenderResourceSection::HandleResourceData(uint32_t sectionId, void* src, uint32_t size, uint32_t offset) {
 	RenderResource *res = resources[sectionId].resource;
 	if (sectionId == 0x1F6E)

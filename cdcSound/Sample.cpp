@@ -65,6 +65,15 @@ uint32_t Sample::Upload(
 	return m_lengthInBytes;
 }
 
+void Sample::Release() {
+	// this bypasses the references counter, and is used by WaveSection, how upsetting
+	if (m_soundHandle)
+		m_soundHandle->release();
+
+	delete this;
+}
+
+
 // HACK
 void Sample::Play() {
 	FMOD::Channel *channel = 0;

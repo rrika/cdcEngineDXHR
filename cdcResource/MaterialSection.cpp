@@ -24,6 +24,16 @@ uint32_t MaterialSection::StartResource(uint32_t sectionId, uint32_t unknown6, u
 	}
 }
 
+void MaterialSection::ReleaseResource(uint32_t id) {
+	auto &entry = materials[id];
+	if (--entry.refCount == 0) {
+		if (entry.blob)
+			delete[] entry.blob;
+		entry.material->Release();
+		materials.erase(id);
+	}
+}
+
 void MaterialSection::HandleResourceData(uint32_t sectionId, void* src, size_t size, size_t offset) {
 	auto &entry = materials[sectionId];
 	memcpy(entry.blob + offset, src, size);

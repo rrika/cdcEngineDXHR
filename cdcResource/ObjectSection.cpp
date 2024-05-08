@@ -32,6 +32,10 @@ uint32_t ObjectSection::StartResource(uint32_t sectionId, uint32_t unknown6, uin
 	return entry - objects;
 }
 
+void ObjectSection::ReleaseResource(uint32_t id) {
+	// TODO
+}
+
 void ObjectSection::HandleResourceData(uint32_t domainId, void* src, size_t size, size_t offset) {
 	auto &entry = objects[domainId];
 	memcpy(entry.objBlob + offset, src, size);

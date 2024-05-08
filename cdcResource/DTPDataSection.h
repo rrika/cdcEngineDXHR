@@ -17,6 +17,7 @@ class DTPDataSection : public cdc::ResolveSection {
 public:
 	// inherit StartResource
 	uint32_t StartResource(uint32_t sectionId, uint32_t sectionSubType, uint32_t unknown6, uint32_t size, bool& alreadyLoaded) override; // 0x08
+	void ReleaseResource(uint32_t id) override;
 	void HandleResourceData(uint32_t id, void* src, uint32_t size, uint32_t offset) override; // 0x18
 	void HandleResourceEnd(uint32_t id, void *drmSectionHeader) override; // 0x1C
 	void construct(uint32_t id, void *drmSectionHeaderMaybe) override; // 0x24

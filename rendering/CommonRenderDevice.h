@@ -15,6 +15,7 @@ class IRenderPassCallback;
 class IRenderTerrain;
 class IRenderTerrainInstance;
 class IShaderLib;
+class RenderExternalResource;
 class RenderMesh;
 class RenderModelInstance;
 class RenderResource;
@@ -177,6 +178,7 @@ public:
 	static RenderResource *createResource(uint32_t, uint32_t);
 	LinearAllocator *getLinear() { return linear30; }
 	void freeTemporarySurfaces();
+	void DeferredRelease(RenderExternalResource*);
 };
 
 extern CommonRenderDevice *g_renderDevice;
