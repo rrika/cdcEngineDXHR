@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstring>
 #include "ObjectSection.h"
+#include "Resolve.h"
 #include "ResolveObject.h"
 #include "cdcFile/FileHelpers.h"
 #include "cdcFile/FileSystem.h"
@@ -34,6 +35,19 @@ uint32_t ObjectSection::StartResource(uint32_t sectionId, uint32_t unknown6, uin
 
 void ObjectSection::ReleaseResource(uint32_t id) {
 	// TODO
+
+	ObjectTracker& otr = objects[id];
+	otr.refCount--;
+	if (Resolve::GetRefCount(otr.resolveObject) <= 0) {
+		if (otr.state != 2) {
+			// TODO
+		}
+		g_objectManager->objectList->entries[otr.objectListIndex-1].slot = ~0u;
+		otr.resolveObject = nullptr;
+		otr.objBlob = nullptr;
+		otr.state = 0;
+		return;
+	}
 }
 
 void ObjectSection::HandleResourceData(uint32_t domainId, void* src, size_t size, size_t offset) {

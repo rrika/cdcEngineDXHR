@@ -394,6 +394,11 @@ void ResolveReceiver::requestComplete(FileRequest *req) {
 	delete this;
 }
 
+void ResolveReceiver::Cancel() {
+	if (cancelCallback)
+		cancelCallback(objectTracker, resolveObject);
+}
+
 void ResolveReceiver::FormatDRMFileName(char *buffer, const char *name) {
 	if (strchr(name, '.'))
 		sprintf(buffer, "%s%s", pathPrefix, name);

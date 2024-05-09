@@ -23,6 +23,11 @@ extern char buildType[16];
 
 namespace cdc {
 
+void ObjectTracker::increaseCountOnResolveObject() {
+	if (resolveObject)
+		resolveObject->m_ref++;
+}
+
 ObjectTracker objects[604];
 
 ObjectManager::ObjectManager() {
@@ -120,6 +125,8 @@ void readAndParseObjectList() {
 	// 18 'foo\0'
 	// 1C 'bar\0'
 
+	g_objectManager->debugLoad = new bool[maxObject+1];
+
 	uint32_t size = 8 + 8 * maxObject + (cursor - filelist);
 	auto *allocation = new char[size];
 	g_objectManager->objectList = (ObjectList*) allocation;
@@ -131,6 +138,7 @@ void readAndParseObjectList() {
 	for (int32_t i=0; i<maxObject; i++) {
 		g_objectManager->objectList->entries[i].name = 0;
 		g_objectManager->objectList->entries[i].slot = ~0u;
+		g_objectManager->debugLoad[i] = false;
 	}
 
 	// rewind
@@ -190,8 +198,12 @@ void objectLoadCallback(void*, void*, void*, ResolveObject* resolveObject) {
 	// TODO
 }
 
-void objectCancelCallback(ObjectTracker*, ResolveObject*) {
-	// TODO
+void objectCancelCallback(ObjectTracker *ot, ResolveObject *ro) {
+	if (ot->objBlob) {
+		g_objectManager->objectList->entries[ot->objectListIndex-1].slot = ~0u;
+		ot->resolveObject = nullptr;
+		ot->state = 0;
+	}
 }
 
 uint32_t objectIdByName(const char *name) {
@@ -210,7 +222,7 @@ static void requestObject(uint32_t id, uint8_t priority) {
 		objectTracker = allocObjectSlot(id, 1);
 
 	} else if (objectTracker->resolveObject) {
-		objectTracker->increaseCountOnResolveObject();
+		objectTracker->increaseCountOnResolveObject(); // increase m_ref
 		return;
 	}
 
@@ -258,17 +270,38 @@ void buildObjectsUI(UIActions& uiact) {
 			ImGui::Text("%4d %s %d",
 				i+1, e->entries[i].name, e->entries[i].slot);
 			ImGui::PushID(i);
-			if (!isLoaded) {
+			if (g_objectManager->debugLoad[i] == false) {
 				ImGui::SameLine();
-				if (ImGui::SmallButton("Load")) {
+				if (ImGui::SmallButton(isLoaded ? "Pin" : "Load")) {
+					g_objectManager->debugLoad[i] = true;
 					requestObjectNormal(i+1);
 					getDefaultFileSystem()->processAll();
 				}
-			} else {
+			}
+			if (isLoaded) {
 				uint32_t slot = e->entries[i].slot;
 				Object *obj = objects[slot].objBlob;
 				ImGui::SameLine();
-				buildUI(uiact, obj);
+				if (auto ro = objects[slot].resolveObject) {
+					uint32_t refCount = ro->m_ref;
+					ImGui::Text("(ref=%d)", ro->m_ref);
+					if (g_objectManager->debugLoad[i] == true) {
+						ImGui::SameLine();
+						if (ImGui::SmallButton("Unload")) {
+							// TODO: implement a helper for this
+							objects[slot].resolveObject->Release();
+							g_objectManager->debugLoad[i] = false;
+							if (refCount == 1)
+								obj = nullptr;
+						}
+					}
+				} else {
+					ImGui::Text("(no object)");
+				}
+				if (obj) {
+					ImGui::SameLine();
+					buildUI(uiact, obj);
+				}
 			}
 			ImGui::PopID();
 		}

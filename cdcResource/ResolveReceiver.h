@@ -49,6 +49,8 @@ public:
 	void requestFailed(FileRequest*) override;
 	void requestComplete(FileRequest*) override;
 
+	void Cancel();
+
 	static void FormatDRMFileName(char *buffer, const char *name);
 };
 

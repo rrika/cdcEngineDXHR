@@ -23,10 +23,7 @@ struct ObjectTracker {
 
 	bool debugHide; // HACK
 
-	void increaseCountOnResolveObject() {
-		// if (resolveObject)
-		// 	resolveObject->dword14++;
-	}
+	void increaseCountOnResolveObject();
 };
 
 extern ObjectTracker objects[604];
@@ -48,6 +45,7 @@ struct ObjectManager {
 	// uint32_t dword10;
 	std::unordered_map<int32_t, ObjectFamily> m_familyMap; // TODO: correct container type
 	ObjectList *objectList = nullptr;
+	bool *debugLoad = nullptr;
 	// uint32_t numNames;
 	// ObjectManagerNamedEntry names[32];
 	InitFunc *preInit; // 4A0, GameAdditionalPreInit

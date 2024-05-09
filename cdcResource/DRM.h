@@ -3,6 +3,8 @@
 
 namespace cdc {
 
+class ResolveObject;
+
 enum class ContentType : uint8_t {
 	Generic = 0,
 	Empty = 1,
@@ -29,6 +31,9 @@ struct SectionRecord {
 
 	Entry *m_pEntry;
 	uint32_t m_numEntries;
+
+	void Release(ResolveObject *pObject);
+	void ReleaseEntry(uint32_t index, ResolveObject *pObject);
 };
 
 struct DRMSectionHeader { // cdc::SectionInfo

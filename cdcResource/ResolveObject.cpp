@@ -1,5 +1,4 @@
 #include <cstring> // for strdup
-#include <unordered_map>
 #include "ResolveObject.h"
 #include "ResolveReceiver.h"
 #include "ResolveSection.h" // for g_resolveSections
@@ -38,7 +37,7 @@ ResolveObject *ResolveObject::create(
 	);
 }
 
-std::unordered_map<uint32_t, ResolveObject *> cachedObjects;
+std::map<uint32_t, ResolveObject *> cachedObjects; // map with stable iterators
 
 ResolveObject *ResolveObject::create(
 	uint32_t pathCrc,
@@ -64,14 +63,15 @@ ResolveObject *ResolveObject::create(
 				rr->objectTracker = objectTracker;
 			}
 
-		// TODO
+		resolveObject->m_ref++;
 		return resolveObject;
 	}
 
 	path = strdup(path); // HACK
 
-	auto *resolveObject = new ResolveObject(path);
-	cachedObjects[pathCrc] = resolveObject;
+	auto it = cachedObjects.insert({pathCrc, nullptr}).first;
+	auto *resolveObject = new ResolveObject(path, it);
+	it->second = resolveObject;
 	auto *resolveReceiver = new ResolveReceiver(
 		callback, callbackArg1, callbackArg2,
 		outPtrWrapped, cancelCallback, objectTracker,
@@ -81,10 +81,19 @@ ResolveObject *ResolveObject::create(
 	auto *req = fs->createRequest(resolveReceiver, path, 0);
 	resolveObject->fileRequest = req;
 	req->submit(priority);
-	// TODO
 
+	resolveObject->m_ref++;
 	return resolveObject;
 }
+
+ResolveObject::~ResolveObject() {
+	if (m_it != cachedObjects.end())
+		cachedObjects.erase(m_it);
+	for (auto *dependency : dependencies) {
+		dependency->Release();
+	}
+}
+
 
 void *ResolveObject::getRootWrapped() {
 	if (rootSection == ~0u)
@@ -122,6 +131,32 @@ void ResolveObject::notifyDependants() {
 			// dependant->byte34 = false;
 		}
 	}
+}
+
+int32_t ResolveObject::Release() { // returns a refcount
+	if (m_ref == 1) {
+		if (fileRequest)
+			fileRequest->cancel();
+		fileRequest = nullptr;
+	}
+
+	if (--m_ref > 0)
+		return m_ref; // not time to unload yet
+
+	if (m_pRecord) {
+		m_pRecord->Release(this); // deletes itself
+		m_pRecord = nullptr;
+	}
+	if (resolveReceiver) {
+		resolveReceiver->Cancel();
+		if (/*byte34_or_ownsResolveReceiver &&*/ resolveReceiver) // checked again apparently
+			delete resolveReceiver;
+	}
+	resolveReceiver = nullptr;
+	if (m_ref >= 0) // unsure why, it's not like this can be called multiple times
+		delete this;
+
+	return 0;
 }
 
 
