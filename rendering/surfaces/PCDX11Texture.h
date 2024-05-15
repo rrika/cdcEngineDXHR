@@ -70,6 +70,7 @@ public:
 	char *resGetBuffer() override;
 	void resConstruct() override;
 	void resMethod10() override;
+	~PCDX11Texture();
 
 	// for TextureMap
 	uint32_t getWidth() override;

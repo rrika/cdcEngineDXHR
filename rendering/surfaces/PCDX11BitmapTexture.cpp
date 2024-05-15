@@ -4,6 +4,14 @@
 
 namespace cdc {
 
+PCDX11BitmapTexture::~PCDX11BitmapTexture() {
+	if (d3dResourceView12C)
+		d3dResourceView12C->Release();
+	if (d3dTexture128)
+		d3dTexture128->Release();
+	// if (imageData)
+}
+
 ID3D11Resource *PCDX11BitmapTexture::getTextureResource() {
 	return d3dTexture128;
 }

@@ -22,6 +22,7 @@ public:
 		PCDX11AsyncCreateResource()
 	{
 	}
+	~PCDX11BitmapTexture();
 
 	ID3D11Resource *getTextureResource() override;
 	ID3D11ShaderResourceView *createShaderResourceView() override;

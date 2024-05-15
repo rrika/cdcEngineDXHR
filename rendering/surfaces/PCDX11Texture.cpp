@@ -119,7 +119,8 @@ uint32_t PCDX11Texture::getHeight() {
 
 
 void PCDX11Texture::resFree() {
-	// TODO
+	// HACK
+	delete this;
 }
 
 void PCDX11Texture::resFill(void* src, uint32_t size, uint32_t offset) {
@@ -146,6 +147,11 @@ char *PCDX11Texture::resGetBuffer() {
 void PCDX11Texture::resConstruct() { /* empty */ }
 
 void PCDX11Texture::resMethod10() { /* empty */ }
+
+PCDX11Texture::~PCDX11Texture() {
+	// TODO
+	free(textureBlob);
+}
 
 void PCDX11Texture::asyncCreate(/* TODO: one argument */) {
 	/*
