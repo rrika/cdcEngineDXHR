@@ -17,7 +17,7 @@ ResolveObject *ResolveObject::create(
 	void *callbackArg1,
 	void *callbackArg2,
 	void **outPtrWrapped,
-	void (*unloadCallback)(ObjectTracker*, ResolveObject*),
+	void (*cancelCallback)(ObjectTracker*, ResolveObject*),
 	ObjectTracker *objectTracker,
 	uint8_t y,
 	uint32_t priority
@@ -31,7 +31,7 @@ ResolveObject *ResolveObject::create(
 		callbackArg1,
 		callbackArg2,
 		outPtrWrapped,
-		unloadCallback,
+		cancelCallback,
 		objectTracker,
 		y,
 		priority
@@ -47,7 +47,7 @@ ResolveObject *ResolveObject::create(
 	void *callbackArg1,
 	void *callbackArg2,
 	void **outPtrWrapped,
-	void (*unloadCallback)(ObjectTracker*, ResolveObject*),
+	void (*cancelCallback)(ObjectTracker*, ResolveObject*),
 	ObjectTracker *objectTracker,
 	uint8_t y,
 	uint32_t priority
@@ -58,9 +58,9 @@ ResolveObject *ResolveObject::create(
 		if (outPtrWrapped && resolveObject->m_pRecord && resolveObject->m_pRecord->m_numEntries)
 			*outPtrWrapped = resolveObject->getRootWrapped();
 
-		if (unloadCallback)
+		if (cancelCallback)
 			if (auto rr = resolveObject->resolveReceiver) {
-				rr->unloadCallback = unloadCallback;
+				rr->cancelCallback = cancelCallback;
 				rr->objectTracker = objectTracker;
 			}
 
@@ -74,7 +74,7 @@ ResolveObject *ResolveObject::create(
 	cachedObjects[pathCrc] = resolveObject;
 	auto *resolveReceiver = new ResolveReceiver(
 		callback, callbackArg1, callbackArg2,
-		outPtrWrapped, unloadCallback, objectTracker,
+		outPtrWrapped, cancelCallback, objectTracker,
 		resolveObject, y, &drmIndex);
 
 	auto *fs = getDefaultFileSystem();

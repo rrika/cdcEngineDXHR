@@ -190,7 +190,7 @@ void objectLoadCallback(void*, void*, void*, ResolveObject* resolveObject) {
 	// TODO
 }
 
-void objectUnloadCallback(ObjectTracker*, ResolveObject*) {
+void objectCancelCallback(ObjectTracker*, ResolveObject*) {
 	// TODO
 }
 
@@ -227,7 +227,7 @@ static void requestObject(uint32_t id, uint8_t priority) {
 		nullptr,
 		nullptr,
 		nullptr,
-		&objectUnloadCallback,
+		&objectCancelCallback,
 		objectTracker,
 		0,
 		priority);

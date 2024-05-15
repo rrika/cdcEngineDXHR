@@ -23,23 +23,23 @@ class ResolveReceiver : public FileReceiver {
 	void *callbackArg1; // 70
 	void *callbackArg2; // 74
 	void **rootSectionPtr; // 78
-	void (*unloadCallback)(ObjectTracker*, ResolveObject*); // 7C
+	void (*cancelCallback)(ObjectTracker*, ResolveObject*); // 7C
 	ObjectTracker *objectTracker; // 80
 
-	friend class ResolveObject; // need to mess with unloadCallback etc.
+	friend class ResolveObject; // need to mess with cancelCallback etc.
 
 public:
 	ResolveReceiver(
 		decltype(callback) callback, void *arg1, void *arg2,
 		void **rootSectionPtr,
-		void (*unloadCallback)(ObjectTracker*, ResolveObject*),
+		void (*cancelCallback)(ObjectTracker*, ResolveObject*),
 		ObjectTracker *objectTracker,
 		ResolveObject *resolveObject,
 		uint8_t unknown,
 		DRMIndex *index = nullptr)
 	:
 		callback(callback), callbackArg1(arg1), callbackArg2(arg2), rootSectionPtr(rootSectionPtr),
-		unloadCallback(unloadCallback), objectTracker(objectTracker),
+		cancelCallback(cancelCallback), objectTracker(objectTracker),
 		resolveObject(resolveObject), index(index)
 	{
 		resolveObject->resolveReceiver = this;

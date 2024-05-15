@@ -26,7 +26,7 @@ public:
 		void *callbackArg1,
 		void *callbackArg2,
 		void **outPtrWrapped,
-		void (*unloadCallback)(ObjectTracker*, ResolveObject*),
+		void (*cancelCallback)(ObjectTracker*, ResolveObject*),
 		ObjectTracker *objectTracker,
 		uint8_t y,
 		uint32_t priority
@@ -39,7 +39,7 @@ public:
 		void *callbackArg1,
 		void *callbackArg2,
 		void **outPtrWrapped,
-		void (*unloadCallback)(ObjectTracker*, ResolveObject*),
+		void (*cancelCallback)(ObjectTracker*, ResolveObject*),
 		ObjectTracker *objectTracker,
 		uint8_t y,
 		uint32_t priority
