@@ -7,6 +7,7 @@
 #include "cdcFile/FileSystem.h"
 #include "cdcGameShell/cdcGameShell.h"
 #include "rendering/Inspector.h"
+#include "cdcResource/Resolve.h"
 #include "cdcResource/ResolveObject.h"
 
 #if ENABLE_IMGUI
@@ -252,6 +253,13 @@ void requestObjectHigh(uint32_t id) {
 
 void requestObjectNormal(uint32_t id) {
 	requestObject(id, cdc::FileRequest::NORMAL);
+}
+
+void releaseObject(uint32_t id) {
+	// HACK
+	if (ObjectTracker *otr = getByObjectListIndex(id))
+		if (otr->resolveObject)
+			Resolve::Release(otr->resolveObject);
 }
 
 char *objectName(uint32_t objectListIndex) {

@@ -101,6 +101,19 @@ void loadDatabases() {
 	globalPlayerInfo = (GlobalPlayerInfo*)ort_globalPlayerInfo->objBlob->data;
 }
 
+void unloadDatabases() {
+	// TODO
+
+	releaseObject(objectIdByName("GlobalPlayerInfo"));
+	if (true) // TODO
+		releaseObject(objectIdByName("GlobalDLCInfo"));
+	releaseObject(objectIdByName("GlobalScripting"));
+	releaseObject(objectIdByName("GlobalDatabase"));
+	releaseObject(objectIdByName("GlobalSmartScripts"));
+
+	// TODO
+}
+
 void Init_NativeScripts();
 
 void MAIN_DoMainInit() {
@@ -129,6 +142,7 @@ void MAIN_DoMainInit() {
 
 	// TODO
 
+	// MAIN_LoadGlobalObjects
 	uint32_t generalBankId = objectIdByName("generalbank");
 	uint32_t globalSoundInfoId = objectIdByName("globalsoundinfo");
 	uint32_t globalAnimInfoId = objectIdByName("globalaniminfo");
@@ -146,6 +160,20 @@ void MAIN_DoMainInit() {
 	// TODO
 
 	UI_Begin();
+
+	// TODO
+}
+
+void MAIN_DoMainUninit() { // ?
+	// TODO
+
+	unloadDatabases();
+
+	// TODO
+
+	releaseObject(objectIdByName("globalaniminfo"));
+	releaseObject(objectIdByName("globalsoundinfo"));
+	releaseObject(objectIdByName("generalbank"));
 
 	// TODO
 }
@@ -177,6 +205,8 @@ void MAIN_Init() { // 2312
 
 void MAIN_Uninit() { // 2573
 
+	// TODO
+	MAIN_DoMainUninit();
 	// TODO
 	Resolve::Destroy();
 }

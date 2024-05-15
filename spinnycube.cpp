@@ -1846,6 +1846,12 @@ end:
 #endif
 	ImGui::DestroyContext();
 #endif
+
+	// maybe it's bad to bypass ObjectManager
+	obj5->Release();
+	obj4->Release();
+	obj3->Release();
+
 	return 0;
 }
 

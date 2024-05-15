@@ -76,6 +76,7 @@ void readAndParseObjectList();
 uint32_t objectIdByName(const char *name);
 void requestObjectHigh(uint32_t id);
 void requestObjectNormal(uint32_t id);
+void releaseObject(uint32_t id);
 char *objectName(uint32_t objectListIndex);
 
 void buildObjectsUI(UIActions& uiact);
