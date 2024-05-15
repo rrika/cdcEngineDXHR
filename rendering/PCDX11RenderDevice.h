@@ -111,6 +111,7 @@ public:
 	void registerComparatorsAndDrawersModel();
 	void registerComparatorsAndDrawersTerrain();
 	void registerComparatorsAndDrawersNGAPrim();
+	~PCDX11RenderDevice();
 	void setupShadowBuffer();
 
 	// incomplete

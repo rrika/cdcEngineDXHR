@@ -261,6 +261,36 @@ void PCDX11RenderDevice::registerComparatorsAndDrawersNGAPrim() {
 	registerDrawer(funcIndex, /*10*/ kRenderFunctionNormal, todoDrawA);
 }
 
+PCDX11RenderDevice::~PCDX11RenderDevice() {
+	// HACK
+	delete shlib_22;
+	delete shlib_21;
+	delete shlib_20;
+	delete shlib_19;
+	delete shlib_18;
+	delete shlib_17;
+	delete shlib_16;
+	delete shlib_15;
+	delete shlib_14;
+	delete shlib_13;
+	delete shlib_12;
+	delete shlib_11;
+	delete shlib_10;
+	delete shlib_9;
+	delete shlib_8;
+	delete shlib_7;
+	delete shlib_6;
+	delete shlib_5;
+	delete shlib_4;
+	delete shlib_3;
+	delete shlib_2;
+	delete shlib_1;
+	delete shlib_0;
+
+	delete renderContext_10CEC;
+	delete static_cast<PCDX11LightManager*>(lightManager);
+}
+
 void PCDX11RenderDevice::setupShadowBuffer() {
 	// TODO
 }

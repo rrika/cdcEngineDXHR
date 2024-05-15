@@ -30,6 +30,11 @@ PCDX11ShaderLib::PCDX11ShaderLib(
 	}
 }
 
+PCDX11ShaderLib::~PCDX11ShaderLib() {
+	delete table;
+	delete[] buffer;
+}
+
 void PCDX11ShaderLib::fill(char *data, uint32_t offset, uint32_t size, bool done) {
 	memcpy(buffer + offset, data, size);
 	if (done) {

@@ -18,6 +18,7 @@ protected:
 	uint32_t numShaders = 0;
 public:
 	PCDX11ShaderTable(char *blob) : blob(blob) {}
+	virtual ~PCDX11ShaderTable() = default;
 };
 
 class PCDX11VertexShaderTable : public PCDX11ShaderTable {
@@ -50,6 +51,25 @@ public:
 	}
 
 	PCDX11VertexShader *operator[](size_t i) const { return vertexShaders[i]; }
+
+	~PCDX11VertexShaderTable() {
+		// TODO
+		Destroy();
+	}
+
+	void Destroy() {
+		if (!vertexShaders)
+			return;
+		for (uint32_t i=0; i<numShaders; i++) {
+			// HACK
+			if (vertexShaders[i]) {
+				vertexShaders[i]->internalRelease();
+				delete vertexShaders[i];
+			}
+		}
+		delete[] vertexShaders;
+		vertexShaders = nullptr;
+	}
 };
 
 class PCDX11PixelShaderTable : public PCDX11ShaderTable {
@@ -82,6 +102,25 @@ public:
 	}
 
 	PCDX11PixelShader *operator[](size_t i) const { return pixelShaders[i]; }
+
+	~PCDX11PixelShaderTable() {
+		// TODO
+		Destroy();
+	}
+
+	void Destroy() {
+		if (!pixelShaders)
+			return;
+		for (uint32_t i=0; i<numShaders; i++) {
+			// HACK
+			if (pixelShaders[i]) {
+				pixelShaders[i]->internalRelease();
+				delete pixelShaders[i];
+			}
+		}
+		delete[] pixelShaders;
+		pixelShaders = nullptr;
+	}
 };
 
 /*
@@ -125,6 +164,25 @@ public:
 	}
 
 	PCDX11ComputeShader *operator[](size_t i) const { return computeShaders[i]; }
+
+	~PCDX11ComputeShaderTable() {
+		// TODO
+		Destroy();
+	}
+
+	void Destroy() {
+		if (!computeShaders)
+			return;
+		for (uint32_t i=0; i<numShaders; i++) {
+			// HACK
+			if (computeShaders[i]) {
+				computeShaders[i]->internalRelease();
+				delete computeShaders[i];
+			}
+		}
+		delete[] computeShaders;
+		computeShaders = nullptr;
+	}
 };
 
 }

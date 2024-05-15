@@ -33,7 +33,7 @@ public:
 	PCDX11ShaderTable *table; // 10
 	char *buffer; // 14
 
-	~PCDX11ShaderLib() override = default;
+	~PCDX11ShaderLib() override;
 	void fill(char *buffer, uint32_t offset, uint32_t size, bool done) override;
 	void Release() override;
 };
