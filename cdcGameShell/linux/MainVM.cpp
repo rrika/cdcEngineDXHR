@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 		Specialisation::BlockingChange(mask);
 	}
 
-	MAIN_Init();
+	MainG2();
 
 	cdcRenderLayer::Destroy();
 

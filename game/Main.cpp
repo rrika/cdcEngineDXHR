@@ -150,7 +150,7 @@ void MAIN_DoMainInit() {
 	// TODO
 }
 
-void MAIN_Init() {
+void MAIN_Init() { // 2312
 
 	const char *prefix;
 	if (archiveFileSystem_default && archiveFileSystem_default)
@@ -172,10 +172,23 @@ void MAIN_Init() {
 
 	// Gameloop::InitiateLevelLoad("det_sarifhq_rail_tutorial", nullptr);
 	getDefaultFileSystem()->processAll();
+}
+
+
+void MAIN_Uninit() { // 2573
+
+	// TODO
+	Resolve::Destroy();
+}
+
+void MainG2() { // 2892
+	MAIN_Init();
 
 	// HACK
 	spinnyCube(
 		hwnd1,
 		deviceManager->getD3DDevice(),
 		deviceManager->getD3DDeviceContext());
+
+	MAIN_Uninit();
 }

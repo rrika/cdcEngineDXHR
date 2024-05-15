@@ -142,7 +142,7 @@ int WinMain2(HINSTANCE hInstance, LPSTR lpCmdLine) {
 	}
 
 	// TODO
-	MAIN_Init();
+	MainG2();
 
 	// TODO
 	cdcRenderLayer::Destroy();
