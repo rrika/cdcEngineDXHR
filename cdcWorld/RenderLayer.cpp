@@ -25,4 +25,13 @@ void Create(HWND hwnd) {
 	// TODO: ShaderUsageDX11.bin
 }
 
+void Destroy() {
+	// TODO
+	if (g_renderDevice) {
+		g_renderDevice->refCountDec();
+		delete g_renderDevice;
+		g_renderDevice = nullptr;
+	}
+}
+
 }

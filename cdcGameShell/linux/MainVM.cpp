@@ -10,6 +10,7 @@
 #include "cdcFile/FileHelpers.h"
 #include "cdcLocale/localstr.h"
 #include "cdcResource/Specialisation.h"
+#include "cdcWorld/RenderLayer.h"
 
 using namespace cdc;
 
@@ -73,5 +74,10 @@ int main(int argc, char** argv) {
 	}
 
 	MAIN_Init();
+
+	cdcRenderLayer::Destroy();
+
+	SDL_Quit();
+
 	return 0;
 }

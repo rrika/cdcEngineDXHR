@@ -4,5 +4,6 @@
 namespace cdcRenderLayer {
 
 void Create(HWND hwnd);
+void Destroy();
 
 }
