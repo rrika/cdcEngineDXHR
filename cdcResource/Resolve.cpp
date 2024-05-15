@@ -9,4 +9,10 @@ void Resolve::Create() {
 	// TODO
 }
 
+void Resolve::Destroy() {
+	// TODO
+	ResolveSection::Destroy();
+	// TODO
+}
+
 }

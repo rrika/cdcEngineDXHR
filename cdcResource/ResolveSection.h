@@ -8,6 +8,7 @@ class ResolveObject;
 class ResolveSection {
 public:
 	static void Create();
+	static void Destroy();
 
 	virtual ~ResolveSection() = 0;
 	virtual uint32_t StartResource(uint32_t sectionId, uint32_t unknown6, uint32_t size, bool& alreadyLoaded); // 0x04

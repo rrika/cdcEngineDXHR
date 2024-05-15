@@ -27,6 +27,19 @@ void ResolveSection::Create() {
 	g_resolveSections[12] = new cdc::RenderResourceSection();
 }
 
+void ResolveSection::Destroy() {
+	delete g_resolveSections[0];
+	delete g_resolveSections[2];
+	delete g_resolveSections[5];
+	delete g_resolveSections[6];
+	delete g_resolveSections[7];
+	delete g_resolveSections[8];
+	delete g_resolveSections[9];
+	delete g_resolveSections[10];
+	delete g_resolveSections[11];
+	delete g_resolveSections[12];
+}
+
 ResolveSection::~ResolveSection() {}
 
 uint32_t ResolveSection::StartResource(
