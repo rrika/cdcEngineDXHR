@@ -34,11 +34,15 @@ option(ENABLE_GCS "Build with whatever GCS is" OFF)
 option(ENABLE_IMGUI "Build with ImGui" ON)
 option(ENABLE_D3DCOMPILER "Build with d3dcompiler dependency" ${NOT_NATIVE_BUILD})
 
+option(ENABLE_ASAN "Build with address sanitizer" OFF)
+
 if (NATIVE_BUILD)
 	add_compile_options(-g)
 
-	#add_compile_options(-g -fsanitize=address)
-	#add_link_options(-g -fsanitize=address)
+	if (ENABLE_ASAN)
+		add_compile_options(-fsanitize=address)
+		add_link_options(-fsanitize=address)
+	endif()
 
 	add_executable(dxhr
 		spinnycube.cpp)
