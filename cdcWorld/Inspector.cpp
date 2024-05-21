@@ -167,6 +167,11 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			instance->sceneEntity->Release();
 			instance->sceneEntity = nullptr;
 		}
+		if (ImGui::Button("Remove object")) {
+			uiact.select((Instance*)nullptr);
+			instance->ReallyRemoveInstance();
+			return;
+		}
 
 		cdc::Object *object = instance->object;
 		if (false)

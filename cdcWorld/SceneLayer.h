@@ -47,5 +47,6 @@ struct SceneLayer { // 192
 	static void PreStreamIn(StreamUnit*);
 	static void PostStreamIn(StreamUnit*);
 	static void AddInstance(Instance *instance);
+	static void RemoveInstance(Instance *instance);
 	static void Update();
 };

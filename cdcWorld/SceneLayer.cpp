@@ -15,7 +15,7 @@ using namespace cdc;
 
 IScene *g_scene = nullptr;
 
-class MyStreamingCallback : public StreamingCallback { // 236
+class MyStreamingCallback : public StreamingCallback { // line 236
 public:
 	// void UnitLoaded(StreamUnit*) override;
 	// void UnitDumped(StreamUnit*) override;
@@ -23,7 +23,7 @@ public:
 	// void StreamGroupDumped(CellStreamGroupData*) override;
 };
 
-void SceneLayer::init() { // 1001
+void SceneLayer::init() { // line 1001
 	auto *sceneManager = SceneManager::create();
 	g_scene = sceneManager->createScene(g_renderDevice);
 }
@@ -31,13 +31,13 @@ void SceneLayer::init() { // 1001
 uint32_t s_numStreamingCallbacks = 0;
 StreamingCallback *s_streamingCallbacks[4];
 
-void SceneLayer::AddStreamingCallback(StreamingCallback *cb) { // 1083
+void SceneLayer::AddStreamingCallback(StreamingCallback *cb) { // line 1083
 	if (cb && s_numStreamingCallbacks < 4) {
 		s_streamingCallbacks[s_numStreamingCallbacks++] = cb;
 	}
 }
 
-void SceneLayer::RemoveStreamingCallback(StreamingCallback *cb) { // 1093
+void SceneLayer::RemoveStreamingCallback(StreamingCallback *cb) { // line 1093
 	for (uint32_t i = 0; i < s_numStreamingCallbacks; i++) {
 		if (s_streamingCallbacks[i] == cb) {
 			// swap-delete with last cb
@@ -47,17 +47,17 @@ void SceneLayer::RemoveStreamingCallback(StreamingCallback *cb) { // 1093
 	}
 }
 
-void SceneLayer::PreStreamIn(StreamUnit*) { // 1282
+void SceneLayer::PreStreamIn(StreamUnit*) { // line 1282
 	// TODO
 }
 
-void SceneLayer::PostStreamIn(StreamUnit *unit) { // 1443
+void SceneLayer::PostStreamIn(StreamUnit *unit) { // line 1443
 	// TODO
 	for (uint32_t i=0; i < s_numStreamingCallbacks; i++)
 		s_streamingCallbacks[i]->UnitLoaded(unit);
 }
 
-void SceneLayer::AddInstance(Instance *instance) { // 1998
+void SceneLayer::AddInstance(Instance *instance) { // line 1998
 	SceneEntity *entity = static_cast<SceneEntity*>/*TODO*/(g_scene->CreateEntity());
 	// entity->SetEnabled(false);
 	// entity->SetName(instance->object->name)
@@ -68,7 +68,14 @@ void SceneLayer::AddInstance(Instance *instance) { // 1998
 	// TODO
 }
 
-static void UpdateInstances() { // 2052
+void SceneLayer::RemoveInstance(Instance *instance) { // line 2029
+	if (g_scene && instance->sceneEntity) {
+		instance->sceneEntity->Release();
+		instance->sceneEntity = nullptr;
+	}
+}
+
+static void UpdateInstances() { // line 2052
 	while (auto *id = InstanceDrawable::s_pFirstDirty) {
 		Instance *i = id->m_instance;
 		// TODO
@@ -110,7 +117,8 @@ void SceneLayer::Update() {
 	// TODO
 }
 
-class ImfStreamingCallback : public StreamingCallback { // 3089
+
+class ImfStreamingCallback : public StreamingCallback { // line 3089
 public:
 	// void UnitLoaded(StreamUnit*) override;
 	// void UnitDumped(StreamUnit*) override;

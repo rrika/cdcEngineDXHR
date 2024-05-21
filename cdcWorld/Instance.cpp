@@ -9,8 +9,32 @@
 #include "InstanceDrawable.h"
 #include "InstanceManager.h"
 #include "Object.h"
+#include "SceneLayer.h"
 
 using namespace cdc;
+
+void Instance::ReallyRemoveInstance() { // line 1086
+	// TODO
+	SceneLayer::RemoveInstance(this);
+	// TODO
+	// object->RemRef();
+	// if (derivedObject) derivedObject->RemRef();
+	// this->~Instance();
+
+	// HACK
+	auto& il = InstanceManager::s_instances;
+	for (auto it = il.begin(); it != il.end(); ++it)
+		if (*it == this) {
+			il.erase(it);
+			break;
+		}
+	for (auto **i=&InstanceManager::s_chain; *i; i = &(*i)->next)
+		if (*i == this) {
+			*i = this->next;
+			break;
+		}
+	delete this;
+}
 
 Instance *Instance::IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, bool force) { // line 1672
 	return IntroduceInstance(intro, streamUnitID, nullptr, force);
@@ -165,6 +189,11 @@ void Instance::DefaultInit( // line 2977
 
 	if (!instanceDrawable)
 		instanceDrawable = new InstanceDrawable(this);
+}
+
+Instance::~Instance() {
+	// TODO
+	delete instanceDrawable;
 }
 
 uint32_t Instance::GetNumModels() {

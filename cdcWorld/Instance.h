@@ -77,6 +77,8 @@ public:
 		cdc::Euler *pRotation,
 		cdc::Object *pDerivedObject,
 		uint8_t flags);
+	void ReallyRemoveInstance();
+	~Instance();
 	uint32_t GetNumModels();
 	dtp::Model **GetModels();
 
