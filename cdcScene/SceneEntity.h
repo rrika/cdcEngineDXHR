@@ -34,6 +34,8 @@ public:
 	void setDrawable(IDrawable *) override;
 	IDrawable *getDrawable() override;
 	void setCellGroup(ISceneCellGroup *) override;
+	void Release() override;
+	~SceneEntity();
 };
 
 }

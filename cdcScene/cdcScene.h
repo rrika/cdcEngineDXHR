@@ -63,6 +63,8 @@ public:
 	virtual void setDrawable(IDrawable *) = 0; // C
 	virtual IDrawable *getDrawable() = 0; // 10
 	virtual void setCellGroup(ISceneCellGroup *) = 0; // 38
+	virtual void Release() = 0;	// 58
+	virtual ~ISceneEntity() = default; // 5C
 };
 
 class ISceneLight : public ISceneEntity { // line 1036

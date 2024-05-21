@@ -76,6 +76,16 @@ void SceneEntity::setCellGroup(ISceneCellGroup *newICellGroup) {
 	}
 }
 
+void SceneEntity::Release() {
+	// called from SceneLayer::RemoveInstance
+	delete this;
+}
+
+SceneEntity::~SceneEntity() {
+	// TODO
+	scene->RemoveEntity(this);
+}
+
 void SceneEntity::QueryVolumeFromDrawable() { // line 370
 	if (drawable) {
 		drawable->GetBoundingVolume(&cullingVolume);

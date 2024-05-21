@@ -110,4 +110,11 @@ void Scene::AddEntity(SceneEntity *pEntity) { // line 2541
 	m_entities.push_back(pEntity);
 }
 
+void Scene::RemoveEntity(SceneEntity *pEntity) {
+	uint32_t index = pEntity->entityIndex;
+	m_entities[index] = m_entities[m_entities.size()-1];
+	m_entities[index]->entityIndex = index;
+	m_entities.resize(m_entities.size()-1);
+}
+
 }

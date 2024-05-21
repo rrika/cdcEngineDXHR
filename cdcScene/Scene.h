@@ -35,6 +35,8 @@ public:
 
 	// called from SceneEntity ctor
 	void AddEntity(SceneEntity *pEntity);
+	// called from SceneEntity dtor
+	void RemoveEntity(SceneEntity *pEntity);
 
 	// 43 methods
 	void Render() override;

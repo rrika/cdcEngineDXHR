@@ -5,6 +5,7 @@
 #include "rendering/CommonMaterial.h"
 #include "rendering/MaterialData.h"
 #include "cdcResource/ResolveSection.h"
+#include "cdcScene/SceneEntity.h"
 #include "cdcSound/SoundPlex.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcWorld/Instance.h"
@@ -161,6 +162,11 @@ void buildUI(UIActions& uiact, Instance *instance) {
 		ImGui::Text("InstanceDrawable %p", instance->instanceDrawable);
 		if (instance->instanceDrawable)
 			ImGui::Text("    %s", typeid(*instance->instanceDrawable).name());
+
+		if (ImGui::Button("Recreate scene entity")) {
+			instance->sceneEntity->Release();
+			instance->sceneEntity = nullptr;
+		}
 
 		cdc::Object *object = instance->object;
 		if (false)
