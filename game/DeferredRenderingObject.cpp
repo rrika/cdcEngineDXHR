@@ -208,8 +208,7 @@ Vector DeferredRenderingObject::Drawable::calcInstanceParamRow(
 		if (param.multiplyMode == 0) {
 			v = (*m) * Vector4{v};
 
-		} else if (param.multiplyMode == 1) {
-			// FatalError("not implemented multiplyMode=1");
+		} else {
 			// Matrix3x3 multiplication
 			v = {
 				m->m[0][0] * v.x + m->m[1][0] * v.y + m->m[2][0] * v.z,
@@ -218,8 +217,8 @@ Vector DeferredRenderingObject::Drawable::calcInstanceParamRow(
 				m->m[0][3] * v.x + m->m[1][3] * v.y + m->m[2][3] * v.z,
 			};
 
-		} else if (param.multiplyMode == 2) {
-			// FatalError("not implemented multiplyMode=2");
+			if (param.multiplyMode == 2)
+				v = v.Normalize3();
 		}
 	}
 
