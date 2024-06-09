@@ -15,7 +15,7 @@ public:
 	void Deactivate(Instance*) override;
 	float GetNextSyncPoint(void*) override;
 	void GetSyncInfo(void*, float *elapsedOut, float *durationOut) override;
-	void Update(void*) override;
+	void Update(AnimUpdateData*) override;
 	void PrePhysics(AnimContextData *data) override;
 	IAnimGraphNode *GetOutput(uint32_t index) override;
 	uint32_t GetNumOutputs() override;

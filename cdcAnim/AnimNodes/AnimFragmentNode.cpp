@@ -1,6 +1,7 @@
 #include <cmath>
 #include <cstdio>
 #include "AnimFragmentNode.h"
+#include "cdcAnim/AnimData.h"
 #include "cdcAnim/AnimDecoder.h"
 #include "cdcAnim/AnimPose.h"
 #include "cdcKit/Animation/anitracker.h"
@@ -52,8 +53,17 @@ void AnimFragmentNode::GetSyncInfo(void*, float *elapsedOut, float *durationOut)
 	// TODO
 }
 
-void AnimFragmentNode::Update(void*) {
-	// TODO
+void AnimFragmentNode::Update(AnimUpdateData *data) {
+	// HACK
+	elapsedTime += data->dt;
+	float end = fragment->mTimePerKey * fragment->mKeyCount;
+	if (elapsedTime >= fragment->mTimePerKey * fragment->mKeyCount)
+	{
+		if (loop)
+			elapsedTime -= fragment->mTimePerKey * fragment->mKeyCount;
+		else
+			elapsedTime = end;
+	}
 }
 
 void AnimFragmentNode::PrePhysics(AnimContextData *data) {
@@ -71,16 +81,6 @@ void AnimFragmentNode::PrePhysics(AnimContextData *data) {
 				// TODO
 			}
 		}
-	}
-
-	elapsedTime += 1000/60.f;
-	float end = fragment->mTimePerKey * fragment->mKeyCount;
-	if (elapsedTime >= fragment->mTimePerKey * fragment->mKeyCount)
-	{
-		if (loop)
-			elapsedTime -= fragment->mTimePerKey * fragment->mKeyCount;
-		else
-			elapsedTime = end;
 	}
 }
 

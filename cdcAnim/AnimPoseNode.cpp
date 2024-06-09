@@ -31,9 +31,9 @@ void AnimPoseNode::GetSyncInfo(void *args, float *elapsedOut, float *durationOut
 		inputNode->GetSyncInfo(args, elapsedOut, durationOut);
 }
 
-void AnimPoseNode::Update(void *args) {
+void AnimPoseNode::Update(AnimUpdateData *data){
 	if (inputNode)
-		inputNode->Update(args);
+		inputNode->Update(data);
 }
 
 void AnimPoseNode::PrePhysics(AnimContextData *data) {

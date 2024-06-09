@@ -20,10 +20,12 @@ public:
 	dtp::Model *model = nullptr; // 20
 	Instance *instance; // 24
 	Matrix *matrices = nullptr; // 2C, assigned by G2Instance_RebuildTransforms
+	float mTimeScale = 1.0f; // 4C
 	IAnimGraphNode *firstNode = nullptr; // 54
 
 	AnimComponentV2(Instance *instance);
 	void Init(dtp::Model *model);
+	void Update(float fFrameTime);
 	AnimPoseNode *CreatePoseNode();
 	void BuildTransforms();
 	void PrePhysics();

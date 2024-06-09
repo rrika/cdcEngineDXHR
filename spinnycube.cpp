@@ -822,6 +822,7 @@ int spinnyCube(HWND window,
 		cameraManager.update();
 		viewMatrix = *cameraManager.getMatrix(); // wow, it's nothing
 
+		cdc::G2Instance_UpdateAllAnimComponents(1/6.f); // dummy value (slightly too slow)
 		cdc::G2Instance_BuildAllTransforms(); // this will evaluate animations
 		SceneLayer::Update(); // this will create SceneEntities for Instances that don't have any yet
 

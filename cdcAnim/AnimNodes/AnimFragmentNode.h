@@ -27,7 +27,7 @@ public:
 	void Deactivate(Instance*) override;
 	float GetNextSyncPoint(void*) override;
 	void GetSyncInfo(void*, float *elapsedOut, float *durationOut) override;
-	void Update(void*) override;
+	void Update(AnimUpdateData*) override;
 	void PrePhysics(AnimContextData*) override;
 
 	// void fun54(...) override;

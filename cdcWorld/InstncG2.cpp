@@ -24,6 +24,12 @@ static void NonAnimatedRebuild(Matrix *matrices, dtp::Model *model) { // guessed
 	}
 }
 
+void G2Instance_UpdateAllAnimComponents(float frameTime) {
+	for (auto *instance = InstanceManager::s_chain; instance; instance = instance->next)
+		if (instance->animComponentV2)
+			instance->animComponentV2->Update(frameTime);
+}
+
 void G2Instance_BuildAllTransforms() { // guessed name
 	// HACK
 	G2Instance_BuildTransformsForList(InstanceManager::s_chain);

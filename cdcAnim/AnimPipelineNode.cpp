@@ -38,10 +38,10 @@ void AnimPipelineNode::Deactivate(Instance *instance) {
 			input->Deactivate(instance);
 }
 
-void AnimPipelineNode::Update(void *a) {
+void AnimPipelineNode::Update(AnimUpdateData *data) {
 	for (auto input : inputs)
 		if (input)
-			input->Update(a);
+			input->Update(data);
 }
 
 void AnimPipelineNode::PrePhysics(AnimContextData *args) {

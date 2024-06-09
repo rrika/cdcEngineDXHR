@@ -1,4 +1,5 @@
 #include "AnimComponentV2.h"
+#include "cdcAnim/AnimData.h"
 #include "cdcAnim/AnimFragment.h"
 #include "cdcAnim/AnimNodes/AnimFragmentNode.h"
 #include "cdcAnim/AnimPoseNode.h"
@@ -39,6 +40,23 @@ void AnimComponentV2::Init(dtp::Model *model) {
 			poseNode = CreatePoseNode();
 			poseNode->SetInput(0, graphOutput);
 		}
+	}
+}
+
+void AnimComponentV2::Update(float fFrameTime) {
+	// HACK
+	if (graphOutput) {
+		if (fFrameTime < 0.0f)
+			fFrameTime = 1/30.f  * 30; // TODO
+		AnimUpdateData data {
+			.instance = instance,
+			.dt = mTimeScale * (100.0f * fFrameTime),
+			.ptr8 = nullptr,
+			.floatC = 0.0f,
+			.weight = 1.0f,
+			.updateFlags = 0x10
+		};
+		graphOutput->Update(&data);
 	}
 }
 
