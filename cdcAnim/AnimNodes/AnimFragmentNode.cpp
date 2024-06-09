@@ -44,12 +44,12 @@ void AnimFragmentNode::Deactivate(Instance*) {
 	// TODO
 }
 
-float AnimFragmentNode::GetNextSyncPoint(void*) {
+float AnimFragmentNode::GetNextSyncPoint(AnimSyncInfoData *sync) {
 	// TODO
 	return 0.0f;
 }
 
-void AnimFragmentNode::GetSyncInfo(void*, float *elapsedOut, float *durationOut) {
+void AnimFragmentNode::GetSyncInfo(AnimSyncInfoData *sync, float *elapsedOut, float *durationOut) {
 	// TODO
 }
 

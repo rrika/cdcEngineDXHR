@@ -19,16 +19,16 @@ void AnimPoseNode::Deactivate(Instance *instance) {
 		inputNode->Deactivate(instance);
 }
 
-float AnimPoseNode::GetNextSyncPoint(void *args) {
+float AnimPoseNode::GetNextSyncPoint(AnimSyncInfoData *sync) {
 	if (inputNode)
-		return inputNode->GetNextSyncPoint(args);
+		return inputNode->GetNextSyncPoint(sync);
 	else
 		return FLT_MAX;
 }
 
-void AnimPoseNode::GetSyncInfo(void *args, float *elapsedOut, float *durationOut) {
+void AnimPoseNode::GetSyncInfo(AnimSyncInfoData *sync, float *elapsedOut, float *durationOut) {
 	if (inputNode)
-		inputNode->GetSyncInfo(args, elapsedOut, durationOut);
+		inputNode->GetSyncInfo(sync, elapsedOut, durationOut);
 }
 
 void AnimPoseNode::Update(AnimUpdateData *data){

@@ -25,8 +25,8 @@ public:
 	AnimFragmentNode(AnimComponentV2 *ac, AnimFragment *fragment);
 	void Activate(Instance*, float) override;
 	void Deactivate(Instance*) override;
-	float GetNextSyncPoint(void*) override;
-	void GetSyncInfo(void*, float *elapsedOut, float *durationOut) override;
+	float GetNextSyncPoint(AnimSyncInfoData*) override;
+	void GetSyncInfo(AnimSyncInfoData*, float *elapsedOut, float *durationOut) override;
 	void Update(AnimUpdateData*) override;
 	void PrePhysics(AnimContextData*) override;
 

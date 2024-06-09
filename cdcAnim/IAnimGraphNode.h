@@ -7,6 +7,7 @@ class Instance;
 namespace cdc {
 
 class AnimPose;
+struct AnimSyncInfoData;
 struct AnimUpdateData;
 
 struct AnimContextData {
@@ -40,8 +41,8 @@ public:
 	virtual ~IAnimGraphNode() = default;                              //  0
 	virtual void Activate(Instance*, float) = 0;                      //  4
 	virtual void Deactivate(Instance*) = 0;                           //  8
-	virtual float GetNextSyncPoint(void*) = 0;                        //  C
-	virtual void GetSyncInfo(void*, float *elapsedOut, float *durationOut) = 0; // 10
+	virtual float GetNextSyncPoint(AnimSyncInfoData*) = 0;            //  C
+	virtual void GetSyncInfo(AnimSyncInfoData*, float *elapsedOut, float *durationOut) = 0; // 10
 	virtual void Update(AnimUpdateData*) = 0;                         // 14
 	virtual void PrePhysics(AnimContextData *data) = 0;               // 18
 	virtual IAnimGraphNode *GetOutput(uint32_t index) = 0;            // 1C

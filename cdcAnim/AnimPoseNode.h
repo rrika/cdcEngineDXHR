@@ -13,8 +13,8 @@ public:
 	AnimPoseNode(AnimComponentV2 *ac, bool addToChain);
 	void Activate(Instance*, float) override;
 	void Deactivate(Instance*) override;
-	float GetNextSyncPoint(void*) override;
-	void GetSyncInfo(void*, float *elapsedOut, float *durationOut) override;
+	float GetNextSyncPoint(AnimSyncInfoData*) override;
+	void GetSyncInfo(AnimSyncInfoData*, float *elapsedOut, float *durationOut) override;
 	void Update(AnimUpdateData*) override;
 	void PrePhysics(AnimContextData *data) override;
 	IAnimGraphNode *GetOutput(uint32_t index) override;

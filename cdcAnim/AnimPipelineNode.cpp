@@ -15,11 +15,11 @@ void AnimPipelineNode::Activate(Instance *instance, float f) {
 			input->Activate(instance, f);
 }
 
-float AnimPipelineNode::GetNextSyncPoint(void *args) {
+float AnimPipelineNode::GetNextSyncPoint(AnimSyncInfoData *sync) {
 	float earliest = FLT_MAX;
 	for (auto input : inputs)
 		if (input) {
-			float t = input->GetNextSyncPoint(args);
+			float t = input->GetNextSyncPoint(sync);
 			if (t < earliest)
 				earliest = t;
 		}
@@ -27,7 +27,7 @@ float AnimPipelineNode::GetNextSyncPoint(void *args) {
 	return earliest;
 }
 
-void AnimPipelineNode::GetSyncInfo(void*, float *elapsedOut, float *durationOut) {
+void AnimPipelineNode::GetSyncInfo(AnimSyncInfoData *sync, float *elapsedOut, float *durationOut) {
 	*elapsedOut = 0.0f;
 	*durationOut = 0.0f;
 }
