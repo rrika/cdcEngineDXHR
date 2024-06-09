@@ -130,6 +130,12 @@ void buildUI(UIActions& uiact, dtp::Intro *intro) {
 	if (cdc::Object *object = (cdc::Object*)objectSection->GetBasePointer(objectSection->FindResource(intro->objectListIndex))) {
 		uint32_t objFamily = buildUI(uiact, object);
 
+		if (auto baseObjectListIndex = object->dtpData->baseObject_objectListIndex) {
+			cdc::ObjectTracker *baseObjectTracker = cdc::getByObjectListIndex(baseObjectListIndex);
+			if (cdc::Object *baseObject = baseObjectTracker->objBlob)
+				buildUI(uiact, baseObject);
+		}
+
 		if (uint32_t scriptTypeID = intro->m_scriptTypeID) {
 			ImGui::SameLine();
 			char label[20];

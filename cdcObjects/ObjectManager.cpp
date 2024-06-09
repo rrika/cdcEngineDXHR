@@ -332,6 +332,7 @@ uint32_t buildUI(UIActions& uiact, cdc::Object *obj) {
 		objFamily = objProp->family;
 
 #if ENABLE_IMGUI
+	ImGui::PushID(obj);
 	ImGui::Text("fam %d/0x%x", objFamily, objFamily);
 	ImGui::SameLine();
 
@@ -366,6 +367,7 @@ uint32_t buildUI(UIActions& uiact, cdc::Object *obj) {
 				uiact.select(scriptType);
 		}
 	}
+	ImGui::PopID();
 #endif
 	return objFamily;
 }
