@@ -102,6 +102,7 @@
 
 #if ENABLE_IMGUI
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h" // for tab navigation blocking
 #include "imgui/backends/imgui_impl_dx11.h"
 #ifdef _WIN32
 #include "imgui/backends/imgui_impl_win32.h"
@@ -676,27 +677,47 @@ int spinnyCube(HWND window,
 #else
 		ImGui_ImplSDL2_NewFrame();
 #endif
+		if (mouseLook) {
+			io.ConfigFlags &= ~ImGuiConfigFlags_NavEnableKeyboard;
+			io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
+		} else {
+			io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+			io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+		}
+		io.ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;
+
 		ImGui::NewFrame();
 		ImGuizmo::BeginFrame();
 
-		if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {
-			mouseLook = false;
-			mouseKeyboard->setCursorGrab(false);
+		{
+			// HACK to block initial tab navigation
+			auto *g = ImGui::GetCurrentContext();
+			if (g->NavMoveFlags & ImGuiNavMoveFlags_Tabbing	 && g->NavTabbingDir == 0)
+				ImGui::NavMoveRequestCancel();
 		}
-		else if (ImGui::IsKeyPressed(ImGuiKey_Tab)) {
-			mouseLook = !mouseLook;
-			mouseKeyboard->setCursorGrab(mouseLook);
+
+		if (!io.WantCaptureKeyboard) {
+			if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {
+				mouseLook = false;
+				mouseKeyboard->setCursorGrab(false);
+			}
+			else if (ImGui::IsKeyPressed(ImGuiKey_Tab) &&
+				!ImGui::IsKeyDown(ImGuiKey_ModCtrl) &&
+				!ImGui::IsKeyDown(ImGuiKey_ModAlt)) {
+				mouseLook = !mouseLook;
+				mouseKeyboard->setCursorGrab(mouseLook);
+			}
+			if (ImGui::IsKeyDown(ImGuiKey_W))
+				forward += 1.0f;
+			if (ImGui::IsKeyDown(ImGuiKey_S))
+				forward -= 1.0f;
+			if (ImGui::IsKeyDown(ImGuiKey_A))
+				sideways -= 1.0f;
+			if (ImGui::IsKeyDown(ImGuiKey_D))
+				sideways += 1.0f;
+			if (ImGui::IsKeyDown(ImGuiKey_ModShift))
+				speedModifier *= 4.0f;
 		}
-		if (ImGui::IsKeyDown(ImGuiKey_W))
-			forward += 1.0f;
-		if (ImGui::IsKeyDown(ImGuiKey_S))
-			forward -= 1.0f;
-		if (ImGui::IsKeyDown(ImGuiKey_A))
-			sideways -= 1.0f;
-		if (ImGui::IsKeyDown(ImGuiKey_D))
-			sideways += 1.0f;
-		if (ImGui::IsKeyDown(ImGuiKey_ModShift))
-			speedModifier *= 4.0f;
 
 #ifdef _WIN32
 		if (mouseLook) {
@@ -1259,7 +1280,9 @@ int spinnyCube(HWND window,
 			}
 			if (mouseLook)
 				ImGui::Text("Press TAB or ESC to release cursor");
-			else
+			else if (io.WantCaptureKeyboard) {
+				ImGui::TextDisabled("Press TAB to grab cursor");
+			} else
 				ImGui::Text("Press TAB to grab cursor");
 			ImGui::EndMainMenuBar();
 		}
