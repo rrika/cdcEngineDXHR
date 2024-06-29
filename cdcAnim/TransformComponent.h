@@ -14,7 +14,7 @@ public:
 	// Instance *m_instance = nullptr; // 4
 	Vector3 m_scale {1.0f, 1.0f, 1.0f, 1.0f}; // 10
 	Matrix *m_matrix = nullptr; // 20
-		// allocated by MeshComponent::SetModel
+		// allocated by MeshComponent::SetModel (InstanceDrawable.h)
 		// written by G2Instance_SetTransformsToIdentity
 		// read by UpdateInstances
 	Matrix *matrixBuffer = nullptr; // 28

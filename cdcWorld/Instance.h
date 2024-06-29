@@ -92,3 +92,8 @@ public:
 	void InitEditorPose(dtp::Model *model); // HACK
 	void BuildEditorTransforms(cdc::Matrix *matrix); // HACK
 };
+
+void INSTANCE_parabola_update_vel_acc(Instance *instance, cdc::Vector& position, float time);
+void INSTANCE_parabola_update_pos_untransformed(Instance *instance, float time, bool ignoreZ);
+//void INSTANCE_parabola_update_pos_transformed(Instance *instance, float time, bool ignoreZ);
+void INSTANCE_parabola_update(Instance *instance, float time);

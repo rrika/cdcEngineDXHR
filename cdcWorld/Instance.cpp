@@ -240,3 +240,31 @@ void Instance::BuildEditorTransforms(Matrix *matrices) {
 	for (uint32_t i=0; i<numSegments; i++)
 		matrices[i] = matrices[modelSegments[i].parent] * overridePose[i];
 }
+
+void INSTANCE_parabola_update_vel_acc(Instance *instance, Vector& position, float time) {
+	Vector& vel = instance->ballisticComponent.m_vel;
+	Vector& accl = instance->ballisticComponent.m_accl;
+	position += (accl * time * time * 0.5f) + (vel * time);
+	vel += accl * time;
+}
+
+void INSTANCE_parabola_update_pos_untransformed(Instance *instance, float time, bool ignoreZ) {
+	Vector delta {0.f, 0.f, 0.f, 0.f};
+	INSTANCE_parabola_update_vel_acc(instance, delta, time);
+	instance->position.x += delta.x;
+	instance->position.y += delta.y;
+	if (!ignoreZ)
+		instance->position.z += delta.z;
+}
+
+// void INSTANCE_parabola_update_pos_transformed(Instance *instance, float time, bool ignoreZ) { ... }
+
+void INSTANCE_parabola_update(Instance *instance, float time) {
+	auto& tc = instance->GetTransformComponent();
+	if (tc.m_matrix == nullptr)
+		return;
+
+	// TODO
+
+	INSTANCE_parabola_update_pos_untransformed(instance, 30.f * time, /*ignoreZ=*/false);
+}

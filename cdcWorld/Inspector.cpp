@@ -178,6 +178,17 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			instance->ReallyRemoveInstance();
 			return;
 		}
+		if (instance->ballisticComponent.m_accl.IsZero3()) {
+			if (ImGui::Button("Yeet")) {
+				instance->ballisticComponent.m_vel = {0, 0, 35.f};
+				instance->ballisticComponent.m_accl = {0, 0, -2.5f};
+			}
+		} else {
+			if (ImGui::Button("Stop")) {
+				instance->ballisticComponent.m_vel = {0, 0, 0};
+				instance->ballisticComponent.m_accl = {0, 0, 0};
+			}
+		}
 
 		cdc::Object *object = instance->object;
 		if (false)

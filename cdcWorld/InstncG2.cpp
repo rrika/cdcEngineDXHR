@@ -80,6 +80,8 @@ void G2Instance_RebuildTransforms(Instance *instance) { // line 386/404
 		} else if (AnimComponentV2 *ac2 = instance->animComponentV2) {
 			ac2->matrices = matrices;
 			ac2->BuildTransforms();
+			// The object origin will be inherited from whichever matrix is
+			// the parent of model segment 0.
 		}
 		G2Instance_PostRebuildTransforms(instance);
 	}

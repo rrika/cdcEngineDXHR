@@ -843,6 +843,19 @@ int spinnyCube(HWND window,
 		cameraManager.update();
 		viewMatrix = *cameraManager.getMatrix(); // wow, it's nothing
 
+		// HACK: apply parabola movement
+		for (Instance *instance : InstanceManager::s_instances) {
+			// this happens in the Process phase via PhysicsSystem
+			INSTANCE_parabola_update(instance, 1/60.f);
+			// this happens in the AdditionalCollide phase via NeActor
+			if (!instance->ballisticComponent.m_accl.IsZero3()) {
+				static_cast<cdc::InstanceDrawable*>(instance->instanceDrawable)->AddToDirtyList();
+				instance->GetTransformComponent().m_matrix[-1].m[3][0] = instance->position.x;
+				instance->GetTransformComponent().m_matrix[-1].m[3][1] = instance->position.y;
+				instance->GetTransformComponent().m_matrix[-1].m[3][2] = instance->position.z;
+			}
+		}
+
 		cdc::G2Instance_UpdateAllAnimComponents(1/6.f); // dummy value (slightly too slow)
 		cdc::G2Instance_BuildAllTransforms(); // this will evaluate animations
 		SceneLayer::Update(); // this will create SceneEntities for Instances that don't have any yet
