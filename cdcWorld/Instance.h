@@ -2,6 +2,7 @@
 #include <cstdint>
 #include "cdcAnim/TransformComponent.h"
 #include "cdcMath/Math.h"
+#include "cdcObjects/BallisticComponent.h"
 #include "cdcObjects/ObjectComponent.h"
 #include "cdcScript/GCObject.h"
 #include "cdcWorld/InstanceDrawable.h" // for MeshComponent
@@ -56,6 +57,8 @@ public:
 	cdc::MeshComponent meshComponent {this}; // 218
 
 	cdc::IDrawable *instanceDrawable = nullptr; // 23C
+
+	cdc::BallisticComponent ballisticComponent; // 2A0
 	UserDataComponent *userDataComponent = nullptr; // 2E0
 	cdc::AnimComponentV2 *animComponentV2 = nullptr; // 2F8
 
