@@ -6,8 +6,8 @@ namespace cdc {
 class IMaterial;
 class PCDX11StaticVertexBuffer;
 // struct StencilParams;
-struct NonPersistentPGData;
-struct PersistentPGData;
+struct NonPersistentPGData; // see CommonRenderModelInstance.h
+struct PersistentPGData;    // see CommonRenderModelInstance.h
 struct Vector3;
 
 struct PrimGroup;
@@ -33,7 +33,7 @@ struct ModelBatch {
 	PCDX11StaticVertexBuffer *staticVertexBuffer;
 	uint32_t dword44;
 	uint32_t dword48;
-	uint32_t format; // 4C, offset patched to pointer
+	uint32_t format; // 4C, offset patched to VertexDecl pointer
 	uint32_t numVertices;
 	uint32_t indexOffsetProbably;
 	uint32_t numTrianglesProbably;

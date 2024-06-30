@@ -26,6 +26,7 @@ target_sources(dxhr PRIVATE
 	CommonScene.cpp
 	LinearAllocator.cpp
 	PCDX11DeviceManager.cpp
+	PCDX11ImmediateDraw.cpp
 	PCDX11InternalResource.cpp
 	PCDX11LightManager.cpp
 	PCDX11Material.cpp

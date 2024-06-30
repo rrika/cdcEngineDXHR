@@ -146,6 +146,8 @@ private:
 	bool m_dirtyViewMatrix; // 545
 	bool m_dirtyProjectMatrix; // 546
 
+	bool m_isSkySphereModeEnabled; // 5A4 (split depth range)
+	bool m_isSkySphereMode; // 5A4 (use upper depth range)
 	PCDX11UberConstantBuffer *m_uberConstantBuffer[7]; // 5A8
 	bool m_dirtyUberCBs[7]; // 5C4
 

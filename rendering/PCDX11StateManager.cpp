@@ -85,6 +85,9 @@ PCDX11StateManager::PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D1
 	m_blendState = 0;
 	m_cullMode = ~0u;
 
+	m_isSkySphereModeEnabled = false; // TODO: true;
+	m_isSkySphereMode = false;
+
 	m_projectMatrix = identity4x4;
 	m_viewMatrix = identity4x4;
 	m_viewProjectMatrix = identity4x4;

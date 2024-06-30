@@ -3,6 +3,7 @@
 #include "drawables/PCDX11FastBlurDrawable.h"
 #include "LinearAllocator.h"
 #include "PCDX11DeviceManager.h"
+#include "PCDX11ImmediateDraw.h"
 #include "PCDX11LightManager.h"
 #include "PCDX11Material.h"
 #include "PCDX11MatrixState.h"
@@ -233,32 +234,23 @@ void PCDX11RenderDevice::registerComparatorsAndDrawersTerrain() {
 }
 
 void PCDX11RenderDevice::registerComparatorsAndDrawersNGAPrim() {
-	DrawableCompareFn todoCmp = nullptr;
+	uint8_t funcIndex = allocFuncIndex("RenderTerrainDrawable"); // probably a copy-paste error
+	registerComparator(funcIndex, /*1*/ kRenderFunctionDepth, PCDX11NGAPrimitive::compare);
+	registerComparator(funcIndex, /*2*/ kRenderFunctionShadow, PCDX11NGAPrimitive::compare);
+	registerComparator(funcIndex, /*8*/ kRenderFunction8, PCDX11NGAPrimitive::compare);
+	registerComparator(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, PCDX11NGAPrimitive::compare);
+	registerComparator(funcIndex, /*4*/ kRenderFunctionComposite, PCDX11NGAPrimitive::compare);
+	registerComparator(funcIndex, /*6*/ kRenderFunctionPredator, PCDX11NGAPrimitive::compare);
 
-	DrawableRenderFn todoDraw1 = nullptr;
-	DrawableRenderFn todoDraw2 = nullptr;
-	DrawableRenderFn todoDraw7 = nullptr;
-	DrawableRenderFn todoDraw4 = nullptr;
-	DrawableRenderFn todoDraw56 = nullptr;
-	DrawableRenderFn todoDrawA = nullptr;
+	registerDrawer(funcIndex, /*1*/ kRenderFunctionDepth, PCDX11NGAPrimitive::drawDepth);
+	registerDrawer(funcIndex, /*2*/ kRenderFunctionShadow, PCDX11NGAPrimitive::drawShadow);
+	registerDrawer(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, PCDX11NGAPrimitive::drawAlphaBloom);
+	registerDrawer(funcIndex, /*4*/ kRenderFunctionComposite, PCDX11NGAPrimitive::drawComposite);
+	registerDrawer(funcIndex, /*5*/ kRenderFunctionTranslucent, PCDX11NGAPrimitive::drawTranslucent);
+	registerDrawer(funcIndex, /*6*/ kRenderFunctionPredator, PCDX11NGAPrimitive::drawTranslucent);
 
-	uint8_t funcIndex = allocFuncIndex("RenderTerrainDrawable");
-	registerComparator(funcIndex, /*1*/ kRenderFunctionDepth, todoCmp);
-	registerComparator(funcIndex, /*2*/ kRenderFunctionShadow, todoCmp);
-	registerComparator(funcIndex, /*8*/ kRenderFunction8, todoCmp);
-	registerComparator(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, todoCmp);
-	registerComparator(funcIndex, /*4*/ kRenderFunctionComposite, todoCmp);
-	registerComparator(funcIndex, /*6*/ kRenderFunctionPredator, todoCmp);
-
-	registerDrawer(funcIndex, /*1*/ kRenderFunctionDepth, todoDraw1);
-	registerDrawer(funcIndex, /*2*/ kRenderFunctionShadow, todoDraw2);
-	registerDrawer(funcIndex, /*7*/ kRenderFunctionAlphaBloomFSX, todoDraw7);
-	registerDrawer(funcIndex, /*4*/ kRenderFunctionComposite, todoDraw4);
-	registerDrawer(funcIndex, /*5*/ kRenderFunctionTranslucent, todoDraw56);
-	registerDrawer(funcIndex, /*6*/ kRenderFunctionPredator, todoDraw56);
-
-	registerComparator(funcIndex, /*10*/ kRenderFunctionNormal, todoCmp);
-	registerDrawer(funcIndex, /*10*/ kRenderFunctionNormal, todoDrawA);
+	registerComparator(funcIndex, /*10*/ kRenderFunctionNormal, PCDX11NGAPrimitive::compare);
+	registerDrawer(funcIndex, /*10*/ kRenderFunctionNormal, PCDX11NGAPrimitive::drawNormal);
 }
 
 PCDX11RenderDevice::~PCDX11RenderDevice() {

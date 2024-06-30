@@ -46,6 +46,8 @@
 #include "postprocessing/PPManager.h"
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
 #include "rendering/buffers/PCDX11IndexBuffer.h"
+#include "rendering/buffers/PCDX11StaticIndexBuffer.h"
+#include "rendering/buffers/PCDX11StaticVertexBuffer.h"
 #include "rendering/buffers/PCDX11UberConstantBuffer.h"
 #include "rendering/Culling/Primitives.h"
 #include "rendering/Culling/Primitives_inlines.h"
@@ -55,6 +57,7 @@
 #include "rendering/IPCDeviceManager.h"
 #include "rendering/IRenderPassCallback.h"
 #include "rendering/PCDX11DeviceManager.h"
+#include "rendering/PCDX11ImmediateDraw.h"
 #include "rendering/PCDX11Material.h" // for CommonMaterial to PCDX11Material cast
 #include "rendering/PCDX11MatrixState.h"
 #include "rendering/PCDX11RenderContext.h"
@@ -65,6 +68,7 @@
 #include "rendering/PCDX11Scene.h"
 #include "rendering/PCDX11StateManager.h"
 #include "rendering/PCDX11StreamDecl.h"
+#include "rendering/PrimitiveContext.h"
 #include "rendering/Projection.h"
 #include "rendering/RenderModelInstance.h"
 #include "rendering/RenderPasses.h"
@@ -478,12 +482,44 @@ int spinnyCube(HWND window,
 
 	RMIDrawableBase rmiDrawable(bottleRenderModel);
 
-	auto sceneCube = g_scene->CreateEntity();
-	sceneCube->setDrawable(&rmiDrawable);
-	sceneCube->setCellGroup(g_scene->GetCellGroup(0));
+	// auto sceneCube = g_scene->CreateEntity();
+	// sceneCube->setDrawable(&rmiDrawable);
+	// sceneCube->setCellGroup(g_scene->GetCellGroup(0));
 
 	// cdc::RenderModelInstance *bottleRenderModelInstance =
 	// 	renderDevice->createRenderModelInstance(bottleRenderModel);
+
+	cdc::PrimitiveContext::State primState {
+		/* m_flags= */          0,           // dummy value
+		/* m_depthBoundsMin= */ 0.f,         // dummy value
+		/* m_depthBoundsMax= */ 99999999.f,  // dummy value
+		/* m_pMaterial= */      bottleRenderModel->primGroups[0].material,
+		/* vertexBuffer= */     bottleRenderModel->modelBatches[0].staticVertexBuffer,
+		/* m_pVertexDecl= */    (cdc::VertexDecl*) bottleRenderModel->modelBatches[0].format,
+		/* indexBuffer= */      bottleRenderModel->indexBuffer,
+		/* instanceParams= */   nullptr,     // dummy value
+		/* scaleformData= */    nullptr,
+		/* ptr24_x10= */        nullptr,
+		/* m_pWorldMatrix= */   &cdc::identity4x4,
+		/* m_pProjectionOverrideMatrix= */ nullptr,
+		/* ptr30_x10= */        nullptr,
+		/* ptr34_x10= */        nullptr
+	};
+
+	cdc::PrimitiveInfo primInfo {
+		/* m_polyFlags= */   0, // ignored
+		/* m_numVertices= */ bottleRenderModel->primGroups[0].triangleCount * 3,
+		/* m_numPrims= */    bottleRenderModel->primGroups[0].triangleCount,
+		/* m_d3dPrimType= */ 4 /*D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST*/
+	};
+
+	cdc::PCDX11NGAPrimitive ngaPrim(
+		&primState,
+		&primInfo,
+		bottleRenderModel->primGroups[0].startIndex,
+		/* sortKey= */ 0.f,
+		static_cast<cdc::PCDX11Material*>(primState.m_pMaterial),
+		renderDevice);
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1103,8 +1139,12 @@ int spinnyCube(HWND window,
 		}
 
 		// single bottle at origin
+
 		// rmiDrawable.draw(&bottleWorldMatrix, 0.0f);
-		sceneCube->setMatrix(bottleWorldMatrix);
+		// sceneCube->setMatrix(bottleWorldMatrix);
+		primState.m_pWorldMatrix = &bottleWorldMatrix;
+		renderDevice->recordDrawable(&ngaPrim, /*mask=*/ 0x1002, /*addToParent=*/ 0); // normals & composite
+
 		if (!editorMode)
 			g_scene->RenderWithoutCellTracing(renderViewport);
 
