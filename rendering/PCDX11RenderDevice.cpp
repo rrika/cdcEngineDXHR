@@ -297,6 +297,7 @@ void PCDX11RenderDevice::method_08() {
 
 void PCDX11RenderDevice::resetRenderLists() {
 	// TODO
+	m_frameIndex++;
 	renderList_current = nullptr;
 	renderList_last = nullptr;
 	renderList_first = nullptr;
@@ -386,7 +387,7 @@ CommonScene *PCDX11RenderDevice::createSubScene( // 48
 	CommonRenderTarget *sourceColor,
 	CommonDepthBuffer *sourceDepth
 ) {
-	sceneCreationCount++;
+	m_sceneCreationCount++;
 	// TODO
 	auto scene = new (linear30, 1, true) PCDX11Scene(
 		this,

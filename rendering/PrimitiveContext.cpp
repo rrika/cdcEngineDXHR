@@ -13,7 +13,7 @@ PrimitiveContext::PrimitiveContext(bool isTransient, CommonRenderDevice *renderD
 	if (isTransient) {
 		m_pWriteState = new (renderDevice, 5 /*kAllocQueue*/) State;
 		m_pReadState = m_pWriteState;
-		// m_frameIndex = renderDevice->getFrameIndex(); // TODO
+		m_frameIndex = renderDevice->getFrameIndex();
 	} else {
 		m_pWriteState = (State*)renderDevice->InternalAlloc(sizeof(State));
 	}

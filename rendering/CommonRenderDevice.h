@@ -30,7 +30,8 @@ public:
 	LinearAllocator linear4; // 4
 	LinearAllocator *linear30; // 30
 	LinearAllocator *linear34; // 34
-	uint32_t sceneCreationCount; // 54
+	uint32_t m_sceneCreationCount; // 54
+	uint32_t m_frameIndex; // 58
 public:
 	CommonScene *scene78; // 78
 protected:
@@ -63,7 +64,7 @@ public:
 	virtual void method_30() = 0;
 	virtual void method_34();
 	virtual void method_38();
-	virtual void method_3C();
+	virtual uint32_t getFrameIndex(); // 3C, see also getSceneCreationCount
 	virtual void method_40();
 	virtual void method_44();
 	virtual CommonScene *createSubScene( // BeginScene
@@ -80,7 +81,7 @@ public:
 		CommonDepthBuffer *sourceDepth);
 	virtual void finishScene() = 0; // 50, EndScene
 	virtual void method_54();
-	virtual uint32_t getSceneCreationCount(); // frame count, basically
+	virtual uint32_t getSceneCreationCount(); // 58, see also getFrameIndex
 	virtual CommonScene *getScene();
 	virtual CommonRenderTarget *getSceneRenderTarget() = 0; // 60
 	virtual CommonDepthBuffer *getSceneDepthBuffer() = 0;

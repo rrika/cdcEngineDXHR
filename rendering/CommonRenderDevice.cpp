@@ -17,7 +17,8 @@ CommonRenderDevice::CommonRenderDevice() :
 {
 	linear30 = new LinearAllocator(0x300000, false, "RenderDevice");
 	linear34 = new LinearAllocator(0x300000, false, "RenderDevice");
-	sceneCreationCount = 0;
+	m_sceneCreationCount = 0;
+	m_frameIndex = 0;
 	// ensure that the draw function 0 in every func set just calls IRenderDrawable::draw
 	renderPasses.allocFuncIndex("Default");
 }
@@ -38,8 +39,8 @@ void CommonRenderDevice::method_38() {
 	// TODO
 }
 
-void CommonRenderDevice::method_3C() {
-	// TODO
+uint32_t CommonRenderDevice::getFrameIndex() {
+	return m_frameIndex;
 }
 
 void CommonRenderDevice::method_40() {
@@ -67,7 +68,7 @@ void CommonRenderDevice::method_54() {
 }
 
 uint32_t CommonRenderDevice::getSceneCreationCount() {
-	return sceneCreationCount;
+	return m_sceneCreationCount;
 }
 
 CommonScene *CommonRenderDevice::getScene() {
