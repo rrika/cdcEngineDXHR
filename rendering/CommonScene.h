@@ -52,7 +52,7 @@ class CommonScene :
 public:
 	RenderViewport viewport;
 	float fogColor[4]; // 100
-	// float float110;
+	float m_parity; // 110
 	RenderGlobalState globalState;
 	uint8_t byte25C; // reset by PCDX11CompositePassCallbacks::post
 	// uint8_t f25D[2];

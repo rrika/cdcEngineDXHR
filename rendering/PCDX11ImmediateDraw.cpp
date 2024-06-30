@@ -75,7 +75,7 @@ uint32_t PCDX11NGAPrimitive::BuildInstanceDataAndFlags(MaterialInstanceData& ins
 	instanceData.stencilSettings64 = m_pState->m_pStencilParams;
 	instanceData.polyFlags = m_pState->m_flags & 0x20000540;
 
-	uint32_t flags = /* m_pRenderDevice->scene78->m_parity < 0.0f ? 2 : 0*/ 2;
+	uint32_t flags = m_pRenderDevice->getScene()->m_parity < 0.0f ? 2 : 0;
 	return flags;
 }
 
@@ -94,7 +94,7 @@ void PCDX11NGAPrimitive::drawDepth(uint32_t funcSetIndex, IRenderDrawable *drawa
 
 	thisNGA->SetupTransform(prevNGA);
 
-	uint32_t flags = /* m_pRenderDevice->scene78->m_parity < 0.0f ? 2 : 0*/ 2;
+	uint32_t flags = thisNGA->m_pRenderDevice->scene78->m_parity < 0.0f ? 2 : 0;
 	auto *pMaterial = static_cast<PCDX11Material*>(thisNGA->m_pState->m_pMaterial);
 	PCDX11StreamDecl *streamDecl = pMaterial->SetupDepthPass(
 		thisNGA->m_pInstanceData,
@@ -132,7 +132,7 @@ void PCDX11NGAPrimitive::drawComposite(uint32_t funcSetIndex, IRenderDrawable *d
 
 	thisNGA->SetupTransform(prevNGA);
 
-	uint32_t flags = /* m_pRenderDevice->scene78->m_parity < 0.0f ? 2 : 0*/ 2;
+	uint32_t flags = thisNGA->m_pRenderDevice->scene78->m_parity < 0.0f ? 2 : 0;
 	// auto *lightManager = static_cast<PCDX11LightManager*>(renderDevice->lightManager84);
 	// if (m_pLightSet)
 	// 	lightManager->fillLightBuffer(m_pLightSet);
@@ -159,7 +159,7 @@ void PCDX11NGAPrimitive::drawTranslucent(uint32_t funcSetIndex, IRenderDrawable 
 
 	thisNGA->SetupTransform(prevNGA);
 
-	uint32_t flags = /* m_pRenderDevice->scene78->m_parity < 0.0f ? 2 : 0*/ 2;
+	uint32_t flags = thisNGA->m_pRenderDevice->scene78->m_parity < 0.0f ? 2 : 0;
 	// auto *lightManager = static_cast<PCDX11LightManager*>(renderDevice->lightManager84);
 	// if (m_pLightSet)
 	// 	lightManager->fillLightBuffer(m_pLightSet);
@@ -186,7 +186,7 @@ void PCDX11NGAPrimitive::drawNormal(uint32_t funcSetIndex, IRenderDrawable *draw
 
 	thisNGA->SetupTransform(prevNGA);
 
-	uint32_t flags = /* m_pRenderDevice->scene78->m_parity < 0.0f ? 2 : 0*/ 2;
+	uint32_t flags = thisNGA->m_pRenderDevice->scene78->m_parity < 0.0f ? 2 : 0;
 	auto *pMaterial = static_cast<PCDX11Material*>(thisNGA->m_pState->m_pMaterial);
 	PCDX11StreamDecl *streamDecl = pMaterial->SetupNormalMapPass(
 		thisNGA->m_pInstanceData,
