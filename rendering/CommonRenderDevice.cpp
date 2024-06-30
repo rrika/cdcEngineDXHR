@@ -4,11 +4,13 @@
 #include "RenderMesh.h" // for cast in CommonRenderDevice::createResource
 #include "renderdevice.h"
 #include "surfaces/TextureMap.h"
+#include "cdcSys/Allocator.h"
 
 namespace cdc {
 
 CommonRenderDevice *g_renderDevice = nullptr;
 PCRendererType g_CurrentRenderer = RENDERER_DX11; // for a lack of better place
+AllocRequester MEM_RENDER_BUFFERS = kAllocMisc; // declared in RenderTags.h
 
 CommonRenderDevice::CommonRenderDevice() :
 	linear4(0x20000, false, /*&linearAllocExt,*/ "RenderDevice")
@@ -207,12 +209,15 @@ void CommonRenderDevice::method_11C() {
 	// TODO
 }
 
-void CommonRenderDevice::method_120() {
-	// TODO
+void *CommonRenderDevice::AllocateMemory(uint32_t size, uint32_t align, AllocRequester *requester) {
+	// HACK
+	(void) requester;
+	return (void*)new char[size];
 }
 
-void CommonRenderDevice::method_124() {
-	// TODO
+void CommonRenderDevice::FreeMemory(void *ptr) {
+	// HACK
+	delete[] (char*)ptr;
 }
 
 void *CommonRenderDevice::linearAlloc30(uint32_t size, uint32_t requester) {
@@ -245,12 +250,12 @@ bool CommonRenderDevice::useAlternateLinearAlloc() {
 	return false;
 }
 
-void CommonRenderDevice::method_198() {
-	// TODO
+void *CommonRenderDevice::InternalAlloc(uint32_t size) {
+	return AllocateMemory(size, /*align=*/16, &MEM_RENDER_BUFFERS);
 }
 
-void CommonRenderDevice::method_19C() {
-	// TODO
+void CommonRenderDevice::InternalFree(void *ptr) {
+	FreeMemory(ptr);
 }
 
 void CommonRenderDevice::method_1A0() {

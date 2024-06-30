@@ -21,6 +21,7 @@ class RenderMesh;
 class RenderModelInstance;
 class RenderResource;
 class TextureMap;
+enum AllocRequester : uint32_t;
 struct RenderVertex;
 
 class CommonRenderDevice
@@ -138,9 +139,9 @@ public:
 	virtual void method_114();
 	virtual void method_118();
 	virtual void method_11C();
-	virtual void method_120();
-	virtual void method_124();
-	virtual void *linearAlloc30(uint32_t, uint32_t); // 128
+	virtual void *AllocateMemory(uint32_t size, uint32_t align, AllocRequester *requester); // 120
+	virtual void FreeMemory(void *ptr);
+	virtual void *linearAlloc30(uint32_t size, uint32_t requester); // 128
 	virtual IMaterial *createMaterial() = 0;
 	virtual TextureMap *createTexture(uint32_t) = 0;
 	virtual void createProceduralTexture() = 0;
@@ -168,8 +169,8 @@ public:
 	virtual void method_18C();
 	virtual void method_190();
 	virtual bool useAlternateLinearAlloc();
-	virtual void method_198();
-	virtual void method_19C();
+	virtual void *InternalAlloc(uint32_t); // 198
+	virtual void InternalFree(void*); // 19C
 	virtual void method_1A0();
 
 	// our own additions

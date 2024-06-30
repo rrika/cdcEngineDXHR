@@ -15,8 +15,7 @@ PrimitiveContext::PrimitiveContext(bool isTransient, CommonRenderDevice *renderD
 		m_pReadState = m_pWriteState;
 		// m_frameIndex = renderDevice->getFrameIndex(); // TODO
 	} else {
-		// m_pWriteState = (State*)renderDevice->InternalAlloc(sizeof(State));
-		m_pWriteState = new State; // HACK
+		m_pWriteState = (State*)renderDevice->InternalAlloc(sizeof(State));
 	}
 	m_pWriteState->m_flags = 0;
 	m_pWriteState->m_depthBoundsMin = 0.0;

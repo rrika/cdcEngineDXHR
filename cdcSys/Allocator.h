@@ -3,7 +3,7 @@
 
 namespace cdc {
 
-enum AllocRequester {
+enum AllocRequester : uint32_t {
 	kAllocMisc,
 	kAllocDebug,
 	kAllocContainer,
