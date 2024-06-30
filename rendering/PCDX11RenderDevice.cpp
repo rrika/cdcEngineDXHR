@@ -474,15 +474,73 @@ void PCDX11RenderDevice::setRenderTarget() {
 	// TODO
 }
 
-void PCDX11RenderDevice::method_C0() {
+void PCDX11RenderDevice::DrawPrimitive(
+	Matrix*, TextureMap*, RenderVertex*, uint32_t, uint32_t, float)
+{
 	// TODO
 }
 
-void PCDX11RenderDevice::method_C4() {
-	// TODO
+void PCDX11RenderDevice::DrawIndexedPrimitive(
+	PrimitiveContext *pContext,
+	uint32_t startIndex,
+	uint32_t numPrims,
+	float sortKey)
+{
+	auto *state = pContext->m_pWriteState;
+	uint32_t flags = state->m_flags;
+	uint32_t passes = pContext->m_passes;
+
+	if (flags & 0x1000000)
+		passes = 1 << kPassIndexFullScreenFX; // 4
+	else if (flags & 0x40000)
+		passes = 1 << kPassIndexPostFSX; // 5
+
+	auto *material = state->m_pMaterial;
+	if (material == nullptr) {
+		// TODO: obtain material from 10C38
+	}
+
+	bool fading = (flags & 0x400) || sortKey != 0.f;
+	passes &= material->GetRenderPassMask(fading);
+
+	// if (m_geometryIsVisible == false) {
+	// 	passes &= ~renderPasses->dword408[kRegularPass];
+	// 	passes &= ~renderPasses->dword408[kLightPass];
+	// }
+
+	if (passes) {
+		flags |= 0x1000;
+		if (!pContext->m_isTransient)
+			pContext->NewState();
+
+		pContext->m_dirtyBits = 0;
+
+		PrimitiveInfo primInfo(flags, numPrims,
+			/*hasSourceIndices=*/ pContext->m_pReadState->indexBuffer != nullptr);
+
+		auto *prim = new (this, 4) PCDX11NGAPrimitive(
+			pContext->m_pReadState,
+			&primInfo,
+			startIndex,
+			sortKey,
+			static_cast<PCDX11Material*>(material),
+			this);
+		
+		// if ((passes & (1 << kPassIndexPostFSX) /*0x20*/) && ...) {
+		// 	TODO
+		// }
+		bool drawInPartition = false; // TODO
+		recordDrawable(prim, passes, drawInPartition);
+		if (passes & (1 << kPassIndexShadow) /*0x200*/) {
+			// TODO
+			// if BlendModeIsOpaque
+		}
+	}
 }
 
-void PCDX11RenderDevice::method_C8() {
+void PCDX11RenderDevice::DrawIndexedPrimitive(
+	PrimitiveContext *pContext, void*, VertexDecl*, uint32_t, uint16_t*, uint32_t, float)
+{
 	// TODO
 }
 

@@ -1,8 +1,14 @@
 #pragma once
+#include <cstdint>
 
 namespace cdc {
 
-enum PCRendererType { // 1755
+struct RenderVertex { // line 294
+	float vX, vY, vZ; uint32_t nDiffuse;
+	float vU, vV;     uint32_t pad[2];
+};
+
+enum PCRendererType { // line 1755
 	RENDERER_DX9 = 0,
 	RENDERER_DX11 = 1
 };

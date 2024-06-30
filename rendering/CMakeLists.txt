@@ -44,6 +44,7 @@ target_sources(dxhr PRIVATE
 	PCDX11StreamDecl.cpp
 	PCDX11StreamDeclCache.cpp
 	PCDX11TerrainDrawable.cpp
+	PrimitiveContext.cpp
 	Projection.cpp
 	RenderPasses.cpp
 	RenderResource.cpp

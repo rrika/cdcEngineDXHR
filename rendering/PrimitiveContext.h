@@ -5,6 +5,7 @@
 namespace cdc {
 
 class CommonIndexBuffer;
+class CommonRenderDevice;
 class CommonVertexBuffer;
 class IMaterial;
 class TextureMap;
@@ -32,6 +33,23 @@ public:
 		const cdc::Matrix* GetWorldMatrix();
 		bool HasShaders();
 	};
+
+	State *m_pWriteState;
+	State *m_pReadState;
+	uint32_t m_frameIndex;
+	uint32_t m_passes;
+	uint16_t m_dirtyBits;
+	bool m_isTransient;
+	CommonRenderDevice *m_pRenderDevice;
+
+	PrimitiveContext(bool isTransient, CommonRenderDevice *renderDevice);
+
+	void NewState();
+	void SetVertexBuffer(CommonVertexBuffer*);
+	void SetIndexBuffer(CommonIndexBuffer*);
+	void SetInstanceParam(uint32_t, Vector4Arg);
+	void SetInstanceTexture(uint32_t, TextureMap*);
+	void SetWorldMatrix(Matrix const&);
 };
 
 }

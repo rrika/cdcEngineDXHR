@@ -145,9 +145,9 @@ public:
 		float clearDepth,
 		uint32_t clearStencil) override;
 	void setRenderTarget() override;
-	void method_C0() override;
-	void method_C4() override;
-	void method_C8() override;
+	void DrawPrimitive(Matrix*, TextureMap*, RenderVertex*, uint32_t, uint32_t, float) override;
+	void DrawIndexedPrimitive(PrimitiveContext*, uint32_t, uint32_t, float) override;
+	void DrawIndexedPrimitive(PrimitiveContext*, void*, VertexDecl*, uint32_t, uint16_t*, uint32_t, float) override;
 	void method_CC() override;
 	void method_D0() override;
 	void method_D4() override;

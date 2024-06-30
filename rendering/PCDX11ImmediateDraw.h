@@ -15,6 +15,8 @@ struct PrimitiveInfo { // belongs in .cpp file
 	uint32_t m_numVertices;
 	uint32_t m_numPrims;
 	uint32_t m_d3dPrimType; // D3D11_PRIMITIVE_TOPOLOGY m_d3dPrimType;
+
+	PrimitiveInfo(uint32_t polyFlags, uint32_t numPrims, bool hasSourceIndices);
 };
 
 class PCDX11NGAPrimitive : public IRenderDrawable {

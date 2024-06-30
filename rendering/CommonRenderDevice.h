@@ -15,11 +15,13 @@ class IRenderPassCallback;
 class IRenderTerrain;
 class IRenderTerrainInstance;
 class IShaderLib;
+class PrimitiveContext;
 class RenderExternalResource;
 class RenderMesh;
 class RenderModelInstance;
 class RenderResource;
 class TextureMap;
+struct RenderVertex;
 
 class CommonRenderDevice
 {
@@ -112,9 +114,9 @@ public:
 		float clearDepth,
 		uint32_t clearStencil) = 0;
 	virtual void setRenderTarget() = 0;
-	virtual void method_C0() = 0;
-	virtual void method_C4() = 0;
-	virtual void method_C8() = 0;
+	virtual void DrawPrimitive(Matrix*, TextureMap*, RenderVertex*, uint32_t, uint32_t, float) = 0;
+	virtual void DrawIndexedPrimitive(PrimitiveContext*, uint32_t, uint32_t, float) = 0;
+	virtual void DrawIndexedPrimitive(PrimitiveContext*, void*, VertexDecl*, uint32_t, uint16_t*, uint32_t, float) = 0;
 	virtual void method_CC() = 0;
 	virtual void method_D0() = 0;
 	virtual void method_D4() = 0;

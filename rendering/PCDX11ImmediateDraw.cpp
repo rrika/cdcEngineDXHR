@@ -9,6 +9,30 @@
 
 namespace cdc {
 
+PrimitiveInfo::PrimitiveInfo(uint32_t polyFlags, uint32_t numPrims, bool hasSourceIndices) :
+	m_polyFlags(polyFlags),
+	m_numPrims(numPrims)
+{
+	switch ((polyFlags >> 16) & 3) {
+	case 0:
+		m_numVertices = 3 * numPrims;
+		m_d3dPrimType = 4; // D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
+		break;
+	case 1:
+		m_numVertices = (hasSourceIndices ? 6 : 4) * numPrims;
+		m_d3dPrimType = 4; // D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
+		break;
+	case 2:
+		m_numPrims = numPrims-2;
+		m_numVertices = numPrims;
+		m_d3dPrimType = 5; // D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
+		break;
+	default:
+		break;
+	}
+}
+
+
 PCDX11NGAPrimitive::PCDX11NGAPrimitive(
 	PrimitiveContext::State *pState,
 	PrimitiveInfo *primInfo,

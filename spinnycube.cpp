@@ -506,20 +506,15 @@ int spinnyCube(HWND window,
 		/* ptr34_x10= */        nullptr
 	};
 
-	cdc::PrimitiveInfo primInfo {
-		/* m_polyFlags= */   0, // ignored
-		/* m_numVertices= */ bottleRenderModel->primGroups[0].triangleCount * 3,
-		/* m_numPrims= */    bottleRenderModel->primGroups[0].triangleCount,
-		/* m_d3dPrimType= */ 4 /*D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST*/
-	};
+	// cdc::PrimitiveInfo primInfo(0, bottleRenderModel->primGroups[0].triangleCount, false);
 
-	cdc::PCDX11NGAPrimitive ngaPrim(
-		&primState,
-		&primInfo,
-		bottleRenderModel->primGroups[0].startIndex,
-		/* sortKey= */ 0.f,
-		static_cast<cdc::PCDX11Material*>(primState.m_pMaterial),
-		renderDevice);
+	// cdc::PCDX11NGAPrimitive ngaPrim(
+	// 	&primState,
+	// 	&primInfo,
+	// 	bottleRenderModel->primGroups[0].startIndex,
+	// 	/* sortKey= */ 0.f,
+	// 	static_cast<cdc::PCDX11Material*>(primState.m_pMaterial),
+	// 	renderDevice);
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1141,9 +1136,20 @@ int spinnyCube(HWND window,
 		// single bottle at origin
 
 		// rmiDrawable.draw(&bottleWorldMatrix, 0.0f);
+
 		// sceneCube->setMatrix(bottleWorldMatrix);
+
+		// primState.m_pWorldMatrix = &bottleWorldMatrix;
+		// renderDevice->recordDrawable(&ngaPrim, /*mask=*/ 0x1002, /*addToParent=*/ 0); // normals & composite
+
+		cdc::PrimitiveContext primContext(/*isTransient=*/true, renderDevice);
+		primContext.m_passes = 0x1002;
 		primState.m_pWorldMatrix = &bottleWorldMatrix;
-		renderDevice->recordDrawable(&ngaPrim, /*mask=*/ 0x1002, /*addToParent=*/ 0); // normals & composite
+		*primContext.m_pWriteState = primState;
+		renderDevice->DrawIndexedPrimitive(&primContext,
+			/*startIndex=*/ 0,
+			/*numPrims=*/   bottleRenderModel->primGroups[0].triangleCount,
+			/*sortZ=*/      0.f);
 
 		if (!editorMode)
 			g_scene->RenderWithoutCellTracing(renderViewport);
