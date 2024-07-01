@@ -417,7 +417,7 @@ void PCDX11RenderDevice::finishScene() {
 		scene7C = thisScene;
 	}
 	// TODO
-	static_cast<PCDX11Scene*>(scene7C)->addToDrawableList(&renderList_current->drawableList);
+	static_cast<PCDX11Scene*>(scene7C)->Finalize(&renderList_current->drawableList);
 	scene7C = scene7C->parentScene;
 }
 

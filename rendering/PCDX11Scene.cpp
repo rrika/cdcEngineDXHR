@@ -143,24 +143,10 @@ void PCDX11Scene::updateUniforms() {
 	sceneBuffer.assignRow(45, row, 1); // SceneBuffer::ScreenResolution
 }
 
-void PCDX11Scene::addToDrawableList(DrawableList *drawableList) {
+void PCDX11Scene::Finalize(DrawableList *drawableList) {
 	// TODO
-	addToDrawableList(drawableList, 0);
+	FinalizeMiddle(drawableList, 0.f);
 	// TODO
-}
-
-void PCDX11Scene::addToDrawableList(DrawableList *drawableList, uint32_t) {
-	// TODO
-	if (parentScene) {
-		auto *parentDrawableList = parentScene->drawableListsAndMasks->listForPass(10);
-		for (uint32_t i=0; i<numSubScenes; i++)
-			parentDrawableList->add(subScenes[i]);
-		// TODO
-	} else {
-		drawableList->add(this);
-		for (uint32_t i=0; i<numSubScenes; i++)
-			drawableList->add(subScenes[i]);
-	}
 }
 
 }

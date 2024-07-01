@@ -36,8 +36,7 @@ public:
 	void draw(uint32_t funcSetIndex, IRenderDrawable *other) override;
 
 	void updateUniforms();
-	void addToDrawableList(DrawableList *drawableList);
-	void addToDrawableList(DrawableList *drawableList, uint32_t);
+	void Finalize(DrawableList *drawableList);
 };
 
 }

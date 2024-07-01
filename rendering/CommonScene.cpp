@@ -1,5 +1,6 @@
 #include "CommonScene.h"
 #include "Projection.h"
+#include "RenderPasses.h"
 
 namespace cdc {
 
@@ -67,6 +68,20 @@ CommonScene::CommonScene(
 	fogColor[1] = 0.0f;
 	fogColor[2] = 1.0f;
 	fogColor[3] = 0.0f;
+}
+
+void CommonScene::FinalizeMiddle(DrawableList *drawableList, float) {
+	// TODO
+	if (parentScene) {
+		auto *parentDrawableList = parentScene->drawableListsAndMasks->listForPass(10);
+		for (uint32_t i=0; i<numSubScenes; i++)
+			parentDrawableList->add(subScenes[i]);
+		// TODO
+	} else {
+		drawableList->add(this);
+		for (uint32_t i=0; i<numSubScenes; i++)
+			drawableList->add(subScenes[i]);
+	}
 }
 
 }

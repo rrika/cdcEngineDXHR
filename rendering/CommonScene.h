@@ -1,8 +1,8 @@
 #pragma once
 #include <cstdint>
 #include "cdcMath/Math.h" // for Matrix
-#include "IRenderScene.h"
 #include "IRenderDrawable.h"
+#include "IRenderScene.h"
 #include "surfaces/CommonRenderTarget.h" // for CommonRenderTarget to IRenderTarget cast
 #include "surfaces/CommonDepthBuffer.h" // for CommonDepthBuffer to IDepthBuffer cast
 
@@ -11,6 +11,7 @@ namespace cdc {
 class CommonRenderDevice;
 class CommonScene;
 class DrawableListsAndMasks;
+struct DrawableList;
 struct RenderPasses;
 
 struct RenderViewport {
@@ -152,6 +153,8 @@ public:
 
 	// void draw(uint32_t funcSetIndex, IRenderDrawable *other) = 0;
 	uint32_t compare(uint32_t funcSetIndex, IRenderDrawable *other) override { return true; }
+
+	void FinalizeMiddle(DrawableList *drawableList, float);
 
 	void setSharedTextureToRenderTarget(CommonRenderTarget *rt, uint32_t slot, uint32_t) {
 		if (rt) {
