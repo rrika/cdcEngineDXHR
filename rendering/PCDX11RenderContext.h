@@ -17,8 +17,8 @@ class PCDX11RenderContext : public PCDX11InternalResource {
 public:
 	PCDX11RenderTarget *renderTarget14 = nullptr; // 14
 	HWND hwnd; // 18
-	uint32_t width = 0; // 1C
-	uint32_t height = 0; // 20
+	uint32_t width = 0; // 1C, read by PCDX11RenderTexture::UpdateAbsoluteSize and PCDX11RenderDevice::getContextWidth
+	uint32_t height = 0; // 20, read by PCDX11RenderTexture::UpdateAbsoluteSize and PCDX11RenderDevice::getContextHeight
 	uint8_t refreshRate; // 24
 	uint8_t enableTripleBuffer; // 27
 	uint32_t bufferCount; // 28
