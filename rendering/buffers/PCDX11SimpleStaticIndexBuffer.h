@@ -19,6 +19,11 @@ public:
 		deviceManager->getD3DDevice()->CreateBuffer(&vertexBufferDesc, &subresourceData, &buffer);
 	}
 
+	~PCDX11SimpleStaticIndexBuffer() {
+		if (buffer)
+			buffer->Release();
+	}
+
 	uint32_t count;
 	ID3D11Buffer *buffer;
 
