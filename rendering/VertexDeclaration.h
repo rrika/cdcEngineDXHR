@@ -29,11 +29,14 @@ struct VertexAttributeA { // VertexElem
 	uint16_t offset;
 	uint8_t format;
 	uint8_t bufferIndex;
+
+	uint32_t GetSize();
 };
 
 struct VertexDecl {
 	uint32_t hash0;
 	uint32_t hash4;
+	// everything below is hashed
 	uint16_t numAttr;
 	uint8_t vertStrideA;
 	uint8_t vertStrideB;
@@ -47,16 +50,13 @@ struct VertexDecl {
 		p->numAttr = count;
 		p->vertStrideA = stride;
 		p->vertStrideB = 0;
+		p->dwordC = 0; // must be initialized for hashing to be determinisitc
 		memcpy(p->attrib, attrs, sizeof(VertexAttributeA) * count);
 		p->Finalize();
 		return p;
 	}
 
-	void Finalize() {
-		// TODO: compute hashes
-		hash0 = 0x12340000;
-		hash4 = 0x56780000;
-	}
+	void Finalize();
 };
 
 struct VertexAttributeB {
