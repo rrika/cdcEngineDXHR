@@ -9,6 +9,7 @@
 #include "rendering/Inspector.h"
 #include "cdcResource/Resolve.h"
 #include "cdcResource/ResolveObject.h"
+#include "game/dtp/modularhuman.h"
 
 #if ENABLE_IMGUI
 #include "../imgui/imgui.h"
@@ -367,6 +368,22 @@ uint32_t buildUI(UIActions& uiact, cdc::Object *obj) {
 				uiact.select(scriptType);
 		}
 	}
+
+	if (objFamily == 93) {
+		auto *modular = *(dtp::ModularHuman**)(0x48 + (char*)objProp);
+		if (!modular) modular = (dtp::ModularHuman*)(0x8 + (char*)objProp);
+		ImGui::Text("  additional models for actors:");
+		if (modular->upperBody && (ImGui::SameLine(), ImGui::SmallButton("Upper body"))) {
+			uiact.select(modular->upperBody);
+		}
+		if (modular->hands && (ImGui::SameLine(), ImGui::SmallButton("Hands"))) {
+			uiact.select(modular->hands);
+		}
+		if (modular->lowerBody && (ImGui::SameLine(), ImGui::SmallButton("Lower body"))) {
+			uiact.select(modular->lowerBody);
+		}
+	}
+
 	ImGui::PopID();
 #endif
 	return objFamily;

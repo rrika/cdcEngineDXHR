@@ -11,6 +11,9 @@
 #include "Object.h"
 #include "SceneLayer.h"
 
+#include "game/dtp/modularhuman.h"
+#include "rendering/CommonRenderDevice.h"
+
 using namespace cdc;
 
 void Instance::ReallyRemoveInstance() { // line 1086
@@ -189,6 +192,24 @@ void Instance::DefaultInit( // line 2977
 
 	if (!instanceDrawable)
 		instanceDrawable = new InstanceDrawable(this);
+
+	// HACK
+	uint32_t derivedObjectFamilyId = 0;
+	auto *derivedObjProp = derivedObject ? (ObjProp*) derivedObject->data : nullptr;
+	if (derivedObjProp && derivedObjProp->id == 0xb00b)
+		derivedObjectFamilyId = derivedObjProp->family;
+
+	if (derivedObjectFamilyId == 93) {
+		auto realInstanceDrawable = static_cast<InstanceDrawable*>(instanceDrawable);
+		auto *modular = *(dtp::ModularHuman**)(0x48 + (char*)derivedObjProp);
+		if (!modular) modular = (dtp::ModularHuman*)(0x8 + (char*)derivedObjProp);
+		if (modular->upperBody)
+			realInstanceDrawable->m_additionalModelInstances.push_back({true, g_renderDevice->createRenderModelInstance(modular->upperBody)});
+		if (modular->hands)
+			realInstanceDrawable->m_additionalModelInstances.push_back({true, g_renderDevice->createRenderModelInstance(modular->hands)});
+		if (modular->lowerBody)
+			realInstanceDrawable->m_additionalModelInstances.push_back({true, g_renderDevice->createRenderModelInstance(modular->lowerBody)});
+	}
 }
 
 Instance::~Instance() {

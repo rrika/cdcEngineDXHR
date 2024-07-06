@@ -40,9 +40,15 @@ class InstanceDrawable :
 	public InstanceComponent
 {
 public:
+	struct AdditionalRMI {
+		bool m_hasOwnership;
+		RenderModelInstance *m_pRMI;
+	};
+
 	Instance *m_instance; // 8
 
 	std::vector<cdc::RenderModelInstance*> m_renderModelInstances; // C
+	std::vector<AdditionalRMI> m_additionalModelInstances; // 18
 	cdc::IMatrixState *m_pMatrixState; // 24
 	uint8_t flags = 0; // 38
 protected:

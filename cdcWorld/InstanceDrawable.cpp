@@ -163,6 +163,10 @@ void InstanceDrawable::draw(Matrix *matrix, float) { // line 1243
 		PrepareMatrixState(matrix, model, rmi, false); // matrix is only used for 0 bones case
 		// }
 		rmi->recordDrawables(m_pMatrixState);
+
+		for (auto& addRMI : m_additionalModelInstances) {
+			addRMI.m_pRMI->recordDrawables(m_pMatrixState);
+		}
 	}
 }
 
@@ -180,6 +184,11 @@ bool InstanceDrawable::GetBoundingBox(Vector *pMin, Vector *pMax) {
 }
 
 InstanceDrawable::~InstanceDrawable() {
+	for (auto *rmi : m_renderModelInstances)
+		delete rmi;
+	for (auto& addRMI : m_additionalModelInstances)
+		if (addRMI.m_hasOwnership)
+			delete addRMI.m_pRMI;
 	RemoveFromDirtyList();
 }
 
