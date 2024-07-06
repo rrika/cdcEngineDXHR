@@ -1469,7 +1469,7 @@ int spinnyCube(HWND window,
 			cdc::buildObjectsUI(uiact);
 			ImGui::End();
 		}
-		if (uiact.selectedModel || uiact.selectedRenderTerrain) {
+		if (uiact.selectedModel || uiact.selectedRenderTerrain || uiact.selectedMaterial) {
 			bool showModelWindow = true;
 			ImGui::Begin("Model", &showModelWindow);
 			ImGui::PushID("model or terrain");
@@ -1503,7 +1503,7 @@ int spinnyCube(HWND window,
 						ImGui::PopID();
 					}
 				}
-			} else {
+			} else if (uiact.selectedRenderTerrain) {
 				auto *terrain = static_cast<cdc::PCDX11RenderTerrain*>(uiact.selectedRenderTerrain);
 				uint32_t numGroups = terrain->m_pResourceData->pHeader->numGroups;
 				ImGui::Text("# groups = %d", numGroups);
@@ -1530,7 +1530,7 @@ int spinnyCube(HWND window,
 				ImGui::PushID("material");
 				// auto *material = static_cast<cdc::PCDX11Material*>(uiact.selectedMaterial);
 				auto *material = static_cast<cdc::CommonMaterial*>(uiact.selectedMaterial);
-				ImGui::Text("material %p", material);
+				ImGui::Text("material %p (id %x)", material, material->GetId());
 
 				ImGui::Text("  mask "); ImGui::SameLine();
 				UIPassMask(material->GetRenderPassMask(/*fading=*/false)); ImGui::SameLine();
@@ -1544,7 +1544,7 @@ int spinnyCube(HWND window,
 
 				for (uint32_t i = 0; i < 16; i++) {
 					ImGui::PushID(i);
-					auto *submat = material->GetMaterialData()->subMat4C[i];
+					auto *submat = material->materialBlob->subMat4C[i];
 					if (submat) {
 						ImGui::Text("submaterial %d: %p", i, submat);
 						ImGui::SameLine();
@@ -1645,8 +1645,10 @@ int spinnyCube(HWND window,
 				ImGui::PopID();
 			}
 			ImGui::End();
-			if (!showModelWindow)
+			if (!showModelWindow) {
 				uiact.select((cdc::RenderMesh*)nullptr);
+				uiact.select((cdc::IMaterial*)nullptr);
+			}
 		}
 
 		ImGuiIO& io = ImGui::GetIO();

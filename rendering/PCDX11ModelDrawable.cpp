@@ -304,7 +304,7 @@ void PCDX11ModelDrawable::buildUI(uint32_t funcSetIndex, UIActions& uiact) {
 
 	MaterialBlob *materialData = nullptr;
 	if (tab0Ext128 && tab0Ext128->material)
-		materialData = tab0Ext128->material->GetMaterialData();
+		materialData = tab0Ext128->material->materialBlob;
 	MaterialBlobSub *subMat = nullptr;
 	if (materialData && subMatIndex < 16)
 		subMat = materialData->subMat4C[subMatIndex];

@@ -69,7 +69,7 @@ struct MaterialBlob {
 
 	uint16_t word0;
 	uint16_t word2;
-	int dword4;
+	int m_id; // 4
 	int renderTargetWriteMask;
 	int blendStateC; // for submat 0, 1, 5
 	int blendFactors;

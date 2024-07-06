@@ -225,7 +225,7 @@ void PCDX11TerrainDrawable::buildUI(uint32_t funcSetIndex, UIActions& uiact) {
 
 	MaterialBlob *materialData = nullptr;
 	if (m_pInstData && m_pInstData->material)
-		materialData = m_pInstData->material->GetMaterialData();
+		materialData = m_pInstData->material->materialBlob;
 	MaterialBlobSub *subMat = nullptr;
 	if (materialData && subMatIndex < 16)
 		subMat = materialData->subMat4C[subMatIndex];

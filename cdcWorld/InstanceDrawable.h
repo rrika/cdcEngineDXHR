@@ -64,6 +64,7 @@ public:
 	void EnableNoDraw();
 	void DisableNoDraw();
 	bool QueryNoDraw() const;
+	cdc::RenderModelInstance *getSelectedRMI();
 
 	void GetBoundingVolume(cdc::BasicCullingVolume*) override;
 	void draw(cdc::Matrix *, float) override;

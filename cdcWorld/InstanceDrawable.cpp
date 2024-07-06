@@ -115,6 +115,11 @@ bool InstanceDrawable::QueryNoDraw() const {
 	return (flags & 0xF4) != 0;
 }
 
+RenderModelInstance *InstanceDrawable::getSelectedRMI() {
+	MeshComponent& meshComponent = m_instance->GetMeshComponent();
+	return m_renderModelInstances[meshComponent.GetCurrentRenderModelIndex()];
+}
+
 void InstanceDrawable::GetBoundingVolume(BasicCullingVolume *volume) {
 
 	Vector center, min, max;

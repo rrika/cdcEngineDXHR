@@ -14,7 +14,7 @@ class CommonMaterial : public IMaterial {
 public:
 	MaterialBlob *materialBlob = nullptr;
 public:
-	MaterialBlob *GetMaterialData() override;
+	uint32_t GetId() override;
 	void Release() override = 0;
 	void SetRenderPassMask(uint32_t mask, bool fading) override;
 	uint32_t GetRenderPassMask(bool fading) override;

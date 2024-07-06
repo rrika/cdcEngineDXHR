@@ -372,16 +372,61 @@ uint32_t buildUI(UIActions& uiact, cdc::Object *obj) {
 	if (objFamily == 93) {
 		auto *modular = *(dtp::ModularHuman**)(0x48 + (char*)objProp);
 		if (!modular) modular = (dtp::ModularHuman*)(0x8 + (char*)objProp);
-		ImGui::Text("  additional models for actors:");
-		if (modular->upperBody && (ImGui::SameLine(), ImGui::SmallButton("Upper body"))) {
-			uiact.select(modular->upperBody);
+		ImGui::Indent();
+		ImGui::Text("Head");
+		if (modular->material8) {
+			ImGui::SameLine();
+			if (ImGui::SmallButton("Material 8"))
+				uiact.select(modular->material18);
 		}
-		if (modular->hands && (ImGui::SameLine(), ImGui::SmallButton("Hands"))) {
-			uiact.select(modular->hands);
+		if (modular->materialC) {
+			ImGui::SameLine();
+			if (ImGui::SmallButton("Material C"))
+				uiact.select(modular->materialC);
 		}
-		if (modular->lowerBody && (ImGui::SameLine(), ImGui::SmallButton("Lower body"))) {
-			uiact.select(modular->lowerBody);
+		if (modular->upperBody) {
+			if (ImGui::SmallButton("Upper body"))
+				uiact.select(modular->upperBody);
+			if (modular->material18) {
+				ImGui::SameLine();
+				if (ImGui::SmallButton("Material 18"))
+					uiact.select(modular->material18);
+			}
+			if (modular->material1C) {
+				ImGui::SameLine();
+				if (ImGui::SmallButton("Material 1C"))
+					uiact.select(modular->material1C);
+			}
 		}
+		if (modular->hands) {
+			if (ImGui::SmallButton("Hands"))
+				uiact.select(modular->hands);
+			if (modular->material18) {
+				ImGui::SameLine();
+				if (ImGui::SmallButton("Material 24"))
+					uiact.select(modular->material24);
+			}
+		}
+		if (modular->lowerBody) {
+			if (ImGui::SmallButton("Lower body"))
+				uiact.select(modular->lowerBody);
+			if (modular->material2C) {
+				ImGui::SameLine();
+				if (ImGui::SmallButton("Material 2C"))
+					uiact.select(modular->material2C);
+			}
+			if (modular->material30) {
+				ImGui::SameLine();
+				if (ImGui::SmallButton("Material 30"))
+					uiact.select(modular->material30);
+			}
+			if (modular->material34) {
+				ImGui::SameLine();
+				if (ImGui::SmallButton("Material 34"))
+					uiact.select(modular->material34);
+			}
+		}
+		ImGui::Unindent();
 	}
 
 	ImGui::PopID();

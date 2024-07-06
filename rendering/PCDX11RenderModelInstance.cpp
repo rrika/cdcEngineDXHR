@@ -1,18 +1,21 @@
-#include "PCDX11RenderModelInstance.h"
+#include "CommonMaterial.h"
+#include "PCDX11Material.h"
 #include "PCDX11MatrixState.h"
 #include "PCDX11ModelDrawable.h"
 #include "PCDX11RenderDevice.h"
-#include "CommonMaterial.h"
+#include "PCDX11RenderModelInstance.h"
 #include <cstdio>
 #include <cmath>
 
 namespace cdc {
 
-void PCDX11RenderModelInstance::setMaterial(uint32_t primGroupSelector, IMaterial *material) {
+void PCDX11RenderModelInstance::setMaterial(uint32_t selector, IMaterial *material) {
 	// TODO
 	Mesh *mesh = renderMesh->getMesh();
 	for (uint32_t i=0; i < mesh->primGroupCount; i++) {
-		if (primGroupSelector == ~0u || primGroupSelector == mesh->primGroups[i].dword20)
+		uint32_t primGroup20 = mesh->primGroups[i].dword20;
+		if (selector == ~0u || selector == primGroup20 ||
+			primGroup20 == 0 && selector == tab0Ext128[i].material->GetId())
 			tab0Ext128[i].material = (PCDX11Material*)material;
 	}
 }

@@ -4,8 +4,8 @@
 
 namespace cdc {
 
-MaterialBlob *CommonMaterial::GetMaterialData() {
-	return materialBlob;
+uint32_t CommonMaterial::GetId() {
+	return materialBlob->m_id;
 }
 
 void CommonMaterial::SetRenderPassMask(uint32_t mask, bool fading) {
