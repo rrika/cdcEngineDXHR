@@ -59,7 +59,7 @@ void PCDX11ModelDrawable::drawDepth(uint32_t funcSetIndex, IRenderDrawable *draw
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
 	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
 	PCDX11StateManager *stateManager = deviceManager->getStateManager();
-	Mesh *mesh = thisModel->renderModel->mesh;
+	ModelData *mesh = thisModel->renderModel->mesh;
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
@@ -83,7 +83,7 @@ void PCDX11ModelDrawable::drawShadow(uint32_t funcSetIndex, IRenderDrawable *dra
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
 	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
 	PCDX11StateManager *stateManager = deviceManager->getStateManager();
-	Mesh *mesh = thisModel->renderModel->mesh;
+	ModelData *mesh = thisModel->renderModel->mesh;
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
@@ -109,7 +109,7 @@ void PCDX11ModelDrawable::drawAlphaBloom(uint32_t funcSetIndex, IRenderDrawable 
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
 	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
 	PCDX11StateManager *stateManager = deviceManager->getStateManager();
-	Mesh *mesh = thisModel->renderModel->mesh;
+	ModelData *mesh = thisModel->renderModel->mesh;
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
@@ -132,7 +132,7 @@ void PCDX11ModelDrawable::drawComposite(uint32_t funcSetIndex, IRenderDrawable *
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
 	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
 	PCDX11StateManager *stateManager = deviceManager->getStateManager();
-	Mesh *mesh = thisModel->renderModel->mesh;
+	ModelData *mesh = thisModel->renderModel->mesh;
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
@@ -164,7 +164,7 @@ void PCDX11ModelDrawable::drawTranslucent(uint32_t funcSetIndex, IRenderDrawable
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
 	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
 	PCDX11StateManager *stateManager = deviceManager->getStateManager();
-	Mesh *mesh = thisModel->renderModel->mesh;
+	ModelData *mesh = thisModel->renderModel->mesh;
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
@@ -193,7 +193,7 @@ void PCDX11ModelDrawable::drawNormal(uint32_t funcSetIndex, IRenderDrawable *dra
 	auto *prevModel = static_cast<PCDX11ModelDrawable*>(prevDrawable);
 	PCDX11RenderDevice *renderDevice = thisModel->renderModel->renderDevice;
 	PCDX11StateManager *stateManager = deviceManager->getStateManager();
-	Mesh *mesh = thisModel->renderModel->mesh;
+	ModelData *mesh = thisModel->renderModel->mesh;
 
 	thisModel->setMatrices(stateManager, prevModel, mesh->flags.hasBones);
 
@@ -352,7 +352,7 @@ void PCDX11ModelDrawable::draw(
 	if (streamDecl == nullptr)
 		return;
 
-	Mesh *mesh = renderModel->getMesh();
+	ModelData *mesh = renderModel->getMesh();
 	stateManager->setDepthLayer(mesh->flags.depthLayer);
 	stateManager->setIndexBuffer(renderModel->indexBuffer);
 	stateManager->setVertexBuffer(meshSub->staticVertexBuffer);

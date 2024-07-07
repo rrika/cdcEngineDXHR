@@ -45,7 +45,7 @@ struct MeshFlags {
 	uint32_t depthLayer : 1;
 };
 
-struct Mesh { // = cdc::ModelData
+struct ModelData {
 	uint32_t magic;
 	MeshFlags flags;
 	uint32_t dword8; // totalDataSize
@@ -90,7 +90,7 @@ struct PrimGroup {
 };
 
 struct MeshHeader { // = cdc::ModelDataHeader
-	Mesh *mesh;
+	ModelData *mesh;
 	uint32_t *ptr4;
 	void **materials;
 	void *skeleton;
@@ -113,7 +113,7 @@ public:
 	virtual void mesh2C() = 0;
 	virtual NonPersistentPGData *getTab0Ext16() = 0;
 	virtual PersistentPGData *getTab0Ext128() = 0;
-	virtual Mesh *getMesh() = 0;
+	virtual ModelData *getMesh() = 0;
 	virtual uint32_t getBoneCountIfEnabled() = 0;
 	virtual void getSkeleton() = 0;
 };

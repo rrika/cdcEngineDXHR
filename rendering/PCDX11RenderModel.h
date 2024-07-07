@@ -15,7 +15,7 @@ public:
 	uint32_t size;
 
 	MeshHeader *meshHeader;
-	Mesh       *mesh = nullptr;
+	ModelData  *mesh = nullptr;
 
 	uint16_t numPrimGroups = 0; // 1C
 	PrimGroup *primGroups = nullptr; // 20
@@ -48,7 +48,7 @@ public:
 	void mesh2C() override { /*TODO*/ }
 	NonPersistentPGData *getTab0Ext16() override { /*TODO*/ return tab0Ext16Byte; }
 	PersistentPGData *getTab0Ext128() override { /*TODO*/ return tab0Ext128Byte; }
-	Mesh *getMesh() override { /*TODO*/ return mesh; }
+	ModelData *getMesh() override { /*TODO*/ return mesh; }
 	uint32_t getBoneCountIfEnabled() override { /*TODO*/ return 0; }
 	void getSkeleton() override { /*TODO*/ }
 };
