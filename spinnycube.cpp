@@ -57,6 +57,8 @@
 #include "postprocessing/PPManager.h"
 #include "cdcRender/buffers/PCDX11ConstantBufferPool.h"
 #include "cdcRender/buffers/PCDX11IndexBuffer.h"
+#include "cdcRender/buffers/PCDX11SimpleStaticIndexBuffer.h"
+#include "cdcRender/buffers/PCDX11SimpleStaticVertexBuffer.h"
 #include "cdcRender/buffers/PCDX11StaticIndexBuffer.h"
 #include "cdcRender/buffers/PCDX11StaticVertexBuffer.h"
 #include "cdcRender/buffers/PCDX11UberConstantBuffer.h"
@@ -673,6 +675,9 @@ int spinnyCube(HWND window,
 	bool drawStreamGroups = true;
 	bool drawCellMeshes = true;
 	bool drawCellBoxes = false;
+	bool drawCollisionMeshes = true;
+	bool c0 = true;
+	bool c1 = true;
 	bool pointlessCopy = true;
 	int showTempBuffer = -1;
 	cdc::Vector cameraPos{0, 0, 0};
@@ -773,6 +778,7 @@ int spinnyCube(HWND window,
 	InventoryContainer inventoryContainer(6, 6);
 
 	std::unordered_map<cdc::IRenderTerrain*, cdc::CommonRenderTerrainInstance *> renderTerrainInstances;
+	std::unordered_map<cdc::Mesh*, std::pair<cdc::PCDX11VertexBuffer*, cdc::PCDX11IndexBuffer*>> collisionMeshes;
 
 	cdc::GameShell::UpdateLoop(0.5);
 
@@ -963,6 +969,33 @@ int spinnyCube(HWND window,
 						auto *rti = (cdc::CommonRenderTerrainInstance*)renderDevice->createRenderTerrainInstance(rt);
 						renderTerrainInstances[rt] = rti;
 						printf("created RenderTerrainInstance %p for RenderTerrain %p\n", rti, rt);
+					}
+				}
+			}
+
+			if (auto *terrain = level->terrain) {
+				uint32_t numMeshes = terrain->numMeshes;
+				for (uint32_t i=0; i < numMeshes; i++) {
+					cdc::Mesh *mesh = &terrain->meshes[i];
+					if (collisionMeshes.find(mesh) == collisionMeshes.end()) {
+						uint32_t numFaces = mesh->m_numFaces - 1;
+						uint16_t *indices = new uint16_t[3 * numFaces];
+						uint16_t *it = indices;
+						for (uint32_t j=0; j < numFaces-1; j++) {
+							*it++ = mesh->m_faces[j].i0;
+							*it++ = mesh->m_faces[j].i1;
+							*it++ = mesh->m_faces[j].i2;
+						}
+
+						size_t stride = mesh->m_vertexType == cdc::Mesh::VERTEX_INT16 ? 2*3 : 4*3;
+						auto *vertexBuffer = new cdc::PCDX11SimpleStaticVertexBuffer(stride, mesh->m_numVertices, mesh->m_vertices);
+						auto *indexBuffer = new cdc::PCDX11SimpleStaticIndexBuffer(3 * numFaces, indices);
+						delete[] indices;
+
+						collisionMeshes[mesh] = {
+							vertexBuffer,
+							indexBuffer
+						};
 					}
 				}
 			}
@@ -1418,6 +1451,8 @@ int spinnyCube(HWND window,
 			if (!cellGroupData)
 				continue;
 
+			cdc::IMaterial *randomCellBoxMaterial = nullptr;
+
 			uint32_t numCells = cellGroupData->header->numTotalCells;
 			for (uint32_t i=0; i < numCells; i++) {
 				cdc::CellData *cell = cellGroupData->cells[i];
@@ -1441,7 +1476,7 @@ int spinnyCube(HWND window,
 				}
 
 				// draw rendermesh (these are for occlusion culling only, presumably)
-				if (cell->renderMesh && drawCellBoxes) {
+				if (cell->renderMesh && true) {
 					auto *cellRMIDrawable = new RMIDrawableBase(cell->renderMesh);
 					recycleRMI.emplace_back(cellRMIDrawable);
 					auto *rmi = static_cast<cdc::PCDX11RenderModelInstance*>(cellRMIDrawable->rmi);
@@ -1452,7 +1487,66 @@ int spinnyCube(HWND window,
 						halton[i].z,
 						1.0f
 					};
-					cellRMIDrawable->draw(&cdc::identity4x4, 0.0f);
+					if (drawCellBoxes)
+						cellRMIDrawable->draw(&cdc::identity4x4, 0.0f);
+
+					randomCellBoxMaterial = rmi->getPersistentPGData()[0].material;
+				}
+			}
+
+			uint32_t color=0;
+			if (auto *terrain = level->terrain; terrain && drawCollisionMeshes) {
+				for (uint32_t i=0; i < terrain->numMeshInstances; i++) {
+					cdc::MeshInstance *meshInstance = &terrain->meshInstances[i];
+					cdc::Mesh *mesh = meshInstance->m_mesh;
+
+					auto it = collisionMeshes.find(mesh);
+					if (it == collisionMeshes.end())
+						continue;
+
+					auto [vb, ib] = it->second;
+					cdc::PrimitiveContext primContext(/*isTransient=*/true, renderDevice);
+					auto *instanceParams = new (renderDevice) cdc::Vector[8];
+					auto *matrix = new (renderDevice) cdc::Matrix;
+					*matrix = cdc::identity4x4;
+					if (c0) {
+						matrix->m[3][0] += level->sceneCenterOffset.x;
+						matrix->m[3][1] += level->sceneCenterOffset.y;
+						matrix->m[3][2] += level->sceneCenterOffset.z;
+					}
+					if (c1) {
+						matrix->m[3][0] += meshInstance->streamOffset.x;
+						matrix->m[3][1] += meshInstance->streamOffset.y;
+						matrix->m[3][2] += meshInstance->streamOffset.z;
+					}
+					instanceParams[0] = {
+						halton[color % std::size(halton)].x,
+						halton[color % std::size(halton)].y,
+						halton[color % std::size(halton)].z,
+						1.0f
+					};
+					color++;
+					*primContext.m_pWriteState = {
+						/* m_flags= */          0,           // dummy value
+						/* m_depthBoundsMin= */ 0.f,         // dummy value
+						/* m_depthBoundsMax= */ 99999999.f,  // dummy value
+						/* m_pMaterial= */      randomCellBoxMaterial,
+						/* vertexBuffer= */     vb,
+						/* m_pVertexDecl= */    renderDevice->drawVertexDecls[6], // only position
+						/* indexBuffer= */      ib,
+						/* instanceParams= */   instanceParams,
+						/* scaleformData= */    nullptr,
+						/* ptr24_x10= */        nullptr,
+						/* m_pWorldMatrix= */   matrix,
+						/* m_pProjectionOverrideMatrix= */ nullptr,
+						/* ptr30_x10= */        nullptr,
+						/* ptr34_x10= */        nullptr
+					};
+					primContext.m_passes = 0x1002;
+					renderDevice->DrawIndexedPrimitive(&primContext,
+						/*startIndex=*/ 0,
+						/*numPrims=*/   ib->getCount() / 3,
+						/*sortZ=*/      0.f);
 				}
 			}
 		}
@@ -1574,6 +1668,7 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Streamgroups ", nullptr, drawStreamGroups)) { drawStreamGroups = !drawStreamGroups; }
 				if (ImGui::MenuItem("Cell Meshes", nullptr, drawCellMeshes)) { drawCellMeshes = !drawCellMeshes; }
 				if (ImGui::MenuItem("Cell Boxes", nullptr, drawCellBoxes)) { drawCellBoxes = !drawCellBoxes; }
+				if (ImGui::MenuItem("Collision meshes", nullptr, drawCollisionMeshes)) { drawCollisionMeshes = !drawCollisionMeshes; }
 				if (ImGui::MenuItem("Fallback GlobalParams", nullptr, useFallbackParams)) { useFallbackParams = !useFallbackParams; }
 				ImGui::Separator();
 				if (ImGui::MenuItem("Off",         nullptr, dc->antiAliasing == 0)) { dc->antiAliasing = 0; }
@@ -1606,6 +1701,8 @@ int spinnyCube(HWND window,
 				ImGui::TextDisabled("Press TAB to grab cursor");
 			} else
 				ImGui::Text("Press TAB to grab cursor");
+			ImGui::Checkbox("C0", &c0);
+			ImGui::Checkbox("C1", &c1);
 			ImGui::EndMainMenuBar();
 		}
 

@@ -28,10 +28,7 @@ struct Level { // UnitBlob
 	uint32_t dword34; // unused?
 	uint32_t dword38; // unused?
 	uint32_t dword3C; // unused?
-	uint32_t dword40;
-	uint32_t dword44;
-	uint32_t dword48;
-	uint32_t dword4C;
+	Vector sceneCenterOffset;
 	CellGroupData *sub50;
 };
 

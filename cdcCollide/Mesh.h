@@ -43,8 +43,8 @@ struct Mesh { // line 104
 	void *vertices; // 20
 	IndexedFace *m_faces; // 24
 	AABBNode *m_root; // 28
-	uint32_t dword2C; // m_numNodes
-	uint32_t dword30; // m_numFaces
+	uint32_t m_numFaces; // 30
+	uint32_t m_numVertices; // 34
 	uint32_t dword34; // m_numVertices
 	uint32_t dword38; // m_numDegenerateFaces
 	uint32_t dword3C; // m_numNonManifoldEdges
@@ -101,6 +101,8 @@ struct MeshInstance { // line 194
 		Vector3Arg end,
 		uint8_t faceCollideFlags);
 };
+
+static_assert(sizeof(MeshInstance) == 0x80);
 
 struct CollisionParams;
 

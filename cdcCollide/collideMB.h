@@ -23,11 +23,13 @@ struct IndexedFace { // line 131
 	VertIndex i0;
 	VertIndex i1;
 	VertIndex i2;
-	uint8_t adjacencyFlags; // C
-	uint8_t collisionFlags; // D
-	uint16_t clientFlags; // E
-	uint32_t materialType; // 10
+	uint8_t adjacencyFlags; // 6
+	uint8_t collisionFlags; // 7
+	uint16_t clientFlags; // 8
+	uint16_t materialType; // A
 };
+
+static_assert(sizeof(IndexedFace) == 0xC);
 
 enum CollideCode { // line 194
 	NO_HIT = 0,
