@@ -292,12 +292,15 @@ void PCDX11RenderDevice::method_08() {
 	// TODO
 }
 
-void PCDX11RenderDevice::resetRenderLists() {
+void PCDX11RenderDevice::resetRenderLists(float timeDelta) {
 	// TODO
 	m_frameIndex++;
 	renderList_current = nullptr;
 	renderList_last = nullptr;
 	renderList_first = nullptr;
+	// TODO
+	m_frameTimeDelta = timeDelta;
+	m_currentTime += 1000 * timeDelta;
 	// TODO
 }
 
@@ -859,6 +862,13 @@ void PCDX11RenderDevice::drawRenderListsInternal(void *arg) {
 		auto stateManager = deviceManager->getStateManager();
 		stateManager->reset();
 		stateManager->setCommonConstantBuffers();
+		float timeVector[4] = {
+			(m_currentTime % 1000000) * 0.001f,
+			m_frameTimeDelta,
+			0.f,
+			0.f
+		};
+		stateManager->accessCommonCB(1).assignRow(24, timeVector, 1); // SceneBuffer::TimeVector
 
 		static_cast<PCDX11LightManager*>(lightManager)->setAttenuationSampler();
 		while (renderList_processing) {

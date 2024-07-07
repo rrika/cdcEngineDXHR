@@ -30,6 +30,8 @@ public:
 	LinearAllocator linear4; // 4
 	LinearAllocator *linear30; // 30
 	LinearAllocator *linear34; // 34
+	float m_frameTimeDelta; // 44
+	uint32_t m_currentTime; // 48
 	uint32_t m_sceneCreationCount; // 54
 	uint32_t m_frameIndex; // 58
 public:
@@ -52,7 +54,7 @@ public:
 	virtual ~CommonRenderDevice() = default;
 	virtual void refCountDec() = 0;
 	virtual void method_08() = 0;
-	virtual void resetRenderLists() = 0;
+	virtual void resetRenderLists(float timeDelta) = 0;
 	virtual void drawRenderLists() = 0; // 10
 	virtual void method_14();
 	virtual void method_18();

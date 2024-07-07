@@ -897,7 +897,7 @@ int spinnyCube(HWND window,
 			tempRenderTarget = static_cast<cdc::PCDX11RenderTarget*>(renderDevice->dx11_createRenderTarget(
 				100, 100, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, 0x18, cdc::kTextureClass2D));
 
-		renderDevice->resetRenderLists();
+		renderDevice->resetRenderLists(1.f/60);
 		renderDevice->beginRenderList(nullptr);
 		auto *scene = renderDevice->createSubScene( // CommonScene::CommonScene creates the projectMatrix
 			&renderViewport,

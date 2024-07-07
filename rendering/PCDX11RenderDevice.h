@@ -117,7 +117,7 @@ public:
 	// incomplete
 	void refCountDec() override;
 	void method_08() override;
-	void resetRenderLists() override;
+	void resetRenderLists(float timeDelta) override;
 	void drawRenderLists() override;
 	bool beginRenderList(float*) override;
 	bool endRenderList() override;
