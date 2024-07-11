@@ -22,7 +22,7 @@ public:
 		PCDX11RenderDevice *renderDevice,
 		D3D11_INPUT_ELEMENT_DESC *elementDesc,
 		uint32_t numElements,
-		PCDX11ShaderSub *shaderSub)
+		PCDX11ShaderBinary *shaderSub)
 	:
 		PCDX11InternalResource(),
 		renderDevice(renderDevice),
@@ -40,7 +40,7 @@ public:
 	D3D11_INPUT_ELEMENT_DESC *elementDesc; // 1C
 	uint32_t numElements; // 20
 	ID3D11InputLayout *inputLayout; // 24
-	PCDX11ShaderSub *shaderSub; // 2C
+	PCDX11ShaderBinary *shaderSub; // 2C
 	Vector4 *secondaryData; // 30
 	PCDX11VertexBuffer *vertexBuffer; // 34 secondary vertex stream
 	PCDX11ConstantBuffer *streamDeclBuffer; // 38

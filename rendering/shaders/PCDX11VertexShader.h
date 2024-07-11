@@ -13,13 +13,13 @@ class PCDX11VertexShader :
 {
 public:
 	ID3D11VertexShader *m_d3dShader;
-	PCDX11ShaderSub m_sub;
+	PCDX11ShaderBinary m_sub;
 
 	static PCDX11VertexShader *create(
 		char *blob, bool takeCopy, /*shaderManagerData,*/
 		bool *isWrappedPtr, bool isWrapped)
 	{
-		PCDX11ShaderSub sub(blob, /*takeCopy=*/false, isWrapped);
+		PCDX11ShaderBinary sub(blob, /*takeCopy=*/false, isWrapped);
 		// TODO
 		auto *shader = new PCDX11VertexShader(blob, takeCopy, isWrapped);
 		// TODO

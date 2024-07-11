@@ -12,13 +12,13 @@ class PCDX11ComputeShader :
 {
 public:
 	ID3D11ComputeShader *m_d3dShader;
-	PCDX11ShaderSub m_sub;
+	PCDX11ShaderBinary m_sub;
 
 	static PCDX11ComputeShader *create(
 		char *blob, bool takeCopy, /*shaderManagerData,*/
 		bool *isWrappedPtr, bool isWrapped)
 	{
-		PCDX11ShaderSub sub(blob, /*takeCopy=*/false, isWrapped);
+		PCDX11ShaderBinary sub(blob, /*takeCopy=*/false, isWrapped);
 		// TODO
 		auto *shader = new PCDX11ComputeShader(blob, takeCopy, isWrapped);
 		// TODO

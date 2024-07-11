@@ -13,7 +13,7 @@ DXGI_FORMAT MakeElementFormat(uint16_t format);
 
 PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 	VertexDecl *layout,
-	PCDX11ShaderSub *shaderSub)
+	PCDX11ShaderBinary *shaderSub)
 {
 	StreamDeclCacheKey key {0, layout->hash0};
 	auto it = cache.insert({key, nullptr});
@@ -43,7 +43,7 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 	VertexDecl *layoutA,
 	ShaderInputSpec *layoutB,
 	bool a4,
-	PCDX11ShaderSub *shaderSub)
+	PCDX11ShaderBinary *shaderSub)
 {
 	// a4 = include normal, binormal, tangent, etc.
 	Vector4 normalScaleOffset{2.0f, -1.0f, 0.0f, 0.0f};

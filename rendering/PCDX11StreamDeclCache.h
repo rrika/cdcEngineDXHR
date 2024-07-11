@@ -23,7 +23,7 @@ struct std::hash<cdc::StreamDeclCacheKey> {
 namespace cdc {
 
 class PCDX11RenderDevice;
-class PCDX11ShaderSub;
+class PCDX11ShaderBinary;
 class PCDX11StreamDecl;
 struct VertexDecl;
 struct ShaderInputSpec;
@@ -40,13 +40,13 @@ struct PCDX11StreamDeclCache {
 
 	PCDX11StreamDecl *buildStreamDecl(
 		VertexDecl *layoutA,
-		PCDX11ShaderSub *shaderSub);
+		PCDX11ShaderBinary *shaderSub);
 
 	PCDX11StreamDecl *buildStreamDecl(
 		VertexDecl *layoutA,
 		ShaderInputSpec *layoutB,
 		bool a4,
-		PCDX11ShaderSub *shaderSub);
+		PCDX11ShaderBinary *shaderSub);
 };
 
 }

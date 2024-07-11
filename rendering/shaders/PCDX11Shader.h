@@ -14,25 +14,25 @@ struct DXBCWrapper { // guessed name
 
 static_assert(sizeof(DXBCWrapper) == 16);
 
-struct PCDX11ShaderSub { // guessed name
+struct PCDX11ShaderBinary { // guessed name
 	DXBCWrapper *dxbcWrapper = nullptr;
 	void *shaderBinary = nullptr;
 	bool hasOwnership; // 8
 	bool wineWorkaround = false; // 9
 	uint16_t shaderBinarySize; // C
 public:
-	PCDX11ShaderSub() { // hack
+	PCDX11ShaderBinary() { // hack
 		hasOwnership = false;
 	}
 
-	PCDX11ShaderSub(void *shaderBinary, uint16_t shaderBinarySize) :
+	PCDX11ShaderBinary(void *shaderBinary, uint16_t shaderBinarySize) :
 		dxbcWrapper(nullptr),
 		shaderBinary(shaderBinary),
 		hasOwnership(false),
 		shaderBinarySize(shaderBinarySize)
 	{} // hack
 
-	PCDX11ShaderSub(char *blob, bool takeCopy, bool isWrapped) {
+	PCDX11ShaderBinary(char *blob, bool takeCopy, bool isWrapped) {
 		hasOwnership = takeCopy;
 		init(blob, takeCopy, isWrapped);
 	}
