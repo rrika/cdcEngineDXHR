@@ -19,6 +19,9 @@ class ScriptObject : public GCObject {
 public:
 	ScriptObject(ScriptType*);
 
+	void ConstructInstance();
+	void DestructInstance();
+
 	Function* GetFunction(int32_t state, int32_t vtIndex);
 	void CallFunction(Function *func, int32_t numArgs, DataValue *args, void *retVal);
 

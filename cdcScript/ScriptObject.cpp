@@ -9,9 +9,19 @@ ScriptObject::ScriptObject(ScriptType *scriptType) :
 	scriptType(scriptType),
 	m_instance(nullptr)
 {
-	// TODO
+	ConstructInstance(); // HACK
+}
+
+void ScriptObject::ConstructInstance() {
+	// HACK
 	m_instance = (uint8_t*) new char;
 	m_instance[0] = 0;
+}
+
+void ScriptObject::DestructInstance() {
+	// HACK
+	delete m_instance;
+	m_instance = nullptr;
 }
 
 Function *ScriptObject::GetFunction(int32_t state, int32_t vtIndex) {
@@ -32,6 +42,7 @@ void ScriptObject::CallFunction(Function *func, int32_t numArgs, DataValue *args
 
 ScriptObject::~ScriptObject() {
 	// TODO
+	DestructInstance(); // HACK
 }
 
 void ScriptObject::MarkChildren() {
