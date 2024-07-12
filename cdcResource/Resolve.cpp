@@ -20,7 +20,7 @@ void Resolve::Destroy() {
 
 int32_t Resolve::Release(ResolveObject*& pObject) {
 	// TODO: interact with StreamDeferredManager
-	if (pObject == nullptr)
+	if (pObject != nullptr)
 		if (auto ref = pObject->Release())
 			return pObject = nullptr, ref;
 
