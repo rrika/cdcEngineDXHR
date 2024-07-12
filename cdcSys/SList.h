@@ -22,6 +22,15 @@ struct SList {
 	Node *head = nullptr;
 	inline static Node *endPtr = nullptr;
 
+	~SList() {
+		Node *node = head;
+		while (node) {
+			Node *next = node->next;
+			delete node;
+			node = next;
+		}
+	}
+
 	inline void push_front(T item) {
 		head = new /*(alloc8)*/ Node{head, item};
 	}
