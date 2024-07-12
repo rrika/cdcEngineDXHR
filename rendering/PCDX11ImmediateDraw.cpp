@@ -59,8 +59,7 @@ PCDX11NGAPrimitive::PCDX11NGAPrimitive(
 
 	// TODO
 
-	// m_pInstanceData = new (pRenderDevice) MaterialInstanceData;
-	m_pInstanceData = new MaterialInstanceData; // HACK: allow instance data to survive across frames
+	m_pInstanceData = new (pRenderDevice) MaterialInstanceData;
 	BuildInstanceDataAndFlags(*m_pInstanceData);
 }
 
