@@ -95,6 +95,15 @@ PCDX11StateManager::PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D1
 	m_projectMatrixPtr = nullptr;
 }
 
+PCDX11StateManager::~PCDX11StateManager() {
+	delete m_uberConstantBuffer[0];
+	delete m_uberConstantBuffer[1];
+	delete m_uberConstantBuffer[2];
+	delete m_uberConstantBuffer[3];
+	delete m_uberConstantBuffer[4];
+	delete m_uberConstantBuffer[5];
+	delete m_uberConstantBuffer[6];
+}
 
 void PCDX11StateManager::reset() {
 	for (uint32_t i=0; i<20; i++) {

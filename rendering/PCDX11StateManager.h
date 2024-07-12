@@ -154,6 +154,7 @@ private:
 public:
 	PCDX11StateManager();
 	PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D11Device *device);
+	~PCDX11StateManager();
 
 	void reset();
 	void setIndexBuffer(PCDX11IndexBuffer *indexBuffer);
