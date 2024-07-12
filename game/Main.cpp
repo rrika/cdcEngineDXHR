@@ -111,7 +111,14 @@ void unloadDatabases() {
 	releaseObject(objectIdByName("GlobalDatabase"));
 	releaseObject(objectIdByName("GlobalSmartScripts"));
 
-	// TODO
+	// auto *primaryweaponsettings_database_ro = ResolveObject::find("primaryweaponsettings_database");
+	// Resolve::Release(primaryweaponsettings_database_ro);
+	auto *objective_database_ro = ResolveObject::find("objective_database");
+	Resolve::Release(objective_database_ro);
+	auto *logicactionresource_database_ro = ResolveObject::find("logicactionresource_database");
+	Resolve::Release(logicactionresource_database_ro);
+	auto *tutorial_database_ro = ResolveObject::find("tutorial_database");
+	Resolve::Release(tutorial_database_ro);
 }
 
 void Init_NativeScripts();

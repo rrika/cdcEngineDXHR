@@ -37,7 +37,7 @@ ResolveObject *ResolveObject::create(
 	);
 }
 
-std::map<uint32_t, ResolveObject *> cachedObjects; // map with stable iterators
+std::map<uint32_t, ResolveObject *> cachedObjects; // map with stable iterators (cdc::s_resolveHash)
 
 ResolveObject *ResolveObject::create(
 	uint32_t pathCrc,
@@ -84,6 +84,13 @@ ResolveObject *ResolveObject::create(
 
 	resolveObject->m_ref++;
 	return resolveObject;
+}
+
+ResolveObject *ResolveObject::find(const char *path) {
+	uint32_t pathCrc = pathCrc32(path);
+	if (auto it = cachedObjects.find(pathCrc); it != cachedObjects.end())
+		return it->second;
+	return nullptr;
 }
 
 ResolveObject::~ResolveObject() {

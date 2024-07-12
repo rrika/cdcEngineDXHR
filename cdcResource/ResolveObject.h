@@ -49,6 +49,8 @@ public:
 		uint32_t priority
 	);
 
+	static ResolveObject *find(const char *path);
+
 	ResolveObject(const char *path, decltype(m_it) it) : path(path), m_it(it) {}
 	~ResolveObject();
 
