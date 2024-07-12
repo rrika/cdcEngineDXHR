@@ -30,11 +30,14 @@ public:
 		numElements(numElements),
 		inputLayout(nullptr),
 		shaderSub(shaderSub),
+		secondaryData(nullptr),
 		vertexBuffer(nullptr),
 		streamDeclBuffer(nullptr)
 	{
 		// InternalResource::...
 	}
+
+	~PCDX11StreamDecl();
 
 	PCDX11RenderDevice *renderDevice; // 10
 	D3D11_INPUT_ELEMENT_DESC *elementDesc; // 1C

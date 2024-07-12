@@ -7,6 +7,13 @@
 
 namespace cdc {
 
+PCDX11StreamDecl::~PCDX11StreamDecl() {
+	delete vertexBuffer;
+	delete[] secondaryData;
+	delete[] elementDesc;
+	// streamDeclBuffer not owned
+}
+
 void PCDX11StreamDecl::apply() {
 	auto deviceContext = renderDevice->getD3DDeviceContext();
 	if (inputLayout)
