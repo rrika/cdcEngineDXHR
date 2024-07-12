@@ -42,6 +42,7 @@ void ObjectSection::ReleaseResource(uint32_t id) {
 		if (otr.state != 2) {
 			// TODO
 		}
+		delete[] otr.objBlob;
 		g_objectManager->objectList->entries[otr.objectListIndex-1].slot = ~0u;
 		otr.resolveObject = nullptr;
 		otr.objBlob = nullptr;
