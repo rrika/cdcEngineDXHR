@@ -22,6 +22,7 @@ public:
 	GFxMovieView *m_gfxMovieInstance; // 4C
 
 	ScaleformMovieInstance(ScaleformMovie *movie/*TODO*/);
+	~ScaleformMovieInstance();
 	uint8_t DispatchToMovieControllers(const char *methodName, const GFxValue *args, uint32_t numArgs);
 	void init(); // HACK
 	void buildUI(); // HACK
