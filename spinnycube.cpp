@@ -1937,6 +1937,9 @@ end:
 	obj4->Release();
 	obj3->Release();
 
+	cdc::releaseObject(lightIndex);
+	cdc::releaseObject(bottleIndex);
+
 	return 0;
 }
 
