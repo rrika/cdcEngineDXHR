@@ -153,6 +153,7 @@ class PCDX11LightManager :
 
 public:
 	PCDX11LightManager(CommonRenderDevice *renderDevice);
+	~PCDX11LightManager();
 
 	LightManagerSubB *allocateSubB();
 	void fillLightBuffer(LightReceiverData *receiverData);

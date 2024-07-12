@@ -28,6 +28,10 @@ PCDX11LightManager::PCDX11LightManager(CommonRenderDevice *commonRenderDevice) :
 	attenuationSampler430 = new PCDX11BitmapTexture(renderDevice, 0, 0, 256, kTextureClassUnknown);
 }
 
+PCDX11LightManager::~PCDX11LightManager() {
+	delete attenuationSampler430;
+}
+
 LightManagerSubB *PCDX11LightManager::allocateSubB() {
 	// TODO
 	return nullptr;
