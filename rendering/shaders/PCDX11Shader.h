@@ -37,6 +37,15 @@ public:
 		init(blob, takeCopy, isWrapped);
 	}
 
+	~PCDX11ShaderBinary() {
+		if (hasOwnership) {
+			if (dxbcWrapper) // TODO
+				delete[] ((char*)shaderBinary-16);
+			else
+				delete[] (char*)shaderBinary;
+		}
+	}
+
 	void init(char *origBlob, bool takeCopy, bool isWrapped) {
 		char *blob = origBlob;
 		if (takeCopy) {
