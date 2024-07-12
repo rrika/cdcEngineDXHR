@@ -40,10 +40,11 @@ public:
 	PCDX11Material(PCDX11RenderDevice *renderDevice) :
 		PCDX11RenderExternalResource(renderDevice)
 	{}
+	void FreeData();
 
 	void load(MaterialBlob *) override;
 	void Release() override;
-	~PCDX11Material() = default;
+	~PCDX11Material() override;
 	void method_18() override;
 
 	void setupVertexResources(uint32_t, MaterialBlobSub*, MaterialInstanceData*, char*, bool);

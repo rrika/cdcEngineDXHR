@@ -20,6 +20,17 @@ void *PCDX11Material::mg_cbdata;
 MaterialInstanceData *PCDX11Material::mg_matInstance;
 bool PCDX11Material::mg_tesselate;
 
+void PCDX11Material::FreeData() {
+	// if (materialBlob != ...)
+	//	renderDevice->Free124(materialBlob);
+	delete[] materialBlob; // allocation happens in MaterialSection
+
+	for (uint32_t i = 0; i < 16; i++) {
+		delete constantBuffersPs[i];
+		delete constantBuffersVs[i];
+	}
+}
+
 void PCDX11Material::load(MaterialBlob *newBlob) {
 	auto deviceContext = renderDevice->getD3DDeviceContext(); // HACK
 	// TODO
@@ -51,7 +62,11 @@ void PCDX11Material::load(MaterialBlob *newBlob) {
 }
 
 void PCDX11Material::Release() {
-	// TODO
+	renderDevice->DeferredRelease(this);
+}
+
+PCDX11Material::~PCDX11Material() {
+	FreeData();
 }
 
 void PCDX11Material::method_18() {
