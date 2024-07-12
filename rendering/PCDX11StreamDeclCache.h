@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <vector>
 
 namespace cdc {
 
@@ -22,6 +23,7 @@ struct std::hash<cdc::StreamDeclCacheKey> {
 
 namespace cdc {
 
+class PCDX11ConstantBuffer;
 class PCDX11RenderDevice;
 class PCDX11ShaderBinary;
 class PCDX11StreamDecl;
@@ -33,10 +35,11 @@ struct PCDX11StreamDeclCache {
 	PCDX11StreamDeclCache(PCDX11RenderDevice *renderDevice) :
 		renderDevice(renderDevice)
 	{}
+	~PCDX11StreamDeclCache();
 
 	PCDX11RenderDevice *renderDevice;
 	std::unordered_map<StreamDeclCacheKey, PCDX11StreamDecl *> cache;
-	uint32_t dword18;
+	std::vector<PCDX11ConstantBuffer*> cbs;
 
 	PCDX11StreamDecl *buildStreamDecl(
 		VertexDecl *layoutA,

@@ -11,6 +11,16 @@ namespace cdc {
 
 DXGI_FORMAT MakeElementFormat(uint16_t format);
 
+PCDX11StreamDeclCache::~PCDX11StreamDeclCache() {
+	for (auto& entry : cache) {
+		delete entry.second;
+		// renderDevice->InternalFree(entry.second);
+	}
+	for (auto cb : cbs) {
+		delete cb;
+	}
+}
+
 PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 	VertexDecl *layout,
 	PCDX11ShaderBinary *shaderSub)
@@ -27,6 +37,7 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 
 		// HACK
 		auto buffer = new PCDX11UberConstantBuffer(2);
+		cbs.push_back(buffer);
 		float rows[] = {
 			2.0f, -1.0f, 0.0f, 0.0f, // NormalScaleOffset
 			1.0f,  0.0f, 0.0f, 0.0f  // TexcoordScales
@@ -164,6 +175,7 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 
 		// HACK
 		auto buffer = new PCDX11UberConstantBuffer(2);
+		cbs.push_back(buffer);
 		float rows[] = {
 			normalScaleOffset.x,
 			normalScaleOffset.y,
