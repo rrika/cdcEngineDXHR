@@ -15,6 +15,14 @@ public:
 		data = new char[16 * rows];
 	}
 
+	~PCDX11UberConstantBuffer() {
+		delete[] (char*)data;
+		if (buffer) {
+			// ScheduleAsyncDelete
+			buffer->Release();
+		}
+	}
+
 	void ensureBuffer() {
 		if (buffer == nullptr) {
 			D3D11_BUFFER_DESC desc = {};
