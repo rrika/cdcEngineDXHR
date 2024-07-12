@@ -276,6 +276,9 @@ PCDX11RenderDevice::~PCDX11RenderDevice() {
 	delete shlib_1;
 	delete shlib_0;
 
+	for (uint32_t i=0; i<std::size(drawVertexDecls); i++)
+		VertexDecl::Destroy(drawVertexDecls[i]);
+
 	delete renderContext_10CEC;
 	delete static_cast<PCDX11LightManager*>(lightManager);
 }

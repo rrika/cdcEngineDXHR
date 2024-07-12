@@ -57,6 +57,10 @@ struct VertexDecl {
 	}
 
 	void Finalize();
+
+	static void Destroy(void *that) {
+		delete[] (char*)that;
+	}
 };
 
 struct VertexAttributeB {
