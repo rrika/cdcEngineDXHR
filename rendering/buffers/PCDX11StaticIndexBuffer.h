@@ -41,7 +41,7 @@ public:
 	uint32_t getCount() override { return m_numIndices; }
 	void method_10() override { /*empty*/ }
 
-	void deferredUpdate() override { /*TODO*/ }
+	void deferredUpdate(PCDX11RenderDevice*) override { /*TODO*/ }
 };
 
 }

@@ -37,12 +37,26 @@ void PrimitiveContext::NewState() {
 	// TODO
 }
 
-void PrimitiveContext::SetVertexBuffer(CommonVertexBuffer*) {
-	// TODO
+void PrimitiveContext::SetVertexDecl(VertexDecl *vd) {
+	if (m_isTransient && m_dirtyBits == 0)
+		NewState();
+	m_dirtyBits |= 1;
+	m_pWriteState->m_pVertexDecl = vd;
 }
 
-void PrimitiveContext::SetIndexBuffer(CommonIndexBuffer*) {
-	// TODO
+void PrimitiveContext::SetVertexBuffer(CommonVertexBuffer *vb) {
+	if (m_isTransient && m_dirtyBits == 0)
+		NewState();
+	m_dirtyBits |= 1;
+	m_pWriteState->vertexBuffer = vb;
+}
+
+void PrimitiveContext::SetIndexBuffer(CommonIndexBuffer *ib) {
+	// TODO: call method on ib (maybe)
+	if (m_isTransient && m_dirtyBits == 0)
+		NewState();
+	m_dirtyBits |= 1;
+	m_pWriteState->indexBuffer = ib;
 }
 
 void PrimitiveContext::SetInstanceParam(uint32_t, Vector4Arg) {

@@ -43,7 +43,7 @@ public:
 	uint32_t getStride() override { return stride; }
 	void method14() override {}
 
-	void deferredUpdate() override { /*TODO*/ }
+	void deferredUpdate(PCDX11RenderDevice*) override { /*TODO*/ }
 };
 
 }
