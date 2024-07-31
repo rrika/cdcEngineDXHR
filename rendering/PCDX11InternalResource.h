@@ -10,7 +10,7 @@ public:
 	virtual ~PCDX11InternalResource();
 	virtual bool internalCreate() = 0;
 	virtual void internalRelease() = 0;
-	virtual void internalResource0C();
+	virtual bool internalResource0C();
 	virtual void internalResource10();
 	virtual void internalOnSettingsChanged();
 

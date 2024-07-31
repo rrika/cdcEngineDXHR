@@ -13,7 +13,7 @@ PCDX11InternalResource::~PCDX11InternalResource() {
 	// deviceManager->unregister(this);
 }
 
-void PCDX11InternalResource::internalResource0C() { internalCreate(); }
+bool PCDX11InternalResource::internalResource0C() { return internalCreate(); }
 
 void PCDX11InternalResource::internalResource10() { internalRelease(); }
 
