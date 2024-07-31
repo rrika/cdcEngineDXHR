@@ -93,7 +93,7 @@ void PCDX11RenderModel::resConstruct() {
 		sub1->format += (uintptr_t)mesh;
 		auto *layout = (VertexDecl*)sub1->format;
 		sub1->staticVertexBuffer = new PCDX11StaticVertexBuffer(
-			PCDX11RenderExternalResource::renderDevice->staticPool10D10,
+			PCDX11RenderExternalResource::renderDevice->m_pStaticVertexPool,
 			layout->vertStrideA,
 			sub1->numVertices,
 			(void*)sub1->vertices);
@@ -108,7 +108,7 @@ void PCDX11RenderModel::resConstruct() {
 		mesh->indices += (uintptr_t)mesh;
 		indices = mesh->indices;
 		indexBuffer = new PCDX11StaticIndexBuffer(
-			PCDX11RenderExternalResource::renderDevice->staticPool10D10,
+			PCDX11RenderExternalResource::renderDevice->m_pStaticIndexPool,
 			mesh->numIndices,
 			(void*)indices);
 	}

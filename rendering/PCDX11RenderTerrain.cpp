@@ -220,7 +220,7 @@ void PCDX11RenderTerrain::resConstruct() {
 
 		void *vertices = (void*)(((char*)header) + buffer.primaryVertexDataOffset);
 		auto *vertexBuffer = new PCDX11StaticVertexBuffer(
-			PCDX11RenderExternalResource::renderDevice->staticPool10D10,
+			PCDX11RenderExternalResource::renderDevice->m_pStaticVertexPool,
 			layout->vertStrideA,
 			buffer.numVertices,
 			vertices);
@@ -231,7 +231,7 @@ void PCDX11RenderTerrain::resConstruct() {
 	// create index buffer
 	auto *indices = (uint16_t*)(((char*)header) + header->indicesOffset);
 	indexBuffer = new PCDX11StaticIndexBuffer(
-		PCDX11RenderExternalResource::renderDevice->staticPool10D10,
+		PCDX11RenderExternalResource::renderDevice->m_pStaticIndexPool,
 		header->numIndices,
 		indices);
 

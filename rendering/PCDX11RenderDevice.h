@@ -53,10 +53,10 @@ public:
 	RenderList *renderList_last = nullptr; // 10D04
 	RenderList *renderList_override = nullptr; // own addition
 
-	// PCDX11Pool *staticPool10D08;
-	// PCDX11Pool *staticPool10D0C;
-	PCDX11StaticPool *staticPool10D10 = nullptr;
-	// PCDX11StaticPool *staticPool10D14;
+	PCDX11Pool *m_pDynamicVertexPool = nullptr; // 10D08
+	PCDX11Pool *m_pDynamicIndexPool = nullptr; // 10D0C
+	PCDX11StaticPool *m_pStaticVertexPool = nullptr; // 10D10
+	PCDX11StaticPool *m_pStaticIndexPool = nullptr; // 10D14
 
 	VertexDecl *drawVertexDecls[7] = {}; // 10BBC
 
