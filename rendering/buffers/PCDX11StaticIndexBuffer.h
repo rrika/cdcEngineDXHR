@@ -31,13 +31,13 @@ public:
 		vertexBufferDesc.Usage     = D3D11_USAGE_IMMUTABLE;
 		vertexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		D3D11_SUBRESOURCE_DATA subresourceData = { data };
-		deviceManager->getD3DDevice()->CreateBuffer(&vertexBufferDesc, &subresourceData, &m_alloc.buffer);
-		m_alloc.offset = 0;
-		m_alloc.totalSize = 2 * count;
+		deviceManager->getD3DDevice()->CreateBuffer(&vertexBufferDesc, &subresourceData, &m_alloc.m_pBuffer);
+		m_alloc.m_offset = 0;
+		m_alloc.m_size = 2 * count;
 	}
 
-	uint32_t getStartIndex() override { return m_alloc.offset; }
-	ID3D11Buffer *getD3DBuffer() override { return m_alloc.buffer; }
+	uint32_t getStartIndex() override { return m_alloc.m_offset; }
+	ID3D11Buffer *getD3DBuffer() override { return m_alloc.m_pBuffer; }
 	uint32_t getCount() override { return m_numIndices; }
 	void method_10() override { /*empty*/ }
 

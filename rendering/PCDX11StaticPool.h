@@ -10,9 +10,10 @@ namespace cdc {
 class PCDX11StaticPool : public PCDX11InternalResource {
 public:
 	struct Allocation { // sizeof(Allocation) == 16
-		uint32_t offset; // 0
-		uint32_t totalSize; // 4
-		ID3D11Buffer *buffer; // 8
+		uint32_t m_offset; // 0
+		uint32_t m_size; // 4
+		ID3D11Buffer *m_pBuffer; // 8
+		// RangeAllocator::Block *m_pBlock; // C
 	};
 
 	bool internalCreate() override { return true; };

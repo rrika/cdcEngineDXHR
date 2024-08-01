@@ -33,12 +33,12 @@ public:
 		vertexBufferDesc.Usage     = D3D11_USAGE_IMMUTABLE;
 		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		D3D11_SUBRESOURCE_DATA subresourceData = { data };
-		deviceManager->getD3DDevice()->CreateBuffer(&vertexBufferDesc, &subresourceData, &allocation.buffer);
-		allocation.totalSize = stride * count;
+		deviceManager->getD3DDevice()->CreateBuffer(&vertexBufferDesc, &subresourceData, &allocation.m_pBuffer);
+		allocation.m_size = stride * count;
 	}
 
 	uint32_t getBaseVertex() override { return baseVertex; }
-	ID3D11Buffer *getD3DBuffer() override { return allocation.buffer; }
+	ID3D11Buffer *getD3DBuffer() override { return allocation.m_pBuffer; }
 	uint32_t method0C() override { return count; }
 	uint32_t getStride() override { return stride; }
 	void method14() override {}
