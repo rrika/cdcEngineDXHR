@@ -2,6 +2,9 @@ target_sources(dxhr PRIVATE
 	Culling/BasicPrimitives.cpp
 	Culling/Primitives.cpp
 
+	buffers/PCDX11StaticIndexBuffer.cpp
+	buffers/PCDX11StaticVertexBuffer.cpp
+
 	drawables/PCDX11ClearDrawable.cpp
 	drawables/PCDX11FastBlurDrawable.cpp
 	drawables/PCDX11FXAADrawable.cpp
@@ -41,6 +44,7 @@ target_sources(dxhr PRIVATE
 	PCDX11RenderTerrain.cpp
 	PCDX11Scene.cpp
 	PCDX11StateManager.cpp
+	PCDX11StaticPool.cpp
 	PCDX11StreamDecl.cpp
 	PCDX11StreamDeclCache.cpp
 	PCDX11TerrainDrawable.cpp

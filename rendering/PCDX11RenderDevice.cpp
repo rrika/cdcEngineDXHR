@@ -17,6 +17,7 @@
 #include "CommonRenderTerrainInstance.h"
 #include "PCDX11Scene.h"
 #include "PCDX11StateManager.h"
+#include "PCDX11StaticPool.h"
 #include "PCDX11TerrainDrawable.h"
 #include "RenderPasses.h"
 #include "Types.h"
@@ -76,6 +77,9 @@ PCDX11RenderDevice::PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t heigh
 	streamDeclCache(this)
 {
 	d3dDeviceContext111580 = deviceManager->getD3DDeviceContext();
+
+	m_pStaticVertexPool = new PCDX11StaticPool(this, D3D11_BIND_VERTEX_BUFFER, 0xA00000, nullptr /*TODO*/);
+	m_pStaticIndexPool = new PCDX11StaticPool(this, D3D11_BIND_INDEX_BUFFER, 0xA00000, nullptr /*TODO*/);
 
 	lightManager = new PCDX11LightManager(this);
 
