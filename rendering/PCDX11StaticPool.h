@@ -1,8 +1,8 @@
 #pragma once
 #include <cstdint>
-// #include <vector>
+#include <vector>
 #include "PCDX11InternalResource.h"
-//#include "RangeAllocator.h"
+#include "RangeAllocator.h"
 
 struct ID3D11Buffer;
 
@@ -17,13 +17,13 @@ public:
 		uint32_t m_offset; // 0
 		uint32_t m_size; // 4
 		ID3D11Buffer *m_pBuffer; // 8
-		// RangeAllocator::Block *m_pBlock; // C
+		RangeAllocator::Block *m_pBlock; // C
 	};
 
 	uint32_t m_bufferSize; // C
 	uint32_t m_binding; // 10, D3D11_BIND_FLAG
-	// std::vector<ID3D11Buffer *> m_buffers; // 14
-	// RangeAllocator m_rangeAlloc; // 20
+	std::vector<ID3D11Buffer *> m_buffers; // 14
+	RangeAllocator m_rangeAlloc; // 20
 	PCDX11RenderDevice *m_pRenderDevice;
 
 	PCDX11StaticPool(
