@@ -2,6 +2,8 @@ target_sources(dxhr PRIVATE
 	Culling/BasicPrimitives.cpp
 	Culling/Primitives.cpp
 
+	buffers/PCDX11DynamicIndexBuffer.cpp
+	buffers/PCDX11DynamicVertexBuffer.cpp
 	buffers/PCDX11StaticIndexBuffer.cpp
 	buffers/PCDX11StaticVertexBuffer.cpp
 
@@ -35,6 +37,7 @@ target_sources(dxhr PRIVATE
 	PCDX11Material.cpp
 	PCDX11MatrixState.cpp
 	PCDX11ModelDrawable.cpp
+	PCDX11Pool.cpp
 	PCDX11RenderContext.cpp
 	PCDX11RenderDevice.cpp
 	PCDX11RenderLight.cpp
