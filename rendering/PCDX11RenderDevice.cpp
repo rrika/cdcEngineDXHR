@@ -8,6 +8,7 @@
 #include "PCDX11Material.h"
 #include "PCDX11MatrixState.h"
 #include "PCDX11ModelDrawable.h"
+#include "PCDX11Pool.h"
 #include "PCDX11RenderContext.h"
 #include "PCDX11RenderDevice.h"
 #include "PCDX11RenderModel.h"
@@ -78,6 +79,8 @@ PCDX11RenderDevice::PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t heigh
 {
 	d3dDeviceContext111580 = deviceManager->getD3DDeviceContext();
 
+	m_pDynamicVertexPool = new PCDX11Pool(0, D3D11_BIND_VERTEX_BUFFER, 0x100000, nullptr /*TODO*/);
+	m_pDynamicIndexPool = new PCDX11Pool(0, D3D11_BIND_INDEX_BUFFER, 0x80000, nullptr /*TODO*/);
 	m_pStaticVertexPool = new PCDX11StaticPool(this, D3D11_BIND_VERTEX_BUFFER, 0xA00000, nullptr /*TODO*/);
 	m_pStaticIndexPool = new PCDX11StaticPool(this, D3D11_BIND_INDEX_BUFFER, 0xA00000, nullptr /*TODO*/);
 
@@ -308,6 +311,9 @@ void PCDX11RenderDevice::resetRenderLists(float timeDelta) {
 	// TODO
 	m_frameTimeDelta = timeDelta;
 	m_currentTime += 1000 * timeDelta;
+	// these pools are used for data passed to DrawIndexedPrimitive
+	m_pDynamicVertexPool->BeginScene();
+	m_pDynamicIndexPool->BeginScene();
 	// TODO
 }
 
@@ -856,6 +862,9 @@ void PCDX11RenderDevice::drawRenderListsInternal(void *arg) {
 	linear34 = linear30;
 	linear30 = linear;
 	linear->rewind();
+
+	m_pDynamicVertexPool->EndScene();
+	m_pDynamicIndexPool->EndScene();
 
 	// TODO
 	if (renderList_override)
