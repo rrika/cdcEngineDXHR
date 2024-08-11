@@ -22,6 +22,8 @@
 #include "PCDX11TerrainDrawable.h"
 #include "RenderPasses.h"
 #include "Types.h"
+#include "buffers/PCDX11DynamicIndexBuffer.h"
+#include "buffers/PCDX11DynamicVertexBuffer.h"
 #include "buffers/PCDX11SimpleDynamicVertexBuffer.h"
 #include "buffers/PCDX11SimpleStaticVertexBuffer.h"
 #include "shaders/PCDX11ShaderLib.h"
@@ -553,9 +555,89 @@ void PCDX11RenderDevice::DrawIndexedPrimitive(
 }
 
 void PCDX11RenderDevice::DrawIndexedPrimitive(
-	PrimitiveContext *pContext, void*, VertexDecl*, uint32_t, uint16_t*, uint32_t, float)
+	PrimitiveContext *pContext,
+	void *verts,
+	VertexDecl *vertexDecl,
+	uint32_t numVertices,
+	uint16_t *indices,
+	uint32_t numPrims,
+	float sortZ)
 {
-	// TODO
+	// WIP
+
+	auto *state = pContext->m_pWriteState;
+	uint32_t flags = state->m_flags;
+	uint32_t passes = pContext->m_passes;
+
+	if (flags & 0x1000000)
+		passes = 1 << kPassIndexFullScreenFX; // 4
+	else if (flags & 0x40000)
+		passes = 1 << kPassIndexPostFSX; // 5
+
+	auto *material = state->m_pMaterial;
+	if (material == nullptr) {
+		// TODO: obtain material from 10C38
+	}
+
+	bool fading = (flags & 0x400) || sortZ != 0.f;
+	passes &= material->GetRenderPassMask(fading);
+
+	// if (m_geometryIsVisible == false) {
+	// 	passes &= ~renderPasses->dword408[kRegularPass];
+	// 	passes &= ~renderPasses->dword408[kLightPass];
+	// }
+
+	if (passes) {
+		if ((flags & 0x1000) == 0) {
+			// TODO: recalculate sortZ from matrix
+		}
+
+		if (!pContext->m_isTransient)
+			pContext->NewState();
+
+		PrimitiveInfo primInfo(flags, numPrims, /*hasSourceIndices=*/ indices != nullptr);
+		if (!numVertices)
+			numVertices = primInfo.m_numVertices;
+
+		auto *vb = new (this) PCDX11DynamicVertexBuffer(m_pDynamicVertexPool, vertexDecl->vertStrideA, numVertices);
+		// PrimitiveContext context2(*pContext); // probably
+		PrimitiveContext& context2 = *pContext; // HACK
+
+		context2.SetVertexDecl(vertexDecl);
+		if (auto *vbmem = vb->Lock()) {
+			memcpy(vbmem, verts, numVertices * vertexDecl->vertStrideA);
+			context2.SetVertexBuffer(vb);
+		}
+
+		if (indices) {
+			auto *ib = new (this) PCDX11DynamicIndexBuffer(m_pDynamicIndexPool, numVertices);
+			auto *ibmem = ib->Lock();
+			if ((flags & 0x30000) == 0x10000) {
+				// TODO
+			} else {
+				memcpy(ibmem, indices, 2 * numVertices);
+			}
+			context2.SetIndexBuffer(ib);
+		}
+
+		auto *prim = new (this, 4) PCDX11NGAPrimitive(
+			pContext->m_pReadState,
+			&primInfo,
+			/*startIndex=*/0,
+			sortZ,
+			static_cast<PCDX11Material*>(material),
+			this);
+		
+		// if ((passes & (1 << kPassIndexPostFSX) /*0x20*/) && ...) {
+		// 	TODO
+		// }
+		bool drawInPartition = false; // TODO
+		recordDrawable(prim, passes, drawInPartition);
+		if (passes & (1 << kPassIndexShadow) /*0x200*/) {
+			// TODO
+			// if BlendModeIsOpaque
+		}
+	}
 }
 
 void PCDX11RenderDevice::method_CC() {
