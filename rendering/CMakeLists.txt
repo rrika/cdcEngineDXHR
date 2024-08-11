@@ -50,6 +50,7 @@ target_sources(dxhr PRIVATE
 	PCDX11TerrainDrawable.cpp
 	PrimitiveContext.cpp
 	Projection.cpp
+	RangeAllocator.cpp
 	RenderPasses.cpp
 	RenderResource.cpp
 	VertexDeclaration.cpp)
