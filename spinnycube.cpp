@@ -29,6 +29,7 @@
 #include "game/DeferredRenderingObject.h"
 #include "game/Gameloop.h"
 #include "game/LensFlareAndCoronaID.h"
+#include "game/ObjectiveManager.h"
 #include "game/script/game/NsMainMenuMovieController.h"
 #include "game/ui/FakeScaleform/fakescaleform.h"
 #include "game/ui/NsPopupRequest.h"
@@ -648,6 +649,9 @@ int spinnyCube(HWND window,
 	mouseLook = true;
 	mouseKeyboard->setCursorGrab(true);
 #endif
+
+	ObjectiveManager objectiveManager;
+	objectiveManager.loadAll();
 
 	std::unordered_map<cdc::IRenderTerrain*, cdc::CommonRenderTerrainInstance *> renderTerrainInstances;
 
