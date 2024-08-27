@@ -51,6 +51,8 @@ void PPQuad(float depth, cdc::IMaterial *material, cdc::MaterialInstanceParams *
 		0);
 }
 
+std::vector<PPTraceNode> pptrace;
+
 PPManager *PPManager::s_instance = nullptr;
 
 PPManager::PPManager() {
@@ -210,6 +212,8 @@ bool PPManager::prepare() {
 			markPassLive(i, &varPassTex->passes, prePassMasks, &variablesMask);
 
 	// TODO
+
+	pptrace.clear();
 
 	return true;
 }
@@ -518,6 +522,18 @@ void PPManager::buildUI(UIActions& uiact) {
 			}
 			if (highlight)
 				ImGui::PopStyleColor();
+		}
+		ImGui::EndGroup();
+
+		ImGui::SameLine();
+
+		ImGui::BeginGroup();
+		for (auto& node : pptrace) {
+			ImGui::Text("%s  %d", node.name, node.output);
+			for (auto input : node.inputs) {
+				ImGui::SameLine();
+				ImGui::Text("%d", input);
+			}
 		}
 		ImGui::EndGroup();
 

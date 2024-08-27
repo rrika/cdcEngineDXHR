@@ -112,6 +112,8 @@ void PPPass::run(cdc::CommonRenderTarget **output, PPRTs *rts, cdc::RenderViewpo
 
 				cdc::TextureMap *rt0 = textures[blob->textureIndices[0]].getRenderTexture(rts);
 
+				pptrace.emplace_back(blob->name, 0, std::vector<uint32_t>{blob->textureIndices[0]});
+
 				switch (blob->builtinShaderType) {
 				case 1:
 					PPFastBlur(rt0, rt, 8, 1, /*0, 29,*/ 0); break;
@@ -136,6 +138,14 @@ void PPPass::run(cdc::CommonRenderTarget **output, PPRTs *rts, cdc::RenderViewpo
 				mip.m_depthBoundsMin = 0.0;
 				mip.m_depthBoundsMax = 1.0;
 				mip.m_pStencilParams = nullptr;
+
+				std::vector<uint32_t> inputs;
+				if (blob->blendOverPrevious)
+					inputs.push_back(0);
+				for (uint32_t i=0; i<4; i++)
+					if (blob->textureIndices[i] != ~0u)
+						inputs.push_back(blob->textureIndices[i]);
+				pptrace.emplace_back(blob->name, 0, inputs);
 
 				for (uint32_t i=0; i<8; i++)
 					if (blob->variableIndices[i] != ~0u)

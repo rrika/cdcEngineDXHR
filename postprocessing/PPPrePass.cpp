@@ -35,6 +35,7 @@ void PPPrePass::run(PPRTs *rts, cdc::RenderViewport *viewport, cdc::CommonRender
 	v.byteC9 = 0;
 	cdc::CommonRenderTarget *rt = textures[blob->outputTextureIndex].getRenderTarget();
 	cdc::CommonRenderTarget *sourceColor = nullptr;
+	std::vector<uint32_t> inputs;
 
 	if (blob->clearMode == 0) {
 		v.clearMode = 1;
@@ -55,6 +56,8 @@ void PPPrePass::run(PPRTs *rts, cdc::RenderViewport *viewport, cdc::CommonRender
 	} else if (blob->clearMode == 2) {
 		v.clearMode = 1;
 		sourceColor = textures[blob->sourceTextureIndex].getRenderTarget();
+		inputs.push_back(blob->sourceTextureIndex);
+
 	}
 
 	// TODO
@@ -74,6 +77,9 @@ void PPPrePass::run(PPRTs *rts, cdc::RenderViewport *viewport, cdc::CommonRender
 	cdc::TextureMap *rt0 = textures[blob->textureIndices[0]].getRenderTexture(rts);
 
 	if (blob->builtinShaderType) {
+		inputs.push_back(blob->textureIndices[0]);
+		pptrace.emplace_back(blob->name, blob->outputTextureIndex, std::move(inputs));
+
 		switch (blob->builtinShaderType) {
 		case 1:
 			PPFastBlur(rt0, rt, 8, 1, /*0, 29,*/ 0); break; // horizontal un-weighted
@@ -98,6 +104,10 @@ void PPPrePass::run(PPRTs *rts, cdc::RenderViewport *viewport, cdc::CommonRender
 		mip.m_depthBoundsMin = 0.0;
 		mip.m_depthBoundsMax = 1.0;
 		mip.m_pStencilParams = nullptr;
+		for (uint32_t i=0; i<4; i++)
+			if (blob->textureIndices[i] != ~0u)
+				inputs.push_back(blob->textureIndices[i]);
+		pptrace.emplace_back(blob->name, blob->outputTextureIndex, std::move(inputs));
 
 		for (uint32_t i=0; i<8; i++)
 			if (blob->variableIndices[i] != ~0u)

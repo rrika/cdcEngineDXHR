@@ -27,6 +27,14 @@ struct PPRTs {
 	cdc::CommonRenderTarget *rtC = nullptr;
 };
 
+struct PPTraceNode {
+	const char *name;
+	uint32_t output;
+	std::vector<uint32_t> inputs;
+};
+
+extern std::vector<PPTraceNode> pptrace;
+
 class PPManager {
 public:
 	static PPManager *s_instance;
