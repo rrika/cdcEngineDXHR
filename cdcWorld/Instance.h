@@ -66,6 +66,7 @@ public:
 	std::vector<cdc::Matrix> overridePose; // HACK
 
 public:
+	static Instance *Find(uint32_t);
 	static Instance *IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, bool force); // line 1672
 	static Instance *IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, /*GCPtr<...>*/NsInstance *scriptObject, bool force); // line 1679
 	bool ScriptAndUberInitCommon(uint32_t scriptTypeId, /*GCPtr<...>*/NsInstance *scriptObject, void *unknown); // line 2793

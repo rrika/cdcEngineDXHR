@@ -1,4 +1,5 @@
 #pragma once
+#include <unordered_map>
 #include <vector>
 #include "cdc/dtp/objectproperties/intro.h"
 
@@ -16,6 +17,7 @@ public:
 			return CreateInstance2();
 	}
 
+	static std::unordered_map<int, Instance*> gInstanceIntroUniqueIDHashMap;
 	static Instance *s_chain; // single chain for now
 	static std::vector<Instance*> s_instances;
 };

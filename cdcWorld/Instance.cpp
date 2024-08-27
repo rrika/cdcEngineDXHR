@@ -37,6 +37,7 @@ void Instance::ReallyRemoveInstance() { // line 1086
 			*i = this->next;
 			break;
 		}
+	InstanceManager::gInstanceIntroUniqueIDHashMap.erase(introUniqueID);
 	delete this;
 }
 
@@ -168,6 +169,9 @@ void Instance::DefaultInit( // line 2977
 	rotation = *pRotation;
 
 	objectData = object->data;
+	introUniqueID = uniqueID;
+
+	InstanceManager::gInstanceIntroUniqueIDHashMap[uniqueID] = this;
 
 	struct ObjProp {
 		uint16_t version;
@@ -260,6 +264,13 @@ dtp::Model **Instance::GetModels() {
 		return derivedObject->models;
 
 	return object->models;
+}
+
+Instance *Instance::Find(uint32_t introUniqueID) { // line 3384
+	auto& map = InstanceManager::gInstanceIntroUniqueIDHashMap;
+	if (auto it = map.find(introUniqueID); it != map.end())
+		return it->second;
+	return nullptr;
 }
 
 void Instance::InitEditorPose(dtp::Model *model) {

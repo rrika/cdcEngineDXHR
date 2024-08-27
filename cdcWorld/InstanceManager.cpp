@@ -1,6 +1,7 @@
 #include "Instance.h"
 #include "InstanceManager.h"
 
+std::unordered_map<int, Instance*> InstanceManager::gInstanceIntroUniqueIDHashMap;
 std::vector<Instance*> InstanceManager::s_instances;
 Instance *InstanceManager::s_chain = nullptr;
 
