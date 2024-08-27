@@ -624,6 +624,7 @@ int spinnyCube(HWND window,
 	bool showStringsWindow = false;
 	bool showScaleformStringsWindow = false;
 	bool showAnimationsWindow = false;
+	bool showObjectivesWindow = false;
 	bool showIntroButtons = true;
 	bool showIntroButtonsIMF = true;
 	bool editorMode = false;
@@ -1290,6 +1291,7 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Show strings")) { showStringsWindow = true; }
 				if (ImGui::MenuItem("Show scaleform strings")) { showScaleformStringsWindow = true; }
 				if (ImGui::MenuItem("Show animations")) { showAnimationsWindow = true; }
+				if (ImGui::MenuItem("Show objectives")) { showObjectivesWindow = true; }
 				if (ImGui::MenuItem("I never asked for this")) { howDoYouHandleAllOfThis(); }
 				ImGui::EndMenu();
 			}
@@ -1909,6 +1911,69 @@ int spinnyCube(HWND window,
 		if (showAnimationsWindow) {
 			if (ImGui::Begin("Animations", &showAnimationsWindow)) {
 				cdc::ANITRACKER_BuildUI(uiact);
+			}
+			ImGui::End();
+		}
+		if (showObjectivesWindow) {
+			static Mission *selectedMission = nullptr;
+			if (ImGui::Begin("Objectives", &showObjectivesWindow)) {
+				if (ImGui::BeginListBox("##missions", ImVec2(300, -FLT_MIN))) {
+					for (Mission *mission : objectiveManager.m_missions) {
+						std::string label;
+						label += std::string(mission->getName());
+						label += " (";
+						label += mission->getState();
+						label += ")";
+						if (ImGui::Selectable(label.c_str(), selectedMission == mission))
+							selectedMission = mission;
+					}
+					ImGui::EndListBox();
+				}
+				ImGui::SameLine();
+				ImGui::BeginGroup();
+				if (selectedMission) {
+					ImGui::TextWrapped("%s", selectedMission->getDescription());
+					ImGui::Separator();
+					// make a copy in case the list is modified during iteration
+					std::vector<Objective*> primaryObjectives(
+						selectedMission->m_primaryObjectives.begin(),
+						selectedMission->m_primaryObjectives.end());
+
+					for (auto objective : primaryObjectives) {
+						ImGui::PushID(objective);
+						ImGui::Text("%s", objective->getName());
+						if (objective->isInState(ObjectiveState::kNotAssigned)) {
+							ImGui::SameLine(); if (ImGui::SmallButton("Begin")) { objective->stateTransition(ObjectiveState::kInProgress, true); }
+						} else if (objective->isInState(ObjectiveState::kInProgress)) {
+							ImGui::SameLine(); if (ImGui::SmallButton("Cancel")) { objective->stateTransition(ObjectiveState::kCancelled, true); }
+							ImGui::SameLine(); if (ImGui::SmallButton("Complete")) { objective->stateTransition(ObjectiveState::kCompleted, true); }
+							ImGui::SameLine(); if (ImGui::SmallButton("Fail")) { objective->stateTransition(ObjectiveState::kFailed, true); }
+							ImGui::SameLine(); if (ImGui::SmallButton("Delete")) { objective->stateTransition(ObjectiveState::kDeleted, true); }
+							uint32_t numLocators = 0;
+							auto *locators = objective->getLocators(numLocators);
+							for (uint32_t i=0; i<numLocators; i++) {
+								ImGui::Text("Locator [%d:%08x] %f %f %f", i,
+									locators[i].uiLocatorId,
+									locators[i].position.x,
+									locators[i].position.y,
+									locators[i].position.z);
+							}
+						} else {
+							ImGui::SameLine();
+							ImGui::Text("(%s)", objective->getState());
+						}
+						ImGui::TextWrapped("%s", objective->getDescription());
+						ImGui::Text("\n");
+						ImGui::PopID();
+					}
+					/*ImGui::Separator();
+					for (auto objective : selectedMission->m_secondaryObjectives) {
+						ImGui::TextWrapped("%s\n%s\n",
+							objective->getName(),
+							objective->getDescription());
+					}*/
+				}
+				ImGui::EndGroup();
 			}
 			ImGui::End();
 		}
