@@ -1,21 +1,21 @@
 #include "DX3Player.h"
 
-bool DX3PlayerDelegate::init(cdc::CdcPlayer*) {
+bool DX3Player::init() {
 	// TODO
 	return true;
 }
 
-bool DX3PlayerDelegate::method_4(cdc::CdcPlayer*) {
+bool DX3Player::method_4() {
 	// TODO
 	return true;
 }
 
-bool DX3PlayerDelegate::uninit_a(cdc::CdcPlayer*) {
+bool DX3Player::uninit_a() {
 	// TODO
 	return true;
 }
 
-bool DX3PlayerDelegate::uninit_b(cdc::CdcPlayer*) {
+bool DX3Player::uninit_b() {
 	// TODO
 	return true;
 }
@@ -71,6 +71,21 @@ void Player::Init(Instance *instance, GameTracker*) {
 	cdcPlayer->instance = instance;
 	cdcPlayer->player = player;
 	cdcPlayer->playerAPI = api;
+}
+
+// -------------------------------------------------------------------------- //
+
+class DX3PlayerDelegate : public cdc::CdcPlayer::IDelegate {
+public:
+	bool init(cdc::CdcPlayer *cdcPlayer) override { return static_cast<DX3Player*>(cdcPlayer)->init(); }
+	bool method_4(cdc::CdcPlayer *cdcPlayer) override { return static_cast<DX3Player*>(cdcPlayer)->method_4(); }
+	bool uninit_a(cdc::CdcPlayer *cdcPlayer) override { return static_cast<DX3Player*>(cdcPlayer)->uninit_a(); }
+	bool uninit_b(cdc::CdcPlayer *cdcPlayer) override { return static_cast<DX3Player*>(cdcPlayer)->uninit_b(); }
+};
+
+void setupDX3PlayerDelegate() {
+	static DX3PlayerDelegate delegate;
+	cdc::CdcPlayer::s_delegate = &delegate;
 }
 
 // -------------------------------------------------------------------------- //

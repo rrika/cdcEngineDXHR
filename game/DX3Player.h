@@ -10,15 +10,14 @@ class DX3Player : public cdc::CdcPlayer {
 public:
 	Player *player; // 8
 	// ContextualActionManager *contextualActionManager24;
+
+	bool init();
+	bool method_4();
+	bool uninit_a();
+	bool uninit_b();
 };
 
-class DX3PlayerDelegate : public cdc::CdcPlayer::IDelegate {
-public:
-	bool init(cdc::CdcPlayer*) override;
-	bool method_4(cdc::CdcPlayer*) override;
-	bool uninit_a(cdc::CdcPlayer*) override;
-	bool uninit_b(cdc::CdcPlayer*) override;
-};
+void setupDX3PlayerDelegate();
 
 class PlayerPair {
 	DX3Player *player[2];
