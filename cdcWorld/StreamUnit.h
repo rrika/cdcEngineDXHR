@@ -18,7 +18,7 @@ struct Level { // UnitBlob
 	uint32_t dwordC; // SignalIDList
 	uint32_t version; // 10
 	uint32_t dword14;
-	uint32_t dword18;
+	int32_t streamUnitID; // 18
 	uint32_t dword1C;
 	uint32_t dword20; // unused?
 	uint32_t dword24; // unused?

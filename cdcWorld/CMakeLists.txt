@@ -6,6 +6,7 @@ target_sources(dxhr PRIVATE
 	InstncG2.cpp
 	InstanceDrawable.cpp
 	InstanceManager.cpp
+	Intro.cpp
 	RenderLayer.cpp
 	RMIDrawableBase.cpp
 	SceneLayer.cpp

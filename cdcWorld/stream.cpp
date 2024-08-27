@@ -116,7 +116,7 @@ StreamUnit *STREAM_GetAndInitStreamUnitWithID(const char *name, int32_t id) { //
 
 	unit->used = 1;
 	strcpy((char*)unit->name, name);
-	unit->StreamUnitID = id;
+	unit->StreamUnitID = id; // might be a dummy ID, put proper ID in STREAM_LoadLevelReturn
 	// unit->wordA = 0;
 	// unit->word240 = 0;
 	// unit->dword4 = 0;
@@ -146,6 +146,7 @@ void STREAM_FinishLoad(StreamUnit *unit) { // 1658
 
 void STREAM_LoadLevelReturn(void *loadData, void *data, void *data2, ResolveObject *resolveObj) { // 1922
 	StreamUnit *unit = (StreamUnit*)data2;
+	unit->StreamUnitID = ((Level*)loadData)->streamUnitID;
 	// TODO
 	STREAM_FinishLoad(unit);
 	// TODO
@@ -153,6 +154,7 @@ void STREAM_LoadLevelReturn(void *loadData, void *data, void *data2, ResolveObje
 
 void STREAM_StreamLoadLevelReturn(void *loadData, void *data, void *data2, ResolveObject *resolveObj) { // 1971
 	StreamUnit *unit = (StreamUnit*)data2;
+	unit->StreamUnitID = ((Level*)loadData)->streamUnitID;
 	// TODO
 	STREAM_FinishLoad(unit);
 	// TODO
