@@ -1,16 +1,25 @@
 #include "DX3Player.h"
+#include "ObjectiveManager.h"
 
 bool DX3Player::init() {
 	// TODO
+	if (!objectiveManager)
+		objectiveManager = new ObjectiveManager(this);
 	return true;
 }
 
 bool DX3Player::method_4() {
+	objectiveManager->deactivateAll();
 	// TODO
 	return true;
 }
 
 bool DX3Player::uninit_a() {
+	// TODO
+	if (objectiveManager) {
+		delete objectiveManager;
+		objectiveManager = nullptr;
+	}
 	// TODO
 	return true;
 }

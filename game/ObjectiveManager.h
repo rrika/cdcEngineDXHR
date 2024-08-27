@@ -4,6 +4,8 @@
 #include "cdcMath/Math.h"
 #include "dtp/objective.h"
 
+namespace cdc { class CdcPlayer; }
+
 class Mission;
 class Objective;
 class ObjectiveManager;
@@ -112,10 +114,10 @@ public:
 	std::list<Mission*> m_missionsActive; // 8
 	std::list<Objective*> m_inProgress; // C
 	std::list<Objective*> m_inProgressActive; // 10
-	// CdcPlayer *player; // 14
+	cdc::CdcPlayer *player; // 14
 
 public:
-	ObjectiveManager(/*CdcPlayer* */);
+	ObjectiveManager(cdc::CdcPlayer*);
 	~ObjectiveManager();
 
 	void loadAll();

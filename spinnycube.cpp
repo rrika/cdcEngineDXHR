@@ -27,6 +27,7 @@
 #include "cdcFile/FileUserBufferReceiver.h"
 #include "game/dtp/objecttypes/globaldatabase.h"
 #include "game/DeferredRenderingObject.h"
+#include "game/DX3Player.h"
 #include "game/Gameloop.h"
 #include "game/LensFlareAndCoronaID.h"
 #include "game/ObjectiveManager.h"
@@ -651,8 +652,7 @@ int spinnyCube(HWND window,
 	mouseKeyboard->setCursorGrab(true);
 #endif
 
-	ObjectiveManager objectiveManager;
-	objectiveManager.loadAll();
+	ObjectiveManager& objectiveManager = *PlayerPair::s_pair->getPlayer0()->objectiveManager;
 
 	std::unordered_map<cdc::IRenderTerrain*, cdc::CommonRenderTerrainInstance *> renderTerrainInstances;
 

@@ -539,7 +539,7 @@ UILocator *Objective::getLocators(uint32_t& outNumLocators) {
 
 //
 
-ObjectiveManager::ObjectiveManager(/*CdcPlayer* */) {
+ObjectiveManager::ObjectiveManager(CdcPlayer *player) : player(player) {
 	// TODO: register message143
 }
 

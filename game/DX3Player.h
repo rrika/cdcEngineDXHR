@@ -3,13 +3,15 @@
 #include "cdcWorld/Player.h"
 #include "cdcWorld/UserDataComponent.h"
 
+class ObjectiveManager;
 struct GameTracker;
 struct Player;
 
 class DX3Player : public cdc::CdcPlayer {
 public:
 	Player *player; // 8
-	// ContextualActionManager *contextualActionManager24;
+	// ContextualActionManager *contextualActionManager = nullptr; // 24
+	ObjectiveManager *objectiveManager = nullptr; // 30
 
 	bool init();
 	bool method_4();
@@ -24,6 +26,7 @@ class PlayerPair {
 	int playerIndex;
 public:
 	PlayerPair();
+	DX3Player *getPlayer0() { return player[0]; }
 	DX3Player *getPlayer() { return player[playerIndex]; }
 
 	static PlayerPair *s_pair;

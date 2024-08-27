@@ -4,6 +4,7 @@
 #include "cdcFile/FileHelpers.h"
 #include "game/Gameloop.h"
 #include "game/dtp/objecttypes/globalplayerinfo.h"
+#include "game/ObjectiveManager.h"
 #include "game/objects/objects.h"
 #include "game/ui/ui.h"
 #include "cdcGameShell/cdcGameShell.h"
@@ -124,6 +125,8 @@ void unloadDatabases() {
 void Init_NativeScripts();
 
 void MAIN_DoMainInit() {
+	setupDX3PlayerDelegate();
+
 	// TODO
 
 	PlayerPair::init();
@@ -167,6 +170,13 @@ void MAIN_DoMainInit() {
 	// TODO
 
 	UI_Begin();
+	/* inlined */ {
+		// TODO
+		DX3Player *player0 = PlayerPair::s_pair->getPlayer0();
+		PlayerPair::unknown(player0); // call DX3Player::method_4
+		player0->objectiveManager->loadAll();
+		// TODO
+	}
 
 	// TODO
 }
