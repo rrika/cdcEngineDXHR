@@ -190,12 +190,11 @@ void PCDX11RenderTerrain::resConstruct() {
 			// (1 << kPassIndexDeferredShading) |
 			(1 << kPassIndexNonNormalDepth);
 
-		// HACK: only these two are implemented right now
-		group->renderPasses = // 0x300A
+		// HACK: only these are implemented right now
+		group->renderPasses = // 0x100A
 			(1 << kPassIndexTranslucent) |
 			(1 << kPassIndexComposite) |
-			(1 << kPassIndexNormal) |
-			(1 << kPassIndexDeferredShading);
+			(1 << kPassIndexNormal);
 
 		if (group->flags & 2)
 			group->renderPasses = (1 << kPassIndexShadow); // 0x200
