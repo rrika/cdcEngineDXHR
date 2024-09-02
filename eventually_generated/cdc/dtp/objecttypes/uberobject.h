@@ -146,6 +146,36 @@ struct UberObjectProp {
 		uint32_t dword10;
 		uint32_t dword14;
 		uint32_t dword18;
+			// 19 - use with E key / shop
+			// 20 - HackingManager: Failure /
+			//      AlarmPanel: Stop interacting /
+			//      DedicatedTerminal: disconnect /
+			//      Emails: Disconnect /
+			//      Keypad: Stop interacting /
+			//      Login: Stop interacting /
+			//      MenuWheel: Close
+			// 21 - ConversationBriefing / shop /
+			//      DedicatedTerminal: disconnect /
+			//      IReader: StopInteracting /
+			//      Keypad: Code validation /
+			//      Login: OnLoginCompleted
+			// 22 - HackingManager: Success
+			// 23 - HackingManager: Failure
+			// 24 - HackingManager: Abort
+			// 26 - AlarmPanel: Start hacking /
+			//      CodeCollected: HackPressed /
+			//      Keypad: StartHacking /
+			//      Login: StartHacking
+			// 30 - UberObjectSection_DX3::PostIK
+			// 31 - UberObjectSection_DX3::PostIK
+			// 39 - UberObjectSection_DX3::PostIK
+			// 42 - message 180
+			// 43 - message 181
+			// 47 - VideoMovieController::StopMovie
+			// 48 - VideoMovieController::onVideoStart
+			// 49 - GrabSystem
+			// 51 - HackingManager: ?
+			// 52 - UberObjectSection_DX3::PostIK
 		uint32_t dword1C;
 		uint8_t gap20[8];
 		uint16_t animTy; // 28 (dtp::AnimReference)
@@ -349,7 +379,14 @@ struct IntroDataUberObject {
 	uint32_t dword80;
 	uint32_t dword84;
 	uint32_t *defaultPrograms; // 88
-	uint8_t gap8C[76];
+	uint8_t gap8C[16];
+	uint32_t numAttachedTurrets; // 9C
+	uint32_t *attachedTurrets; // A0
+	uint32_t numAttachedDoors; // A4
+	uint32_t *attachedDoors; // A8
+	uint32_t numAttachedRobots; // AC
+	uint32_t *attachedRobots; // B0
+	uint8_t gapB4[36];
 	uint8_t numConnections; // D8
 	uint8_t numLoot;
 	uint8_t gapDA[4];
