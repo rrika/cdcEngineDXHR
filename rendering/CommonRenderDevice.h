@@ -140,7 +140,7 @@ public:
 	virtual void method_108();
 	virtual void method_10C();
 	virtual void method_110();
-	virtual void method_114();
+	virtual void SetGlobalParams(uint32_t index, uint32_t count, float *params);
 	virtual void method_118();
 	virtual void method_11C();
 	virtual void *AllocateMemory(uint32_t size, uint32_t align, AllocRequester *requester); // 120

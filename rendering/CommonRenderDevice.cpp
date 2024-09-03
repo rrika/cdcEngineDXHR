@@ -200,8 +200,13 @@ void CommonRenderDevice::method_110() {
 	// TODO
 }
 
-void CommonRenderDevice::method_114() {
-	// TODO
+void CommonRenderDevice::SetGlobalParams(uint32_t index, uint32_t count, float *params) {
+	if (index+count <= 16) {
+		RenderGlobalState *globalState = scene7C
+			? &scene7C->globalState
+			: &globalState_8C;
+		memcpy((char*)(globalState->m_aParams + 4*index), params, 16*count);
+	}
 }
 
 void CommonRenderDevice::method_118() {
