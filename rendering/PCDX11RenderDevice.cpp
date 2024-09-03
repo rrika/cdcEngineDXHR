@@ -29,7 +29,7 @@
 #include "shaders/PCDX11ShaderLib.h"
 #include "surfaces/PCDX11DefaultRenderTarget.h"
 #include "surfaces/PCDX11DepthBuffer.h"
-// #include "surfaces/PCDX11HeapRenderTarget.h"
+#include "surfaces/PCDX11HeapRenderTarget.h"
 #include "surfaces/PCDX11RenderTarget.h"
 #include "surfaces/PCDX11RenderTexture.h"
 #include "surfaces/PCDX11SubFrameRenderTarget.h"
@@ -882,8 +882,7 @@ PCDX11RenderTarget *PCDX11RenderDevice::dx11_createRenderTarget(
 			PCDX11DefaultRenderTarget(width, height, flags & ~4, dxgiFormat, this, 0, textureClass);
 
 	} else {
-		// return new PCDX11HeapRenderTarget(width, height, flags, dxgiFormat, this, textureClass);
-		return nullptr;
+		return new PCDX11HeapRenderTarget(width, height, flags, dxgiFormat, this, textureClass);
 	}
 }
 

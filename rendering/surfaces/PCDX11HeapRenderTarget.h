@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include "PCDX11DefaultRenderTarget.h"
 
 namespace cdc {
@@ -7,22 +8,26 @@ class PCDX11HeapRenderTarget :
 	public PCDX11DefaultRenderTarget
 {
 public:
-	TextureMap *getRenderTexture() override { /*TODO*/ }
-	uint32_t getWidth() override { /*TODO*/ }
-	uint32_t getHeight() override { /*TODO*/ }
-	void method_0C() override { /*TODO*/ }
-	void method_10() override { /*TODO*/ }
-	void method_14() override { /*TODO*/ }
+	PCDX11HeapRenderTarget(
+		uint32_t width, uint32_t height,
+		uint32_t flags, uint32_t format,
+		PCDX11RenderDevice *renderDevice, TextureClass textureClass);
 
-	void method_24() override { /*TODO*/ }
-	uint32_t method_28() override { /*TODO*/ }
-	uint32_t method_2C() override { /*TODO*/ }
-	ID3D11Resource *getTextureResource() override { /*TODO*/ }
-	ID3D11RenderTargetView *getRenderTargetView() override { /*TODO*/ }
-	void method_38() override { /*TODO*/ }
-	void method_3C() override { /*TODO*/ }
-	void method_40() override { /*TODO*/ }
-	void method_44() override { /*TODO*/ }
+	// inherit getRenderTexture
+	// inherit getWidth
+	// inherit getHeight
+	// inherit freeResource
+	// inherit registerAtScene
+	void method_14() override;
+
+	// inherit method_24
+	// inherit method_28
+	// inherit method_2C
+	// inherit getTextureResource
+	// inherit getRenderTargetView
+	// inherit copyFromTexture
+	// inherit method_3C
+	// inherit method_40
 };
 
 }
