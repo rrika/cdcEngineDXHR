@@ -927,6 +927,16 @@ PCDX11LightManager *PCDX11RenderDevice::getLightManager() {
 	return static_cast<PCDX11LightManager*>(lightManager);
 }
 
+PCDX11RenderTarget *PCDX11RenderDevice::GetDefaultRenderTarget(bool isFlush) { // line 2340
+	RenderList *list = isFlush ? renderList_processing : renderList_current;
+	return list ? list->renderTarget : nullptr;
+}
+
+PCDX11DepthBuffer *PCDX11RenderDevice::GetDefaultDepthBuffer(bool isFlush) { // line 2349
+	RenderList *list = isFlush ? renderList_processing : renderList_current;
+	return list ? list->depthBuffer : nullptr;
+}
+
 void PCDX11RenderDevice::recordDrawable(IRenderDrawable *drawable, uint32_t mask, bool addToNextScene) {
 	// TODO
 	// drawable->draw(0, nullptr); // hack

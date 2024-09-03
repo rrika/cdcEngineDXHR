@@ -212,6 +212,8 @@ public:
 	ID3D11DeviceContext *d3dDeviceContext111580;
 	ID3D11DeviceContext *getD3DDeviceContext() { return d3dDeviceContext111580; }
 	PCDX11LightManager *getLightManager();
+	PCDX11RenderTarget *GetDefaultRenderTarget(bool isFlush);
+	PCDX11DepthBuffer *GetDefaultDepthBuffer(bool isFlush);
 	void recordDrawable(IRenderDrawable *drawable, uint32_t mask, bool addToNextScene);
 	void clearRenderTargetNow(char mode, float *color, float depth, uint32_t stencil);
 	void setTexture(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown);
