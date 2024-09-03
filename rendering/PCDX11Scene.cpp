@@ -26,6 +26,11 @@ PCDX11Scene::PCDX11Scene(
 	CommonScene(renderDevice, parentScene, viewport, renderTarget, depthBuffer, sourceColor, sourceDepth, globalState, renderPasses),
 	renderDevice(static_cast<PCDX11RenderDevice*>(renderDevice))
 {
+	if (!renderTarget && !depthBuffer) {
+		this->renderTarget = this->renderDevice->GetDefaultRenderTarget(/*isFlush=*/ false);
+		this->depthBuffer = this->renderDevice->GetDefaultDepthBuffer(/*isFlush=*/ false);
+	}
+
 	// TODO
 	uint32_t mask = viewport->mask;
 
