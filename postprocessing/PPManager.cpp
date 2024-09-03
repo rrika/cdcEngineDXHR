@@ -15,6 +15,42 @@
 
 using namespace cdc;
 
+static cdc::VertexDecl *makeVertexDecl() {
+	std::vector<VertexAttributeA> attrs;
+	attrs.push_back({VertexAttributeA::kPosition,  0,  2, 0});
+	attrs.push_back({VertexAttributeA::kTexcoord1, 12, 1, 0});
+	auto *vd = VertexDecl::Create(attrs.data(), attrs.size(), /*stride=*/ sizeof(float)*5);
+	return vd;
+}
+
+VertexDecl *ppVertexDecl = makeVertexDecl();
+
+void PPQuad(float depth, cdc::IMaterial *material, cdc::MaterialInstanceParams *instanceParams, float sortZ, uint32_t primFlags, uint32_t passMask) {
+	float d = depth;
+	float verts[6 * 5] = {
+		0, 0, d, 0, 0,
+		1, 0, d, 1, 0,
+		0, 1, d, 0, 1,
+
+		1, 0, d, 1, 0,
+		1, 1, d, 1, 1,
+		0, 1, d, 0, 1
+	};
+	g_renderDevice->DrawIndexedPrimitive(
+		&identity4x4,
+		verts,
+		ppVertexDecl,
+		/*numVerts=*/    0, // automatic
+		/*indexBuffer=*/ nullptr,
+		/*numPrims=*/    2,
+		primFlags | 0x10000040,
+		material,
+		instanceParams,
+		sortZ,
+		passMask,
+		0);
+}
+
 PPManager *PPManager::s_instance = nullptr;
 
 PPManager::PPManager() {
@@ -192,6 +228,7 @@ static void buildUI(UIActions& uiact, dtp::PPPrePassBlob *prePassBlob, dtp::PPVa
 		if (ImGui::SmallButton("Material")) {
 			uiact.select(prePassBlob->material);
 			uiact.select(static_cast<CommonMaterial*>(prePassBlob->material)->materialBlob->subMat4C[8 /*transparent*/]);
+			uiact.select(ppVertexDecl);
 		}
 	}
 
@@ -244,6 +281,7 @@ static void buildUI(UIActions& uiact, dtp::PPPassBlob *passBlob, dtp::PPVarPassT
 		if (ImGui::SmallButton("Material")) {
 			uiact.select(passBlob->material);
 			uiact.select(static_cast<CommonMaterial*>(passBlob->material)->materialBlob->subMat4C[8 /*transparent*/]);
+			uiact.select(ppVertexDecl);
 		}
 	}
 
@@ -339,6 +377,7 @@ void PPManager::buildUI(UIActions& uiact) {
 						if (ImGui::SmallButton("Material")) {
 							uiact.select(prePass->material);
 							uiact.select(static_cast<CommonMaterial*>(prePass->material)->materialBlob->subMat4C[8 /*transparent*/]);
+							uiact.select(ppVertexDecl);
 						}
 					}
 					for (uint32_t k=0; k<numTextures; k++)
@@ -367,6 +406,7 @@ void PPManager::buildUI(UIActions& uiact) {
 					if (ImGui::SmallButton("Material")) {
 						uiact.select(pass->material);
 						uiact.select(static_cast<CommonMaterial*>(pass->material)->materialBlob->subMat4C[8 /*transparent*/]);
+						uiact.select(ppVertexDecl);
 					}
 				}
 				for (uint32_t k=0; k<numTextures; k++)

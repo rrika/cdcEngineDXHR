@@ -10,11 +10,15 @@ namespace cdc {
 
 class CommonRenderTarget;
 class CommonDepthBuffer;
+class IMaterial;
+struct MaterialInstanceParams;
 struct RenderViewport;
 
 }
 
 struct UIActions;
+
+void PPQuad(float depth, cdc::IMaterial *material, cdc::MaterialInstanceParams *instanceParams, float sortZ, uint32_t primFlags, uint32_t passMask);
 
 struct PPRTs {
 	cdc::CommonRenderTarget *rt0 = nullptr;

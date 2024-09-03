@@ -1,5 +1,7 @@
+#include <cstring>
 #include "CommonRenderDevice.h"
 #include "CommonRenderTerrain.h" // for cast in CommonRenderDevice::createResource
+#include "PrimitiveContext.h"
 #include "RenderExternalResource.h"
 #include "RenderMesh.h" // for cast in CommonRenderDevice::createResource
 #include "renderdevice.h"
@@ -261,6 +263,66 @@ void CommonRenderDevice::InternalFree(void *ptr) {
 
 void CommonRenderDevice::method_1A0() {
 	// TODO
+}
+
+void CommonRenderDevice::DrawIndexedPrimitive(
+	Matrix     *toWorld,
+	void       *verts,
+	VertexDecl *vertexDecl,
+	uint32_t    numVerts,
+	uint16_t   *indices,
+	uint32_t    numPrims,
+	uint32_t    primFlags,
+	IMaterial  *material,
+	MaterialInstanceParams *mip,
+	float       sortZ,
+	uint32_t    passMask,
+	Matrix     *projectOverride
+) {
+	auto *instanceParams = new (this) Vector4[8];
+	instanceParams[0] = mip->m_shaderConstants[0];
+	instanceParams[1] = mip->m_shaderConstants[1];
+	instanceParams[2] = mip->m_shaderConstants[2];
+	instanceParams[3] = mip->m_shaderConstants[3];
+	instanceParams[4] = mip->m_shaderConstants[4];
+	instanceParams[5] = mip->m_shaderConstants[5];
+	instanceParams[6] = mip->m_shaderConstants[6];
+	instanceParams[7] = mip->m_shaderConstants[7];
+	auto *instanceTextures = new (this) TextureMap*[4];
+	instanceTextures[0] = mip->m_pTextures[0];
+	instanceTextures[1] = mip->m_pTextures[1];
+	instanceTextures[2] = mip->m_pTextures[2];
+	instanceTextures[3] = mip->m_pTextures[3];
+	PrimitiveContext::State primState {
+		/* m_flags= */          primFlags,
+		/* m_depthBoundsMin= */ mip->m_depthBoundsMin,
+		/* m_depthBoundsMax= */ mip->m_depthBoundsMax,
+		/* m_pMaterial= */      material,
+		/* vertexBuffer= */     nullptr, // patched later
+		/* m_pVertexDecl= */    vertexDecl,
+		/* indexBuffer= */      nullptr, // patched later
+		/* instanceParams= */   instanceParams,
+		/* scaleformData= */    nullptr,
+		/* m_pInstanceTextures = */ instanceTextures,
+		/* m_pWorldMatrix= */   toWorld,
+		/* m_pProjectionOverrideMatrix= */ projectOverride,
+		/* ptr30_x10= */        nullptr,
+		/* ptr34_x10= */        nullptr
+	};
+
+	PrimitiveContext primContext(/*isTransient=*/true, this);
+	primContext.m_passes = passMask;
+	*primContext.m_pWriteState = primState;
+
+	// the primContext is almost ready, only allocation of vertex and index buffer remain
+	DrawIndexedPrimitive(
+		&primContext,
+		verts,
+		vertexDecl, // also encoded in primContext
+		numVerts,
+		indices,
+		numPrims,
+		sortZ);
 }
 
 RenderResource *CommonRenderDevice::createResource(uint32_t type, uint32_t arg) {

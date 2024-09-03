@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "CommonScene.h"
 #include "LinearAllocator.h"
+#include "renderdevice.h"
 #include "RenderPasses.h"
 #include "Types.h"
 
@@ -181,6 +182,19 @@ public:
 	virtual void revisitRenderLists(void*) = 0;
 	virtual void freeRenderLists(void*) = 0;
 
+	void DrawIndexedPrimitive(
+		Matrix     *toWorld,
+		void       *verts,
+		VertexDecl *vertexDecl,
+		uint32_t    numVerts,
+		uint16_t   *indexBuffer,
+		uint32_t    numPrims,
+		uint32_t    primFlags,
+		IMaterial  *material,
+		MaterialInstanceParams *mip,
+		float       sortZ,
+		uint32_t    passMask,
+		Matrix     *projectOverride);
 	static RenderResource *createResource(uint32_t, uint32_t);
 	LinearAllocator *getLinear() { return linear30; }
 	void freeTemporarySurfaces();
