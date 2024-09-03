@@ -36,7 +36,7 @@ public:
 		uint32_t widthMaybe8;
 		uint32_t heightMaybeC;
 		PCDX11RenderTarget *renderTarget; // 10
-		// uint32_t dword14;
+		PCDX11DepthBuffer *depthBuffer; // 14
 		DrawableList drawableList; // 18
 		LightManagerSubB *lightManagerSubB; // 28
 		// uint8_t byte2C;

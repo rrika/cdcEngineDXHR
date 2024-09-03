@@ -48,7 +48,8 @@ PCDX11RenderDevice::RenderList::RenderList(PCDX11RenderDevice *renderDevice, uin
 		widthMaybe8 = dimensions[2];
 		heightMaybeC = dimensions[3];
 
-		auto *currentRenderTarget = renderDevice->getRenderContextAny()->getRenderTarget();
+		auto *renderContext = renderDevice->getRenderContextAny();
+		auto *currentRenderTarget = renderContext->getRenderTarget();
 		renderTarget = new PCDX11SubFrameRenderTarget(
 			dimensions[0],
 			dimensions[1],
@@ -56,10 +57,12 @@ PCDX11RenderDevice::RenderList::RenderList(PCDX11RenderDevice *renderDevice, uin
 			dimensions[3],
 			renderDevice,
 			renderTarget);
+		depthBuffer = renderContext->depthBuffer; // not cropped apparently
 
 	} else {
-		renderTarget = renderDevice->getRenderContextAny()->getRenderTarget();
-		// dword14 = ...;
+		auto *renderContext = renderDevice->getRenderContextAny();
+		renderTarget = renderContext->getRenderTarget();
+		depthBuffer = renderContext->getDepthBuffer();
 		dword0 = 0;
 		dword4 = 0;
 		if (!renderTarget) return; // HACK

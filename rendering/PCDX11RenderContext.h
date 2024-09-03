@@ -47,11 +47,15 @@ public:
 		fullscreen = false; // hack
 	}
 
-	inline PCDX11RenderTarget *getRenderTarget() {
+	PCDX11RenderTarget *getRenderTarget() {
 		if (renderTarget14)
 			return renderTarget14;
 		else
 			return renderTarget2C;
+	}
+
+	PCDX11DepthBuffer *getDepthBuffer() {
+		return depthBuffer;
 	}
 
 	void handleResize(int32_t width, int32_t height);
