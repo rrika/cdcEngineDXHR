@@ -13,7 +13,9 @@ public:
 	uint32_t dword24 = 0;
 
 	void init(dtp::PPTextureBlob *blob);
+	cdc::CommonRenderTarget *getRenderTarget();
 	cdc::TextureMap *getRenderTexture(PPRTs *rts);
+	void freeRenderTarget();
 
 	virtual ~PPTexture() = default;
 };

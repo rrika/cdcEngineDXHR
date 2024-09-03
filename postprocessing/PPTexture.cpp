@@ -8,7 +8,28 @@ void PPTexture::init(dtp::PPTextureBlob *newBlob) {
 	blob = *newBlob;
 
 	if (blob.dword4) {
-		// TODO
+		
+		uint32_t flags = 1;
+		uint32_t format = 0;
+
+		if (blob.dword8 == 1)
+			flags |= 8;
+		if (blob.byte18)
+			flags |= 4;
+
+		if (blob.dword14 == 0)
+			format = 21;  // -> DXGI_FORMAT_R8G8B8A8_UNORM
+		else if (blob.dword14 == 1)
+			format = 112; // -> DXGI_FORMAT_R16G16_FLOAT
+		else if (blob.dword14 == 2)
+			format = 114; // -> DXGI_FORMAT_R32_FLOAT
+
+		renderTarget = static_cast<cdc::CommonRenderTarget*>(
+			cdc::g_renderDevice->createRenderTarget(
+				blob.width,
+				blob.height,
+				flags, format, format, cdc::kTextureClassUnknown));
+
 	} else {
 
 		if (blob.dword8 == 0)
@@ -18,6 +39,10 @@ void PPTexture::init(dtp::PPTextureBlob *newBlob) {
 		else if (blob.dword8 == 2)
 			dword24 = 3;
 	}
+}
+
+cdc::CommonRenderTarget *PPTexture::getRenderTarget() {
+	return blob.dword4 ? renderTarget : nullptr;
 }
 
 cdc::TextureMap *PPTexture::getRenderTexture(PPRTs *rts) {
@@ -40,4 +65,14 @@ cdc::TextureMap *PPTexture::getRenderTexture(PPRTs *rts) {
 
 	else
 		return nullptr;
+}
+
+void PPTexture::freeRenderTarget() {
+	if (renderTarget) { // HACK
+		renderTarget->EvictNow();
+		delete renderTarget;
+		renderTarget = nullptr;
+	}
+	// if (!dword24)
+	// 	renderTarget->method_14();
 }

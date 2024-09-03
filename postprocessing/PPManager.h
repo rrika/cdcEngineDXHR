@@ -35,8 +35,8 @@ public:
 	std::vector<PPTexture> textures; // 10
 	std::vector<PPVariable> variables; // 1C
 	uint32_t rootPasses; // 28, enable anti-aliasing and rain
-	uint32_t width;
-	uint32_t height;
+	uint32_t width = 0;
+	uint32_t height = 0;
 	// std::vector<PPInput*> inputs; // 1B4
 
 	// HACK

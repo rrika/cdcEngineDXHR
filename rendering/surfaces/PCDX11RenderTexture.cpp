@@ -173,7 +173,8 @@ void PCDX11RenderTexture::resFree() {
 			depthStencilView->Release();
 		if (shaderResourceView)
 			shaderResourceView->Release();
-		resource->Release();
+		if (resource)
+			resource->Release();
 	}
 
 	if (borrowedResource) {

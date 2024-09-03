@@ -64,7 +64,22 @@ bool PPManager::prepare() {
 
 	dtp::PPVarPassTexBlobs *varPassTex = fallbackVarPassTex; // activeSets[0]->varPassTex;
 
-	if (true) { // if (redoTextures)
+	// TODO
+
+	bool redoTextures = textures.size() != varPassTex->textures.size;
+
+	if (width != g_renderDevice->getContextWidth() ||
+		height != g_renderDevice->getContextHeight())
+	{
+		width = g_renderDevice->getContextWidth();
+		height = g_renderDevice->getContextHeight();
+		redoTextures = true;
+	}
+
+	if (redoTextures) {
+		for (PPTexture& tex : textures)
+			tex.freeRenderTarget();
+
 		while (textures.size() < varPassTex->textures.size)
 			textures.push_back(PPTexture());
 
