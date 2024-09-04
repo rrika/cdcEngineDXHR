@@ -44,6 +44,7 @@ PCDX11Scene::PCDX11Scene(
 }
 
 void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
+	auto *otherScene = static_cast<PCDX11Scene*>(other);
 	auto stateManager = deviceManager->getStateManager();
 	auto backupScene = renderDevice->scene78;
 	renderDevice->scene78 = this;
@@ -54,6 +55,8 @@ void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 		static_cast<PCDX11RenderTarget*>(renderTarget),
 		static_cast<PCDX11DepthBuffer*>(depthBuffer));
 	// TODO
+	if (otherScene && otherScene->parentScene==nullptr)
+		globalState.tex14[12] = otherScene->globalState.tex14[12];
 	updateUniforms();
 	auto& sceneBuffer = stateManager->accessCommonCB(1);
 	sceneBuffer.assignRow(27, globalState.m_aParams, 16);
