@@ -9,6 +9,10 @@
 #include "rendering/PCDX11MatrixState.h"
 #include "rendering/RenderMesh.h"
 
+#include "rendering/PCDX11RenderDevice.h" // HACK
+#include "rendering/PCDX11RenderModelInstance.h" // HACK
+#include "game/DeferredRenderingObject.h" // HACK
+
 namespace cdc {
 
 InstanceDrawable *InstanceDrawable::s_pFirstDirty = nullptr;
@@ -162,6 +166,16 @@ void InstanceDrawable::draw(Matrix *matrix, float) { // line 1243
 	cdc::RenderModelInstance *rmi = m_renderModelInstances[meshComponent.GetCurrentRenderModelIndex()];
 
 	if (model && rmi) {
+		if (dynamic_cast<DeferredRenderingObject::Drawable*>(this)) { // HACK
+			auto *scene = static_cast<PCDX11RenderModelInstance*>(rmi)->renderDevice->getScene();
+			Matrix project = scene->projectMatrix;
+			project.m[0][2] *= 0.00001;
+			project.m[1][2] *= 0.00001;
+			project.m[2][2] *= 0.00001;
+			project.m[3][2] *= 0.00001;
+			rmi->SetProjectionOverride(&project);
+		}
+
 		// if (skydome) {
 		//	...
 		// } else {
