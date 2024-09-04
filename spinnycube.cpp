@@ -21,6 +21,7 @@
 #include "cdc/dtp/objectproperties/intermediatemesh.h"
 #include "cdc/dtp/objectproperties/sfxmarker.h"
 #include "cdc/dtp/soundplex.h"
+#include "cdc/dtp/unitdata.h"
 #include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h" // for archiveFileSystem_default
 #include "cdcFile/FileSystem.h" // for enum cdc::FileRequest::Priority
@@ -963,7 +964,7 @@ int spinnyCube(HWND window,
 		// add drawables to the scene
 		scene->m_clearColor = 0xff060606;
 		// float lightAccumulation[4] = {0.9f, 0.9f, 0.9f, 1.0f};
-		float lightAccumulation[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+		float lightAccumulation[4] = {0.0f, 0.0f, 0.0f, 0.0f}; // alpha determines which objects get the outline for interactables
 
 		renderDevice->clearRenderTarget(2, /*mask=*/ 0x2000, 0.0f, lightAccumulation, 1.0f, 0); // deferred shading buffer
 		static_cast<cdc::PCDX11RenderModelInstance*>(lightRenderModelInstance)->baseMask = 0x2000; // deferred lighting
@@ -1307,6 +1308,24 @@ int spinnyCube(HWND window,
 		for (uint32_t i=0; i<std::size(pptoggles); i++)
 			if (pptoggles[i].active)
 				PPManager::s_instance->addActiveSet(pptoggles[i].set, 1.0f);
+
+		for (StreamUnit &unit : StreamTracker) {
+			if (!unit.used)
+				continue;
+
+			if (unit.level == nullptr)
+				continue;
+			if (unit.level->unitData == nullptr)
+				continue;
+			if (unit.level->unitData->postprocessing == nullptr)
+				continue;
+			if (unit.level->unitData->postprocessing->ppactiveset == nullptr)
+				continue;
+
+			PPManager::s_instance->addActiveSet(unit.level->unitData->postprocessing->ppactiveset, 1.0f);
+			break;
+		}
+
 
 		PPManager::s_instance->run(
 			scene->renderTarget, // renderDevice->getSceneRenderTarget(),
@@ -1947,7 +1966,7 @@ int spinnyCube(HWND window,
 				for (uint32_t i=0; i < admd->numObjects; i++) {
 					auto &intro = admd->objects[i];
 					auto oid = intro.objectListIndex;
-					auto name =oid >= cdc::g_objectManager->objectList->count
+					auto name = (oid == 0 || oid >= cdc::g_objectManager->objectList->count)
 						? "???" : cdc::objectName(intro.objectListIndex);
 					ImGui::Text("  [%3d] intro %s (%d) %d/0x%x",
 						i, name, oid, intro.uniqueID, intro.uniqueID);

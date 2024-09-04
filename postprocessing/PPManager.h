@@ -53,7 +53,7 @@ public:
 	uint32_t variablesMask;
 	dtp::PPVarPassTexBlobs *fallbackVarPassTex = nullptr;
 	uint32_t rootOverride = 0;
-	uint32_t rootOverrideMask = 0;
+	uint32_t rootOverrideMask = 8; // disable "ManagedBlurs" until the we configure them properly
 
 	PPManager();
 	virtual ~PPManager() = default;
