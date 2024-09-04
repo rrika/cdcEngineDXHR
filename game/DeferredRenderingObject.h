@@ -49,6 +49,7 @@ struct DeferredRenderingObject {
 	class Drawable : public cdc::InstanceDrawable {
 	public:
 		Drawable(Instance*);
+		void GetBoundingVolume(cdc::BasicCullingVolume*) override;
 		void draw(cdc::Matrix *, float) override;
 
 		static cdc::Vector calcInstanceParamRow(

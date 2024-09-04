@@ -2,6 +2,7 @@
 #include "rendering/CommonMaterial.h"
 #include "rendering/CommonScene.h"
 #include "rendering/CommonRenderDevice.h"
+#include "rendering/Culling/BasicPrimitives_inlines.h"
 #include "rendering/PCDX11RenderModelInstance.h"
 #include "cdcSys/Assert.h"
 #include "cdcMath/MatrixInlines.h"
@@ -258,6 +259,8 @@ void hackCalcInstanceParams(DeferredRenderingExtraData *extra, Matrix *m, Vector
 	// write the modified matrix back out
 	*m = objToWorld;
 
+	if (!instanceParams)
+		return;
 
 	Vector invScale {1.0f/scale.x, 1.0f/scale.y, 1.0f/scale.z, 0.0f};
 	worldToObj.m[0][0] *= invScale.x;
@@ -296,6 +299,22 @@ DeferredRenderingObject::Drawable::Drawable(Instance *instance) :
 	cdc::InstanceDrawable(instance)
 {
 	// TODO
+}
+
+void DeferredRenderingObject::Drawable::GetBoundingVolume(cdc::BasicCullingVolume *volume) {
+
+	auto *extra = (DeferredRenderingExtraData*)m_instance->introData;
+	float *scale = extra->scale;
+	bool uniform = extra->scaleModeE1 == 1;
+	Matrix scaleMatrix {
+		scale[0], 0, 0, 0,
+		0, scale[uniform?0:1], 0, 0,
+		0, 0, scale[uniform?0:2], 0,
+		0, 0, 0, 1
+	};
+
+	InstanceDrawable::GetBoundingVolume(volume);
+	volume->m_data.box.Transform(scaleMatrix); // assume it's a box
 }
 
 void DeferredRenderingObject::Drawable::draw(cdc::Matrix *matrix, float arg) {
