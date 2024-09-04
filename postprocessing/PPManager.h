@@ -41,6 +41,8 @@ public:
 	// std::vector<PPInput*> inputs; // 1B4
 
 	// HACK
+	bool showUnusedVariables = true;
+	uint32_t variablesMask;
 	dtp::PPVarPassTexBlobs *fallbackVarPassTex = nullptr;
 	uint32_t rootOverride = 0;
 	uint32_t rootOverrideMask = 0;

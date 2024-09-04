@@ -186,7 +186,7 @@ bool PPManager::prepare() {
 
 	for (uint32_t i = 0; i < 32; i++)
 		prePassMasks[i] = 0;
-	uint32_t variablesMask = 0;
+	variablesMask = 0;
 
 	for (uint32_t i = 0; i < varPassTex->passes.size; i++)
 		if ((1 << i) & rootPasses)
@@ -473,9 +473,11 @@ void PPManager::buildUI(UIActions& uiact) {
 			}
 		}
 
+		ImGui::Checkbox("Show unused variables", &showUnusedVariables);
 		uint32_t numVariables = varPassTex->variables.size;
 		for (uint32_t i=0; i<numVariables; i++) {
-			VarEdit(varPassTex->variables.data + i);
+			if (showUnusedVariables || (variablesMask & 1 << i) != 0)
+				VarEdit(varPassTex->variables.data + i);
 		}
 
 		ImGui::EndTabItem();
