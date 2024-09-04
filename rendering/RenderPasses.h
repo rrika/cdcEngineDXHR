@@ -71,6 +71,7 @@ struct DrawableList { // = cdc::RenderDrawableList
 	void sortWithFunc(CompareFunctionSet *funcSet, uint32_t funcSetIndex);
 	void draw(RenderFunctionSet *funcSet, uint32_t funcSetIndex);
 	void absorbToBack(DrawableList& other);
+	size_t size() const;
 };
 
 struct DrawableListsAndMasks { // = cdc::RenderPassesInstance

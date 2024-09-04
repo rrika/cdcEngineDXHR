@@ -221,6 +221,13 @@ void DrawableList::absorbToBack(DrawableList& other) {
 	other.last = 0;
 }
 
+size_t DrawableList::size() const {
+	size_t n = 0;
+	for (DrawableItem *item = first; item; item = item->next)
+		n++;
+	return n;
+}
+
 DrawableListsAndMasks::DrawableListsAndMasks(
 	RenderPasses *renderPasses,
 	RenderPassType passType,

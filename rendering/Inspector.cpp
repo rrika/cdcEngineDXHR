@@ -35,7 +35,7 @@ void buildUI(UIActions& uiact, DrawableListsAndMasks *drawableList) {
 	while (mask) {
 		if (mask & 1) {
 			ImGui::PushID(index);
-			if (ImGui::TreeNode("pass", "pass %d: list %p", index, list)) {
+			if (ImGui::TreeNode("pass", "pass %d: list %p (%d items)", index, list, list->size())) {
 				buildUI(uiact, list++, ~0u);
 				ImGui::TreePop();
 			}
@@ -58,7 +58,7 @@ void buildUI(UIActions& uiact, RenderPasses *renderPasses, DrawableListsAndMasks
 			IRenderPassCallback *callbacks = pass->callbacks;
 			DrawableList *list = &activeLists->drawableLists[activeLists->compactIndices[passId]];
 			ImGui::PushID(passId);
-			if (ImGui::TreeNode("pass", "%s (%d)", pass->name, passId)) {
+			if (ImGui::TreeNode("pass", "%s (%d, %d items)", pass->name, passId, list->size())) {
 			// if (ImGui::TreeNode("pass", "pass %d (%s): list %p", passId, pass->name, list)) {
 				buildUI(uiact, list, pass->funcSetIndex);
 				ImGui::TreePop();
