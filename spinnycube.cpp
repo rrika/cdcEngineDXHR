@@ -1156,6 +1156,8 @@ int spinnyCube(HWND window,
 			/*numPrims=*/   bottleRenderModel->primGroups[0].triangleCount,
 			/*sortZ=*/      0.f);
 
+		renderViewport.hackNoCulling = !useFrustumCulling;
+
 		if (!editorMode)
 			g_scene->RenderWithoutCellTracing(renderViewport);
 

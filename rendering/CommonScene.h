@@ -26,6 +26,7 @@ struct RenderViewport {
 		// fourth row is camera position
 	uint32_t dwordC0; // C0, for PCDX11DepthPassCallbacks::pre
 	uint32_t mask; // E0
+	bool hackNoCulling = false;
 };
 
 struct RenderGlobalState {
