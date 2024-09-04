@@ -57,6 +57,9 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 			flags |= 2;
 	}
 
+	if (ext->projectOverrideValid) // HACK
+		flags ^= 2;
+
 	for (uint32_t i=0; i<mesh->meshCount; i++) {
 		ModelBatch *sub = &mesh->meshTable[i];
 		float fade = 1.0f;
