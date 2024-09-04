@@ -437,12 +437,15 @@ bool PCDX11ModelDrawable::setMatrices(
 		}
 	}
 
-	// RenderModelInstanceData *currentExt = ext && ext->projectMatrixValid ? ext : nullptr;
-	// RenderModelInstanceData *prevExt = prevDrawable && prevDrawable->ext && prevDrawable->ext->projectMatrixValid
-	// 	? prevDrawable->ext : nullptr;
+	RenderModelInstanceData *currentExt = ext && ext->projectOverrideValid ? ext : nullptr;
+	RenderModelInstanceData *prevExt = prevDrawable && prevDrawable->ext && prevDrawable->ext->projectOverrideValid
+		? prevDrawable->ext : nullptr;
 
-	if (poseData != prevPoseData) { // || currentExt != prevExt) {
-		// stateManager->setProjectMatrix(currentExt->projectMatrix);
+	if (poseData != prevPoseData || currentExt != prevExt) {
+		if (currentExt)
+			stateManager->setProjectMatrixPtr(&currentExt->projectOverride);
+		else
+			stateManager->setProjectMatrixPtr(nullptr);
 		// TODO: don't reinterpret cast
 		stateManager->setWorldMatrix(*reinterpret_cast<Matrix*>(poseData->getMatrix(0)));
 		stateManager->updateMatrices();

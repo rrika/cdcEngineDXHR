@@ -29,6 +29,8 @@ struct PersistentPGData {  // created in PCDX11RenderModel::resConstruct
 };
 
 struct RenderModelInstanceData {
+	Matrix projectOverride; // 0
+	bool projectOverrideValid = false; // 40
 	// TODO
 	Vector4 instanceParams[8];
 };
@@ -51,6 +53,13 @@ public:
 	}
 	~CommonRenderModelInstance() {
 		delete ext;
+	}
+
+	void SetProjectionOverride(Matrix const *m) override {
+		if (ext && m) {
+			ext->projectOverride = *m;
+			ext->projectOverrideValid = true; 
+		}
 	}
 
 	PersistentPGData *getPersistentPGData() override { return tab0Ext128; } // TODO: confirm
