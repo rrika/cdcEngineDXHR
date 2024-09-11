@@ -26,8 +26,10 @@
 #include "cdcFile/FileHelpers.h" // for archiveFileSystem_default
 #include "cdcFile/FileSystem.h" // for enum cdc::FileRequest::Priority
 #include "cdcFile/FileUserBufferReceiver.h"
+#include "game/Actor/InventoryPlayer.h"
 #include "game/dtp/objecttypes/globaldatabase.h"
 #include "game/dtp/objecttypes/globalloading.h"
+#include "game/dtp/pickup.h"
 #include "game/DeferredRenderingObject.h"
 #include "game/DX3Player.h"
 #include "game/Gameloop.h"
@@ -127,6 +129,7 @@ extern HCURSOR ImGui_ImplWin32_Arrow;
 #include <SDL2/SDL.h>
 #endif
 
+extern uint32_t *pickupDatabase;
 cdc::MultiplexStream *neverAskedForThis = nullptr;
 uint32_t subtitleIndex = 0;
 
@@ -640,6 +643,7 @@ int spinnyCube(HWND window,
 	bool showAnimationsWindow = false;
 	bool showObjectivesWindow = false;
 	bool showPostProcessingWindow = false;
+	bool showInventory = false;
 	bool showIntroButtons = true;
 	bool showIntroButtonsIMF = true;
 	bool editorMode = false;
@@ -685,6 +689,7 @@ int spinnyCube(HWND window,
 #endif
 
 	ObjectiveManager& objectiveManager = *PlayerPair::s_pair->getPlayer0()->objectiveManager;
+	InventoryContainer inventoryContainer(6, 6);
 
 	std::unordered_map<cdc::IRenderTerrain*, cdc::CommonRenderTerrainInstance *> renderTerrainInstances;
 
@@ -1391,6 +1396,10 @@ int spinnyCube(HWND window,
 
 				ImGui::EndMenu();
 			}
+			if (ImGui::BeginMenu("Player")) {
+				if (ImGui::MenuItem("Inventory")) { showInventory = true; }
+				ImGui::EndMenu();
+			}
 			if (ImGui::BeginMenu("Rendering")) {
 				if (ImGui::MenuItem("Capture frame")) {
 					selectedCapture = captures.size();
@@ -2079,6 +2088,78 @@ int spinnyCube(HWND window,
 		if (showPostProcessingWindow) {
 			if (ImGui::Begin("Post-processing", &showPostProcessingWindow)) {
 				PPManager::s_instance->buildUI(uiact);
+			}
+			ImGui::End();
+		}
+		if (showInventory) {
+			if (ImGui::Begin("Inventory", &showInventory)) {
+				ImGui::Text("%d free cells", inventoryContainer.totalFreeCells());
+
+				ImVec2 topLeft = ImGui::GetCursorPos();
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+				uint32_t gridScale = 40;
+				uint32_t gap = 2;
+
+				for (InventorySlot *slot : inventoryContainer.collectAllSlots()) {
+					uint32_t dtpId = slot->dtpId;
+					auto *pickup = (dtp::Pickup*)cdc::g_resolveSections[7]->GetBasePointer(dtpId);
+					if (pickup->width && pickup->height && pickup->texture8) {
+						auto *resource = (cdc::RenderResource*)cdc::g_resolveSections[5]->GetBasePointer(pickup->texture8);
+						if (auto tex = dynamic_cast<cdc::PCDX11Texture*>(resource)) {
+							ImGui::SetCursorPos(ImVec2 {
+								topLeft.x + gridScale*slot->x,
+								topLeft.y + gridScale*slot->y});
+							ImVec2 size(
+								gridScale * pickup->width - gap,
+								gridScale * pickup->height - gap);
+							if (slot->transpose)
+								std::swap(size.x, size.y);
+							if (ImGui::ImageButton(tex->createShaderResourceView(), size)) {
+								/* could do something here */
+							}
+						}
+					}
+				}
+
+				ImGui::PopStyleVar();
+				ImGui::SetCursorPos(ImVec2 { topLeft.x, topLeft.y + 6*gridScale });
+
+				for (InventorySlot *slot : inventoryContainer.collectAllSlots()) {
+					uint32_t dtpId = slot->dtpId;
+					auto *pickup = (dtp::Pickup*)cdc::g_resolveSections[7]->GetBasePointer(dtpId);
+					ImGui::Text("%d x [%05x] %s (%dx%d, category %d) -> %x",
+						slot->count,
+						dtpId,
+						localstr_get(pickup->nameStringIndex),
+						pickup->width,
+						pickup->height,
+						pickup->category,
+						pickup->dtpId48);
+				}
+			}
+			ImGui::End();
+			if (ImGui::Begin("Shop", &showInventory)) {
+				for (int i=0; i<pickupDatabase[0]; i++) {
+					uint32_t dtpId = pickupDatabase[1+i];
+					auto *pickup = (dtp::Pickup*)cdc::g_resolveSections[7]->GetBasePointer(dtpId);
+					ImGui::PushID(dtpId);
+					if (ImGui::SmallButton("+10")) {
+						inventoryContainer.add(dtpId, 10, nullptr, nullptr);
+					}
+					ImGui::SameLine();
+					if (ImGui::SmallButton("+1")) {
+						inventoryContainer.add(dtpId, 1, nullptr, nullptr);
+					}
+					ImGui::SameLine();
+					ImGui::Text("[%05x] %s (%dx%d, category %d) -> %x",
+						dtpId,
+						localstr_get(pickup->nameStringIndex),
+						pickup->width,
+						pickup->height,
+						pickup->category,
+						pickup->dtpId48);
+					ImGui::PopID();
+				}
 			}
 			ImGui::End();
 		}

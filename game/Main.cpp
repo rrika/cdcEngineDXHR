@@ -39,6 +39,7 @@ void *objectiveDatabase;
 void *logicActionResourceDatabase;
 void *tutorialDatabase;
 GlobalPlayerInfo *globalPlayerInfo;
+uint32_t *pickupDatabase;
 
 void SetupBuildDir(const char *prefix) {
 	char streamdir[256];
@@ -151,6 +152,18 @@ void MAIN_DoMainInit() {
 	SceneLayer::init();
 
 	// TODO
+
+	cdc::ResolveObject::create(
+		"pc-w\\pickup_database.drm",
+		nullptr,
+		nullptr,
+		nullptr,
+		(void**)&pickupDatabase,
+		nullptr,
+		nullptr,
+		0,
+		cdc::FileRequest::NORMAL
+	);
 
 	// MAIN_LoadGlobalObjects
 	uint32_t generalBankId = objectIdByName("generalbank");
