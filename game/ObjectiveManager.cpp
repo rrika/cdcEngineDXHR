@@ -10,6 +10,10 @@
 #include "cdcWorld/StreamUnit.h"
 #include "cdc/dtp/objectproperties/intro.h"
 
+#ifdef _WIN32
+#define strcasecmp _stricmp
+#endif
+
 using namespace cdc;
 
 static const char *missionStateToString(ObjectiveState state) {
