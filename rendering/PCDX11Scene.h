@@ -22,16 +22,7 @@ public:
 		CommonDepthBuffer *sourceDepth,
 		RenderGlobalState *globalState,
 		/* ... */
-		RenderPasses *renderPasses)
-	:
-		CommonScene(renderDevice, parentScene, viewport, renderTarget, depthBuffer, sourceColor, sourceDepth, globalState, renderPasses),
-		renderDevice(static_cast<PCDX11RenderDevice*>(renderDevice))
-	{
-		// TODO
-		uint32_t mask = viewport->mask;
-		// TODO
-		drawableListsAndMasks = renderPasses->createDrawableLists(kRegularPass, mask, renderDevice->getLinear());
-	}
+		RenderPasses *renderPasses);
 
 	void draw(uint32_t funcSetIndex, IRenderDrawable *other) override;
 

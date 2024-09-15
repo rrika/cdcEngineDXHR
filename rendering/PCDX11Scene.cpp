@@ -8,6 +8,29 @@
 
 namespace cdc {
 
+PCDX11Scene::PCDX11Scene(
+	CommonRenderDevice *renderDevice,
+	/* ... */
+	CommonScene *parentScene,
+	RenderViewport *viewport,
+	CommonRenderTarget *renderTarget,
+	CommonDepthBuffer *depthBuffer,
+	/* ... */
+	CommonRenderTarget *sourceColor,
+	CommonDepthBuffer *sourceDepth,
+	RenderGlobalState *globalState,
+	/* ... */
+	RenderPasses *renderPasses)
+:
+	CommonScene(renderDevice, parentScene, viewport, renderTarget, depthBuffer, sourceColor, sourceDepth, globalState, renderPasses),
+	renderDevice(static_cast<PCDX11RenderDevice*>(renderDevice))
+{
+	// TODO
+	uint32_t mask = viewport->mask;
+	// TODO
+	drawableListsAndMasks = renderPasses->createDrawableLists(kRegularPass, mask, renderDevice->getLinear());
+}
+
 void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 	auto stateManager = deviceManager->getStateManager();
 	auto backupScene = renderDevice->scene78;
