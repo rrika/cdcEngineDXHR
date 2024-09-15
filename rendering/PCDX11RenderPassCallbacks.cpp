@@ -6,6 +6,7 @@
 #include "PCDX11StateManager.h"
 #include "surfaces/PCDX11DepthBuffer.h" // for CommonDepthBuffer to PCDX11DepthBuffer cast
 #include "surfaces/PCDX11RenderTarget.h" // for PCDX11RenderTarget to CommonRenderTarget cast
+#include "cdcSys/Color.h"
 
 namespace cdc {
 
@@ -52,8 +53,8 @@ bool PCDX11NormalPassCallbacks::pre(
 		static_cast<PCDX11RenderTarget*>(rt),
 		static_cast<PCDX11DepthBuffer*>(db));
 
-	float color[] = {0.5, 0.5, 0.5, 1.0f}; // HACK
-	renderDevice->clearRenderTargetNow(1, color, 0, 0); // HACK
+	float color[] = {0.5, 0.5, 1.0, 1.0f};
+	renderDevice->clearRenderTargetNow(0b111, color, 1.f, 0);
 
 	return true;
 }
@@ -177,15 +178,21 @@ void PCDX11DepthPassCallbacks::post(
 
 
 bool PCDX11CompositePassCallbacks::pre(
-	CommonRenderDevice *renderDevice,
+	CommonRenderDevice *commonRenderDevice,
 	uint32_t passId,
 	uint32_t drawableCount,
 	uint32_t priorPassesBitfield)
 {
+	auto *renderDevice = static_cast<PCDX11RenderDevice*>(commonRenderDevice);
+	auto *stateManager = deviceManager->getStateManager();
 	// TODO
 	if (drawableCount) {
 		PCDX11Material::invalidate();
-		auto *stateManager = deviceManager->getStateManager();
+		auto *scene = static_cast<PCDX11Scene*>(renderDevice->scene78);
+		float color[4]; SetARGB(color, scene->m_clearColor);
+		renderDevice->clearRenderTargetNow(0b1 /*TODO*/, color, 1.f,
+			// even though a stencil clear value is provided, it's not enabled via the flags
+			0 /*scene->getViewport().clearStencil*/);
 		PCDX11BaseTexture *shadowBuffer = nullptr;
 		stateManager->setTextureAndSampler(10, shadowBuffer, 0, 0.0f);
 	}

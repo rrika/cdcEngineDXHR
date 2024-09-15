@@ -928,11 +928,10 @@ int spinnyCube(HWND window,
 		*lightWorldMatrix = lightScaleTranslate;
 
 		// add drawables to the scene
-		float backgroundColor[4] = {0.025f, 0.025f, 0.025f, 1.0f};
+		scene->m_clearColor = 0xff060606;
 		// float lightAccumulation[4] = {0.9f, 0.9f, 0.9f, 1.0f};
 		float lightAccumulation[4] = {0.0f, 0.0f, 0.0f, 1.0f};
 
-		renderDevice->clearRenderTarget(10, /*mask=*/ 1, 0.0f, backgroundColor, 1.0f, 0);
 		renderDevice->clearRenderTarget(2, /*mask=*/ 0x2000, 0.0f, lightAccumulation, 1.0f, 0); // deferred shading buffer
 		static_cast<cdc::PCDX11RenderModelInstance*>(lightRenderModelInstance)->baseMask = 0x2000; // deferred lighting
 		lightRenderModelInstance->recordDrawables(&lightMatrixState);

@@ -79,7 +79,7 @@ public:
 	CommonScene *prevScene; // 40C
 	float heightFogParams[4];
 	float fogScaleOffset[4];
-	// uint8_t f430[4];
+	uint32_t m_clearColor; // 430
 	// float float434;
 	// uint8_t byte438;
 	// uint8_t f439[3];
