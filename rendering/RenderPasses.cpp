@@ -1,8 +1,10 @@
 #include <algorithm>
 #include <cstring>
+#include <string>
 #include <vector>
 #include "IRenderDrawable.h"
 #include "LinearAllocator.h"
+#include "PIXTracker.h"
 #include "RenderPasses.h"
 
 namespace cdc {
@@ -99,7 +101,10 @@ void RenderPasses::sort(DrawableList *list, int passId) {
 
 void RenderPasses::draw(DrawableList *list, int passId) {
 	RenderPass& pass = passes[passId];
+
+	cdc::PIXTracker::StartMarker(pass.name);
 	list->draw(&drawers[pass.funcSetIndex], pass.funcSetIndex);
+	cdc::PIXTracker::EndMarker();
 }
 
 void RenderPasses::sortAndDraw(
@@ -110,7 +115,7 @@ void RenderPasses::sortAndDraw(
 {
 	uint32_t *reqPass;
 	if (passType == kShadowPass)
-	 	reqPass = requestedPassesShadow;
+		reqPass = requestedPassesShadow;
 	else
 		reqPass = requestedPassesScene;
 
@@ -132,6 +137,11 @@ void RenderPasses::sortAndDraw(
 					}
 					if (callbacks)
 						callbacks->post(renderDevice, passId);
+				} else {
+					std::string name = pass->name;
+					name += " (empty)";
+					cdc::PIXTracker::StartMarker(name.c_str());
+					cdc::PIXTracker::EndMarker();
 				}
 			}
 		}
