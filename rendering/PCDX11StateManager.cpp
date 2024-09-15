@@ -872,7 +872,38 @@ void PCDX11StateManager::updateRenderState() {
 }
 
 void PCDX11StateManager::updateViewport() {
-	// TODO
+	// TODO: proper implementation
+	IRenderSurface *r = m_renderTarget ? (IRenderSurface*) m_renderTarget : (IRenderSurface*) m_depthBuffer;
+	float width = r ? r->getWidth() : 320;
+	float height = r ? r->getHeight() : 240;
+	float minDepth = 0.f;
+	float maxDepth = 1.f;
+
+	auto& sceneBuffer = accessCommonCB(1);
+	float row[4];
+
+	row[0] = 0.0f; // offset
+	row[1] = 0.0f; // offset
+	row[2] = 1.0f/width; // scale
+	row[3] = 1.0f/height; // scale
+	sceneBuffer.assignRow(44, row, 1); // SceneBuffer::ScreenExtents
+
+	row[0] = width;
+	row[1] = height;
+	row[2] = 0.0f;
+	row[3] = 0.0f;
+	sceneBuffer.assignRow(45, row, 1); // SceneBuffer::ScreenResolution
+
+	D3D11_VIEWPORT viewport {
+		/*.TopLeftX=*/ 0,
+		/*.TopLeftY=*/ 0,
+		/*.Width=*/    width,
+		/*.Height=*/   height,
+		/*.MinDepth=*/ minDepth,
+		/*.MaxDepth=*/ maxDepth
+	};
+
+	m_deviceContext->RSSetViewports(1, &viewport);
 }
 
 void PCDX11StateManager::setComputeShader(PCDX11ComputeShader *computeShader) {

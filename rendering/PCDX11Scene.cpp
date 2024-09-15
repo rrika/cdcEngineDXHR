@@ -56,6 +56,7 @@ void PCDX11Scene::updateUniforms() {
 	auto stateManager = deviceManager->getStateManager();
 	auto& sceneBuffer = stateManager->accessCommonCB(1);
 	// TODO
+	stateManager->updateViewport();
 	stateManager->setViewMatrix(viewMatrix);
 	stateManager->setProjectMatrix(projectMatrix);
 	// TODO
@@ -126,21 +127,6 @@ void PCDX11Scene::updateUniforms() {
 	row[1] = 0.0f;
 	row[2] = 1.0f;
 	memcpy(globalState.m_aParams + 52, row, 16); // SceneBuffer::GlobalParams[13]
-
-	auto rt = stateManager->m_renderTarget;
-	auto width = rt->getWidth();
-	auto height = rt->getHeight();
-
-	row[0] = 0.0f; // offset
-	row[1] = 0.0f; // offset
-	row[2] = 1.0f/width; // scale
-	row[3] = 1.0f/height; // scale
-	sceneBuffer.assignRow(44, row, 1); // SceneBuffer::ScreenExtents
-	row[0] = width;
-	row[1] = height;
-	row[2] = 0.0f;
-	row[3] = 0.0f;
-	sceneBuffer.assignRow(45, row, 1); // SceneBuffer::ScreenResolution
 }
 
 void PCDX11Scene::Finalize(DrawableList *drawableList) {
