@@ -78,6 +78,11 @@ public:
 	virtual void method_1C() = 0;
 	virtual void method_20() = 0;
 	virtual void method_24() = 0;
+
+	// HACK:
+	virtual void StartMarker(const char *) = 0;
+	virtual void StartMarker(const wchar_t *) = 0;
+	virtual void EndMarker() = 0;
 };
 
 }

@@ -8,6 +8,7 @@
 struct ID3D11Device;
 struct IDXGIFactory;
 struct ID3D11DeviceContext;
+struct ID3DUserDefinedAnnotation;
 
 namespace cdc {
 
@@ -40,6 +41,7 @@ private:
 	DisplayConfig config1; // 34
 	DisplayConfig config2; // BC
 	PCDX11ShaderManager shaderManager; // 14C, actually a pointer
+	ID3DUserDefinedAnnotation *annotation = nullptr; // HACK
 
 public:
 	PCDX11StateManager *stateManager; // 150
@@ -48,16 +50,20 @@ public:
 
 	PCDX11DeviceManager(HMODULE d3d11, HMODULE dxgi);
 	PCDX11DeviceManager(HMODULE d3d11, HMODULE dxgi, ID3D11Device*, ID3D11DeviceContext*);
-	void method_00();
-	DisplayConfig *getDisplayConfig();
-	void setBrightness(float brightness);
-	bool isConfigAcceptable(DisplayConfig*);
-	void method_10();
-	void method_14();
-	void method_18();
-	void method_1C();
-	void method_20();
-	void method_24();
+	void method_00() override;
+	DisplayConfig *getDisplayConfig() override;
+	void setBrightness(float brightness) override;
+	bool isConfigAcceptable(DisplayConfig*) override;
+	void method_10() override;
+	void method_14() override;
+	void method_18() override;
+	void method_1C() override;
+	void method_20() override;
+	void method_24() override;
+
+	void StartMarker(const char *) override;
+	void StartMarker(const wchar_t *) override;
+	void EndMarker() override;
 
 	ID3D11Device *getD3DDevice() { return device; }
 	IDXGIFactory *getDxgiFactory() { return dxgiFactory; }

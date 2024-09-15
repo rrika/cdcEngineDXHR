@@ -51,6 +51,7 @@ target_sources(dxhr PRIVATE
 	PCDX11StreamDecl.cpp
 	PCDX11StreamDeclCache.cpp
 	PCDX11TerrainDrawable.cpp
+	PIXTracker.cpp
 	PrimitiveContext.cpp
 	Projection.cpp
 	RangeAllocator.cpp

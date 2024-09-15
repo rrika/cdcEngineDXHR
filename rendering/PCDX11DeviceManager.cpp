@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <iterator>
 #include <windows.h>
 #include <d3d11_1.h>
@@ -41,6 +42,8 @@ PCDX11DeviceManager::PCDX11DeviceManager(
 		/*depthTextureFormat=*/ DXGI_FORMAT_R24G8_TYPELESS
 	});
 	currentAdapter = &adapters[0];
+	HRESULT r = deviceContext->QueryInterface(
+		__uuidof(ID3DUserDefinedAnnotation), reinterpret_cast<void**>(&annotation));
 }
 
 void PCDX11DeviceManager::method_00() {
@@ -82,6 +85,23 @@ void PCDX11DeviceManager::method_20() {
 
 void PCDX11DeviceManager::method_24() {
 	// TODO
+}
+
+void PCDX11DeviceManager::StartMarker(const char *str) {
+	if (!annotation) return;
+	size_t len = strlen(str);
+	wchar_t *wstr = new wchar_t[len+1];
+	mbstowcs(wstr, str, len+1);
+	StartMarker(wstr);
+	delete[] wstr;
+}
+
+void PCDX11DeviceManager::StartMarker(const wchar_t *wstr) {
+	if (annotation) annotation->BeginEvent(wstr);
+}
+
+void PCDX11DeviceManager::EndMarker() {
+	if (annotation) annotation->EndEvent();
 }
 
 PCDX11DeviceManager *deviceManager = nullptr;
