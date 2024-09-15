@@ -27,6 +27,12 @@ PCDX11Scene::PCDX11Scene(
 {
 	// TODO
 	uint32_t mask = viewport->mask;
+
+	if (mask & 1 << kPassIndexNormal)
+		mask &= ~(1 << kPassIndexDepth);
+	else
+		mask &= ~(1 << kPassIndexNonNormalDepth);
+
 	// TODO
 	drawableListsAndMasks = renderPasses->createDrawableLists(kRegularPass, mask, renderDevice->getLinear());
 }
