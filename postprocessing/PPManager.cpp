@@ -56,6 +56,7 @@ bool PPManager::createScene(
 				depth,
 				nullptr,
 				nullptr);
+			renderDevice->getScene()->debugName = "post-process";
 		}
 
 		if (fastblur)
@@ -81,6 +82,7 @@ bool PPManager::createScene(
 				nullptr,
 				rt,
 				nullptr);
+			renderDevice->getScene()->debugName = "copy rt to rtDest";
 		}
 
 		return true;

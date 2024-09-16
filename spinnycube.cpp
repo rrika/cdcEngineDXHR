@@ -629,7 +629,7 @@ int spinnyCube(HWND window,
 	bool showIntroButtons = true;
 	bool showIntroButtonsIMF = true;
 	bool editorMode = false;
-	std::vector<std::pair<void*, cdc::CommonScene*>> captures { { nullptr, nullptr } };
+	std::vector<std::pair<void*, cdc::PCDX11RenderDevice::RenderList*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
 
 #ifdef _WIN32
@@ -1267,6 +1267,7 @@ int spinnyCube(HWND window,
 				renderContext->depthBuffer,
 				nullptr,
 				nullptr);
+			renderDevice->getScene()->debugName = "imgui";
 		}
 
 		renderDevice->recordDrawable(&imGuiDrawable, /*mask=*/ 0x100, /*addToParent=*/ 0);
@@ -1320,7 +1321,7 @@ int spinnyCube(HWND window,
 			if (ImGui::BeginMenu("Rendering")) {
 				if (ImGui::MenuItem("Capture frame")) {
 					selectedCapture = captures.size();
-					captures.push_back({renderDevice->captureRenderLists(), scene});
+					captures.push_back({renderDevice->captureRenderLists(), renderDevice->renderList_current});
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Frustum Culling", nullptr, useFrustumCulling)) { useFrustumCulling = !useFrustumCulling; }
@@ -1439,9 +1440,9 @@ int spinnyCube(HWND window,
 
 		imGuiDrawable.lastMinuteAdditions = [&]() {
 			if (showDrawablesWindow) {
-				cdc::CommonScene *xscene = captures[selectedCapture].second;
-				if (!xscene)
-					xscene = scene;
+				cdc::PCDX11RenderDevice::RenderList *xlist = captures[selectedCapture].second;
+				if (!xlist)
+					xlist = renderDevice->renderList_processing;
 				ImGui::Begin("Scene drawables", &showDrawablesWindow);
 				ImGui::BeginChild("capture list", ImVec2(0, 150), true);
 				for (uint32_t i = 0; i < captures.size(); i++) {
@@ -1462,9 +1463,17 @@ int spinnyCube(HWND window,
 				// 	captures.push_back({renderDevice->captureRenderLists(), scene});
 				// }
 
-				// buildUI(xscene->drawableListsAndMasks);
-				buildUI(uiact, &renderDevice->renderPasses, xscene->drawableListsAndMasks);
-				buildUI(xscene);
+				for (auto it=xlist->drawableList.first; it; it = it->next) {
+					if (auto *xscene = dynamic_cast<cdc::PCDX11Scene*>(it->drawable)) {
+						if (ImGui::TreeNodeEx(xscene->debugName.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+							// buildUI(xscene->drawableListsAndMasks);
+							buildUI(uiact, &renderDevice->renderPasses, xscene->drawableListsAndMasks);
+							ImGui::TreePop();
+						}
+					} else
+						buildUI(uiact, it->drawable, /*funcSetIndex=*/ 0);
+				}
+				// buildUI(xscene);
 				ImGui::End();
 			}
 		};
