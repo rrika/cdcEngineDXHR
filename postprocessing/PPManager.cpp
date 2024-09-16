@@ -1,8 +1,19 @@
 #include "PPBuiltins.h"
 #include "PPManager.h"
 #include "PPPass.h"
+#include "rendering/CommonMaterial.h"
+#include "rendering/MaterialData.h"
 #include "rendering/PCDX11RenderDevice.h"
 #include "rendering/surfaces/PCDX11RenderTarget.h"
+
+#include "config.h"
+
+#if ENABLE_IMGUI
+#include "imgui/imgui.h"
+#include "UIActions.h"
+#endif
+
+using namespace cdc;
 
 PPManager *PPManager::s_instance = nullptr;
 
@@ -106,3 +117,238 @@ bool PPManager::run(
 // void PPManager::addActiveSet(dtp::PPActiveSet *activeSet, float f) {
 // 	// TODO
 // }
+
+#if ENABLE_IMGUI
+
+
+static void buildUI(UIActions& uiact, dtp::PPPrePassBlob *prePassBlob, dtp::PPVarPassTexBlobs *varPassTex) {
+	ImGui::PushID(prePassBlob);
+	ImGui::Text("%p %s\n", prePassBlob, prePassBlob->name);
+	ImGui::Indent();
+	ImGui::Text("output to %02x, clearMode %02x, clearColor/sourceTexture %08x, clearColorScale %f",
+		(int)prePassBlob->outputTextureIndex,
+		(int)prePassBlob->clearMode,
+		(int)prePassBlob->clearColor,
+		prePassBlob->clearColorScale);
+	ImGui::Text("enabled %02x, useDepth %02x, byte16 %02x",
+		(int)prePassBlob->enabled,
+		(int)prePassBlob->useDepthBuffer,
+		(int)prePassBlob->byte16);
+
+	if (prePassBlob->builtinShaderType > 0) {
+		ImGui::Text("built-in shader %d", prePassBlob->builtinShaderType);
+	} else {
+		if (ImGui::SmallButton("Material")) {
+			uiact.select(prePassBlob->material);
+			uiact.select(static_cast<CommonMaterial*>(prePassBlob->material)->materialBlob->subMat4C[8 /*transparent*/]);
+		}
+	}
+
+	ImGui::Indent();
+	for (uint32_t i=0; i<24; i++) {
+		if (prePassBlob->variableIndices[i] == ~0u)
+			continue;
+		if (prePassBlob->variableIndices[i] >= varPassTex->variables.size) {
+			ImGui::Text("out of bounds variable %d", prePassBlob->variableIndices[i]);
+			continue;
+		}
+		ImGui::Text("var %s", varPassTex->variables.data[prePassBlob->variableIndices[i]].name);
+	}
+	for (uint32_t i=0; i<8; i++) {
+		if (prePassBlob->textureIndices[i] == ~0u)
+			continue;
+		if (prePassBlob->textureIndices[i] >= varPassTex->textures.size) {
+			ImGui::Text("out of bounds texture %d", prePassBlob->textureIndices[i]);
+			continue;
+		}
+		ImGui::Text("tex %s", varPassTex->textures.data[prePassBlob->textureIndices[i]].name);
+	}
+	ImGui::Unindent();
+	ImGui::Unindent();
+	ImGui::PopID();
+}
+
+static void buildUI(UIActions& uiact, dtp::PPPassBlob *passBlob, dtp::PPVarPassTexBlobs *varPassTex) {
+	ImGui::PushID(passBlob);
+	ImGui::Text("%s\n", passBlob->name);
+	ImGui::Indent();
+	ImGui::Text("en=%02x %s xE=%02x gate=%02x blend=%02x, scaleform %02x settings dependent %02x",
+		(int)passBlob->enabled,
+		passBlob->useDepthBuffer ? "use depth" : "not reading depth",
+		(int)passBlob->byteE,
+		(int)passBlob->gatePrePasses,
+		(int)passBlob->blendOverPrevious,
+		(int)passBlob->scaleform,
+		(int)passBlob->canBeDisabledThroughSettings);
+
+	for (uint32_t i=0; i<passBlob->numPrePasses; i++) {
+		auto *prePassBlob = passBlob->prePasses+i;
+		// ImGui::Text("%s\n", prePassBlob->name);
+		buildUI(uiact, prePassBlob, varPassTex);
+	}
+
+	if (passBlob->builtinShaderType > 0) {
+		ImGui::Text("built-in shader %d", passBlob->builtinShaderType);
+	} else {
+		if (ImGui::SmallButton("Material")) {
+			uiact.select(passBlob->material);
+			uiact.select(static_cast<CommonMaterial*>(passBlob->material)->materialBlob->subMat4C[8 /*transparent*/]);
+		}
+	}
+
+	ImGui::Indent();
+	for (uint32_t i=0; i<24; i++) {
+		if (passBlob->variableIndices[i] == ~0u)
+			continue;
+		if (passBlob->variableIndices[i] >= varPassTex->variables.size) {
+			ImGui::Text("out of bounds variable %d", passBlob->variableIndices[i]);
+			continue;
+		}
+		ImGui::Text("var %s", varPassTex->variables.data[passBlob->variableIndices[i]].name);
+	}
+	for (uint32_t i=0; i<8; i++) {
+		if (passBlob->textureIndices[i] == ~0u)
+			continue;
+		if (passBlob->textureIndices[i] >= varPassTex->textures.size) {
+			ImGui::Text("out of bounds texture %d", passBlob->textureIndices[i]);
+			continue;
+		}
+		ImGui::Text("tex %s", varPassTex->textures.data[passBlob->textureIndices[i]].name);
+	}
+	ImGui::Unindent();
+	ImGui::Unindent();
+	ImGui::PopID();
+}
+
+static void VarEdit(dtp::PPVariableBlob *variable) {
+	bool packed = variable->format == 12 ;
+	unsigned char minu8[4] = {0, 0, 0, 0};
+	unsigned char maxu8[4] = {255, 255, 255, 255};
+	float minf32[4] = {0.f, 0.f, 0.f, 0.f};
+	float maxf32[4] = {1.f, 1.f, 1.f, 1.f};
+	ImGui::SliderScalarN(variable->name,
+		packed ? ImGuiDataType_U8 : ImGuiDataType_Float,
+		packed ? (void*)&variable->packed : (void*)&variable->x,
+		packed ? 4 : (variable->format % 4)+1,
+		packed ? (void*)&minu8 : (void*)&minf32,
+		packed ? (void*)&maxu8 : (void*)&maxf32);
+}
+
+void PPManager::buildUI(UIActions& uiact) {
+
+	auto *varPassTex = fallbackVarPassTex;
+	if (!varPassTex)
+		return;
+
+	if (!ImGui::BeginTabBar("PPManager"))
+		return;
+
+	if (ImGui::BeginTabItem("Dynamic")) {
+
+		uint32_t numVariables = varPassTex->variables.size;
+		for (uint32_t i=0; i<numVariables; i++) {
+			VarEdit(varPassTex->variables.data + i);
+		}
+
+		ImGui::EndTabItem();
+	}
+
+	if (ImGui::BeginTabItem("Static")) {
+
+		bool copy = ImGui::Button("Copy to clipboard");
+		if (copy)
+			ImGui::LogToClipboard();
+		for (uint32_t i=0; i<varPassTex->passes.size; i++) {
+			auto *pass = varPassTex->passes.data + i;
+			::buildUI(uiact, pass, varPassTex);
+		}
+		if (copy)
+			ImGui::LogFinish();
+
+		ImGui::EndTabItem();
+	}
+
+	if (ImGui::BeginTabItem("Routing")) {
+
+		uint32_t numTextures = varPassTex->textures.size;
+		const char **modes = new const char*[numTextures];
+		if (ImGui::BeginTable("table", numTextures + 1, ImGuiTableFlags_SizingFixedFit)) {
+			for (uint32_t i=0; i<varPassTex->passes.size; i++) {
+				auto *pass = varPassTex->passes.data + i;
+				// if ((1 << i & rootPasses) == 0 && pass->gatePrePasses)
+				// 	continue;
+				for (uint32_t j=0; j<pass->numPrePasses; j++) {
+					auto *prePass = pass->prePasses + j;
+					ImGui::TableNextRow();
+					ImGui::PushID(prePass);
+					ImGui::TableSetColumnIndex(0);
+					ImGui::Text("pre %s", prePass->name);
+					if (prePass->builtinShaderType == 0) {
+						ImGui::SameLine();
+						if (ImGui::SmallButton("Material")) {
+							uiact.select(prePass->material);
+							uiact.select(static_cast<CommonMaterial*>(prePass->material)->materialBlob->subMat4C[8 /*transparent*/]);
+						}
+					}
+					for (uint32_t k=0; k<numTextures; k++)
+						modes[k] = "";
+					for (uint32_t k=0; k<8; k++) {
+						if (prePass->textureIndices[k] == ~0u)
+							continue;
+						modes[prePass->textureIndices[k]] = ".";
+					}
+					if (prePass->outputTextureIndex < numTextures)
+						modes[prePass->outputTextureIndex] = "W";
+					for (uint32_t k=0; k<numTextures; k++) {
+						ImGui::TableSetColumnIndex(1+k);
+						ImGui::Text("%s", modes[k]);
+					}
+					ImGui::PopID();
+				}
+				// if ((1 << i & rootPasses) == 0)
+				// 	continue;
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);
+				ImGui::PushID(pass);
+				ImGui::Text("%s", pass->name);
+				if (pass->builtinShaderType == 0) {
+					ImGui::SameLine();
+					if (ImGui::SmallButton("Material")) {
+						uiact.select(pass->material);
+						uiact.select(static_cast<CommonMaterial*>(pass->material)->materialBlob->subMat4C[8 /*transparent*/]);
+					}
+				}
+				for (uint32_t k=0; k<numTextures; k++)
+					modes[k] = "";
+				for (uint32_t k=0; k<8; k++) {
+					if (pass->textureIndices[k] == ~0u)
+						continue;
+					modes[pass->textureIndices[k]] = ".";
+				}
+				bool readingPrimaryRT = false;
+				for (uint32_t i=0; i<8; i++)
+					if (pass->textureIndices[i] != ~0u) {
+						auto *textureBlob = &varPassTex->textures.data[pass->textureIndices[i]];
+						if (textureBlob->dword4 == 0 && textureBlob->dword8 == 0) // reading the primary RT
+							readingPrimaryRT = true;
+					}
+					modes[0] =
+						readingPrimaryRT ? "RW" :
+						pass->blendOverPrevious ? "rW" :
+						"W";
+				for (uint32_t k=0; k<numTextures; k++) {
+					ImGui::TableSetColumnIndex(1+k);
+					ImGui::Text("%s", modes[k]);
+				}
+				ImGui::PopID();
+			}
+			ImGui::EndTable();
+		}
+
+		ImGui::EndTabItem();
+	}
+
+	return ImGui::EndTabBar();
+}
+#endif
+

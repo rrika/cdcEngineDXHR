@@ -451,6 +451,18 @@ int spinnyCube(HWND window,
 		cdc::FileRequest::NORMAL
 	);
 
+	auto globalLoadingResolveObject = cdc::ResolveObject::create(
+		"pc-w\\globalloading.drm",
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		0,
+		cdc::FileRequest::NORMAL
+	);
+
 	cdc::archiveFileSystem_default->processAll();
 
 	cdc::ResolveSection *objectSection = cdc::g_resolveSections[11];
@@ -626,6 +638,7 @@ int spinnyCube(HWND window,
 	bool showScaleformStringsWindow = false;
 	bool showAnimationsWindow = false;
 	bool showObjectivesWindow = false;
+	bool showPostProcessingWindow = false;
 	bool showIntroButtons = true;
 	bool showIntroButtonsIMF = true;
 	bool editorMode = false;
@@ -1253,6 +1266,9 @@ int spinnyCube(HWND window,
 
 		renderDevice->finishScene();
 
+		PPManager::s_instance->fallbackVarPassTex = (dtp::PPVarPassTexBlobs*)
+			cdc::g_resolveSections[7]->GetBasePointer(0x5a0); // from globalloading.drm
+
 		if (dc->antiAliasing > 0) {
 			PPManager::s_instance->run(
 				scene->renderTarget, // renderDevice->getSceneRenderTarget(),
@@ -1295,6 +1311,7 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Show scaleform strings")) { showScaleformStringsWindow = true; }
 				if (ImGui::MenuItem("Show animations")) { showAnimationsWindow = true; }
 				if (ImGui::MenuItem("Show objectives")) { showObjectivesWindow = true; }
+				if (ImGui::MenuItem("Show post-processing")) { showPostProcessingWindow = true; }
 				if (ImGui::MenuItem("I never asked for this")) { howDoYouHandleAllOfThis(); }
 				ImGui::EndMenu();
 			}
@@ -1985,6 +2002,12 @@ int spinnyCube(HWND window,
 					}*/
 				}
 				ImGui::EndGroup();
+			}
+			ImGui::End();
+		}
+		if (showPostProcessingWindow) {
+			if (ImGui::Begin("Post-processing", &showPostProcessingWindow)) {
+				PPManager::s_instance->buildUI(uiact);
 			}
 			ImGui::End();
 		}

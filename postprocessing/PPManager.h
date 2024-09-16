@@ -14,6 +14,8 @@ struct RenderViewport;
 
 }
 
+struct UIActions;
+
 struct PPRTs {
 	cdc::CommonRenderTarget *rt0 = nullptr;
 	cdc::CommonDepthBuffer *db = nullptr;
@@ -47,4 +49,6 @@ public:
 		cdc::CommonDepthBuffer *depth,
 		cdc::RenderViewport *viewport);
 	// void addActiveSet(dtp::PPActiveSet *activeSet, float f);
+
+	void buildUI(UIActions& uiact);
 };
