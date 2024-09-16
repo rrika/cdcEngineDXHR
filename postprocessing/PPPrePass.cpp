@@ -1,10 +1,12 @@
 #include "PPPrePass.h"
 
-void PPPrePass::init(dtp::PPPrePassBlob *blob, PPTexture *textures, uint32_t numTextures, PPVariable *variables, uint32_t numVariables) {
+bool PPPrePass::init(dtp::PPPrePassBlob *blob, PPTexture *textures, uint32_t numTextures, PPVariable *variables, uint32_t numVariables) {
+	this->blob = blob;
 	// TODO
+	return true;
 }
 
-void PPPrePass::createScene(PPRTs *rts, cdc::RenderViewport *viewport, cdc::CommonRenderTarget *rt) {
+void PPPrePass::run(PPRTs *rts, cdc::RenderViewport *viewport, cdc::CommonRenderTarget *rt) {
 	// TODO
 }
 

@@ -8,12 +8,15 @@ namespace cdc { class IMaterial; }
 namespace dtp {
 
 struct PPVariableBlob {
-	const char *name;
-	uint32_t dword4;
-	float float8;
-	float floatC;
-	float float10;
-	float float14;
+	const char *name; // 0
+	uint32_t format; // 4
+	union { // 8
+		uint32_t packed;
+		float x;
+	};
+	float y; // C
+	float z; // 10
+	float w; // 14
 };
 
 struct PPTextureBlob {
@@ -23,16 +26,21 @@ struct PPTextureBlob {
 	uint32_t width;
 	uint32_t height;
 	uint32_t dword14;
-	uint32_t dword18;
+	uint8_t byte18;
 };
 
 struct PPPrePassBlob {
 	const char *name;
-	uint32_t dword4;
-	uint32_t dword8;
-	uint32_t dwordC;
-	uint32_t dword10;
+	uint32_t outputTextureIndex; // 4
+	uint32_t clearMode;
+	union {
+		uint32_t clearColor;
+		uint32_t sourceTextureIndex;
+	};
+	float clearColorScale;
 	bool enabled; // 14
+	bool useDepthBuffer;
+	bool byte16;
 	uint32_t variableIndices[24]; // 18
 	uint32_t textureIndices[8]; // 78
 	cdc::IMaterial *material; // 98
@@ -43,11 +51,11 @@ struct PPPassBlob {
 	const char *name;
 	uint32_t numPrePasses; // 4
 	PPPrePassBlob *prePasses; // 8
-	uint8_t byteC;
-	uint8_t useDepthBuffer; // D
-	uint8_t byteE;
-	uint8_t byteF;
-	uint32_t dword10;
+	bool enabled; // C
+	bool useDepthBuffer; // D
+	bool byteE; // clearMode
+	bool gatePrePasses; // F, prepasses only run when main pass runs
+	bool blendOverPrevious; // 10
 	uint32_t variableIndices[24]; // 14
 	uint32_t textureIndices[8]; // 74
 	cdc::IMaterial *material; // 94
@@ -56,13 +64,26 @@ struct PPPassBlob {
 	uint32_t builtinShaderType; // 9C
 };
 
+struct PPVariableBlobArray {
+	uint32_t size; // 0
+	PPVariableBlob *data; // 4
+};
+
+struct PPPassBlobArray {
+	uint32_t size; // 0
+	PPPassBlob *data; // 4
+};
+
+struct PPTextureBlobArray {
+	uint32_t size; // 0
+	PPTextureBlob *data; // 4
+};
+
+// dtp path postprocess/effects/dx3_postprocess_v2.ppfx
 struct PPVarPassTexBlobs {
-	uint32_t numVariables; // 0
-	PPVariableBlob *variables; // 4
-	uint32_t numPasses; // 8
-	PPPassBlob *passes; // C
-	uint32_t numTextures; // 10
-	PPTextureBlob *textures; // 14
+	PPVariableBlobArray variables; // 0
+	PPPassBlobArray passes; // 8
+	PPTextureBlobArray textures; // 10
 };
 
 struct PPVariableUnk2Link {
@@ -76,6 +97,9 @@ struct PPVariableUnk2Link {
 	uint32_t blendMode1C;
 };
 
+struct PPDefaultInputs;
+
+// eg. dtp path postprocess/datas/cinefx.ppdat
 struct PPActiveSet {
 	char *name; // 0
 	PPVarPassTexBlobs *varPassTex; // 4

@@ -7,8 +7,8 @@
 PPManager *PPManager::s_instance = nullptr;
 
 PPManager::PPManager() {
-	activeSets.reserve(16);
-	unknowns2.reserve(16);
+	// activeSets.reserve(16);
+	// inputs.reserve(16);
 	textures.reserve(16);
 	variables.reserve(16);
 }
@@ -18,7 +18,7 @@ bool PPManager::prepare() {
 	return true;
 }
 
-bool PPManager::createScene(
+bool PPManager::run(
 	cdc::CommonRenderTarget *rt,
 	cdc::CommonRenderTarget *rtParticle,
 	cdc::CommonRenderTarget *rtDest, // HACK: allow specifying a different target
@@ -88,10 +88,10 @@ bool PPManager::createScene(
 		return true;
 	}
 
-	dtp::PPVarPassTexBlobs *vpt = activeSets[0]->varPassTex;
-	dtp::PPPassBlob *passBlobs = vpt->passes;
+	dtp::PPVarPassTexBlobs *vpt = fallbackVarPassTex; // activeSets[0]->varPassTex;
+	dtp::PPPassBlob *passBlobs = vpt->passes.data;
 	PPPass pass;
-	for (uint32_t i=0; i < vpt->numPasses; i++) {
+	for (uint32_t i=0; i < vpt->passes.size; i++) {
 		pass.init(&passBlobs[i],
 			textures.data(),
 			textures.size(),
@@ -103,6 +103,6 @@ bool PPManager::createScene(
 	return true;
 }
 
-void PPManager::addActiveSet(dtp::PPActiveSet *unk1, float f) {
-	// TODO
-}
+// void PPManager::addActiveSet(dtp::PPActiveSet *activeSet, float f) {
+// 	// TODO
+// }

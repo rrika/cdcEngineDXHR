@@ -27,7 +27,7 @@ bool PPPass::init(dtp::PPPassBlob *blob, PPTexture *textures, uint32_t numTextur
 
 	// ensure variable indices are in range
 	for (uint32_t i=0; i<24; i++)
-		if (auto vi = textureIndices[i]; vi != ~0u && vi >= numVariables) {
+		if (auto vi = variableIndices[i]; vi != ~0u && vi >= numVariables) {
 			success = false;
 			break;
 		}
@@ -37,16 +37,16 @@ bool PPPass::init(dtp::PPPassBlob *blob, PPTexture *textures, uint32_t numTextur
 	this->numTextures = numTextures;
 	this->variables = variables;
 	this->numVariables = numVariables;
-	this->byte18 = 0; // does any texture have dword24 == 1
+	this->readsRT0 = 0; // does any texture have dword24 == 1
 
 	for (uint32_t i=0; i<8; i++)
-		if (textureIndices[i] == ~0u)
+		if (textureIndices[i] != ~0u)
 			if (textures[textureIndices[i]].dword24 == 1)
-				byte18 = 1;
+				readsRT0 = 1;
 
 	return success;
 }
 
-void PPPass::createScene(cdc::CommonRenderTarget*, PPRTs *rts, cdc::RenderViewport *a4, uint32_t pppassMask, bool, uint32_t texturesMask) {
+void PPPass::run(cdc::CommonRenderTarget **output, PPRTs *rts, cdc::RenderViewport *viewport, uint32_t pppassMask, bool, uint32_t texturesMask) {
 	// TODO
 }

@@ -1250,7 +1250,7 @@ int spinnyCube(HWND window,
 		static_cast<cdc::PCDX11Scene*>(scene)->debugShowTempBuffer = showTempBuffer;
 
 		if (dc->antiAliasing > 0) {
-			PPManager::s_instance->createScene(
+			PPManager::s_instance->run(
 				scene->renderTarget, // renderDevice->getSceneRenderTarget(),
 				nullptr, // particle RT
 				renderContext->renderTarget2C,
