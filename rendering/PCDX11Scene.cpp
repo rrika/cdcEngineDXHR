@@ -3,6 +3,7 @@
 #include "PCDX11Material.h"
 #include "PCDX11Scene.h"
 #include "PCDX11StateManager.h"
+#include "PIXTracker.h"
 #include "surfaces/PCDX11DepthBuffer.h"
 #include "surfaces/PCDX11RenderTarget.h"
 
@@ -42,6 +43,8 @@ void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 	auto backupScene = renderDevice->scene78;
 	renderDevice->scene78 = this;
 
+	PIXTracker::StartMarker(debugName.c_str());
+
 	stateManager->pushRenderTargets(
 		static_cast<PCDX11RenderTarget*>(renderTarget),
 		static_cast<PCDX11DepthBuffer*>(depthBuffer));
@@ -51,8 +54,11 @@ void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 	sceneBuffer.assignRow(27, globalState.m_aParams, 16);
 	// TODO
 
-	if (sourceColor)
+	if (sourceColor) {
+		PIXTracker::StartMarker("color copy");
 		stateManager->m_renderTarget->copyFromTexture(static_cast<PCDX11RenderTarget*>(sourceColor));
+		PIXTracker::EndMarker();
+	}
 	if (sourceDepth)
 		stateManager->m_depthBuffer->copyFromTexture(static_cast<PCDX11DepthBuffer*>(sourceDepth)); // not implemented in original binary
 
@@ -68,7 +74,9 @@ void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 	// HACK
 	if (debugShowTempBuffer != -1) {
 		if (TextureMap *temp = globalState.tex14[debugShowTempBuffer]) {
+			PIXTracker::StartMarker("debugShowTempBuffer");
 			renderDevice->copySurface(static_cast<PCDX11RenderTexture*>(temp), false, 15);
+			PIXTracker::EndMarker();
 		}
 	}
 
@@ -77,6 +85,8 @@ void PCDX11Scene::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
 	if (prevScene)
 		prevScene->drawableListsAndMasks->absorbToBack(*drawableListsAndMasks);
 	renderDevice->scene78 = backupScene;
+
+	PIXTracker::EndMarker();
 
 	PCDX11Material::invalidate();
 }

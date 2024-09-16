@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <string>
 #include "cdcMath/Math.h" // for Matrix
 #include "IRenderDrawable.h"
 #include "IRenderScene.h"
@@ -113,7 +114,9 @@ public:
 	// char field_6D4[120];
 	// uint32_t dword750;
 	uint32_t numSubScenes;
-  	CommonScene *subScenes[18];
+	CommonScene *subScenes[18];
+
+	std::string debugName = "scene";
 
 public:
 	CommonScene(
@@ -146,9 +149,9 @@ public:
 		dir[2] = viewport.viewMatrix.m[2][2];
 		dir[3] = viewport.viewMatrix.m[2][3];
 	}
-	RenderViewport& getViewport() override { return viewport; }
-	IRenderTarget *getRenderTarget() override { return renderTarget; }
-	IDepthBuffer *getDepthBuffer() override { return depthBuffer; }
+	RenderViewport& getViewport() override { return viewport; } // 18
+	IRenderTarget *getRenderTarget() override { return renderTarget; } // 1C
+	IDepthBuffer *getDepthBuffer() override { return depthBuffer; } // 20
 	void scene24() override {}
 	void scene28() override {}
 
