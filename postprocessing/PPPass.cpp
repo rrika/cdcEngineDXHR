@@ -101,7 +101,24 @@ void PPPass::run(cdc::CommonRenderTarget **output, PPRTs *rts, cdc::RenderViewpo
 				}
 
 			} else if (blob->material) {
-				// TODO
+				cdc::MaterialInstanceParams mip;
+				mip.m_pTextures[0] = blob->textureIndices[0] != ~0u ? textures[blob->textureIndices[0]].getRenderTexture(rts) : nullptr;
+				mip.m_pTextures[1] = blob->textureIndices[1] != ~0u ? textures[blob->textureIndices[1]].getRenderTexture(rts) : nullptr;
+				mip.m_pTextures[2] = blob->textureIndices[2] != ~0u ? textures[blob->textureIndices[2]].getRenderTexture(rts) : nullptr;
+				mip.m_pTextures[3] = blob->textureIndices[3] != ~0u ? textures[blob->textureIndices[3]].getRenderTexture(rts) : nullptr;
+				mip.m_depthBoundsMin = 0.0;
+				mip.m_depthBoundsMax = 1.0;
+				mip.m_pStencilParams = nullptr;
+
+				// for (uint32_t i=0; i<8; i++)
+				// 	if (blob->variableIndices[i] != ~0u)
+				// 		mip.m_shaderConstants[i] = cdc::Vector4{variables[blob->variableIndices[i]].m_value};
+
+				// for (uint32_t i=8; i<24; i++)
+				// 	if (blob->variableIndices[i] != ~0u)
+				// 		renderDevice->SetGlobalParams(i-8, 1, variables[blob->variableIndices[i]].m_value.vec128);
+
+				PPQuad(v.nearz + 10.0f, blob->material, &mip, 0.0f, /*primFlags=*/ 0x400, /*mask=*/ 8 /*0x42CB*/);
 			}
 
 			renderDevice->finishScene();

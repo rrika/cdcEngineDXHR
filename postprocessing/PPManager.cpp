@@ -71,7 +71,17 @@ bool PPManager::prepare() {
 		for (uint32_t i = 0; i < textures.size(); i++)
 			textures[i].init(&varPassTex->textures.data[i]);
 	}
+
 	// TODO
+
+	DisplayConfig *dc = deviceManager->getDisplayConfig();
+	rootPasses = 0;
+	rootPasses |= 0x400; // rain
+	if (dc->antiAliasing > 0)
+		rootPasses |= 0x10; // antialias
+
+	// TODO
+
 	return true;
 }
 

@@ -1269,16 +1269,13 @@ int spinnyCube(HWND window,
 		PPManager::s_instance->fallbackVarPassTex = (dtp::PPVarPassTexBlobs*)
 			cdc::g_resolveSections[7]->GetBasePointer(0x5a0); // from globalloading.drm
 
-		if (dc->antiAliasing > 0) {
-			PPManager::s_instance->run(
-				scene->renderTarget, // renderDevice->getSceneRenderTarget(),
-				nullptr, // particle RT
-				renderContext->renderTarget2C,
-				scene->depthBuffer, // renderDevice->getSceneDepthBuffer(),
-				&renderViewport
-			);
-
-		}
+		PPManager::s_instance->run(
+			scene->renderTarget, // renderDevice->getSceneRenderTarget(),
+			nullptr, // particle RT
+			renderContext->renderTarget2C,
+			scene->depthBuffer, // renderDevice->getSceneDepthBuffer(),
+			&renderViewport
+		);
 
 		auto imguiScene = renderDevice->createSubScene(
 			&renderViewport,
