@@ -43,10 +43,6 @@ bool PPPass::init(dtp::PPPassBlob *blob, PPTexture *textures, uint32_t numTextur
 	this->numVariables = numVariables;
 	this->readsRT0 = 0; // does any texture have dword24 == 1
 
-	// HACK
-	readsRT0 = true;
-	return true;
-
 	for (uint32_t i=0; i<8; i++)
 		if (textureIndices[i] != ~0u)
 			if (textures[textureIndices[i]].dword24 == 1)
@@ -87,8 +83,7 @@ void PPPass::run(cdc::CommonRenderTarget **output, PPRTs *rts, cdc::RenderViewpo
 
 			if (blob->builtinShaderType) {
 
-				// hardcoded source for now
-				cdc::TextureMap *rt0 = rts->rt0->getRenderTexture(); // textures[blob->textureIndices[0]].getRenderTexture(rts);
+				cdc::TextureMap *rt0 = textures[blob->textureIndices[0]].getRenderTexture(rts);
 
 				switch (blob->builtinShaderType) {
 				case 1:

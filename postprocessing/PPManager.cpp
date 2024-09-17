@@ -25,6 +25,16 @@ PPManager::PPManager() {
 }
 
 bool PPManager::prepare() {
+
+	dtp::PPVarPassTexBlobs *varPassTex = fallbackVarPassTex; // activeSets[0]->varPassTex;
+
+	if (true) { // if (redoTextures)
+		while (textures.size() < varPassTex->textures.size)
+			textures.push_back(PPTexture());
+
+		for (uint32_t i = 0; i < textures.size(); i++)
+			textures[i].init(&varPassTex->textures.data[i]);
+	}
 	// TODO
 	return true;
 }

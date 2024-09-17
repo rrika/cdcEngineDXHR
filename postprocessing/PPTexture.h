@@ -2,13 +2,18 @@
 #include <cstdint>
 #include "cdc/dtp/postprocessing.h"
 
-namespace cdc { class CommonRenderTarget; }
+namespace cdc { class CommonRenderTarget; class TextureMap; }
+
+struct PPRTs;
 
 class PPTexture {
 public:
 	cdc::CommonRenderTarget *renderTarget; // 4
 	dtp::PPTextureBlob blob; // 8
-	uint32_t dword24;
+	uint32_t dword24 = 0;
+
+	void init(dtp::PPTextureBlob *blob);
+	cdc::TextureMap *getRenderTexture(PPRTs *rts);
 
 	virtual ~PPTexture() = default;
 };
