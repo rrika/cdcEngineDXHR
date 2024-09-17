@@ -48,16 +48,15 @@ bool PPManager::run(
 		} else {
 			static_cast<cdc::PCDX11RenderTarget*>(rt)->getRenderTexture11()->createRenderTargetView();
 			aaDst = rtDest;
-
-			renderDevice->finishScene();
-			renderDevice->createSubScene(
-				viewport,
-				rtDest,
-				depth,
-				nullptr,
-				nullptr);
-			renderDevice->getScene()->debugName = "post-process";
 		}
+
+		renderDevice->createSubScene(
+			viewport,
+			rtDest,
+			depth,
+			nullptr,
+			nullptr);
+		renderDevice->getScene()->debugName = "post-process";
 
 		if (fastblur)
 			PPFastBlur(
@@ -73,9 +72,9 @@ bool PPManager::run(
 				/*passMask=*/ 0x100);
 
 		rt = aaDst;
+		renderDevice->finishScene();
 
 		if (rt != rtDest) {
-			renderDevice->finishScene();
 			renderDevice->createSubScene(
 				viewport,
 				rtDest,
@@ -83,6 +82,7 @@ bool PPManager::run(
 				rt,
 				nullptr);
 			renderDevice->getScene()->debugName = "copy rt to rtDest";
+			renderDevice->finishScene();
 		}
 
 		return true;

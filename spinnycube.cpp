@@ -577,7 +577,7 @@ int spinnyCube(HWND window,
 	bool drawStreamGroups = true;
 	bool drawCellMeshes = true;
 	bool drawCellBoxes = false;
-	bool pointlessCopy = false;
+	bool pointlessCopy = true;
 	int showTempBuffer = -1;
 	cdc::Vector cameraPos{0, 0, 0};
 
@@ -898,9 +898,11 @@ int spinnyCube(HWND window,
 
 		cdc::PCDX11RenderTarget *tempRenderTarget = nullptr;
 
-		if (dc->antiAliasing > 0 && !pointlessCopy)
+		if (dc->antiAliasing > 0 && !pointlessCopy) {
 			tempRenderTarget = static_cast<cdc::PCDX11RenderTarget*>(renderDevice->dx11_createRenderTarget(
 				100, 100, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, 0x18, cdc::kTextureClass2D));
+			tempRenderTarget->getRenderTexture11()->createRenderTargetView();
+		}
 
 		renderDevice->resetRenderLists(1.f/60);
 		renderDevice->beginRenderList(nullptr);
@@ -1249,6 +1251,8 @@ int spinnyCube(HWND window,
 
 		static_cast<cdc::PCDX11Scene*>(scene)->debugShowTempBuffer = showTempBuffer;
 
+		renderDevice->finishScene();
+
 		if (dc->antiAliasing > 0) {
 			PPManager::s_instance->run(
 				scene->renderTarget, // renderDevice->getSceneRenderTarget(),
@@ -1258,20 +1262,17 @@ int spinnyCube(HWND window,
 				&renderViewport
 			);
 
-		} else if (showTempBuffer != -1) {
-			// restart the scene so that the showTempBuffer feature doesn't draw over the UI
-			renderDevice->finishScene();
-			renderDevice->createSubScene(
-				&renderViewport,
-				renderContext->renderTarget2C,
-				renderContext->depthBuffer,
-				nullptr,
-				nullptr);
-			renderDevice->getScene()->debugName = "imgui";
 		}
 
+		auto imguiScene = renderDevice->createSubScene(
+			&renderViewport,
+			renderContext->renderTarget2C,
+			renderContext->depthBuffer,
+			nullptr,
+			nullptr);
 		renderDevice->recordDrawable(&imGuiDrawable, /*mask=*/ 0x100, /*addToParent=*/ 0);
 		renderDevice->finishScene();
+		imguiScene->debugName = "imgui";
 
 		renderDevice->endRenderList();
 
