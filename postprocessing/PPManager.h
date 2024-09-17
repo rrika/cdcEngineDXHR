@@ -30,7 +30,7 @@ public:
 	// std::vector<dtp::PPActiveSet*> activeSets; // 4
 	std::vector<PPTexture> textures; // 10
 	std::vector<PPVariable> variables; // 1C
-	uint32_t rootPasses = 0; // 28
+	uint32_t rootPasses = 0x10; // 28, enable anti-aliasing pass by default
 	uint32_t width;
 	uint32_t height;
 	// std::vector<PPInput*> inputs; // 1B4

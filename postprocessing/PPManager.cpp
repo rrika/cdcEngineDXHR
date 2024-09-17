@@ -42,7 +42,7 @@ bool PPManager::run(
 	if (!prepare())
 		return false;
 
-	if (true) { // HACK
+	if (false) { // HACK
 
 		auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
 		cdc::CommonRenderTarget *aaDst;
@@ -99,18 +99,59 @@ bool PPManager::run(
 		return true;
 	}
 
+	auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
+	auto *newRenderTarget = renderDevice->dx11_createRenderTarget(
+		100, 100,
+		DXGI_FORMAT_B8G8R8A8_UNORM_SRGB,
+		0x18, cdc::kTextureClass2D);
+	newRenderTarget->getRenderTexture11()->createRenderTargetView();
+
+	PPRTs rts = {
+		.rt0 = newRenderTarget,
+		.db = depth,
+		.rt8 = rtParticle,
+		.rtC = rt
+	};
+
 	dtp::PPVarPassTexBlobs *vpt = fallbackVarPassTex; // activeSets[0]->varPassTex;
 	dtp::PPPassBlob *passBlobs = vpt->passes.data;
+	CommonRenderTarget *currentRt = rt;
 	PPPass pass;
 	for (uint32_t i=0; i < vpt->passes.size; i++) {
-		pass.init(&passBlobs[i],
+		if (pass.init(&passBlobs[i],
 			textures.data(),
 			textures.size(),
 			variables.data(),
-			variables.size());
-		// TODO
+			variables.size()))
+		{
+			uint32_t texturesMask = 0;
+			pass.run(
+				&currentRt,
+				&rts,
+				viewport,
+				0 /*prePassMasks[i]*/,
+				(rootPasses >> i) & 1,
+				texturesMask
+			);
+		}
 	}
-	// TODO
+
+	// if (rts.rtC != rt) {
+	if (currentRt != rtDest) {
+		cdc::RenderViewport newViewport;
+		// newViewport.clearMode = 0;
+		newViewport.mask = 0xFFFF8FFF; // TODO
+		// newViewport.byteC9 = 0;
+		auto copyScene = g_renderDevice->createSubScene(
+			&newViewport,
+			rtDest, // nullptr
+			nullptr,
+			currentRt, // newRenderTarget,
+			nullptr);
+		g_renderDevice->finishScene();
+
+		copyScene->debugName = "copy to final dest";
+	}
 	return true;
 }
 
