@@ -680,7 +680,12 @@ void PCDX11RenderDevice::method_180() {
 struct Capture {
 	LinearAllocator *linear;
 	PCDX11RenderDevice::RenderList *list;
-	~Capture() { delete linear; }
+	std::vector<IRenderSurface*> temporarySurfaces;
+	~Capture() {
+		for (auto temp : temporarySurfaces)
+			temp->EvictNow();
+		delete linear;
+	}
 };
 
 void *PCDX11RenderDevice::captureRenderLists() {
@@ -688,6 +693,10 @@ void *PCDX11RenderDevice::captureRenderLists() {
 	capture->linear = linear30; // steal the allocator
 	linear30 = new LinearAllocator(0x300000, false, "RenderDevice"); // replace with a fresh one
 	capture->list = renderList_first;
+	capture->temporarySurfaces = std::vector<IRenderSurface*>(
+		temporarySurfaces,
+		temporarySurfaces + numTemporarySurfaces);
+	numTemporarySurfaces = 0;
 	renderList_override = renderList_first;
 	renderList_first = nullptr;
 	return (void*)capture;
