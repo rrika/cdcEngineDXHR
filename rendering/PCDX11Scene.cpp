@@ -116,6 +116,13 @@ void PCDX11Scene::updateUniforms() {
 	row[3] = 0.0f;
 	sceneBuffer.assignRow(25, row, 1); // SceneBuffer::HeightFogParams
 	sceneBuffer.assignRow(9, fogScaleOffset, 1); // SceneBuffer::FogScaleOffset
+	Matrix screenMatrix = {
+		 2.f,  0.f, 0.f, 0.f,
+		 0.f,  2.f, 0.f, 0.f,
+		 0.f,  0.f, 1.f, 0.f,
+		-1.f, -1.f, 0.f, 1.f,
+	};
+	sceneBuffer.assignMatrix(4, screenMatrix); // SceneBuffer::ScreenMatrix
 
 	// for light shaders to translate the coordinates back
 	float compressNear = 0.0f, compressFar = 1.0f; // 0.98f;
