@@ -60,6 +60,89 @@ PPManager::PPManager() {
 	variables.reserve(16);
 }
 
+static void markPrePassLive(uint32_t passIndex, uint32_t prePassIndex, dtp::PPPassBlobArray *passArray, uint32_t *outputPrePassMasks, uint32_t *outVariablesMask) {
+
+	dtp::PPPrePassBlob *prePass = &passArray->data[passIndex].prePasses[prePassIndex];
+	uint32_t textureIndices[8];
+	memcpy(textureIndices, prePass->textureIndices, sizeof(uint32_t) * 8);
+
+	// for every variable
+	for (uint32_t i=0; i<24; i++)
+		if (prePass->variableIndices[i] != ~0u)
+			*outVariablesMask |= 1 << prePass->variableIndices[i];
+
+	for (uint32_t i=0; i<8; i++) {
+		if (textureIndices[i] == ~0u)
+			continue;
+
+		if (textureIndices[i] == 0) // this isn't in the original game but avoids false dependencies
+			continue;
+
+		uint32_t writerPrePass = 255;
+		uint32_t writerPass = 255;
+
+		for (uint32_t j=0; j<=passIndex; j++) {
+
+			dtp::PPPassBlob *jpass = &passArray->data[j];
+
+			for (uint32_t k=0; k<jpass->numPrePasses; k++) {
+				if (j == passIndex && k >= prePassIndex)
+					continue;
+
+				if (textureIndices[i] == jpass->prePasses[k].outputTextureIndex) {
+					writerPass = j;
+					writerPrePass = k;
+				}
+			}
+		}
+
+		if (writerPass != 255) {
+			outputPrePassMasks[writerPass] |= 1 << writerPrePass;
+			markPrePassLive(writerPass, writerPrePass, passArray, outputPrePassMasks, outVariablesMask);
+		}
+	}
+}
+
+static void markPassLive(uint32_t passIndex, dtp::PPPassBlobArray *passArray, uint32_t *outputPrePassMasks, uint32_t *outVariablesMask) {
+
+	dtp::PPPassBlob *pass = &passArray->data[passIndex];
+	uint32_t textureIndices[8];
+	memcpy(textureIndices, pass->textureIndices, sizeof(uint32_t) * 8);
+
+	// for every variable
+	for (uint32_t i=0; i<24; i++)
+		if (pass->variableIndices[i] != ~0u)
+			*outVariablesMask |= 1 << pass->variableIndices[i];
+
+	// for every texture
+	for (uint32_t i=0; i<8; i++) {
+		if (textureIndices[i] == ~0u)
+			continue;
+
+		uint32_t writerPrePass = 255;
+		uint32_t writerPass = 255;
+
+		// for every prior pass
+		for (uint32_t j=0; j<=passIndex; j++) {
+
+			dtp::PPPassBlob *jpass = &passArray->data[j];
+
+			// for every prepass thereof
+			for (uint32_t k=0; k<jpass->numPrePasses; k++)
+				if (textureIndices[i] == jpass->prePasses[k].outputTextureIndex) {
+					writerPass = j;
+					writerPrePass = k;
+				}
+		}
+
+		// mark the prepass
+		if (writerPass != 255) {
+			outputPrePassMasks[writerPass] |= 1 << writerPrePass;
+			markPrePassLive(writerPass, writerPrePass, passArray, outputPrePassMasks, outVariablesMask);
+		}
+	}
+}
+
 bool PPManager::prepare() {
 
 	dtp::PPVarPassTexBlobs *varPassTex = fallbackVarPassTex; // activeSets[0]->varPassTex;
@@ -98,6 +181,16 @@ bool PPManager::prepare() {
 		rootPasses |= 0x10; // antialias
 
 	rootPasses ^= (rootPasses ^ rootOverride) & rootOverrideMask;
+
+	// TODO
+
+	for (uint32_t i = 0; i < 32; i++)
+		prePassMasks[i] = 0;
+	uint32_t variablesMask = 0;
+
+	for (uint32_t i = 0; i < varPassTex->passes.size; i++)
+		if ((1 << i) & rootPasses)
+			markPassLive(i, &varPassTex->passes, prePassMasks, &variablesMask);
 
 	// TODO
 
@@ -204,7 +297,7 @@ bool PPManager::run(
 				&currentRt,
 				&rts,
 				viewport,
-				(rootPasses >> i) & 1 ? 0xffffffff : 0 /*prePassMasks[i]*/,
+				prePassMasks[i],
 				(rootPasses >> i) & 1,
 				texturesMask
 			);
