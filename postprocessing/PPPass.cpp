@@ -137,9 +137,9 @@ void PPPass::run(cdc::CommonRenderTarget **output, PPRTs *rts, cdc::RenderViewpo
 					if (blob->variableIndices[i] != ~0u)
 						mip.m_shaderConstants[i] = cdc::Vector4{variables[blob->variableIndices[i]].m_value};
 
-				// for (uint32_t i=8; i<24; i++)
-				// 	if (blob->variableIndices[i] != ~0u)
-				// 		renderDevice->SetGlobalParams(i-8, 1, variables[blob->variableIndices[i]].m_value.vec128);
+				for (uint32_t i=8; i<24; i++)
+					if (blob->variableIndices[i] != ~0u)
+						renderDevice->SetGlobalParams(i-8, 1, variables[blob->variableIndices[i]].m_value.vec128);
 
 				PPQuad(v.nearz + 10.0f, blob->material, &mip, 0.0f, /*primFlags=*/ 0x400, /*mask=*/ 8 /*0x42CB*/);
 			}
