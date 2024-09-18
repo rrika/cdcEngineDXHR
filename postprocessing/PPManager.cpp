@@ -92,11 +92,12 @@ bool PPManager::prepare() {
 	for (uint32_t i = 0; i < variables.size(); i++)
 		variables[i].init(&varPassTex->variables.data[i]);
 
-	DisplayConfig *dc = deviceManager->getDisplayConfig();
 	rootPasses = 0;
-	rootPasses |= 1 << 17; // alcohol effect with one variable
-	if (dc->antiAliasing > 0)
+
+	if (deviceManager->getDisplayConfig()->antiAliasing > 0)
 		rootPasses |= 0x10; // antialias
+
+	rootPasses ^= (rootPasses ^ rootOverride) & rootOverrideMask;
 
 	// TODO
 
@@ -365,6 +366,19 @@ void PPManager::buildUI(UIActions& uiact) {
 		return;
 
 	if (ImGui::BeginTabItem("Dynamic")) {
+
+		ImGui::BeginDisabled(rootOverrideMask == 0);
+		if (ImGui::Button("Reset overrides"))
+				rootOverride = rootOverrideMask = 0;
+		ImGui::EndDisabled();
+
+		for (uint32_t i=0; i<varPassTex->passes.size; i++) {
+			auto *pass = varPassTex->passes.data + i;
+			if (ImGui::CheckboxFlags(pass->name, &rootPasses, 1<<i)) {
+				rootOverride ^= (rootOverride ^ rootPasses) & (1<<i);
+				rootOverrideMask |= 1<<i;
+			}
+		}
 
 		uint32_t numVariables = varPassTex->variables.size;
 		for (uint32_t i=0; i<numVariables; i++) {

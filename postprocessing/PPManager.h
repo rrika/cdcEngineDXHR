@@ -41,6 +41,8 @@ public:
 
 	// HACK
 	dtp::PPVarPassTexBlobs *fallbackVarPassTex = nullptr;
+	uint32_t rootOverride = 0;
+	uint32_t rootOverrideMask = 0;
 
 	PPManager();
 	virtual ~PPManager() = default;
