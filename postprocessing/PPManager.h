@@ -31,10 +31,10 @@ class PPManager {
 public:
 	static PPManager *s_instance;
 
-	// std::vector<dtp::PPActiveSet*> activeSets; // 4
+	std::vector<dtp::PPActiveSet*> activeSets; // 4
 	std::vector<PPTexture> textures; // 10
 	std::vector<PPVariable> variables; // 1C
-	uint32_t rootPasses; // 28, enable anti-aliasing and rain
+	uint32_t rootPasses; // 28
 	uint32_t prePassMasks[32]; // 12C, one for each pass
 	uint32_t width = 0;
 	uint32_t height = 0;
@@ -57,7 +57,8 @@ public:
 		cdc::CommonRenderTarget *rtDest, // HACK
 		cdc::CommonDepthBuffer *depth,
 		cdc::RenderViewport *viewport);
-	// void addActiveSet(dtp::PPActiveSet *activeSet, float f);
+	void resetActiveSets();
+	void addActiveSet(dtp::PPActiveSet *activeSet, float f);
 
 	void buildUI(UIActions& uiact);
 };

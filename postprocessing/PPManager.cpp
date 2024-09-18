@@ -54,7 +54,7 @@ void PPQuad(float depth, cdc::IMaterial *material, cdc::MaterialInstanceParams *
 PPManager *PPManager::s_instance = nullptr;
 
 PPManager::PPManager() {
-	// activeSets.reserve(16);
+	activeSets.reserve(16);
 	// inputs.reserve(16);
 	textures.reserve(16);
 	variables.reserve(16);
@@ -143,6 +143,24 @@ static void markPassLive(uint32_t passIndex, dtp::PPPassBlobArray *passArray, ui
 	}
 }
 
+static uint32_t RootPassesForActiveSet(dtp::PPActiveSet *activeSet) {
+	uint32_t rootPasses = 0;
+
+	for (uint32_t i = 0; i < activeSet->alwaysActivePassCount; i++)
+		rootPasses |= 1 << activeSet->alwaysActivePassIndices[i];
+
+	DisplayConfig *dc = deviceManager->getDisplayConfig();
+	if (dc->antiAliasing == 1)
+		for (uint32_t i = 0; i < activeSet->antialiasPassCount; i++)
+			rootPasses |= 1 << activeSet->antialiasPassIndices[i];
+
+	else if (dc->antiAliasing > 1)
+		for (uint32_t i = 0; i < activeSet->antialias2PassCount; i++)
+			rootPasses |= 1 << activeSet->antialias2PassIndices[i];
+
+	return rootPasses;
+}
+
 bool PPManager::prepare() {
 
 	dtp::PPVarPassTexBlobs *varPassTex = fallbackVarPassTex; // activeSets[0]->varPassTex;
@@ -176,9 +194,8 @@ bool PPManager::prepare() {
 		variables[i].init(&varPassTex->variables.data[i]);
 
 	rootPasses = 0;
-
-	if (deviceManager->getDisplayConfig()->antiAliasing > 0)
-		rootPasses |= 0x10; // antialias
+	for (auto *activeSet : activeSets)
+		rootPasses |= RootPassesForActiveSet(activeSet);
 
 	rootPasses ^= (rootPasses ^ rootOverride) & rootOverrideMask;
 
@@ -323,9 +340,14 @@ bool PPManager::run(
 	return true;
 }
 
-// void PPManager::addActiveSet(dtp::PPActiveSet *activeSet, float f) {
-// 	// TODO
-// }
+void PPManager::resetActiveSets() {
+	activeSets.clear();
+}
+
+void PPManager::addActiveSet(dtp::PPActiveSet *activeSet, float f) {
+	// HACK
+	activeSets.push_back(activeSet);
+}
 
 #if ENABLE_IMGUI
 

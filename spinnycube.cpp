@@ -26,6 +26,7 @@
 #include "cdcFile/FileSystem.h" // for enum cdc::FileRequest::Priority
 #include "cdcFile/FileUserBufferReceiver.h"
 #include "game/dtp/objecttypes/globaldatabase.h"
+#include "game/dtp/objecttypes/globalloading.h"
 #include "game/DeferredRenderingObject.h"
 #include "game/DX3Player.h"
 #include "game/Gameloop.h"
@@ -622,6 +623,9 @@ int spinnyCube(HWND window,
 
 	ImGuiDrawable imGuiDrawable;
 
+	auto *globalLoadingObject = (cdc::Object*)globalLoadingResolveObject->getRootWrapped();
+	auto *globalLoading = (GlobalLoading*)(globalLoadingObject->data);
+
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	auto *dc = cdc::deviceManager->getDisplayConfig();
@@ -645,6 +649,24 @@ int spinnyCube(HWND window,
 	bool editorMode = false;
 	std::vector<std::pair<void*, cdc::PCDX11RenderDevice::RenderList*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
+
+	struct PPToggle {
+		const char *name;
+		dtp::PPActiveSet *set;
+		bool active = false;
+	} pptoggles[] = {
+		{"cinefx", globalLoading->pp_cinefx},
+		{"animation", globalLoading->pp_animation},
+		{"scaleform", globalLoading->pp_scaleform},
+		{"health", globalLoading->pp_health},
+		{"concussion", globalLoading->pp_concussion},
+		{"gas", globalLoading->pp_gas},
+		{"alcohol", globalLoading->pp_alcohol},
+		{"emp", globalLoading->pp_emp},
+		{"gamemenu", globalLoading->pp_gamemenu},
+		{"xray", globalLoading->pp_xray},
+		{"x1C0", globalLoading->pp_1C0} // nothing there
+	};
 
 #ifdef _WIN32
 	ImGui_ImplWin32_Arrow = (HCURSOR)yellowCursor;
@@ -1286,6 +1308,10 @@ int spinnyCube(HWND window,
 
 		PPManager::s_instance->fallbackVarPassTex = (dtp::PPVarPassTexBlobs*)
 			cdc::g_resolveSections[7]->GetBasePointer(0x5a0); // from globalloading.drm
+		PPManager::s_instance->resetActiveSets();
+		for (uint32_t i=0; i<std::size(pptoggles); i++)
+			if (pptoggles[i].active)
+				PPManager::s_instance->addActiveSet(pptoggles[i].set, 1.0f);
 
 		PPManager::s_instance->run(
 			scene->renderTarget, // renderDevice->getSceneRenderTarget(),
@@ -1372,6 +1398,15 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Normal Buffer", nullptr, showTempBuffer == 11)) { showTempBuffer = 11; }
 				if (ImGui::MenuItem("Light Buffer", nullptr, showTempBuffer == 12)) { showTempBuffer = 12; }
 				if (ImGui::MenuItem("Final Buffer", nullptr, showTempBuffer == -1)) { showTempBuffer = -1; }
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Postprocessing")) {
+				if (ImGui::MenuItem("Show active")) { showPostProcessingWindow = true; }
+				ImGui::Separator();
+				for (uint32_t i=0; i<std::size(pptoggles); i++) {
+					if (pptoggles[i].set)
+						ImGui::MenuItem(pptoggles[i].name, nullptr, &pptoggles[i].active);
+				}
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Popups")) {
