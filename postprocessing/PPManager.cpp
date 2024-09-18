@@ -91,7 +91,7 @@ bool PPManager::prepare() {
 
 	DisplayConfig *dc = deviceManager->getDisplayConfig();
 	rootPasses = 0;
-	rootPasses |= 0x400; // rain
+	rootPasses |= 0x4; // glow without variables
 	if (dc->antiAliasing > 0)
 		rootPasses |= 0x10; // antialias
 
@@ -200,7 +200,7 @@ bool PPManager::run(
 				&currentRt,
 				&rts,
 				viewport,
-				0 /*prePassMasks[i]*/,
+				0xffffffff /*prePassMasks[i]*/,
 				(rootPasses >> i) & 1,
 				texturesMask
 			);

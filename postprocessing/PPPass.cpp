@@ -1,6 +1,7 @@
 #include <cstring>
 #include "PPBuiltins.h"
 #include "PPPass.h"
+#include "PPPrePass.h"
 #include "PPManager.h"
 #include "PPTexture.h"
 #include "PPVariable.h"
@@ -53,7 +54,29 @@ bool PPPass::init(dtp::PPPassBlob *blob, PPTexture *textures, uint32_t numTextur
 
 void PPPass::run(cdc::CommonRenderTarget **output, PPRTs *rts, cdc::RenderViewport *viewport, uint32_t pppassMask, bool isRootPass, uint32_t texturesMask) {
 	// TODO
-	{
+	if (blob->enabled && isRootPass || !blob->gatePrePasses) {
+		for (uint32_t i = 0; i < blob->numPrePasses; i++) {
+			if ((1 << i) & pppassMask) {
+				PPPrePass prepass;
+				if (prepass.init(
+					&blob->prePasses[i],
+					textures, numTextures,
+					variables, numVariables))
+				{
+					if (blob->prePasses[i].enabled) {
+						if (prepass.readsRT0 && !blob->prePasses[i].byte16) { // reads RT0
+							if (*output != rts->rt0)
+								std::swap(rts->rtC, rts->rt0);
+
+						}
+						if (prepass.writesRT0) // outputs to RT0
+							*output = rts->rtC;
+
+						prepass.run(rts, viewport, rts->rtC);
+					}
+				}
+			}
+		}
 		if (blob->enabled && isRootPass) {
 
 			if (readsRT0) {
