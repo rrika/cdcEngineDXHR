@@ -71,7 +71,8 @@ void buildUI(UIActions& uiact, RenderPasses *renderPasses, DrawableListsAndMasks
 void buildUI(CommonScene *scene) {
 	for (uint32_t i=0; i<13; i++) {
 		TextureMap *t = scene->globalState.tex14[i];
-		ImGui::Text("global texture %d: %p", i, t);
+		ImGui::Text("global texture %d: %p %s", i, t,
+			scene->drawableListsAndMasks->renderPasses->bufferNames[i]);
 		if (auto renderTexture = dynamic_cast<PCDX11RenderTexture*>(t)) {
 			auto s = renderTexture->createShaderResourceView();
 			if (s)

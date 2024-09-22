@@ -45,6 +45,8 @@ struct RenderPasses { // = cdc::RenderPassData
 	CompareFunctionSet comparators[20]; // 41C
 	RenderFunctionSet drawers[20]; // 91C
 
+	const char *bufferNames[13] = {}; // HACK, aligns with RenderGlobalState::tex14
+
 	RenderPasses();
 	uint32_t addRenderPass(RenderPassType passType, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex, uint32_t firstPassId);
 	void setRenderPassDebugName(uint32_t passId, const char *name);

@@ -197,6 +197,10 @@ void PCDX11RenderDevice::setupPassCallbacks() {
 	setPassCallback(/* 5*/ kPassIndexPostFSX,         &postFSXPassCallbacks);
 	setPassCallback(/*12*/ kPassIndexNormal,          &normalPassCallbacks);
 	setPassCallback(/*13*/ kPassIndexDeferredShading, &deferredShadingPassCallbacks);
+
+	renderPasses.bufferNames[10] = "depth buffer";
+	renderPasses.bufferNames[11] = "normal buffer";
+	renderPasses.bufferNames[12] = "light buffer";
 }
 
 void PCDX11RenderDevice::registerComparatorsAndDrawersModel() {

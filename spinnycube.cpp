@@ -1485,10 +1485,10 @@ int spinnyCube(HWND window,
 							buildUI(uiact, &renderDevice->renderPasses, xscene->drawableListsAndMasks);
 							ImGui::TreePop();
 						}
+						// buildUI(xscene);
 					} else
 						buildUI(uiact, it->drawable, /*funcSetIndex=*/ 0);
 				}
-				// buildUI(xscene);
 				ImGui::End();
 			}
 		};
@@ -1627,7 +1627,14 @@ int spinnyCube(HWND window,
 						texref[i].tex ? static_cast<cdc::PCDX11Texture*>(texref[i].tex)->createShaderResourceView() : 0);
 					if (g1 || g2) {
 						ImGui::SameLine();
-						ImGui::Text("%x", texref[i].fallbackIndex);
+						ImGui::Text("0x%x+%d",
+							texref[i].fallbackIndex & ~0x1f,
+							texref[i].fallbackIndex & 0x1f);
+						if (g1) {
+							ImGui::SameLine();
+							ImGui::Text("(%s)", scene->drawableListsAndMasks->renderPasses->bufferNames[
+								texref[i].fallbackIndex & 0x1f]);
+						}
 					}
 				}
 				ImGui::Unindent();
