@@ -318,6 +318,9 @@ void PCDX11ModelDrawable::buildUI(uint32_t funcSetIndex, UIActions& uiact) {
 	}
 	ImGui::Text("renderModel: %p", renderModel);
 	ImGui::Text("ext:         %p", ext);
+	if (ext) {
+		ImGui::Text("instanceParam[0] = %f", ext->instanceParams[0].x);
+	}
 	ImGui::Text("meshSub:     %p", meshSub);
 	ImGui::Text("primGroup:   %p", primGroup);
 	ImGui::Text("tab0Ext128:  %p", tab0Ext128);
@@ -338,8 +341,10 @@ void PCDX11ModelDrawable::buildUI(uint32_t funcSetIndex, UIActions& uiact) {
 	ImGui::Text("funcSetIndex %d", funcSetIndex);
 	ImVec4 white {1.0f, 1.0f, 1.0f, 1.0f};
 	ImVec4 red {1.0f, 0.0f, 0.0f, 1.0f};
-	ImGui::TextColored(subMat->vsBufferNumRows ? red : white, "vs cb rows:  %d", subMat->vsBufferNumRows);
-	ImGui::TextColored(subMat->psBufferNumRows ? red : white, "ps cb rows:  %d", subMat->psBufferNumRows);
+	if (subMat) {
+		ImGui::TextColored(subMat->vsBufferNumRows ? red : white, "vs cb rows:  %d", subMat->vsBufferNumRows);
+		ImGui::TextColored(subMat->psBufferNumRows ? red : white, "ps cb rows:  %d", subMat->psBufferNumRows);
+	}
 #endif
 }
 
