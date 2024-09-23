@@ -87,11 +87,14 @@ bool PPManager::prepare() {
 			textures[i].init(&varPassTex->textures.data[i]);
 	}
 
-	// TODO
+	variables.resize(0);
+	variables.resize(varPassTex->variables.size);
+	for (uint32_t i = 0; i < variables.size(); i++)
+		variables[i].init(&varPassTex->variables.data[i]);
 
 	DisplayConfig *dc = deviceManager->getDisplayConfig();
 	rootPasses = 0;
-	rootPasses |= 0x4; // glow without variables
+	rootPasses |= 1 << 17; // alcohol effect with one variable
 	if (dc->antiAliasing > 0)
 		rootPasses |= 0x10; // antialias
 
@@ -200,7 +203,7 @@ bool PPManager::run(
 				&currentRt,
 				&rts,
 				viewport,
-				0xffffffff /*prePassMasks[i]*/,
+				(rootPasses >> i) & 1 ? 0xffffffff : 0 /*prePassMasks[i]*/,
 				(rootPasses >> i) & 1,
 				texturesMask
 			);
@@ -265,7 +268,9 @@ static void buildUI(UIActions& uiact, dtp::PPPrePassBlob *prePassBlob, dtp::PPVa
 			ImGui::Text("out of bounds variable %d", prePassBlob->variableIndices[i]);
 			continue;
 		}
-		ImGui::Text("var %s", varPassTex->variables.data[prePassBlob->variableIndices[i]].name);
+		ImGui::Text("%s %s",
+			i < 8 ? "vari" : "varg",
+			varPassTex->variables.data[prePassBlob->variableIndices[i]].name);
 	}
 	for (uint32_t i=0; i<8; i++) {
 		if (prePassBlob->textureIndices[i] == ~0u)
@@ -318,7 +323,9 @@ static void buildUI(UIActions& uiact, dtp::PPPassBlob *passBlob, dtp::PPVarPassT
 			ImGui::Text("out of bounds variable %d", passBlob->variableIndices[i]);
 			continue;
 		}
-		ImGui::Text("var %s", varPassTex->variables.data[passBlob->variableIndices[i]].name);
+		ImGui::Text("%s %s",
+			i < 8 ? "vari" : "varg",
+			varPassTex->variables.data[passBlob->variableIndices[i]].name);
 	}
 	for (uint32_t i=0; i<8; i++) {
 		if (passBlob->textureIndices[i] == ~0u)

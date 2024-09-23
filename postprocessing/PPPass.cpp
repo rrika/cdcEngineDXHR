@@ -133,9 +133,9 @@ void PPPass::run(cdc::CommonRenderTarget **output, PPRTs *rts, cdc::RenderViewpo
 				mip.m_depthBoundsMax = 1.0;
 				mip.m_pStencilParams = nullptr;
 
-				// for (uint32_t i=0; i<8; i++)
-				// 	if (blob->variableIndices[i] != ~0u)
-				// 		mip.m_shaderConstants[i] = cdc::Vector4{variables[blob->variableIndices[i]].m_value};
+				for (uint32_t i=0; i<8; i++)
+					if (blob->variableIndices[i] != ~0u)
+						mip.m_shaderConstants[i] = cdc::Vector4{variables[blob->variableIndices[i]].m_value};
 
 				// for (uint32_t i=8; i<24; i++)
 				// 	if (blob->variableIndices[i] != ~0u)

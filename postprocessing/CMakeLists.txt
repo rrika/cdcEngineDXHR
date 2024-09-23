@@ -3,4 +3,5 @@ target_sources(dxhr PRIVATE
 	PPManager.cpp
 	PPPass.cpp
 	PPPrePass.cpp
-	PPTexture.cpp)
+	PPTexture.cpp
+	PPVariable.cpp)

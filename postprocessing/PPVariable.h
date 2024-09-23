@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include "cdcMath/Math.h"
 #include "cdc/dtp/postprocessing.h"
 
 class PPVariable {
@@ -7,14 +8,13 @@ public:
 	uint32_t dword4;
 	uint32_t dword8;
 	uint32_t dwordC;
-	uint32_t dword10;
-	uint32_t dword14;
-	uint32_t dword18;
-	uint32_t dword1C;
-	uint32_t dword20;
+	cdc::Vector m_value = {0.0f, 0.0f, 0.0f, 0.0f};
+	dtp::PPVariableBlob *m_blob = nullptr;
 	uint32_t dword24;
 	uint32_t dword28;
 	uint32_t dword2C;
+
+	void init(dtp::PPVariableBlob *blob);
 
 	virtual ~PPVariable() = default;
 };
