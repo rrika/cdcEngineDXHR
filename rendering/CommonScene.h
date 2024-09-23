@@ -57,7 +57,7 @@ public:
 	float fogColor[4]; // 100
 	float m_parity; // 110
 	RenderGlobalState globalState;
-	uint8_t byte25C; // reset by PCDX11CompositePassCallbacks::post
+	uint8_t m_isUseAlphaForBloom; // reset by PCDX11CompositePassCallbacks::post
 	// uint8_t f25D[2];
 	// Matrix mat260;
 	// char field_29F;

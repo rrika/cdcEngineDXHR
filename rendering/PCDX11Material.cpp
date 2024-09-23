@@ -530,7 +530,7 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 	uint32_t blendState = materialBlob->blendStateC;
 	bool x = true;
 	if ((materialBlob->dword18 & 1) == 0 ||
-		renderDevice->scene78->byte25C ||
+		renderDevice->scene78->m_isUseAlphaForBloom ||
 		(blendState & 1) ||
 		opacity < 1.0
 	)
@@ -571,7 +571,7 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 	//stateManager->setBlendStateAndBlendFactors(materialBlob->blendState24, 0, 0);
 
 	uint16_t renderTargetWriteMask = materialBlob->renderTargetWriteMask;
-	/* if (renderDevice->scene78->byte25C) {
+	/* if (renderDevice->scene78->m_isUseAlphaForBloom) {
 		if (x)
 			renderTargetWriteMask = renderTargetWriteMask | 8;
 		else

@@ -207,7 +207,7 @@ void PCDX11CompositePassCallbacks::post(
 	uint32_t passId)
 {
 	CommonScene *commonScene = renderDevice->scene78;
-	commonScene->byte25C = 0;
+	commonScene->m_isUseAlphaForBloom = 0;
 }
 
 
@@ -226,7 +226,7 @@ void PCDX11OpaquePassCallbacks::post(
 	uint32_t passId)
 {
 	CommonScene *commonScene = renderDevice->scene78;
-	commonScene->byte25C = 0;
+	commonScene->m_isUseAlphaForBloom = 0;
 }
 
 
@@ -245,7 +245,7 @@ void PCDX11TranslucentPassCallbacks::post(
 	uint32_t passId)
 {
 	CommonScene *commonScene = renderDevice->scene78;
-	commonScene->byte25C = 0;
+	commonScene->m_isUseAlphaForBloom = 0;
 }
 
 
@@ -264,7 +264,7 @@ void PCDX11AlphaBloomFSXPassCallbacks::post(
 	uint32_t passId)
 {
 	CommonScene *commonScene = renderDevice->scene78;
-	commonScene->byte25C = 0;
+	commonScene->m_isUseAlphaForBloom = 0;
 	PCDX11Material::invalidate();
 }
 

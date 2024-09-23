@@ -30,7 +30,7 @@ CommonScene::CommonScene(
 	this->viewport = *viewport;
 	this->globalState = *globalState;
 
-	byte25C = 0;
+	m_isUseAlphaForBloom = 0;
 
 	{
 		// see also PCDX11RenderModelInstance::recordDrawables

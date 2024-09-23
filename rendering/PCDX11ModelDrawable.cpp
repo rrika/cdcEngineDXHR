@@ -263,7 +263,7 @@ void PCDX11ModelDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *prevDrawa
 
 	stateManager->setRenderTargetWriteMask(
 		(tab0Ext128->sub10.polyFlags & 0x100) ? 0 :
-		renderDevice->scene78->byte25C ? 7 : 15);
+		renderDevice->scene78->m_isUseAlphaForBloom ? 7 : 15);
 
 	auto *layout = (VertexDecl*)meshSub->format;
 	PCDX11StreamDecl *streamDecl = renderDevice->streamDeclCache.buildStreamDecl(layout, &vertexShader->m_sub);
