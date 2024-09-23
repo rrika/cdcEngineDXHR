@@ -166,8 +166,12 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			instance->position.z);
 		ImGui::Text("SceneEntity      %p", instance->sceneEntity);
 		ImGui::Text("InstanceDrawable %p", instance->instanceDrawable);
-		if (instance->instanceDrawable)
+		if (instance->instanceDrawable) {
 			ImGui::Text("    %s", typeid(*instance->instanceDrawable).name());
+			if (auto id = dynamic_cast<cdc::InstanceDrawable*>(instance->instanceDrawable)) {
+				ImGui::Text("   %d additional models", id->m_additionalModelInstances.size());
+			}
+		}
 
 		if (ImGui::Button("Recreate scene entity")) {
 			instance->sceneEntity->Release();
