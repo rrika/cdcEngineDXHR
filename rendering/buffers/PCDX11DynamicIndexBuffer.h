@@ -22,4 +22,8 @@ public:
 	unsigned char *Lock();
 };
 
+// Unless P1077R0 is accepted, the virtual CommonIndexBuffer dtor prevents this from being trivial
+// static_assert(std::is_trivially_destructible<PCDX11DynamicIndexBuffer>(),
+// 	"PCDX11DynamicIndexBuffer might be allocated from the transient heap for which dtors don't run");
+
 }

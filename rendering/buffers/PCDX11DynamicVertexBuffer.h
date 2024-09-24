@@ -22,4 +22,8 @@ public:
 	unsigned char *Lock();
 };
 
+// Unless P1077R0 is accepted, the virtual CommonVertexBuffer dtor prevents this from being trivial
+// static_assert(std::is_trivially_destructible<PCDX11DynamicVertexBuffer>(),
+// 	"PCDX11DynamicVertexBuffer might be allocated from the transient heap for which dtors don't run");
+
 }
