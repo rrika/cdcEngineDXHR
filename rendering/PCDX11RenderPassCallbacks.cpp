@@ -140,8 +140,8 @@ bool PCDX11DepthPassCallbacks::pre(
 
 	if (scene->depthBuffer) {
 		// TODO: scene->depthBuffer->byte14 = 0;
-		uint32_t dwordC0 = scene->viewport.dwordC0;
-		if (dwordC0 == 24 || dwordC0 == 26) {
+		uint32_t clearMode = scene->viewport.clearMode;
+		if (clearMode == 24 || clearMode == 26) {
 			float color[] = {0.0f, 0.0f, 0.0f, 0.0f};
 			renderDevice->clearRenderTargetNow(2, color, 1.0, 0);
 		}

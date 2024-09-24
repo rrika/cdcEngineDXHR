@@ -25,7 +25,10 @@ struct RenderViewport {
 	Matrix viewMatrix; // 30
 		// third row is camera direction
 		// fourth row is camera position
-	uint32_t dwordC0; // C0, for PCDX11DepthPassCallbacks::pre
+	float clearColor[4]; // B0
+	uint32_t clearMode; // C0, for PCDX11DepthPassCallbacks::pre and PPPrePass::createScene
+	uint32_t clearStencil; // C4
+	uint8_t byteC9;
 	uint32_t mask; // E0
 	bool hackNoCulling = false;
 };
