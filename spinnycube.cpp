@@ -616,11 +616,6 @@ int spinnyCube(HWND window,
 	// pass 3 translucent
 	// pass 8 runs last and is where I put imgui since it messes with the render state
 
-	SpinnyCubePass cubePass;
-	cubePass.viewport = &viewport;
-	cubePass.keepAlphaBlend = keepAlphaBlend;
-	renderDevice->setPassCallback(0, &cubePass);
-
 	ImGuiDrawable imGuiDrawable;
 
 	auto *globalLoadingObject = (cdc::Object*)globalLoadingResolveObject->getRootWrapped();
@@ -2101,32 +2096,6 @@ end:
 	cdc::releaseObject(bottleIndex);
 
 	return 0;
-}
-
-bool SpinnyCubePass::pre(
-	cdc::CommonRenderDevice *renderDevice,
-	uint32_t passId,
-	uint32_t drawableCount,
-	uint32_t priorPassesBitfield)
-{
-	auto *deviceContext = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice)->getD3DDeviceContext();
-
-	deviceContext->RSSetViewports(1, viewport);
-
-	// hack hack, one of the lights gets too close to the camera
-	cdc::deviceManager->getStateManager()->m_rasterizerDesc.DepthClipEnable = false;
-
-	cdc::deviceManager->getStateManager()->setDepthState(D3D11_COMPARISON_LESS, true);
-	deviceContext->OMSetBlendState(keepAlphaBlend, nullptr, 0xffffffff);
-
-	return true;
-}
-
-void SpinnyCubePass::post(
-	cdc::CommonRenderDevice *renderDevice,
-	uint32_t passId)
-{
-	// empty
 }
 
 void ImGuiDrawable::draw(uint32_t funcSetIndex, IRenderDrawable *other) {
