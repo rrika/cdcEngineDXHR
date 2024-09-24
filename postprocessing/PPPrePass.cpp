@@ -31,11 +31,11 @@ void PPPrePass::run(PPRTs *rts, cdc::RenderViewport *viewport, cdc::CommonRender
 		return;
 
 	cdc::RenderViewport v = *viewport;
-	// v.clearMode = 0;
-	// v.byteC9 = 0;
+	v.clearMode = 0;
+	v.byteC9 = 0;
 	cdc::CommonRenderTarget *rt = textures[blob->outputTextureIndex].getRenderTarget();
 	cdc::CommonRenderTarget *sourceColor = nullptr;
-/*
+
 	if (blob->clearMode == 0) {
 		v.clearMode = 1;
 
@@ -56,7 +56,7 @@ void PPPrePass::run(PPRTs *rts, cdc::RenderViewport *viewport, cdc::CommonRender
 		v.clearMode = 1;
 		sourceColor = textures[blob->sourceTextureIndex].getRenderTarget();
 	}
-*/
+
 	// TODO
 	v.mask &= ~0x3000;
 

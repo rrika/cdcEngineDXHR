@@ -307,9 +307,9 @@ bool PPManager::run(
 	// if (rts.rtC != rt) {
 	if (currentRt != rtDest) {
 		cdc::RenderViewport newViewport;
-		// newViewport.clearMode = 0;
+		newViewport.clearMode = 0;
 		newViewport.mask = 0xFFFF8FFF; // TODO
-		// newViewport.byteC9 = 0;
+		newViewport.byteC9 = 0;
 		auto copyScene = g_renderDevice->createSubScene(
 			&newViewport,
 			rtDest, // nullptr

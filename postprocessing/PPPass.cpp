@@ -90,9 +90,12 @@ void PPPass::run(cdc::CommonRenderTarget **output, PPRTs *rts, cdc::RenderViewpo
 			*output = rts->rtC;
 
 			cdc::RenderViewport v = *viewport;
+			v.clearMode = 0;
+			v.byteC9 = 0;
 			v.mask &= ~0x3000; // 0xFFEF8FFF
 
-			// TODO
+			// if (blob->byteE)
+			//	v.clearMode = 1;
 
 			cdc::CommonRenderDevice *renderDevice = cdc::g_renderDevice;
 
