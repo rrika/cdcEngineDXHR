@@ -482,6 +482,26 @@ void PPManager::buildUI(UIActions& uiact) {
 
 	if (ImGui::BeginTabItem("Dynamic")) {
 
+		dtp::PPActiveSet *hoverSet = nullptr;
+
+		ImGui::BeginGroup();
+		auto *dc = cdc::deviceManager->getDisplayConfig();
+		ImGui::RadioButton("Off",         (int*)&dc->antiAliasing, 0);
+		ImGui::RadioButton("FXAA Low",    (int*)&dc->antiAliasing, 2);
+		ImGui::RadioButton("FXAA Medium", (int*)&dc->antiAliasing, 3);
+		ImGui::RadioButton("FXAA High",   (int*)&dc->antiAliasing, 4);
+		ImGui::RadioButton("MLAA",        (int*)&dc->antiAliasing, 5);
+		for (auto set : activeSets) {
+			ImGui::Text("%s", set->name);
+			if (ImGui::IsItemHovered())
+				hoverSet = set;
+		}
+		ImGui::EndGroup();
+		ImGui::SameLine();
+
+		uint32_t hoverRootPasses = hoverSet ? RootPassesForActiveSet(hoverSet) : 0;
+
+		ImGui::BeginGroup();
 		ImGui::BeginDisabled(rootOverrideMask == 0);
 		if (ImGui::Button("Reset overrides"))
 				rootOverride = rootOverrideMask = 0;
@@ -489,11 +509,17 @@ void PPManager::buildUI(UIActions& uiact) {
 
 		for (uint32_t i=0; i<varPassTex->passes.size; i++) {
 			auto *pass = varPassTex->passes.data + i;
+			bool highlight = (hoverRootPasses >> i) & 1;
+			if (highlight)
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0, 0.0, 0.0, 1.0));
 			if (ImGui::CheckboxFlags(pass->name, &rootPasses, 1<<i)) {
 				rootOverride ^= (rootOverride ^ rootPasses) & (1<<i);
 				rootOverrideMask |= 1<<i;
 			}
+			if (highlight)
+				ImGui::PopStyleColor();
 		}
+		ImGui::EndGroup();
 
 		ImGui::Checkbox("Show unused variables", &showUnusedVariables);
 		uint32_t numVariables = varPassTex->variables.size;
