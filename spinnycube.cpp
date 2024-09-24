@@ -44,6 +44,7 @@
 #include "cdcKit/Animation/anitracker.h"
 #include "cdcLocale/localstr.h"
 #include "cdcMath/Math.h" // for cdc::Matrix
+#include "cdcMath/VectorInlines.h"
 #include "cdcObjects/ObjectManager.h" // for buildObjectsUI
 #include "postprocessing/PPManager.h"
 #include "rendering/buffers/PCDX11ConstantBufferPool.h"
@@ -945,7 +946,7 @@ int spinnyCube(HWND window,
 		// add drawables to the scene
 		scene->m_clearColor = 0xff060606;
 		// float lightAccumulation[4] = {0.9f, 0.9f, 0.9f, 1.0f};
-		float lightAccumulation[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+		float lightAccumulation[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
 		renderDevice->clearRenderTarget(2, /*mask=*/ 0x2000, 0.0f, lightAccumulation, 1.0f, 0); // deferred shading buffer
 		static_cast<cdc::PCDX11RenderModelInstance*>(lightRenderModelInstance)->baseMask = 0x2000; // deferred lighting
@@ -1008,7 +1009,24 @@ int spinnyCube(HWND window,
 					if (lensFlareExtraData->texture[3]) ppg->sub10.pInstanceTextures[3] = lensFlareExtraData->texture[3];
 
 				} else {
-					rmi->baseMask = 0x100A; // normals, composite, translucent. this is further narrowed down by CommonMaterial::SetRenderPasses
+					cdc::Vector4 pos {
+						instanceMatrix.m[3][0],
+						instanceMatrix.m[3][1],
+						instanceMatrix.m[3][2],
+						1.0f
+					};
+					cdc::Vector4 viewPos = viewMatrix * pos;
+					bool closeEnough = sqrt(cdc::Dot3(viewPos, viewPos)) < 2000.0f;
+
+					if (extraData && closeEnough) {
+						// assume this is an interactable object, give it an outline
+						rmi->ext->instanceParams[0] = {0.069f, 0.f, 0.f, 0.f};
+						rmi->baseMask = 0x300A; // normals, deferred, composite, translucent. this is further narrowed down by CommonMaterial::SetRenderPasses
+					} else {
+						// IMF without outline
+						rmi->ext->instanceParams[0] = {0.969f, 0.f, 0.f, 0.f};
+						rmi->baseMask = 0x100A; // normals, composite, translucent. this is further narrowed down by CommonMaterial::SetRenderPasses
+					}
 				}
 				recycleRMI.emplace_back(selectedRmiDrawable);
 			}

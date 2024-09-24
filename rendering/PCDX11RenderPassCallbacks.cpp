@@ -105,6 +105,8 @@ bool PCDX11DeferredShadingPassCallbacks::pre(
 		static_cast<PCDX11RenderTarget*>(rt),
 		static_cast<PCDX11DepthBuffer*>(db));
 
+	stateManager->setRenderTargetWriteMask(15);
+
 	return true;
 }
 

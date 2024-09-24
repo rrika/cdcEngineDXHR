@@ -90,6 +90,7 @@ void PPPass::run(cdc::CommonRenderTarget **output, PPRTs *rts, cdc::RenderViewpo
 			*output = rts->rtC;
 
 			cdc::RenderViewport v = *viewport;
+			v.mask &= ~0x3000; // 0xFFEF8FFF
 
 			// TODO
 
