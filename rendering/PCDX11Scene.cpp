@@ -155,19 +155,21 @@ void PCDX11Scene::updateUniforms() {
 	//printf("DepthToView  %f %f %f %f\n", row[0], row[1], row[2], row[3]);
 	sceneBuffer.assignRow(18, row, 1); // SceneBuffer::DepthToView
 
-	// HACK: needed for the composite submaterial to work
-	row[0] = 0.1f;
-	row[1] = 0.1f;
-	row[2] = 0.1f;
-	memcpy(globalState.m_aParams + 0, row, 16); // SceneBuffer::GlobalParams[0] (ambient or rim light)
-	row[0] = 0.0f;
-	row[1] = 0.0f;
-	row[2] = 0.0f;
-	memcpy(globalState.m_aParams + 4, row, 16); // SceneBuffer::GlobalParams[1] (how much pearl appearance)
-	row[0] = 1.0f;
-	memcpy(globalState.m_aParams + 8, row, 16); // SceneBuffer::GlobalParams[2] (unsure what this does)
-	row[0] = 0.0f;
-	memcpy(globalState.m_aParams + 24, row, 16); // SceneBuffer::GlobalParams[6] (unsure what this does)
+	if (false) {
+		// HACK: needed for the composite submaterial to work
+		row[0] = 0.1f;
+		row[1] = 0.1f;
+		row[2] = 0.1f;
+		memcpy(globalState.m_aParams + 0, row, 16); // SceneBuffer::GlobalParams[0] (ambient or rim light)
+		row[0] = 0.0f;
+		row[1] = 0.0f;
+		row[2] = 0.0f;
+		memcpy(globalState.m_aParams + 4, row, 16); // SceneBuffer::GlobalParams[1] (how much pearl appearance)
+		row[0] = 1.0f;
+		memcpy(globalState.m_aParams + 8, row, 16); // SceneBuffer::GlobalParams[2] (unsure what this does)
+		row[0] = 0.0f;
+		memcpy(globalState.m_aParams + 24, row, 16); // SceneBuffer::GlobalParams[6] (unsure what this does)
+	}
 
 	// HACK: needed for the normals submaterial to work
 	row[0] = 1.0f;

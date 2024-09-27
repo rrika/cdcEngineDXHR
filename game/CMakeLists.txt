@@ -4,6 +4,7 @@ target_sources(dxhr PRIVATE
 	DeferredRenderingObject.cpp
 	DX3Player.cpp
 	Gameloop.cpp
+	GlobalParamManager.cpp
 	Impulse.cpp
 	LensFlareAndCoronaID.cpp
 	Main.cpp

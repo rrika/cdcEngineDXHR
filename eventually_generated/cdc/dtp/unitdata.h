@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include "game/GlobalParamManager.h"
 
 namespace dtp {
 
@@ -33,7 +34,8 @@ struct UnitData {
 		uint32_t ssaoMaterial_B; // 18
 		uint32_t ssaoMaterial_C; // 1C
 		uint8_t ssaoMaterials_inUse; // 20
-		uint8_t gap21[251];
+		GlobalParamInit globalParamInit; // 24
+		uint8_t gap110[0xC];
 		PPActiveSet *ppactiveset; // 11C
 		uint32_t dword120;
 		uint32_t dword124;

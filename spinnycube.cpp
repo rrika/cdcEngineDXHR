@@ -33,6 +33,7 @@
 #include "game/DeferredRenderingObject.h"
 #include "game/DX3Player.h"
 #include "game/Gameloop.h"
+#include "game/GlobalParamManager.h"
 #include "game/LensFlareAndCoronaID.h"
 #include "game/ObjectiveManager.h"
 #include "game/script/game/NsMainMenuMovieController.h"
@@ -646,6 +647,7 @@ int spinnyCube(HWND window,
 	bool showInventory = false;
 	bool showIntroButtons = true;
 	bool showIntroButtonsIMF = true;
+	bool useFallbackParams = false;
 	bool editorMode = false;
 	std::vector<std::pair<void*, cdc::PCDX11RenderDevice::RenderList*>> captures { { nullptr, nullptr } };
 	uint32_t selectedCapture = 0;
@@ -1314,6 +1316,9 @@ int spinnyCube(HWND window,
 			if (pptoggles[i].active)
 				PPManager::s_instance->addActiveSet(pptoggles[i].set, 1.0f);
 
+
+		ApplyGlobalParams((cdc::Vector*)scene->globalState.m_aParams, &globalDatabase->globalParamInit);
+
 		for (StreamUnit &unit : StreamTracker) {
 			if (!unit.used)
 				continue;
@@ -1324,6 +1329,12 @@ int spinnyCube(HWND window,
 				continue;
 			if (unit.level->unitData->postprocessing == nullptr)
 				continue;
+
+			if (!useFallbackParams)
+				ApplyGlobalParams(
+					(cdc::Vector*)scene->globalState.m_aParams,
+					&unit.level->unitData->postprocessing->globalParamInit);
+
 			if (unit.level->unitData->postprocessing->ppactiveset == nullptr)
 				continue;
 
@@ -1411,6 +1422,7 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Streamgroups ", nullptr, drawStreamGroups)) { drawStreamGroups = !drawStreamGroups; }
 				if (ImGui::MenuItem("Cell Meshes", nullptr, drawCellMeshes)) { drawCellMeshes = !drawCellMeshes; }
 				if (ImGui::MenuItem("Cell Boxes", nullptr, drawCellBoxes)) { drawCellBoxes = !drawCellBoxes; }
+				if (ImGui::MenuItem("Fallback GlobalParams", nullptr, useFallbackParams)) { useFallbackParams = !useFallbackParams; }
 				ImGui::Separator();
 				if (ImGui::MenuItem("Off",         nullptr, dc->antiAliasing == 0)) { dc->antiAliasing = 0; }
 				if (ImGui::MenuItem("FXAA Low",    nullptr, dc->antiAliasing == 2)) { dc->antiAliasing = 2; }

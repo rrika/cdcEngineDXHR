@@ -6,5 +6,5 @@ struct PackedBytesAndScale {
 	uint32_t bytes;
 	float scale;
 
-	cdc::Vector unpack();
+	cdc::Vector unpack() const;
 };

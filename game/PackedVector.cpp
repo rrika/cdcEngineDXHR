@@ -1,6 +1,6 @@
 #include "PackedVector.h"
 
-cdc::Vector PackedBytesAndScale::unpack() {
+cdc::Vector PackedBytesAndScale::unpack() const {
 	return {
 		((uint8_t)(bytes >>  0)) * scale / 255.0f,
 		((uint8_t)(bytes >>  8)) * scale / 255.0f,
