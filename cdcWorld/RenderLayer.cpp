@@ -1,6 +1,6 @@
 #include "RenderLayer.h"
-#include "rendering/PCDX11RenderDevice.h"
-#include "rendering/renderdevice.h"
+#include "cdcRender/PCDX11RenderDevice.h"
+#include "cdcRender/renderdevice.h"
 
 using namespace cdc;
 

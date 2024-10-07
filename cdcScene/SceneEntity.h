@@ -1,7 +1,7 @@
 #pragma once
 #include "cdcScene.h"
 #include "cdcMath/Math.h"
-#include "rendering/Culling/BasicPrimitives.h"
+#include "cdcRender/Culling/BasicPrimitives.h"
 
 namespace cdc {
 

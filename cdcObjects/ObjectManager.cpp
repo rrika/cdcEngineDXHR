@@ -6,7 +6,7 @@
 #include "cdcFile/FileHelpers.h"
 #include "cdcFile/FileSystem.h"
 #include "cdcGameShell/cdcGameShell.h"
-#include "rendering/Inspector.h"
+#include "cdcRender/Inspector.h"
 #include "cdcResource/Resolve.h"
 #include "cdcResource/ResolveObject.h"
 #include "game/dtp/modularhuman.h"

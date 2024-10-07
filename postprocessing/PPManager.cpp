@@ -1,10 +1,10 @@
 #include "PPBuiltins.h"
 #include "PPManager.h"
 #include "PPPass.h"
-#include "rendering/CommonMaterial.h"
-#include "rendering/MaterialData.h"
-#include "rendering/PCDX11RenderDevice.h"
-#include "rendering/surfaces/PCDX11RenderTarget.h"
+#include "cdcRender/CommonMaterial.h"
+#include "cdcRender/MaterialData.h"
+#include "cdcRender/PCDX11RenderDevice.h"
+#include "cdcRender/surfaces/PCDX11RenderTarget.h"
 
 #include "config.h"
 

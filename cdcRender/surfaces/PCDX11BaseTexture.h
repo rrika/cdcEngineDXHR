@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <d3d11.h>
-#include "rendering/Types.h"
+#include "cdcRender/Types.h"
 
 namespace cdc {
 

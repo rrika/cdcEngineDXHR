@@ -3,14 +3,14 @@
 #include "cdcWorld/CalcSkeleton.h"
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Object.h"
-#include "rendering/CommonRenderDevice.h"
-#include "rendering/Culling/BasicPrimitives.h"
-#include "rendering/Culling/BasicPrimitives_inlines.h" // for SetFromMinMax
-#include "rendering/PCDX11MatrixState.h"
-#include "rendering/RenderMesh.h"
+#include "cdcRender/CommonRenderDevice.h"
+#include "cdcRender/Culling/BasicPrimitives.h"
+#include "cdcRender/Culling/BasicPrimitives_inlines.h" // for SetFromMinMax
+#include "cdcRender/PCDX11MatrixState.h"
+#include "cdcRender/RenderMesh.h"
 
-#include "rendering/PCDX11RenderDevice.h" // HACK
-#include "rendering/PCDX11RenderModelInstance.h" // HACK
+#include "cdcRender/PCDX11RenderDevice.h" // HACK
+#include "cdcRender/PCDX11RenderModelInstance.h" // HACK
 #include "game/DeferredRenderingObject.h" // HACK
 
 namespace cdc {

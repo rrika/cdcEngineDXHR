@@ -5,8 +5,8 @@
 #include "PPManager.h"
 #include "PPTexture.h"
 #include "PPVariable.h"
-#include "rendering/CommonRenderDevice.h"
-#include "rendering/CommonScene.h"
+#include "cdcRender/CommonRenderDevice.h"
+#include "cdcRender/CommonScene.h"
 
 bool PPPass::init(dtp::PPPassBlob *blob, PPTexture *textures, uint32_t numTextures, PPVariable *variables, uint32_t numVariables) {
 	uint32_t variableIndices[24];

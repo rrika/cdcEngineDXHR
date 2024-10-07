@@ -2,9 +2,9 @@
 #include "PPManager.h"
 #include "PPPrePass.h"
 #include "PPTexture.h"
-#include "rendering/CommonRenderDevice.h"
-#include "rendering/CommonScene.h"
-#include "rendering/surfaces/PCDX11DefaultRenderTarget.h"
+#include "cdcRender/CommonRenderDevice.h"
+#include "cdcRender/CommonScene.h"
+#include "cdcRender/surfaces/PCDX11DefaultRenderTarget.h"
 
 bool PPPrePass::init(dtp::PPPrePassBlob *blob, PPTexture *textures, uint32_t numTextures, PPVariable *variables, uint32_t numVariables) {
 	this->blob = blob;

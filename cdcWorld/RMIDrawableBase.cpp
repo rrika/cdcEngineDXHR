@@ -1,10 +1,10 @@
 #include "RMIDrawableBase.h"
-#include "rendering/Culling/BasicPrimitives.h"
-#include "rendering/Culling/BasicPrimitives_inlines.h"
-#include "rendering/CommonRenderDevice.h"
-#include "rendering/RenderMesh.h"
-#include "rendering/RenderModelInstance.h"
-#include "rendering/PCDX11MatrixState.h"
+#include "cdcRender/Culling/BasicPrimitives.h"
+#include "cdcRender/Culling/BasicPrimitives_inlines.h"
+#include "cdcRender/CommonRenderDevice.h"
+#include "cdcRender/RenderMesh.h"
+#include "cdcRender/RenderModelInstance.h"
+#include "cdcRender/PCDX11MatrixState.h"
 
 RMIDrawableBase::RMIDrawableBase(cdc::RenderMesh *model) {
 	rmi = cdc::g_renderDevice->createRenderModelInstance(model);

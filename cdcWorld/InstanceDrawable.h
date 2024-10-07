@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <vector>
-#include "rendering/RenderModelInstance.h"
+#include "cdcRender/RenderModelInstance.h"
 #include "cdcScene/IDrawable.h"
 #include "cdcWorld/InstanceComponent.h"
 

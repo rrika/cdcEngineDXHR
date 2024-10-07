@@ -1,12 +1,12 @@
 #include "PPBuiltins.h"
-#include "rendering/PCDX11DeviceManager.h"
-#include "rendering/IRenderDrawable.h"
-#include "rendering/drawables/PCDX11FXAADrawable.h"
-#include "rendering/drawables/PCDX11MLAADrawable.h"
-#include "rendering/surfaces/PCDX11RenderTarget.h"
-#include "rendering/surfaces/PCDX11RenderTexture.h"
-#include "rendering/PCDX11RenderDevice.h"
-#include "rendering/renderdevice.h"
+#include "cdcRender/PCDX11DeviceManager.h"
+#include "cdcRender/IRenderDrawable.h"
+#include "cdcRender/drawables/PCDX11FXAADrawable.h"
+#include "cdcRender/drawables/PCDX11MLAADrawable.h"
+#include "cdcRender/surfaces/PCDX11RenderTarget.h"
+#include "cdcRender/surfaces/PCDX11RenderTexture.h"
+#include "cdcRender/PCDX11RenderDevice.h"
+#include "cdcRender/renderdevice.h"
 
 using namespace cdc;
 

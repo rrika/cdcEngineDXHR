@@ -1,7 +1,7 @@
 #include <cstdio>
 #include "RenderResourceSection.h"
-#include "../../rendering/CommonRenderDevice.h"
-#include "../../rendering/RenderResource.h"
+#include "cdcRender/CommonRenderDevice.h"
+#include "cdcRender/RenderResource.h"
 
 namespace cdc {
 

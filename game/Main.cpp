@@ -10,7 +10,7 @@
 #include "cdcGameShell/cdcGameShell.h"
 #include "cdcKit/Animation/anitracker.h"
 #include "cdcObjects/ObjectManager.h"
-#include "../rendering/PCDX11DeviceManager.h"
+#include "cdcRender/PCDX11DeviceManager.h"
 #include "postprocessing/PPManager.h"
 #include "cdcResource/Resolve.h"
 #include "cdcResource/ResolveObject.h"

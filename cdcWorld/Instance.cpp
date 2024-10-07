@@ -12,8 +12,8 @@
 #include "SceneLayer.h"
 
 #include "game/dtp/modularhuman.h"
-#include "rendering/CommonRenderDevice.h"
-#include "rendering/IMaterial.h"
+#include "cdcRender/CommonRenderDevice.h"
+#include "cdcRender/IMaterial.h"
 
 using namespace cdc;
 

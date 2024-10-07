@@ -1,7 +1,7 @@
 #include "cdcMath/MatrixInlines.h"
 #include "Primitives.h"
 #include "BasicPrimitives_inlines.h"
-#include "rendering/CommonScene.h"
+#include "cdcRender/CommonScene.h"
 
 namespace cdc {
 

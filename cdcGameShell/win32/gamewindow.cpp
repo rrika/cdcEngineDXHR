@@ -1,7 +1,7 @@
 #include "gamewindow.h"
 #include "config.h"
 #include "imgui/imgui.h"
-#include "rendering/PCDX11RenderDevice.h"
+#include "cdcRender/PCDX11RenderDevice.h"
 
 using namespace cdc;
 

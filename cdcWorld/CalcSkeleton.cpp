@@ -1,7 +1,7 @@
 #include <cstring>
 #include "CalcSkeleton.h"
 #include "cdcMath/MatrixInlines.h"
-#include "rendering/PCDX11MatrixState.h"
+#include "cdcRender/PCDX11MatrixState.h"
 #include "cdcWorld/cdcWorldTypes.h"
 
 namespace cdc {

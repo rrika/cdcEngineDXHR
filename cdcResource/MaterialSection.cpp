@@ -1,7 +1,7 @@
 #include <cstring> // for memcpy
 #include "MaterialSection.h"
-#include "../../rendering/CommonRenderDevice.h"
-#include "../../rendering/IMaterial.h"
+#include "cdcRender/CommonRenderDevice.h"
+#include "cdcRender/IMaterial.h"
 
 namespace cdc {
 

@@ -1,6 +1,6 @@
 #include "ShaderLibSection.h"
-#include "../../rendering/CommonRenderDevice.h"
-#include "../../rendering/shaders/IShaderLib.h"
+#include "cdcRender/CommonRenderDevice.h"
+#include "cdcRender/shaders/IShaderLib.h"
 
 namespace cdc {
 

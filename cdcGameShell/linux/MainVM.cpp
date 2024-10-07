@@ -2,10 +2,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
 #include "../../game/Main.h"
-#include "../../rendering/BuiltinResources.h"
-#include "../../rendering/IPCDeviceManager.h"
-#include "../../rendering/PCDX11DeviceManager.h"
-#include "../../rendering/PCDX11RenderDevice.h"
+#include "cdcRender/BuiltinResources.h"
+#include "cdcRender/IPCDeviceManager.h"
+#include "cdcRender/PCDX11DeviceManager.h"
+#include "cdcRender/PCDX11RenderDevice.h"
 #include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h"
 #include "cdcLocale/localstr.h"

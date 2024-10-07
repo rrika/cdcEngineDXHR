@@ -1,5 +1,5 @@
 #include "PrimitiveContext.h"
-#include "rendering/CommonRenderDevice.h"
+#include "cdcRender/CommonRenderDevice.h"
 
 namespace cdc {
 

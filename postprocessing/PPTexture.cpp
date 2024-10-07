@@ -1,8 +1,8 @@
 #include "PPManager.h" // for PPRTs
 #include "PPTexture.h"
-#include "rendering/CommonRenderDevice.h"
-#include "rendering/surfaces/CommonRenderTarget.h" 
-#include "rendering/surfaces/CommonDepthBuffer.h" 
+#include "cdcRender/CommonRenderDevice.h"
+#include "cdcRender/surfaces/CommonRenderTarget.h" 
+#include "cdcRender/surfaces/CommonDepthBuffer.h" 
 
 void PPTexture::init(dtp::PPTextureBlob *newBlob) {
 	blob = *newBlob;

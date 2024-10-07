@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
 #include "cdcScene.h"
-#include "rendering/CommonScene.h"
-#include "rendering/Culling/Primitives.h"
+#include "cdcRender/CommonScene.h"
+#include "cdcRender/Culling/Primitives.h"
 
 namespace cdc {
 
