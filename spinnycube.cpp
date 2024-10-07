@@ -2115,8 +2115,9 @@ int spinnyCube(HWND window,
 				for (InventorySlot *slot : inventoryContainer.collectAllSlots()) {
 					uint32_t dtpId = slot->dtpId;
 					auto *pickup = (dtp::Pickup*)cdc::g_resolveSections[7]->GetBasePointer(dtpId);
-					if (pickup->width && pickup->height && pickup->texture8) {
-						auto *resource = (cdc::RenderResource*)cdc::g_resolveSections[5]->GetBasePointer(pickup->texture8);
+					uint32_t textureId = slot->transpose ? pickup->texture8 : pickup->texture10;
+					if (pickup->width && pickup->height && textureId) {
+						auto *resource = (cdc::RenderResource*)cdc::g_resolveSections[5]->GetBasePointer(textureId);
 						if (auto tex = dynamic_cast<cdc::PCDX11Texture*>(resource)) {
 							ImGui::SetCursorPos(ImVec2 {
 								topLeft.x + gridScale*slot->x,
