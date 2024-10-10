@@ -24,3 +24,7 @@ void FatalError(const char *format, ...) {
 }
 
 }
+
+void todo() {
+	cdc::FatalError("todo");
+}

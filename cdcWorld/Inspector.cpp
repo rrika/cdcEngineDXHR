@@ -12,6 +12,7 @@
 #include "cdcWorld/Object.h"
 #include "game/DeferredRenderingObject.h"
 #include "game/LensFlareAndCoronaID.h"
+#include "game/dtp/conversation.h"
 #include "UIActions.h"
 
 void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
@@ -124,6 +125,39 @@ void buildUI(UIActions& uiact, LensFlareAndCoronaExtraData *extra) {
 	ImGui::Text("material %p", extra->material);
 }
 
+struct ActorNpcExtraData {
+	uint32_t pad[0x3C / 4];
+	dtp::Interaction *defaultInteraction; // 3C
+};
+
+void buildUI(UIActions& uiact, dtp::Interaction *interaction) {
+	if (interaction->dword0 && interaction->dtpGraph) {
+		uint32_t tier = interaction->dtpGraph->tier;
+		ImGui::Text("tier %d", tier);
+		ImGui::Indent();
+		if (tier == 1) {
+			auto *nodeList = &static_cast<dtp::ConversationGraph*>(interaction->dtpGraph)->sub8->nodeList;
+			for (uint32_t i=0; i<nodeList->dword0; i++) {
+				dtp::ConversationGraphNode *node = &nodeList->nodes[i];
+				ImGui::Text("node %d: %s", i, node->typeName);
+			}
+		}
+		ImGui::Unindent();
+	}
+	else if (interaction->dword0)
+		ImGui::Text("no graph");
+	else
+		ImGui::Text("dword0 = 0");
+}
+
+void buildUI(UIActions& uiact, ActorNpcExtraData *extra) {
+	ImGui::Text("default interaction:");
+	if (extra->defaultInteraction) {
+		ImGui::SameLine();
+		buildUI(uiact, extra->defaultInteraction);
+	}
+}
+
 void buildUI(UIActions& uiact, dtp::Intro *intro) {
 	auto *objectSection = cdc::g_resolveSections[11];
 
@@ -153,6 +187,10 @@ void buildUI(UIActions& uiact, dtp::Intro *intro) {
 
 		} else if (objFamily == 0x5b) {
 			auto *extraData = (LensFlareAndCoronaExtraData*) intro->extraData1;
+			buildUI(uiact, extraData);
+
+		} else if (objFamily == 0x53 || objFamily == 0x5d) { // NPC, NPC with replacements
+			auto *extraData = (ActorNpcExtraData*) intro->extraData1;
 			buildUI(uiact, extraData);
 		}
 	}

@@ -1,6 +1,13 @@
 target_sources(dxhr PRIVATE
 	Actor/InventoryPlayer.cpp
 
+	Conversation/BriefingManager.cpp
+	Conversation/ConversationActor.cpp
+	Conversation/ConversationBase.cpp
+	Conversation/ConversationBriefing.cpp
+	Conversation/ConversationGraphNodes.cpp
+	Conversation/ConversationManager.cpp
+
 	DeferredRenderingObject.cpp
 	DX3Player.cpp
 	Gameloop.cpp
