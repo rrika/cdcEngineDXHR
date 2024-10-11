@@ -130,20 +130,11 @@ struct ActorNpcExtraData {
 	dtp::Interaction *defaultInteraction; // 3C
 };
 
+void buildUI(UIActions& uiact, dtp::ConversationGraphBase *dtpGraph); // game/Conversation/Inspector.cpp
+
 void buildUI(UIActions& uiact, dtp::Interaction *interaction) {
-	if (interaction->dword0 && interaction->dtpGraph) {
-		uint32_t tier = interaction->dtpGraph->tier;
-		ImGui::Text("tier %d", tier);
-		ImGui::Indent();
-		if (tier == 1) {
-			auto *nodeList = &static_cast<dtp::ConversationGraph*>(interaction->dtpGraph)->sub8->nodeList;
-			for (uint32_t i=0; i<nodeList->dword0; i++) {
-				dtp::ConversationGraphNode *node = &nodeList->nodes[i];
-				ImGui::Text("node %d: %s", i, node->typeName);
-			}
-		}
-		ImGui::Unindent();
-	}
+	if (interaction->dword0 && interaction->dtpGraph)
+		buildUI(uiact, interaction->dtpGraph);
 	else if (interaction->dword0)
 		ImGui::Text("no graph");
 	else

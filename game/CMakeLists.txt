@@ -20,5 +20,11 @@ target_sources(dxhr PRIVATE
 	objects/objects.cpp
 	objects/UberObject_DX3.cpp)
 
+if (ENABLE_IMGUI)
+	target_sources(dxhr PRIVATE
+		Conversation/Inspector.cpp)
+endif()
+
 add_subdirectory(script/game)
 add_subdirectory(ui)
+

@@ -1,15 +1,35 @@
 #pragma once
 #include <cstdint>
 
+namespace cdc { class RenderResource; }
+
 namespace dtp {
 
 // nodes
 
-struct ConversationGraphNode { // made-up name
-	uint32_t dword0;
+struct BriefingProfile {
+	uint16_t nameIndex;
+	uint16_t nonPlayer;
+	// cdc::RenderResource *texture;
+	uint32_t texture;
+};
+
+struct BriefingLine {
+	BriefingProfile *profile; // 0
 	uint32_t dword4;
 	uint32_t dword8;
-	const char *typeName;
+	uint32_t voiceLineIndex; // C
+	uint32_t stringIndex; // 10
+	const char *untranslated;
+};
+
+struct ConversationGraphNode { // made-up name
+	const char *count;    // eg. "(099)"
+	const char *dtpPath;  // eg. "dtp\conversation\briefingnodes\Briefing_Line.dtp"
+	union {
+		BriefingLine *line; // 8
+	};
+	const char *typeName; // eg. "Line"
 	uint32_t dword10;
 	uint32_t dword14;
 	uint32_t dword18;
@@ -32,7 +52,11 @@ struct ConversationBase { // made-up name
 };
 
 struct ConversationBriefing : ConversationBase {
-	uint32_t pad[(0x60-0x4) / 4]; // 4
+	char pad4[0x18-0x4];
+	const char *name18;
+	char pad1C[0x24-0x1C];
+	const char *name24;
+	char pad28[0x60-0x28];
 	ConversationGraphNodeList nodeList; // 60
 };
 

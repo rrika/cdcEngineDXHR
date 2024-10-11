@@ -29,6 +29,7 @@
 #include "game/Actor/InventoryPlayer.h"
 #include "game/dtp/objecttypes/globaldatabase.h"
 #include "game/dtp/objecttypes/globalloading.h"
+#include "game/dtp/conversation.h"
 #include "game/dtp/pickup.h"
 #include "game/DeferredRenderingObject.h"
 #include "game/DX3Player.h"
@@ -187,6 +188,9 @@ public:
 DRMIndex drmIndex;
 
 #if ENABLE_IMGUI
+
+void buildUI(UIActions& uiact, dtp::ConversationGraphBase *dtpGraph); // game/Conversation/Inspector.cpp
+
 struct DRMExplorer {
 
 	void draw(UIActions& uiact, bool *showWindow) {
@@ -249,6 +253,12 @@ struct DRMExplorer {
 								}
 								ImGui::PopID();
 
+							}
+							if (section.type == 7 && section.allocFlags == 42) { // DTP (Conversation)
+								auto *convGraph = (dtp::ConversationGraphBase*)cdc::g_resolveSections[7]->GetBasePointer(section.id);
+								ImGui::PushID(section.id);
+								buildUI(uiact, convGraph);
+								ImGui::PopID();
 							}
 							if (section.type == 8) { // Script
 								if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->GetBasePointer(section.id)) {
