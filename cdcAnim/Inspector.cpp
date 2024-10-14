@@ -137,12 +137,14 @@ void buildUI(UIActions& uiact, AnimComponentV2 *ac) {
 		if (ImGui::SmallButton(label))
 			ac->TriggerStateTransition(0, i, true);
 	}
-	char label[7];
-	cdc::AnimBuffer &buffer = *ac->poseNode->pose.buffer;
-	for (uint32_t i=1; i<buffer.numSegments; i++) {
-		snprintf(label, 7, "pos%d", i);
-		ImGui::SliderFloat3(label, buffer.segments[i].trans.vec128, -200.f, 200.f);
-		snprintf(label, 7, "rot%d", i);
-		ImGui::SliderFloat3(label, buffer.segments[i].rot.vec128, -2.f, 2.f);
+	if (ac->poseNode) {
+		char label[7];
+		cdc::AnimBuffer &buffer = *ac->poseNode->pose.buffer;
+		for (uint32_t i=1; i<buffer.numSegments; i++) {
+			snprintf(label, 7, "pos%d", i);
+			ImGui::SliderFloat3(label, buffer.segments[i].trans.vec128, -200.f, 200.f);
+			snprintf(label, 7, "rot%d", i);
+			ImGui::SliderFloat3(label, buffer.segments[i].rot.vec128, -2.f, 2.f);
+		}
 	}
 }
