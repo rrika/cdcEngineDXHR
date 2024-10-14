@@ -17,6 +17,31 @@ struct UberObjectProp {
 	SectionProp *sectionList; // C
 };
 
+struct LootItem {
+	uint32_t pickupDtpIndex; // 0
+	uint32_t dword4;
+	uint32_t dword8;
+	uint32_t dwordC;
+	uint32_t dword10;
+	uint32_t dword14;
+	uint32_t dword18;
+	uint32_t dword1C;
+	uint32_t dword20;
+};
+
+struct Loot {
+	uint32_t sectionIndex;
+	uint32_t numItems;
+	LootItem *items;
+};
+
+struct IntroDataUberObject {
+	uint8_t gap0[0x6C];
+	Loot *loot; // 6C
+	uint8_t gap70[0xD9-0x70];
+	uint8_t numLoot; // D9
+};
+
 static_assert(sizeof(UberObjectProp::SectionProp) == 0x2F0);
 
 }

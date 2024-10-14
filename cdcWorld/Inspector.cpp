@@ -2,17 +2,43 @@
 #include "3rdParty/imgui/imgui.h"
 #include "cdc/dtp/objectproperties/intro.h"
 #include "cdcAnim/Inspector.h"
+#include "cdcLocale/localstr.h"
 #include "cdcRender/CommonMaterial.h"
 #include "cdcRender/MaterialData.h"
+#include "cdcResource/DTPDataSection.h"
 #include "cdcResource/ResolveSection.h"
 #include "cdcScene/SceneEntity.h"
 #include "cdcSound/SoundPlex.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Object.h"
+#include "cdc/dtp/objecttypes/uberobject.h"
 #include "game/DeferredRenderingObject.h"
 #include "game/LensFlareAndCoronaID.h"
+#include "game/dtp/pickup.h"
 #include "UIActions.h"
+
+void buildUI(UIActions& uiact, dtp::IntroDataUberObject *extra) {
+	if (!extra) {
+		ImGui::Text("no extra data");
+		return;
+	}
+	for (uint32_t i=0; i<extra->numLoot; i++) {
+		auto *loot = &extra->loot[i];
+		ImGui::Text("loot %d on section %d", i, loot->sectionIndex);
+		ImGui::Indent();
+		for (uint32_t j=0; j<loot->numItems; j++) {
+			auto pickupDtpIndex = loot->items[j].pickupDtpIndex;
+			auto count = 0; // TODO
+			auto *item = static_cast<dtp::Pickup*>(DTPDataSection::getPointer(pickupDtpIndex));
+			if (item)
+				ImGui::Text("%d x %d %s", count, pickupDtpIndex, localstr_get(item->nameStringIndex));
+			else
+				ImGui::Text("%d x %d (unavailable)", count, pickupDtpIndex);
+		}
+		ImGui::Unindent();
+	}
+}
 
 void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
 	// material
@@ -147,7 +173,11 @@ void buildUI(UIActions& uiact, dtp::Intro *intro) {
 			}
 		}
 
-		if (objFamily == 0x50) {
+		if (objFamily == 2) {
+			auto *extraData = (dtp::IntroDataUberObject*) intro->extraData1;
+			buildUI(uiact, extraData);
+
+		} else if (objFamily == 0x50) {
 			auto *extraData = (DeferredRenderingExtraData*) intro->extraData1;
 			buildUI(uiact, extraData);
 
