@@ -176,9 +176,9 @@ void UberObjectComposite::commandByIndex(int index) {
 	}
 }
 
-bool UberObjectComposite::methodC(dtp::UberObjectProp::Unknown& entry, int x, void *y) {
-	for (uint32_t i=0; i<entry.numConditions; i++)
-		if (auto *cond = entry.conditions[i])
+bool UberObjectComposite::methodC(dtp::UberObjectProp::Event& event, int x, void *y) {
+	for (uint32_t i=0; i<event.numConditions; i++)
+		if (auto *cond = event.conditions[i])
 			if (checkCondition(*cond) == false)
 				return false;
 	if (!instance)
@@ -377,7 +377,7 @@ int32_t UberObjectSection::getTransitionIndex(dtp::UberObjectProp::Transition *t
 bool UberObjectSection::evalTransitionCondition(dtp::UberObjectProp::Transition& tr) {
 	for (uint32_t i=0; i<tr.numFlagMatchers; i++) {
 		auto& m = tr.flagMatchers[i];
-		if (((stateFlags >> m.bitIndex) & 1) != tr.expected)
+		if (((stateFlags >> m.bitIndex) & 1) != m.expected)
 			return false;
 	}
 	return true;
@@ -394,7 +394,7 @@ bool UberObjectSection::evalTransitionConditionRand(dtp::UberObjectProp::Transit
 void UberObjectSection::resetIfRequested() {
 	if (reset) {
 		reset = false;
-		setState(sectionProp->initialState);
+		setState(sectionProp->initialState, false);
 	}
 }
 
@@ -564,11 +564,11 @@ void UberObjectSection::doAction(dtp::UberObjectProp::Action& action) { // metho
 	}
 }
 
-void UberObjectSection::write(BinaryWriter&) {
+void UberObjectSection::write(cdc::BinaryWriter&) {
 	// TODO
 }
 
-void UberObjectSection::read(BinaryReader&) {
+void UberObjectSection::read(cdc::BinaryReader&) {
 	// TODO
 }
 
@@ -1088,15 +1088,15 @@ void buildUI(UIActions& uiact, dtp::UberObjectProp *uberProp, Instance *instance
 		buildUI(uiact, uberProp, &cmd, instance);
 		ImGui::Unindent();
 	}
-	for (uint32_t i=0; i < uberProp->numUnknown; i++) {
-		auto& unknown = uberProp->unknownList[i];
-		ImGui::Text("Event for section %d, %d %d",
-			unknown.sectionIndex,
-			unknown.dword10,
-			unknown.dword14);
+	for (uint32_t i=0; i < uberProp->numEvents; i++) {
+		auto& event = uberProp->eventList[i];
+		ImGui::Text("Event for section %d, trigger type %d, %d",
+			event.sectionIndex,
+			event.triggerType,
+			event.triggerState.stateIndex);
 		ImGui::Indent();
-		for (uint32_t j=0; j < unknown.numConditions; j++) {
-			buildUI(uiact, unknown.conditions[j]);
+		for (uint32_t j=0; j < event.numConditions; j++) {
+			buildUI(uiact, event.conditions[j]);
 		}
 		ImGui::Unindent();
 	}

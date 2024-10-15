@@ -37,6 +37,9 @@ public:
 };
 
 struct Player : InstanceUserData { // sizeof(Player) == 0x120
+	uint32_t padding[0x54 / 4];
+	// make sure offset 0x50 is readable in case someone mistakes this for an
+	// UberObjectComposite or UberObjectSection
 	static void Init(Instance*, GameTracker*);
 };
 

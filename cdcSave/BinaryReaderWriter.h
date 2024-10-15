@@ -1,4 +1,5 @@
 #pragma once
+#include <cstring>
 
 namespace cdc {
 
@@ -13,6 +14,7 @@ struct BinaryReader  { // 33
 		memcpy((char*)data, current, size);
 		byteCount += size;
 		current += size;
+		return true;
 	}
 
 	template <typename T>
@@ -34,6 +36,7 @@ struct BinaryWriter  { // 88
 			memcpy(current, (char*)data, size);
 		byteCount += size;
 		current += size;
+		return true;
 	}
 
 	template <typename T>

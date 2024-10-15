@@ -232,16 +232,25 @@ struct UberObjectProp {
 		uint32_t key;
 		uint32_t commandIndex;
 	};
-	struct Unknown { // maintenance maybe
+	struct EventTriggerState {
+		uint32_t stateIndex;
+	};
+	struct EventTriggerFlag {
+		uint32_t sectionIndex; // overrides Event::sectionIndex
+		uint32_t flagIndex;
+		bool active;
+	};
+	struct Event {
 		uint32_t dword0;
 		uint32_t numConditions; // 4
  		QueryProp **conditions; // 8
 		uint32_t sectionIndex; // C
-		uint32_t dword10;
-		uint32_t dword14;
-		uint32_t dword18;
-		uint32_t dword1C;
-		uint8_t byte20;
+		uint32_t triggerType; // 10
+		union {
+			EventTriggerState triggerState; // triggerType = 1, 2, 3, 4
+			EventTriggerFlag triggerFlag; // triggerType = 5
+		};
+		uint8_t onlyOnce; // 20
   		uint16_t objListIndexOverride; // 22
 	};
 	uint16_t version; // 0
@@ -258,8 +267,8 @@ struct UberObjectProp {
 	uint32_t numCommands; // 18
 	Command *commandList; // 1C
 
-	uint32_t numUnknown; // 20
-	Unknown *unknownList; // 24
+	uint32_t numEvents; // 20
+	Event *eventList; // 24
 
 	uint32_t dword28;
 	uint32_t dword2C;
@@ -351,6 +360,7 @@ struct IntroDataUberObject {
 
 static_assert(sizeof(UberObjectProp::SectionProp) == 0x2F0);
 static_assert(sizeof(UberObjectProp::Consequence) == 0x44);
+static_assert(sizeof(UberObjectProp::Event) == 0x24);
 static_assert(sizeof(IntroDataUberObject) == 0xE4);
 
 }

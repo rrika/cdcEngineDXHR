@@ -41,7 +41,7 @@ public:
 	virtual ~UberObjectComposite() = default;
 	virtual void commandByName(uint32_t); // 4
 	virtual void commandByIndex(int); // 8
-	virtual bool methodC(dtp::UberObjectProp::Unknown& entry, int, void*);
+	virtual bool methodC(dtp::UberObjectProp::Event& event, int, void*);
 	virtual UberObjectSection *createSection(Instance *instance, dtp::UberObjectProp::SectionProp *info, uint32_t index); // 10
 	virtual void Update();
 	// virtual void write(BinaryWriter&); // 18
@@ -107,8 +107,8 @@ public:
 	virtual void setState(uint32_t, bool); // 10
 	virtual bool shouldTakeTransition(dtp::UberObjectProp::Transition& transition);
 	virtual void doAction(dtp::UberObjectProp::Action& action);
-	virtual void write(BinaryWriter&); // 1C
-	virtual void read(BinaryReader&); // 20
+	virtual void write(cdc::BinaryWriter&); // 1C
+	virtual void read(cdc::BinaryReader&); // 20
 	// virtual void method24();
 	// virtual void method28();
 	virtual void Update();
