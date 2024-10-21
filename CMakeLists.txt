@@ -36,6 +36,9 @@ option(ENABLE_D3DCOMPILER "Build with d3dcompiler dependency" ${NOT_NATIVE_BUILD
 
 option(ENABLE_ASAN "Build with address sanitizer" OFF)
 
+configure_file(res/DXHRDC.shad DXHRDC.shad COPYONLY)
+configure_file(res/dtpdata.ids dtpdata.ids COPYONLY)
+
 if (NATIVE_BUILD)
 	add_compile_options(-g)
 
@@ -78,8 +81,6 @@ if (NATIVE_BUILD)
 		fmodex)
 
 elseif (MSVC)
-	configure_file(DXHRDC.shad DXHRDC.shad COPYONLY)
-
 	add_executable(dxhr WIN32
 		spinnycube.cpp)
 	target_link_libraries(dxhr PRIVATE
@@ -105,6 +106,7 @@ elseif (MSVC)
 		DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 else()
+
 	add_compile_options(-g)
 
 	add_compile_options(-target ${triple}

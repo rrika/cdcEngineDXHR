@@ -1,4 +1,5 @@
 #include <cstdlib> // for getenv
+#include <cstring>
 #include <string>
 #ifdef _WIN32
 #include <windows.h>
@@ -73,7 +74,15 @@ FileSystem *getDefaultFileSystem() {
 }
 
 char *FSHelper_ReadFile(const char *path) {
-	auto fs = archiveFileSystem_default; // HACK
+	FileSystem *fs;
+	if (strcmp(path, "pc-dev\\dtpdata.ids") == 0) {
+		// the copy that comes with the PC version is incorrect.
+		// use the list that comes with this repo instead.
+	 	fs = lowerFileSystem;
+	 	path = "dtpdata.ids";
+	} else {
+	 	fs = archiveFileSystem_default; // HACK
+	}
 	uint32_t size = fs->getSize(path);
 
 	char *buffer = new char[size+1];

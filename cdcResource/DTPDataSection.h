@@ -26,4 +26,6 @@ public:
 	uint32_t FindResource(uint32_t) override; // 0x44
 
 	static void *getPointer(uint32_t);
+	static void ReadIDs();
+	static const char *GetName(uint32_t);
 };
