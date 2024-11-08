@@ -1683,6 +1683,7 @@ int spinnyCube(HWND window,
 				// auto *material = static_cast<cdc::PCDX11Material*>(uiact.selectedMaterial);
 				auto *material = static_cast<cdc::CommonMaterial*>(uiact.selectedMaterial);
 				ImGui::Text("material %p (id %x)", material, material->GetId());
+				uiact.origin((void*)material);
 
 				ImGui::Text("  mask "); ImGui::SameLine();
 				UIPassMask(material->GetRenderPassMask(/*fading=*/false)); ImGui::SameLine();
