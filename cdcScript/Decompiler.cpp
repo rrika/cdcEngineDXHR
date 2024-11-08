@@ -1,4 +1,6 @@
 #include "config.h"
+#include "cdcResource/DRMIndex.h"
+#include "cdcResource/DTPDataSection.h"
 #include "cdcScript/DataType.h"
 #include "cdcScript/Decompiler.h"
 #include "cdcScript/ScriptDataCursor.h"
@@ -56,11 +58,11 @@ static void Type(UIActions& uiact, DataType *dt) {
 				auto *sdt = cty->m_subType;
 				if (ImGui::SmallButton(nameof(ty)))
 					uiact.select(ty);
-				ImGui::SameLine();
+				ImGui::SameLine(0.f, 0.f);
 				ImGui::Text("<");
-				ImGui::SameLine();
+				ImGui::SameLine(0.f, 0.f);
 				Type(uiact, sdt);
-				ImGui::SameLine();
+				ImGui::SameLine(0.f, 0.f);
 				ImGui::Text(">");
 			} else {
 				// A
@@ -78,8 +80,16 @@ static void Type(UIActions& uiact, DataType *dt) {
 
 void Decompile(UIActions& uiact, ScriptType& ty) {
 #if ENABLE_IMGUI
+	{
+		const char *path = nullptr;
+		cdc::DRMSectionHeader *header = nullptr;
+		ptrdiff_t offset;
+		if (locate(&ty, header, offset))
+			path = DTPDataSection::GetName(header->id);
+		if (path)
+			ImGui::TextDisabled("// %s", path);
+	}
 	ImGui::Text("class %s", nameof(&ty));
-	uiact.origin((void*)&ty);
 	ImGui::SameLine();
 	if (auto parentTy = ty.getParentType()) {
 		ImGui::Text(":");
@@ -113,26 +123,26 @@ void Decompile(UIActions& uiact, ScriptType& ty) {
 		for (uint32_t i=0; i<numFunctions; i++) {
 			Function *fn = &ty.blob->m_functions[i];
 			Prototype *pt = fn->prototype;
-			Type(uiact, &pt->returnType); ImGui::SameLine();
-			ImGui::Text("method_%d(", i);
+			Type(uiact, &pt->returnType);
 			ImGui::SameLine();
+			ImGui::Text("method_%d(", i);
 			uint32_t numArgs = pt->GetNumArgs();
 			for (uint32_t j=0; j<numArgs; j++) {
 				if (j) {
+					ImGui::SameLine(0.f, 0.f);
 					ImGui::Text(",");
-					ImGui::SameLine();
 				}
 				DataMember *m = &pt->args[i];
+				ImGui::SameLine();
 				Type(uiact, &m->m_type);
 				ImGui::SameLine();
 				ImGui::Text("arg_%x", m->m_offset);
-				ImGui::SameLine();
 			}
 			ImGui::SameLine();
 			ImGui::Text(");");
 		}
 	} else {
-		ImGui::Text("// no functions");
+		ImGui::TextDisabled("// no functions");
 	}
 	ImGui::Unindent();
 	ImGui::Text("}");
