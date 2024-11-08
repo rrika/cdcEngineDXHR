@@ -208,6 +208,53 @@ const char * const sectionTypeNames[] = {
 
 struct DRMExplorer {
 
+	void sectionLine(UIActions& uiact, cdc::DRMSectionHeader& section, uint32_t i) {
+		ImGui::Text("%3d: %04x %s allocFlags:%d unk6:%x (%d bytes)",
+			i, section.id, sectionTypeNames[section.type], section.allocFlags, section.unknown06, section.payloadSize);
+		if (section.type == 5) { // RenderResource
+			ImGui::Text("    ");
+			ImGui::SameLine();
+			auto *resource = (cdc::RenderResource*)cdc::g_resolveSections[5]->GetBasePointer(section.id);
+			if (auto tex = dynamic_cast<cdc::PCDX11Texture*>(resource)) {
+				ImGui::Image(
+					tex->createShaderResourceView(), ImVec2(256, 256));
+			}
+		}
+		if (section.type == 6) { // FMOD
+			ImGui::PushID(section.id);
+			ImGui::SameLine();
+			if (ImGui::SmallButton("Play sound")) {
+				((cdc::WaveSection*)cdc::g_resolveSections[6])->playSound(section.id);
+			}
+			ImGui::PopID();
+		}
+		if (section.type == 7 && section.allocFlags == 0xD) { // DTP (SoundPlex)
+			ImGui::PushID(section.id);
+			ImGui::SameLine();
+			auto *plex = (dtp::SoundPlex*)cdc::g_resolveSections[7]->GetBasePointer(section.id);
+			if (plex) {
+				if (ImGui::SmallButton("Play soundplex")) {
+					cdc::SOUND_StartPaused(plex, /*delay=*/ 0.0f);
+				}
+				buildUI(plex, nullptr, /*indent=*/ "    ");
+			}
+			ImGui::PopID();
+
+		}
+		if (section.type == 8) { // Script
+			if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->GetBasePointer(section.id)) {
+				ImGui::SameLine();
+				ImGui::Text(" %s", ty->blob->m_nativeScriptName);
+				ImGui::SameLine();
+				ImGui::PushID(section.id);
+				if (ImGui::SmallButton("Decompile")) {
+					uiact.select(ty);
+				}
+				ImGui::PopID();
+			}
+		}
+	}
+
 	void draw(UIActions& uiact, bool *showWindow) {
 		ImGui::Begin("DRM Explorer", showWindow);
 
@@ -218,53 +265,8 @@ struct DRMExplorer {
 				for (auto& entry : drmIndex.sectionHeaders) {
 					if (ImGui::TreeNode(entry.first.c_str())) {
 						uint32_t i=0;
-						for (auto& section : entry.second) {
-
-							ImGui::Text("%3d: %04x %s allocFlags:%d unk6:%x (%d bytes)",
-								i++, section.id, sectionTypeNames[section.type], section.allocFlags, section.unknown06, section.payloadSize);
-							if (section.type == 5) { // RenderResource
-								ImGui::Text("    ");
-								ImGui::SameLine();
-								auto *resource = (cdc::RenderResource*)cdc::g_resolveSections[5]->GetBasePointer(section.id);
-								if (auto tex = dynamic_cast<cdc::PCDX11Texture*>(resource)) {
-									ImGui::Image(
-										tex->createShaderResourceView(), ImVec2(256, 256));
-								}
-							}
-							if (section.type == 6) { // FMOD
-								ImGui::PushID(section.id);
-								ImGui::SameLine();
-								if (ImGui::SmallButton("Play sound")) {
-									((cdc::WaveSection*)cdc::g_resolveSections[6])->playSound(section.id);
-								}
-								ImGui::PopID();
-							}
-							if (section.type == 7 && section.allocFlags == 0xD) { // DTP (SoundPlex)
-								ImGui::PushID(section.id);
-								ImGui::SameLine();
-								auto *plex = (dtp::SoundPlex*)cdc::g_resolveSections[7]->GetBasePointer(section.id);
-								if (plex) {
-									if (ImGui::SmallButton("Play soundplex")) {
-										cdc::SOUND_StartPaused(plex, /*delay=*/ 0.0f);
-									}
-									buildUI(plex, nullptr, /*indent=*/ "    ");
-								}
-								ImGui::PopID();
-
-							}
-							if (section.type == 8) { // Script
-								if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->GetBasePointer(section.id)) {
-									ImGui::SameLine();
-									ImGui::Text(" %s", ty->blob->m_nativeScriptName);
-									ImGui::SameLine();
-									ImGui::PushID(section.id);
-									if (ImGui::SmallButton("Decompile")) {
-										uiact.select(ty);
-									}
-									ImGui::PopID();
-								}
-							}
-						}
+						for (auto& section : entry.second)
+							sectionLine(uiact, section, i++);
 						ImGui::TreePop();
 					}
 				}
