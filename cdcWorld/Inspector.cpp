@@ -28,13 +28,16 @@ void buildUI(UIActions& uiact, dtp::IntroDataUberObject *extra) {
 		uint32_t programDtp = extra->defaultPrograms[i];
 		ImGui::Text("program %d: %x", i, programDtp);
 		if (auto *program = static_cast<dtp::TvProgram*>(DTPDataSection::getPointer(programDtp))) {
+			uiact.origin((void*)program);
 			ImGui::Indent();
 			for (uint32_t j=0; j<program->numEntries; j++) {
 				ImGui::Text("show %d: %x", j, program->entries[j].showDtpId);
 				auto *show  = static_cast<dtp::TvShow*>(DTPDataSection::getPointer(program->entries[j].showDtpId));
+				uiact.origin((void*)show);
 				uint32_t soundPlexDtp = show->ptr->ptr->ptr->soundPlexDtp;
 				ImGui::Text("soundPlexDtp %x", soundPlexDtp);
 				auto *soundPlex = static_cast<dtp::SoundPlex*>(DTPDataSection::getPointer(soundPlexDtp));
+				uiact.origin((void*)soundPlex);
 				if (soundPlex) {
 					std::function<void(cdc::SoundHandle)> ignore = [](cdc::SoundHandle){};
 					buildUI(soundPlex, &ignore);

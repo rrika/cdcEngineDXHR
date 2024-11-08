@@ -8,6 +8,7 @@
 #include "cdcAnim/AnimPoseNode.h"
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Object.h"
+#include "UIActions.h"
 
 using namespace cdc;
 
@@ -30,6 +31,7 @@ void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
 	ImGui::Text("fragment %p", fragment);
 	if (!fragment)
 		return;
+	uiact.origin((void*)fragment);
 	ImGui::Indent();
 	ImGui::Text("mAnimID 0x%x", fragment->mAnimID);
 	ImGui::Text("mKeyCount %d", fragment->mKeyCount);

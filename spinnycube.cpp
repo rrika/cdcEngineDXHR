@@ -1636,10 +1636,12 @@ int spinnyCube(HWND window,
 				for (uint32_t i = 0; i < model->numModelBatches; i++) {
 					cdc::ModelBatch *batch = &model->modelBatches[i];
 					ImGui::Text("batch %d", i);
+					uiact.origin((void*)batch);
 					for (uint32_t j = 0; j < batch->tab0EntryCount_30; j++, pg++) {
 						ImGui::PushID(pg);
 						ImGui::Text("  group %d", pg);
 						cdc::PrimGroup *group = &model->primGroups[pg];
+						uiact.origin((void*)group);
 						ImGui::SameLine();
 						ImGui::Text(": flags %02x dword20 %08x passMask", group->flags, group->dword20); ImGui::SameLine();
 						UIPassMask(nppg[pg].mask8); ImGui::SameLine();
@@ -1662,7 +1664,10 @@ int spinnyCube(HWND window,
 				for (uint32_t i = 0; i < numGroups; i++) {
 					ImGui::PushID(i);
 					cdc::RenderTerrainGroup *group = &terrain->m_pGroups[i];
-					ImGui::Text("group %d passes %08x", i, group->renderPasses);
+					ImGui::Text("group %d passes", i);
+					uiact.origin((void*)group);
+					ImGui::SameLine();
+					UIPassMask(group->renderPasses);
 					ImGui::SameLine();
 					if (ImGui::SmallButton("vertexdecl/material")) {
 						cdc::RenderTerrainVertexBuffer *group_vb = &terrain->m_pVertexBuffers[group->vbIndex];
@@ -1700,6 +1705,7 @@ int spinnyCube(HWND window,
 					auto *submat = material->materialBlob->subMat4C[i];
 					if (submat) {
 						ImGui::Text("submaterial %d: %p", i, submat);
+						uiact.origin((void*)submat);
 						ImGui::SameLine();
 						if (ImGui::SmallButton("show"))
 							uiact.select(submat);
@@ -1726,6 +1732,7 @@ int spinnyCube(HWND window,
 				ImGui::PushID("submaterial");
 				cdc::MaterialBlobSub *submat = uiact.selectedSubMaterial;
 				ImGui::Text("submaterial %p", submat);
+				uiact.origin((void*)submat);
 
 				uint8_t psRefIndexEnd = 0;
 				psRefIndexEnd = std::max<uint8_t>(psRefIndexEnd, submat->psRefIndexEndA);

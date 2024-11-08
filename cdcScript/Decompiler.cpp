@@ -78,6 +78,7 @@ static void Type(UIActions& uiact, DataType *dt) {
 void Decompile(UIActions& uiact, ScriptType& ty) {
 #if ENABLE_IMGUI
 	ImGui::Text("class %s", nameof(&ty));
+	uiact.origin((void*)&ty);
 	ImGui::SameLine();
 	if (auto parentTy = ty.getParentType()) {
 		ImGui::Text(":");
