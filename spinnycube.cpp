@@ -206,11 +206,33 @@ const char * const sectionTypeNames[] = {
 	"AnyType",
 };
 
+static void PathText(const char *path) {
+	const char *sep1 = strrchr(path, '/');
+	const char *sep2 = strrchr(path, '\\');
+	const char *sep = sep1 > sep2 ? sep1 : sep2;
+	if (sep) {
+		std::string basename(path, sep+1);
+		ImGui::TextDisabled("%s", basename.c_str());
+		ImGui::SameLine(0.f, 0.f);
+		ImGui::Text("%s", sep+1);
+	} else {
+		ImGui::Text("%s", path);
+	}
+}
+
 struct DRMExplorer {
 
 	void sectionLine(UIActions& uiact, cdc::DRMSectionHeader& section, uint32_t i) {
 		ImGui::Text("%3d: %04x %s allocFlags:%d unk6:%x (%d bytes)",
 			i, section.id, sectionTypeNames[section.type], section.allocFlags, section.unknown06, section.payloadSize);
+
+		const char *path = nullptr;
+		if (section.type == (uint8_t)cdc::ContentType::DTPData ||
+			section.type == (uint8_t)cdc::ContentType::Material ||
+			section.type == (uint8_t)cdc::ContentType::Script
+		)
+			path = DTPDataSection::GetName(section.id);
+
 		if (section.type == 5) { // RenderResource
 			ImGui::Text("    ");
 			ImGui::SameLine();
@@ -228,23 +250,32 @@ struct DRMExplorer {
 			}
 			ImGui::PopID();
 		}
-		if (section.type == 7 && section.allocFlags == 0xD) { // DTP (SoundPlex)
-			ImGui::PushID(section.id);
-			ImGui::SameLine();
-			auto *plex = (dtp::SoundPlex*)cdc::g_resolveSections[7]->GetBasePointer(section.id);
-			if (plex) {
-				if (ImGui::SmallButton("Play soundplex")) {
-					cdc::SOUND_StartPaused(plex, /*delay=*/ 0.0f);
+		if (section.type == 7) {
+			if (section.allocFlags == 0xD) { // DTP (SoundPlex)
+				ImGui::PushID(section.id);
+				ImGui::SameLine();
+				auto *plex = (dtp::SoundPlex*)cdc::g_resolveSections[7]->GetBasePointer(section.id);
+				if (plex) {
+					if (ImGui::SmallButton("Play soundplex")) {
+						cdc::SOUND_StartPaused(plex, /*delay=*/ 0.0f);
+					}
+					if (path) {
+						ImGui::SameLine();
+						PathText(path);
+						path = nullptr;
+					}
+					buildUI(plex, nullptr, /*indent=*/ "    ");
 				}
-				buildUI(plex, nullptr, /*indent=*/ "    ");
+				ImGui::PopID();
 			}
-			ImGui::PopID();
-
 		}
 		if (section.type == 8) { // Script
 			if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->GetBasePointer(section.id)) {
-				ImGui::SameLine();
-				ImGui::Text(" %s", ty->blob->m_nativeScriptName);
+				if (ty->blob->m_nativeScriptName) {
+					ImGui::SameLine();
+					ImGui::Text(" %s", ty->blob->m_nativeScriptName);
+					path = nullptr; // might want to show this, but not on the same line
+				}
 				ImGui::SameLine();
 				ImGui::PushID(section.id);
 				if (ImGui::SmallButton("Decompile")) {
@@ -252,6 +283,10 @@ struct DRMExplorer {
 				}
 				ImGui::PopID();
 			}
+		}
+		if (path) {
+			ImGui::SameLine();
+			PathText(path);
 		}
 	}
 
@@ -348,7 +383,7 @@ struct SpinnyUIActions : public UIActions {
 		{
 			const char *dtpPath = DTPDataSection::GetName(header->id);
 			ImGui::SameLine();
-			ImGui::Text("%s", dtpPath);
+			PathText(dtpPath);
 		}
 
 		if (offset > 0) {
