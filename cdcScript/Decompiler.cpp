@@ -1,6 +1,7 @@
 #include "config.h"
 #include "cdcScript/DataType.h"
 #include "cdcScript/Decompiler.h"
+#include "cdcScript/ScriptDataCursor.h"
 #include "cdcScript/ScriptType.h"
 #include "UIActions.h"
 
@@ -90,13 +91,21 @@ void Decompile(UIActions& uiact, ScriptType& ty) {
 	}
 	ImGui::Text("{");
 	ImGui::Indent();
-	if (ty.blob->m_members) {
-		uint32_t numMembers = ty.blob->m_members.size();
-		for (uint32_t i=0; i<numMembers; i++) {
-			DataMember *m = &ty.blob->m_members[i];
-			Type(uiact, &m->m_type);
+	if (false) {
+		if (ty.blob->m_members) {
+			uint32_t numMembers = ty.blob->m_members.size();
+			for (uint32_t i=0; i<numMembers; i++) {
+				DataMember *m = &ty.blob->m_members[i];
+				Type(uiact, &m->m_type);
+				ImGui::SameLine();
+				ImGui::Text("field_%x;", m->m_offset);
+			}
+		}
+	} else {
+		for (ScriptUniqueDataCursor c(&ty); !c.done(); c.advance()) {
+			Type(uiact, &c->m_type);
 			ImGui::SameLine();
-			ImGui::Text("field_%x;", m->m_offset);
+			ImGui::Text("field_%x;", c->m_offset);	
 		}
 	}
 	if (ty.blob->m_functions) {
