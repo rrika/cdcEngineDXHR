@@ -1,4 +1,5 @@
 target_sources(dxhr PRIVATE
+	DRMIndex.cpp
 	Resolve.cpp
 	ResolveObject.cpp
 	ResolveReceiver.cpp

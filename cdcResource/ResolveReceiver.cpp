@@ -373,6 +373,23 @@ void ResolveReceiver::requestComplete(FileRequest *req) {
 
 	resolveObject->notifyDependants();
 
+	{
+		auto name = std::make_shared<std::string>(resolveObject->path);
+		auto entries = resolveObject->m_pRecord->m_pEntry;
+		for (uint32_t i = 0; i < sectionHeaders.size(); i++) {
+			auto domainID = entries[i].domainID;
+			auto *resolveSection = g_resolveSections[sectionHeaders[i].type];
+			if (!resolveSection)
+				continue;
+			auto *wrapped = resolveSection->GetBasePointer(domainID);
+			auto *blob = resolveSection->GetResolveBasePointer(domainID);
+
+			drmIndex.loadedSections[uintptr_t(blob)] = {name, i, sectionHeaders[i].payloadSize};
+			if (blob != wrapped)
+				drmIndex.loadedSections[uintptr_t(wrapped)] = {name, i, 0xffffffff};
+		}
+	}
+
 	void *wrapped = nullptr;
 	if (resolveObject->rootSection != ~0u) {
 		auto& rootSection = sectionHeaders[resolveObject->rootSection];
