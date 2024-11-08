@@ -87,6 +87,7 @@
 #include "cdcRender/surfaces/PCDX11Texture.h"
 #include "cdcRender/VertexDeclaration.h"
 #include "cdcResource/DRMIndex.h"
+#include "cdcResource/DTPDataSection.h"
 #include "cdcResource/ResolveObject.h"
 #include "cdcResource/ResolveReceiver.h"
 #include "cdcResource/ResolveSection.h"
@@ -184,9 +185,27 @@ public:
 		uint32_t passId) override;
 };
 
-DRMIndex drmIndex;
-
 #if ENABLE_IMGUI
+
+const char * const sectionTypeNames[] = {
+	"Generic",
+	"Empty",
+	"Animation",
+	"",
+	"",
+	"RenderResource",
+	"FMODSoundBank",
+	"DTPData",
+	"Script",
+	"ShaderLib",
+	"Material",
+	"Object",
+	"RenderMesh",
+	"CollisionMesh",
+	"StreamGroupList",
+	"AnyType",
+};
+
 struct DRMExplorer {
 
 	void draw(UIActions& uiact, bool *showWindow) {
@@ -200,26 +219,9 @@ struct DRMExplorer {
 					if (ImGui::TreeNode(entry.first.c_str())) {
 						uint32_t i=0;
 						for (auto& section : entry.second) {
-							const char *names[] = {
-								"Generic",
-								"Empty",
-								"Animation",
-								"",
-								"",
-								"RenderResource",
-								"FMODSoundBank",
-								"DTPData",
-								"Script",
-								"ShaderLib",
-								"Material",
-								"Object",
-								"RenderMesh",
-								"CollisionMesh",
-								"StreamGroupList",
-								"AnyType",
-							};
+
 							ImGui::Text("%3d: %04x %s allocFlags:%d unk6:%x (%d bytes)",
-								i++, section.id, names[section.type], section.allocFlags, section.unknown06, section.payloadSize);
+								i++, section.id, sectionTypeNames[section.type], section.allocFlags, section.unknown06, section.payloadSize);
 							if (section.type == 5) { // RenderResource
 								ImGui::Text("    ");
 								ImGui::SameLine();
@@ -322,6 +324,37 @@ struct SpinnyUIActions : public UIActions {
 	void select(Instance *instance) override {
 		selectedInstance = instance;
 		selectedMovable = (void*)instance;
+	}
+
+	void origin(void *ptr) override {
+		cdc::DRMSectionHeader *header = nullptr;
+		ptrdiff_t offset = 0;
+
+		if (!ImGui::IsItemHovered())
+			return;
+		if (!locate(ptr, header, offset))
+			return;
+
+		ImGui::BeginTooltip();
+
+		const char *tyname = header->type < 16 ? sectionTypeNames[header->type] : "";
+		ImGui::Text("%p: %s %05x", ptr, tyname, header->id);
+
+		if (header->type == (uint8_t)cdc::ContentType::DTPData ||
+			header->type == (uint8_t)cdc::ContentType::Material ||
+			header->type == (uint8_t)cdc::ContentType::Script)
+		{
+			const char *dtpPath = DTPDataSection::GetName(header->id);
+			ImGui::SameLine();
+			ImGui::Text("%s", dtpPath);
+		}
+
+		if (offset > 0) {
+			ImGui::SameLine();
+			ImGui::Text("+ 0x%x", offset);
+		}
+
+		ImGui::EndTooltip();
 	}
 };
 

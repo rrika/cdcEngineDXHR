@@ -28,4 +28,6 @@ struct UIActions {
 	virtual void select(dtp::Intro *intro) = 0;
 	virtual void select(dtp::IMFRef *imfRef) = 0;
 	virtual void select(Instance *instance) = 0;
+
+	virtual void origin(void *) = 0;
 };
