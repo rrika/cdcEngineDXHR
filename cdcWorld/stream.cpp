@@ -39,6 +39,13 @@ struct ObjList {
 
 ObjList *objList;
 
+const char *unitNameById(uint32_t id) {
+	if (id < objList->count)
+		return objList->entries[id].name;
+	else
+		return nullptr;
+}
+
 #if ENABLE_IMGUI
 static void buildUnitsUI(bool main, bool scn) {
 	for (uint32_t i = 0; i < objList->count; i++) {

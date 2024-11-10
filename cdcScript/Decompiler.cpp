@@ -9,6 +9,7 @@
 #include "cdcScript/ScriptType.h"
 #include "cdcSound/SoundPlex.h"
 #include "cdcWorld/InstanceManager.h"
+#include "cdcWorld/stream.h"
 #include "game/DX3Player.h"
 #include "game/ObjectiveManager.h"
 #include "UIActions.h"
@@ -142,6 +143,11 @@ static void InitNative(UIActions& uiact, ScriptType *ty, void *init_) {
 		struct StickyInit { uint16_t varName; };
 		auto *init = *(StickyInit**)init_;
 		ImGui::Text("{ 0x%x }", init->varName);
+
+	} else if (strcmp(ntyname, "unitref") == 0) {
+		struct UnitRefInit { uint16_t unitId; };
+		auto *init = *(UnitRefInit**)init_;
+		ImGui::Text("unit %s", unitNameById(init->unitId));
 
 	} else if (strcmp(ntyname, "sound") == 0) {
 		auto *init = *(dtp::ScriptSound**)init_;

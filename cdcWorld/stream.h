@@ -33,3 +33,5 @@ void buildUnitsUI();
 void STREAM_Init();
 StreamUnit *STREAM_GetStreamUnitWithID(int32_t id);
 StreamUnit *STREAM_LevelLoadAndInit(const char *baseAreaName);
+
+const char *unitNameById(uint32_t);
