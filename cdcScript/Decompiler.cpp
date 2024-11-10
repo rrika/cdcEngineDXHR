@@ -76,6 +76,79 @@ static void Type(UIActions& uiact, DataType *dt) {
 	}
 	ImGui::Text("%s", simple);
 }
+
+static void InitNative(UIActions& uiact, ScriptType *ty, void *init_) {
+	ty = ty->getClosestNativeAncestor();
+	if (!ty) {
+		ImGui::Text("[ERROR: not a native type]");
+		return;
+	}
+
+	const char *ntyname = ty->blob->m_nativeScriptName;
+
+	ImGui::Text("todo(%s)", ntyname);
+}
+
+static void Init(UIActions& uiact, DataMember *member) {
+	if (!member)
+		return;
+
+	ImGui::SameLine();
+
+	uint32_t init = member->m_init;
+	switch (member->m_type.type & 15) {
+	case DataType::DTVOID:
+		ImGui::Text("= (void)0");
+		break;
+
+	case DataType::BOOL:
+		ImGui::TextUnformatted(bool(init & 0xff) ? "= true" : "= false");
+		break;
+
+	case DataType::INT:
+		ImGui::Text("= %d", init);
+		break;
+
+	case DataType::FLOAT: {
+		float f; memcpy(&f, &init, 4);
+		ImGui::Text("= %f", f);
+		break;
+	}
+	case DataType::STRING:
+		ImGui::Text("= \"%s\"", (const char*)init);
+		break;
+
+	case DataType::STATE:
+		ImGui::Text("= state %d", init);
+		break;
+
+	case DataType::ARRAY:
+	case DataType::DYNARRAY:
+	case DataType::MAP:
+	case DataType::UNKNOWN:
+		goto todo;
+
+	case DataType::NATIVE:
+		if (init) {
+			ImGui::Text("=");
+			ImGui::SameLine();
+			InitNative(uiact, member->m_type.GetScriptType(), (void*)init);
+		}
+		break;
+
+	case DataType::SCRIPT:
+	case DataType::STRUCT:
+	case DataType::STRUCT_REF:
+	case DataType::ENUM:
+	case DataType::NTENUM:
+		goto todo;
+
+	todo:
+		ImGui::Text("= todo(%d)", member->m_type.type & 15);
+		break;
+	}
+}
+
 #endif
 
 void Decompile(UIActions& uiact, ScriptType& ty) {
@@ -108,14 +181,22 @@ void Decompile(UIActions& uiact, ScriptType& ty) {
 				DataMember *m = &ty.blob->m_members[i];
 				Type(uiact, &m->m_type);
 				ImGui::SameLine();
-				ImGui::Text("field_%x;", m->m_offset);
+				ImGui::Text("field_%x", m->m_offset);
+				Init(uiact, m);
+				ImGui::SameLine(0.f, 0.f);
+				ImGui::Text(";");
 			}
 		}
 	} else {
 		for (ScriptUniqueDataCursor c(&ty); !c.done(); c.advance()) {
+			ImGui::PushID((DataMember*)c);
 			Type(uiact, &c->m_type);
 			ImGui::SameLine();
-			ImGui::Text("field_%x;", c->m_offset);	
+			ImGui::Text("field_%x", c->m_offset);	
+			Init(uiact, c);
+			ImGui::SameLine(0.f, 0.f);
+			ImGui::Text(";");
+			ImGui::PopID();
 		}
 	}
 	if (ty.blob->m_functions) {
