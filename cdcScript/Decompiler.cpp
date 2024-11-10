@@ -1,4 +1,5 @@
 #include "config.h"
+#include "cdc/dtp/script/scriptsound.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcResource/DRMIndex.h"
 #include "cdcResource/DTPDataSection.h"
@@ -6,6 +7,7 @@
 #include "cdcScript/Decompiler.h"
 #include "cdcScript/ScriptDataCursor.h"
 #include "cdcScript/ScriptType.h"
+#include "cdcSound/SoundPlex.h"
 #include "cdcWorld/InstanceManager.h"
 #include "game/DX3Player.h"
 #include "game/ObjectiveManager.h"
@@ -140,6 +142,13 @@ static void InitNative(UIActions& uiact, ScriptType *ty, void *init_) {
 		struct StickyInit { uint16_t varName; };
 		auto *init = *(StickyInit**)init_;
 		ImGui::Text("{ 0x%x }", init->varName);
+
+	} else if (strcmp(ntyname, "sound") == 0) {
+		auto *init = *(dtp::ScriptSound**)init_;
+		if (ImGui::SmallButton("Play")) {
+			SOUND_StartPaused(&init->m_plex, 0.0f);
+		}
+		uiact.origin((void*)init);
 
 	} else {
 		ImGui::Text("todo(%s)", ntyname);
