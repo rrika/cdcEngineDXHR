@@ -1,10 +1,14 @@
 #include "config.h"
+#include "cdcObjects/ObjectManager.h"
 #include "cdcResource/DRMIndex.h"
 #include "cdcResource/DTPDataSection.h"
 #include "cdcScript/DataType.h"
 #include "cdcScript/Decompiler.h"
 #include "cdcScript/ScriptDataCursor.h"
 #include "cdcScript/ScriptType.h"
+#include "cdcWorld/InstanceManager.h"
+#include "game/DX3Player.h"
+#include "game/ObjectiveManager.h"
 #include "UIActions.h"
 
 #if ENABLE_IMGUI
@@ -86,7 +90,60 @@ static void InitNative(UIActions& uiact, ScriptType *ty, void *init_) {
 
 	const char *ntyname = ty->blob->m_nativeScriptName;
 
-	ImGui::Text("todo(%s)", ntyname);
+	ObjectiveManager& objectiveManager = *PlayerPair::s_pair->getPlayer0()->objectiveManager;
+
+	if (strcmp(ntyname, "objective") == 0) {
+		struct ObjectiveInit { uint32_t objectiveId; };
+		auto *init = *(ObjectiveInit**)init_;
+		ImGui::Text("objective %d/0x%x", init->objectiveId, init->objectiveId);
+		if (Objective *o = objectiveManager.getObjective(init->objectiveId)) {
+			ImGui::SameLine(0.f, 0.f);
+			ImGui::TextDisabled(" /* %s */", o->getName());
+		}
+
+	} else if (strcmp(ntyname, "mission") == 0) {
+		struct MissionInit { uint32_t missionId; };
+		auto *init = *(MissionInit**)init_;
+		ImGui::Text("mission %d/%x", init->missionId, init->missionId);
+		if (Mission *m = objectiveManager.getMission(init->missionId)) {
+			ImGui::SameLine(0.f, 0.f);
+			ImGui::TextDisabled(" /* %s */", m->getName());
+		}
+
+	} else if (strcmp(ntyname, "scenarioref") == 0) {
+		struct ScenarioRef { uint32_t scenarioId; };
+		auto *init = *(ScenarioRef**)init_;
+		ImGui::Text("scenario %d/0x%x", init->scenarioId, init->scenarioId);
+
+	} else if (strcmp(ntyname, "instanceref") == 0) {
+		struct InstanceRefInit { uint32_t id; };
+		auto *init = *(InstanceRefInit**)init_;
+		ImGui::Text("instance %d/0x%x", init->id, init->id);
+		auto& map = InstanceManager::gInstanceIntroUniqueIDHashMap;
+		if (auto it = map.find(init->id); it != map.end()) {
+			ImGui::SameLine();
+			if (ImGui::SmallButton("inspect")) {
+				uiact.select(it->second);
+			}
+		}
+
+	} else if (strcmp(ntyname, "uberobjectevent") == 0 || strcmp(ntyname, "uberobjectcommand") == 0) {
+		struct UberObjectEventOrCommandInit { uint16_t objListIndex; uint32_t index; };
+		auto *init = *(UberObjectEventOrCommandInit**)init_;
+		ImGui::Text("{object %s, %x}", objectName(init->objListIndex), init->index);
+
+	} else if (
+		strcmp(ntyname, "stickybool") == 0 ||
+		strcmp(ntyname, "stickyfloat") == 0 ||
+		strcmp(ntyname, "stickyint") == 0
+	) {
+		struct StickyInit { uint16_t varName; };
+		auto *init = *(StickyInit**)init_;
+		ImGui::Text("{ 0x%x }", init->varName);
+
+	} else {
+		ImGui::Text("todo(%s)", ntyname);
+	}
 }
 
 static void Init(UIActions& uiact, DataMember *member) {
