@@ -1,4 +1,5 @@
 target_sources(dxhr PRIVATE
+	DataType.cpp
 	Decompiler.cpp
 	GarbageCollector.cpp
 	GCObject.cpp

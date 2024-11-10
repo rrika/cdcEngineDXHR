@@ -49,11 +49,11 @@ static void Type(UIActions& uiact, DataType *dt) {
 		case DataType::SCRIPT:
 		{
 			ImGui::PushID((void*)dt);
-			if (dt->ptr8 == nullptr)
+			if (dt->m_script == nullptr)
 				ImGui::Text("(null)");
 			else if (dt->type & 0x80) {
 				// A<B>
-				auto *cty = (DataType::Compound*)dt->ptr8;
+				auto *cty = dt->m_compound;
 				auto *ty = cty->m_script;
 				auto *sdt = cty->m_subType;
 				if (ImGui::SmallButton(nameof(ty)))
@@ -66,7 +66,7 @@ static void Type(UIActions& uiact, DataType *dt) {
 				ImGui::Text(">");
 			} else {
 				// A
-				auto *ty = (ScriptType*)dt->ptr8;
+				auto *ty = dt->m_script;
 				if (ImGui::SmallButton(nameof(ty)))
 					uiact.select(ty);
 			}
