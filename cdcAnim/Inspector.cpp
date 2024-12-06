@@ -9,6 +9,7 @@
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Object.h"
 #include "UIActions.h"
+#include "cdc/dtp/animnodes/fragment.h"
 #include "cdc/dtp/animationpipelinegraph.h"
 #include "cdc/dtp/animationstategraph.h"
 #include "cdc/dtp/animgraphcommon.h"
@@ -52,7 +53,28 @@ static void buildUI(UIActions& uiact, dtp::AnimGraphNode::Node *node, dtp::AnimG
 		ImGui::SameLine();
 		ImGui::Text("%s", (const char*)node->data);
 		uiact.origin((void*)node);
-		// TODO
+		ImGui::Indent();
+		if (strcmp((const char*)node->data, "cdc\\dtp\\animnodes\\Fragment.dtp") == 0 ||
+			strcmp((const char*)node->data, "dtp\\animnodes\\DynamicFragment.dtp") == 0
+		) {
+			auto *data = (dtp::FragmentNode*)node->namedNodeData;
+			int32_t extIndex = (int32_t)data->extIndex;
+			if (extIndex != -1) {
+				uint16_t animId = ext[extIndex].animId;
+				ImGui::Text("ext[%d] = %04x", extIndex, animId);
+			} else {
+				ImGui::Text("ext[%d] = N/A", extIndex);
+			}
+			for (uint32_t i=0; i<data->m_loopTriggerCount; i++) {
+				auto& event = data->m_loopTriggers[i];
+				ImGui::Text("loop trigger %08x %08x", event.dword0, event.dword4);
+			}
+			for (uint32_t i=0; i<data->m_endTriggerCount; i++) {
+				auto& event = data->m_endTriggers[i];
+				ImGui::Text("end trigger %08x %08x", event.dword0, event.dword4);
+			}
+		}
+		ImGui::Unindent();
 	}
 
 	// ImGui::Indent();
