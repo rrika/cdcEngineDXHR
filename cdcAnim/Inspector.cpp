@@ -9,13 +9,55 @@
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Object.h"
 #include "UIActions.h"
+#include "cdc/dtp/animationpipelinegraph.h"
 #include "cdc/dtp/animationstategraph.h"
 #include "cdc/dtp/animgraphcommon.h"
 
 using namespace cdc;
 
+static void buildUI(UIActions& uiact, dtp::AnimGraphNode *pipeline, dtp::AnimGraphExt *ext);
+static void buildUI(UIActions& uiact, dtp::AnimGraphNode::Node *node, dtp::AnimGraphExt *ext);
 static void buildUI(UIActions& uiact, dtp::AnimStateGraph *stateGraph, dtp::AnimGraphExt *ext);
 static void buildUI(UIActions& uiact, dtp::AnimStateGraph::State *state, dtp::AnimGraphExt *ext);
+
+static void buildUI(UIActions& uiact, dtp::AnimGraphNode *pipeline, dtp::AnimGraphExt *ext) {
+	ImGui::Text("pipeline %p", pipeline);
+	uiact.origin((void*)pipeline);
+	ImGui::Indent();
+	for (uint32_t i=0; i<pipeline->numNodes; i++)
+		buildUI(uiact, &pipeline->nodes[i], ext);
+	for (uint32_t i=0; i<pipeline->numEdges; i++) {
+		auto& edge = pipeline->edges[i];
+		ImGui::Text("edge %d:%d -> %d:%d",
+			edge.srcNodeIndex,
+			edge.srcNodeOutputIndex,
+			edge.dstNodeIndex,
+			edge.dstNodeInputIndex);
+		uiact.origin((void*)&edge);
+	}
+	ImGui::Unindent();
+}
+
+static void buildUI(UIActions& uiact, dtp::AnimGraphNode::Node *node, dtp::AnimGraphExt *ext) {
+	const char *types[] = {
+		"AnimNode",
+		"EmbeddedPipe",
+		"EmbeddedState",
+		"CustomNode"
+	};
+	ImGui::Text("node %p %s", node, types[node->type4]);
+	if (node->type4 == dtp::AnimGraphNode::NodeTypeEnum_AnimNode ||
+		node->type4 == dtp::AnimGraphNode::NodeTypeEnum_CustomNode)
+	{
+		ImGui::SameLine();
+		ImGui::Text("%s", (const char*)node->data);
+		uiact.origin((void*)node);
+		// TODO
+	}
+
+	// ImGui::Indent();
+	// ImGui::Unindent();
+}
 
 static void buildUI(UIActions& uiact, dtp::AnimStateGraph *stateGraph, dtp::AnimGraphExt *ext) {
 	ImGui::Text("state graph %p nodes", stateGraph);
@@ -44,8 +86,13 @@ static void buildUI(UIActions& uiact, dtp::AnimStateGraph::State *state, dtp::An
 		"Empty"
 	};
 	ImGui::Text("state %p %s", state, types[state->type4]);
-	uiact.origin((void*)state);
-	// TODO
+	ImGui::Indent();
+	if (state->type4 == dtp::AnimStateGraph::AnimPipeOrStateGraph_AnimPipe) {
+		auto *pipeline = (dtp::AnimGraphNode*) state->data;
+		buildUI(uiact, pipeline, ext);
+	}
+
+	ImGui::Unindent();
 }
 
 static float cbShortArray(void* data, int idx) {
