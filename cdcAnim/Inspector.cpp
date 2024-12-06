@@ -9,8 +9,44 @@
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Object.h"
 #include "UIActions.h"
+#include "cdc/dtp/animationstategraph.h"
+#include "cdc/dtp/animgraphcommon.h"
 
 using namespace cdc;
+
+static void buildUI(UIActions& uiact, dtp::AnimStateGraph *stateGraph, dtp::AnimGraphExt *ext);
+static void buildUI(UIActions& uiact, dtp::AnimStateGraph::State *state, dtp::AnimGraphExt *ext);
+
+static void buildUI(UIActions& uiact, dtp::AnimStateGraph *stateGraph, dtp::AnimGraphExt *ext) {
+	ImGui::Text("state graph %p nodes", stateGraph);
+	uiact.origin((void*)stateGraph);
+	ImGui::Indent();
+	for (uint32_t i=0; i<stateGraph->numStates; i++)
+		buildUI(uiact, &stateGraph->states[i], ext);
+	ImGui::Unindent();
+	ImGui::Text("edges");
+	ImGui::Indent();
+	for (uint32_t i=0; i<stateGraph->numEdges; i++) {
+		auto& edge = stateGraph->edges[i];
+		ImGui::Text("%d -> %d", edge.fromIndex, edge.toIndex);
+		uiact.origin((void*)&edge);
+	}
+	ImGui::Unindent();
+}
+
+static void buildUI(UIActions& uiact, dtp::AnimStateGraph::State *state, dtp::AnimGraphExt *ext) {
+	const char *types[] = {
+		"AnimPipe",
+		"StateGraph",
+		"TransientState",
+		"Unknown",
+		"Fragment",
+		"Empty"
+	};
+	ImGui::Text("state %p %s", state, types[state->type4]);
+	uiact.origin((void*)state);
+	// TODO
+}
 
 static float cbShortArray(void* data, int idx) {
 	auto *offsets = (int16_t*)data;
@@ -133,6 +169,11 @@ void buildUI(UIActions& uiact, cdc::AnimFragment *fragment) {
 
 void buildUI(UIActions& uiact, AnimComponentV2 *ac) {
 	auto *object = ac->instance->object;
+	dtp::ObjectBaseData *objectDtpData = object->dtpData;
+	for (uint32_t i=0; i<objectDtpData->hasAnimGraph; i++) {
+		auto& root = objectDtpData->pAnimGraph[i]; 
+		buildUI(uiact, root.graph, root.ext);
+	}
 	for (uint32_t i=0; i<object->numAnims; i++) {
 		char label[10];
 		snprintf(label, 10, "Anim %d", i);
