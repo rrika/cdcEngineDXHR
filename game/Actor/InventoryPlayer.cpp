@@ -280,7 +280,7 @@ uint32_t InventoryContainer::removeByType(uint32_t dtpId, uint32_t amount) {
 	if (pickup->category == 8) {
 		// TODO
 	}
-	return removeFromSlot(smallest - m_slots.begin(), amount);
+	return removeFromSlot(smallest - &*m_slots.begin(), amount);
 }
 
 uint32_t InventoryContainer::removeFromSlot(uint32_t slotIndex, uint32_t amount) {
