@@ -1039,7 +1039,7 @@ int spinnyCube(HWND window,
 		*lightWorldMatrix = lightScaleTranslate;
 
 		// add drawables to the scene
-		scene->m_clearColor = 0xff060606;
+		scene->m_clearColor = 0x00060606;
 		// float lightAccumulation[4] = {0.9f, 0.9f, 0.9f, 1.0f};
 		float lightAccumulation[4] = {0.0f, 0.0f, 0.0f, 0.0f}; // alpha determines which objects get the outline for interactables
 

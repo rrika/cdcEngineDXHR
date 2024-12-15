@@ -197,6 +197,7 @@ bool PCDX11CompositePassCallbacks::pre(
 			0 /*scene->getViewport().clearStencil*/);
 		PCDX11BaseTexture *shadowBuffer = nullptr;
 		stateManager->setTextureAndSampler(10, shadowBuffer, 0, 0.0f);
+		scene->m_isUseAlphaForBloom = true; // TODO
 	}
 	// TODO
 	return true;

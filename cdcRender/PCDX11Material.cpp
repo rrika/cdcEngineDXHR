@@ -528,13 +528,13 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 {
 	float opacity = matInstance->opacity * opacityMultiplier;
 	uint32_t blendState = materialBlob->blendStateC;
-	bool x = true;
+	bool glow = true;
 	if ((materialBlob->dword18 & 1) == 0 ||
 		renderDevice->scene78->m_isUseAlphaForBloom ||
 		(blendState & 1) ||
 		opacity < 1.0
 	)
-		x = false;
+		glow = false;
 
 	uint32_t subMaterialIndex;
 	if (isTranslucentPass) {
@@ -571,12 +571,12 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 	//stateManager->setBlendStateAndBlendFactors(materialBlob->blendState24, 0, 0);
 
 	uint16_t renderTargetWriteMask = materialBlob->renderTargetWriteMask;
-	/* if (renderDevice->scene78->m_isUseAlphaForBloom) {
-		if (x)
+	if (renderDevice->scene78->m_isUseAlphaForBloom) {
+		if (glow)
 			renderTargetWriteMask = renderTargetWriteMask | 8;
 		else
 			renderTargetWriteMask = renderTargetWriteMask & 7;
-	} */
+	}
 	stateManager->setRenderTargetWriteMask(renderTargetWriteMask);
 
 	uint32_t vertexIndex = vsSelect;
