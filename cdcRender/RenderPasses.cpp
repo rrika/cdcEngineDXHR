@@ -176,7 +176,7 @@ void DrawableList::sortSimple() {
 
 	// sort the vector
 	std::sort(items.begin(), items.end(), [](DrawableItem *a, DrawableItem *b) {
-		return a->drawable->sortZ < b->drawable->sortZ;
+		return a->drawable->sortZ > b->drawable->sortZ;
 	});
 
 	// relink the list
