@@ -88,6 +88,8 @@ Instance *Instance::IntroduceInstance(dtp::Intro *intro, int16_t streamUnitID, /
 
 	// TODO
 
+	if (object->dtpData->dword0 & 0x10000)
+		static_cast<InstanceDrawable*>(instance->instanceDrawable)->EnableNoDraw();
 	instance->InitCommonComponents(true, true);
 
 	// TODO

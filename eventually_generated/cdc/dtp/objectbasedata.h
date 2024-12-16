@@ -24,6 +24,7 @@ struct ObjectBaseData {
 	};
 
 	uint32_t dword0;
+		// 00001000 invisible (triggers, etc.), see Instance::IntroduceInstance
 		// 00002000 no_dump, see cdc::ObjectManager::ReleaseObject
 		// 20000000 see MeshComponent::SetModel
 	uint32_t dword4;
