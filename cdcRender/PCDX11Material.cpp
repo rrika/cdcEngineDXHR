@@ -530,7 +530,7 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 	uint32_t blendState = materialBlob->blendStateC;
 	bool glow = true;
 	if ((materialBlob->dword18 & 1) == 0 ||
-		renderDevice->scene78->m_isUseAlphaForBloom ||
+		!renderDevice->scene78->m_isUseAlphaForBloom ||
 		(blendState & 1) ||
 		opacity < 1.0
 	)
@@ -582,7 +582,7 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 	uint32_t vertexIndex = vsSelect;
 	if (flags & 8)
 		vertexIndex |= 8;
-	uint32_t pixelIndex = 0;
+	uint32_t pixelIndex = glow ? 4 : 0;
 
 	auto pixelLib = static_cast<PCDX11ShaderLib*>(subMaterial->shaderPixel);
 	if (!pixelLib)

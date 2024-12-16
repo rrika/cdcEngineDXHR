@@ -218,7 +218,8 @@ bool PCDX11OpaquePassCallbacks::pre(
 	uint32_t drawableCount,
 	uint32_t priorPassesBitfield)
 {
-	// TODO
+	CommonScene *commonScene = renderDevice->scene78;
+	commonScene->m_isUseAlphaForBloom = 1; // TODO
 	return true;
 }
 
@@ -237,7 +238,8 @@ bool PCDX11TranslucentPassCallbacks::pre(
 	uint32_t drawableCount,
 	uint32_t priorPassesBitfield)
 {
-	// TODO
+	CommonScene *commonScene = renderDevice->scene78;
+	commonScene->m_isUseAlphaForBloom = 1; // TODO
 	return true;
 }
 
