@@ -171,18 +171,10 @@ void PCDX11Scene::updateUniforms() {
 		memcpy(globalState.m_aParams + 24, row, 16); // SceneBuffer::GlobalParams[6] (unsure what this does)
 	}
 
-	// HACK: needed for the normals submaterial to work
-	row[0] = 1.0f;
-	row[1] = 0.0f;
-	row[2] = 0.0f;
-	row[3] = 0.0f;
-	memcpy(globalState.m_aParams + 44, row, 16); // SceneBuffer::GlobalParams[11]
-	row[0] = 0.0f;
-	row[1] = 1.0f;
-	memcpy(globalState.m_aParams + 48, row, 16); // SceneBuffer::GlobalParams[12]
-	row[1] = 0.0f;
-	row[2] = 1.0f;
-	memcpy(globalState.m_aParams + 52, row, 16); // SceneBuffer::GlobalParams[13]
+	// HACK: this is done elsewhere
+	memcpy(globalState.m_aParams + 44, viewMatrix.m[0], 16); // SceneBuffer::GlobalParams[11]
+	memcpy(globalState.m_aParams + 48, viewMatrix.m[1], 16); // SceneBuffer::GlobalParams[12]
+	memcpy(globalState.m_aParams + 52, viewMatrix.m[2], 16); // SceneBuffer::GlobalParams[13]
 }
 
 void PCDX11Scene::Finalize(DrawableList *drawableList) {
