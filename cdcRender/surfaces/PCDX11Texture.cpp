@@ -168,8 +168,14 @@ void PCDX11Texture::asyncCreate(/* TODO: one argument */) {
 
 	// hack implementation
 
+	uint32_t format = decodeFormat(textureBlob->format);
+
+	// ignore request for RGBA, always do BGRA
+	if (format == 28) // DXGI_FORMAT_R8G8B8A8_UNORM
+		format = 87; // DXGI_FORMAT_B8G8R8A8_UNORM
+
 	printf("async create texture %d x %d fmt=%08x (%d)\n", textureBlob->width, textureBlob->height,
-		textureBlob->format, decodeFormat(textureBlob->format));
+		textureBlob->format, format);
 
 	this->wrapMode = textureBlob->flags & 7;
 	this->shape = (TextureClass)textureBlob->textureClass;
@@ -181,7 +187,7 @@ void PCDX11Texture::asyncCreate(/* TODO: one argument */) {
 	textureDesc.Height             = textureBlob->height;
 	textureDesc.MipLevels          = 1;
 	textureDesc.ArraySize          = 1;
-	textureDesc.Format             = (DXGI_FORMAT)decodeFormat(textureBlob->format);
+	textureDesc.Format             = (DXGI_FORMAT)format;
 	textureDesc.SampleDesc.Count   = 1;
 	textureDesc.Usage              = D3D11_USAGE_IMMUTABLE;
 	textureDesc.BindFlags          = D3D11_BIND_SHADER_RESOURCE;
