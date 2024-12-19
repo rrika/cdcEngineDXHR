@@ -1015,6 +1015,7 @@ int spinnyCube(HWND window,
 
 		renderDevice->resetRenderLists(1.f/60);
 		renderDevice->beginRenderList(nullptr);
+		cdc::OrthonormalInverse3x4(&renderViewport.viewMatrix, viewMatrix);
 		auto *scene = renderDevice->createSubScene( // CommonScene::CommonScene creates the projectMatrix
 			&renderViewport,
 			tempRenderTarget ? tempRenderTarget : renderContext->renderTarget2C,
@@ -1022,7 +1023,6 @@ int spinnyCube(HWND window,
 			nullptr,
 			nullptr);
 		scene->viewMatrix = viewMatrix;
-		cdc::OrthonormalInverse3x4(&renderViewport.viewMatrix, viewMatrix);
 
 		cdc::g_microphone.m_viewMatrix = viewMatrix;
 		cdc::g_microphone.m_position = cameraPos;
