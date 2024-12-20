@@ -276,7 +276,20 @@ void hackCalcInstanceParams(DeferredRenderingExtraData *extra, Matrix *m, Vector
 
 	cachedMatrixMulChain_setup(&objToWorld, &worldToObj);
 
-	for (uint32_t i=0; i<8; i++) {
+	uint32_t i = 0;
+
+	if (extra->instanceParamFromMatrixB7) {
+		if (extra->sourceSpaceB5 != 4 && extra->targetSpaceB6 != 4) {
+			Matrix *m = cachedMatrixMulChain_eval(extra->sourceSpaceB5, extra->targetSpaceB6);
+			instanceParams[0] = {m->m[0][0], m->m[0][1], m->m[0][2], m->m[0][3]};
+			instanceParams[1] = {m->m[1][0], m->m[1][1], m->m[1][2], m->m[1][3]};
+			instanceParams[2] = {m->m[2][0], m->m[2][1], m->m[2][2], m->m[2][3]};
+			instanceParams[3] = {m->m[3][0], m->m[3][1], m->m[3][2], m->m[3][3]};
+		}
+		i = 4; // skip these four in the next loop
+	}
+
+	for (; i<8; i++) {
 		auto& param = extra->params[i];
 		if (param.mode != 36) {
 			instanceParams[i] = Vector4{DeferredRenderingObject::Drawable::calcInstanceParamRow(
