@@ -146,10 +146,14 @@ private:
 	bool m_dirtyViewMatrix; // 545
 	bool m_dirtyProjectMatrix; // 546
 
-	bool m_isSkySphereModeEnabled; // 5A4 (split depth range)
+	bool m_dirtyViewport = true; // 570
+
+	bool m_isSkySphereModeEnabled; // 5A4, split depth range, disabled for shadow maps
 	bool m_isSkySphereMode; // 5A4 (use upper depth range)
 	PCDX11UberConstantBuffer *m_uberConstantBuffer[7]; // 5A8
 	bool m_dirtyUberCBs[7]; // 5C4
+
+	static float constexpr kSkySphereRange = 0.02f;
 
 public:
 	PCDX11StateManager();
@@ -204,6 +208,7 @@ public:
 	void updateRenderTargets(PCDX11RenderTarget *renderTarget, PCDX11DepthBuffer *depthBuffer);
 	void updateRenderState();
 	void updateViewport();
+	void getCompressedDepthRange(float&, float&);
 
 	void setComputeShader(PCDX11ComputeShader *computeShader);
 	void setComputeShaderTexture(uint32_t slot, PCDX11BaseTexture *cb);
