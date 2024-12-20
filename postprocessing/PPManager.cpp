@@ -291,7 +291,7 @@ bool PPManager::run(
 	auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
 	auto *newRenderTarget = renderDevice->dx11_createRenderTarget(
 		100, 100,
-		DXGI_FORMAT_B8G8R8A8_UNORM_SRGB,
+		DXGI_FORMAT_B8G8R8A8_UNORM,
 		0x18, cdc::kTextureClass2D);
 	newRenderTarget->getRenderTexture11()->createRenderTargetView();
 

@@ -38,7 +38,7 @@ PCDX11DeviceManager::PCDX11DeviceManager(
 
 	// HACK
 	adapters.push_back(AdapterInfo {
-		/*backBufferFormat=*/ DXGI_FORMAT_B8G8R8A8_UNORM_SRGB,
+		/*backBufferFormat=*/ DXGI_FORMAT_B8G8R8A8_UNORM,
 		/*depthTextureFormat=*/ DXGI_FORMAT_R24G8_TYPELESS
 	});
 	currentAdapter = &adapters[0];

@@ -1009,7 +1009,7 @@ int spinnyCube(HWND window,
 
 		if (dc->antiAliasing > 0 && !pointlessCopy) {
 			tempRenderTarget = static_cast<cdc::PCDX11RenderTarget*>(renderDevice->dx11_createRenderTarget(
-				100, 100, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, 0x18, cdc::kTextureClass2D));
+				100, 100, DXGI_FORMAT_B8G8R8A8_UNORM, 0x18, cdc::kTextureClass2D));
 			tempRenderTarget->getRenderTexture11()->createRenderTargetView();
 		}
 
@@ -1039,7 +1039,7 @@ int spinnyCube(HWND window,
 		*lightWorldMatrix = lightScaleTranslate;
 
 		// add drawables to the scene
-		scene->m_clearColor = 0x00060606;
+		scene->m_clearColor = 0x002a2a2a;
 		// float lightAccumulation[4] = {0.9f, 0.9f, 0.9f, 1.0f};
 		float lightAccumulation[4] = {0.0f, 0.0f, 0.0f, 0.0f}; // alpha determines which objects get the outline for interactables
 

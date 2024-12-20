@@ -61,7 +61,7 @@ void PCDX11RenderContext::handleResize(int32_t newWidth, int32_t newHeight) {
 	frameBuffer->Release(); frameBuffer = nullptr;
 
 	swapChain->ResizeBuffers(bufferCount, width, height,
-		DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, // TODO
+		DXGI_FORMAT_B8G8R8A8_UNORM, // TODO
 		0);
 
 	createRenderTargets();
