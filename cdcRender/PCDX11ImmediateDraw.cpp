@@ -231,9 +231,7 @@ void PCDX11NGAPrimitive::DrawPrimitive(PCDX11StreamDecl *pStreamDecl, bool isBac
 		cb3.assignRow(0, (void*)m_pState->scaleformData, 3); // 3 × float4
 	}
 
-	// if (stateManager->m_isSkySphereModeEnabled && stateManager->m_isSkySphereMode) {
-	// 	
-	// }
+	stateManager->setDepthLayer(false); // never in the sky
 
 	if (isBackBeforeFront)
 		stateManager->setCullMode(CullMode::front, (flags & 2) != 0);

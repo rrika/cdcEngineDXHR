@@ -55,6 +55,11 @@ public:
 		delete ext;
 	}
 
+	void SetDrawBehindAll(bool depthLayer) override {
+		ModelData *md = renderMesh->getMesh();
+		md->flags.depthLayer = depthLayer;
+	}
+
 	void SetProjectionOverride(Matrix const *m) override {
 		if (ext && m) {
 			ext->projectOverride = *m;

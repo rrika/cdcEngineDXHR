@@ -28,6 +28,7 @@ struct ObjectBaseData {
 		// 00002000 no_dump, see cdc::ObjectManager::ReleaseObject
 		// 20000000 see MeshComponent::SetModel
 	uint32_t dword4;
+		// 00000100 is sky
 		// 00004000 has bones
 	uint32_t dword8;
 	uint32_t dwordC;
