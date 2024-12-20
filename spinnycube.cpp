@@ -30,6 +30,7 @@
 #include "game/dtp/objecttypes/globaldatabase.h"
 #include "game/dtp/objecttypes/globalloading.h"
 #include "game/dtp/pickup.h"
+#include "game/CoronasManager.h"
 #include "game/DeferredRenderingObject.h"
 #include "game/DX3Player.h"
 #include "game/Gameloop.h"
@@ -134,6 +135,7 @@ extern HCURSOR ImGui_ImplWin32_Arrow;
 extern uint32_t *pickupDatabase;
 cdc::MultiplexStream *neverAskedForThis = nullptr;
 uint32_t subtitleIndex = 0;
+uint32_t coronasPass = 0;
 
 void howDoYouHandleAllOfThis() {
 	if (!neverAskedForThis)
@@ -413,6 +415,9 @@ int spinnyCube(HWND window,
 
 	std::unique_ptr<cdc::PCMouseKeyboard> mouseKeyboard(cdc::PCMouseKeyboard::create(window));
 	auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
+	uint32_t coronasIndex = renderDevice->addPass(cdc::kRegularPass, 0x6500, 2, /*5*/ cdc::kRenderFunctionTranslucent);
+	coronasPass = 1 << coronasIndex;
+	renderDevice->renderPasses.setRenderPassDebugName(coronasIndex,  "Coronas");
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -684,7 +689,7 @@ int spinnyCube(HWND window,
 	renderViewport.farz = f;
 	renderViewport.fov = 0.925f;
 	renderViewport.aspect = w;
-	renderViewport.mask = 0x310B; // pass 0, 12. 13, 1, and 8
+	renderViewport.mask = 0x310B | coronasPass; // pass 0, 12. 13, 1, 8 and coronas
 	// pass 12 normals (function set 10, draw bottle normals)
 	// pass 13 deferred shading (just contains a cleardrawable)
 	// pass 1 composite (draw bottle textures)
@@ -1080,8 +1085,11 @@ int spinnyCube(HWND window,
 				selectedRmiDrawable = new RMIDrawableBase(renderModel);
 				auto *rmi = static_cast<cdc::CommonRenderModelInstance*>(selectedRmiDrawable->rmi);
 				if (objFamily == 0x50) {
-					rmi->baseMask = 0x2000; // deferred lighting
 					auto *deferredExtraData = (DeferredRenderingExtraData*)extraData;
+					if (deferredExtraData->lightRatherThanCorona)
+						rmi->baseMask = 0x2000; // deferred lighting
+					else
+						rmi->baseMask = coronasPass;
 					hackCalcInstanceParams(deferredExtraData, &instanceMatrix, rmi->ext->instanceParams);
 
 					// patch textures (even though this render model is shared between instances)

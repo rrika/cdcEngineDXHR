@@ -1,6 +1,7 @@
 #include "CommonMaterial.h"
 #include "MaterialData.h"
 #include "Types.h"
+#include "game/CoronasManager.h"
 
 namespace cdc {
 
@@ -115,6 +116,10 @@ void CommonMaterial::SetRenderPasses() {
 	// can't figure out the precise correspondence to SetRenderPassMask calls
 	m_renderPassesMaskFading = (fadeBlendMode & 1) ? maskBlend : maskElse;
 	m_renderPassesMask = (materialBlob->blendStateC & 1) ? maskBlend : maskElse;
+
+	// HACK
+	m_renderPassesMaskFading |= coronasPass;
+	m_renderPassesMask |= coronasPass;
 }
 
 }

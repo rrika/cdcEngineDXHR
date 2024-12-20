@@ -84,8 +84,8 @@ RenderViewport *CommonRenderDevice::getCurViewport() {
 	return nullptr;
 }
 
-void CommonRenderDevice::addPass(RenderPassType passType, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex) {
-	renderPasses.addRenderPass(passType, order, sortMode, funcSetIndex, /*firstPassId=*/0);
+uint32_t CommonRenderDevice::addPass(RenderPassType passType, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex) {
+	return renderPasses.addRenderPass(passType, order, sortMode, funcSetIndex, /*firstPassId=*/0);
 }
 
 void CommonRenderDevice::method_78() {
