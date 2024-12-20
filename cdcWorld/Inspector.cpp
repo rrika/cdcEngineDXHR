@@ -143,7 +143,17 @@ void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
 		"dir (mat3x3)",
 		"[not implemented]"
 	};
-	for (uint32_t i=0; i<8; i++) {
+	uint32_t i=0;
+	if (extra->instanceParamFromMatrixB7) {
+		for (; i<4; i++) {
+			ImGui::Text("param %d mode matrix %s -> %s row %d",
+				i,
+				spaces[extra->sourceSpaceB5],
+				spaces[extra->targetSpaceB6],
+				i);
+		}
+	}
+	for (; i<8; i++) {
 		auto& param = extra->params[i];
 		ImGui::Text("param %d mode %2d %s",
 			i, param.mode, modes[param.mode]);
