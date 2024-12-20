@@ -126,6 +126,13 @@ RenderModelInstance *InstanceDrawable::getSelectedRMI() {
 
 void InstanceDrawable::GetBoundingVolume(BasicCullingVolume *volume) {
 
+	// HACK
+	bool skydome = (m_instance->object->dtpData->dword4 & 0x100) != 0;
+	if (skydome) {
+		volume->m_type = kVolumeEverything;
+		return;
+	}
+
 	Vector center, min, max;
 	float radius;
 
@@ -176,11 +183,20 @@ void InstanceDrawable::draw(Matrix *matrix, float) { // line 1243
 			rmi->SetProjectionOverride(&project);
 		}
 
-		// if (skydome) {
-		//	...
-		// } else {
-		PrepareMatrixState(matrix, model, rmi, false); // matrix is only used for 0 bones case
-		// }
+		bool skydome = (m_instance->object->dtpData->dword4 & 0x100) != 0;
+		if (skydome) {
+			float observer[4] = {0.f, 0.f, 0.f, 0.f};
+			g_renderDevice->getScene()->getCameraPosition(observer);
+			Matrix skyMatrix = identity4x4;
+			skyMatrix.m[3][0] = observer[0];
+			skyMatrix.m[3][1] = observer[1];
+			skyMatrix.m[3][2] = observer[2];
+			rmi->SetDrawBehindAll(true);
+			PrepareMatrixState(&skyMatrix, model, rmi, true);
+
+		} else {
+			PrepareMatrixState(matrix, model, rmi, false); // matrix is only used for 0 bones case
+		}
 		rmi->recordDrawables(m_pMatrixState);
 
 		for (auto& addRMI : m_additionalModelInstances) {

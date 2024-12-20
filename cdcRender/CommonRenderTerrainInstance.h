@@ -17,6 +17,8 @@ public:
 	RenderTerrainInstanceData *instanceData; // 10
 	Vector4 *m_pCurrentInstanceParams = 0; // 18
 	// Vector4 *m_pInstanceParams = 0; // 1C
+	bool m_isDrawBehindAll = false; // 24, is part of sky
+
 public:
 	CommonRenderTerrainInstance(CommonRenderTerrain *renderTerrain);
 

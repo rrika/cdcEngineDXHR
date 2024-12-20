@@ -1,5 +1,6 @@
 #include "buffers/PCDX11StaticIndexBuffer.h"
 #include "buffers/PCDX11VertexBuffer.h"
+#include "CommonRenderTerrainInstance.h"
 #include "PCDX11LightManager.h"
 #include "PCDX11Material.h"
 #include "PCDX11RenderDevice.h"
@@ -289,6 +290,7 @@ bool PCDX11TerrainDrawable::setMatrix(IRenderDrawable *prevDrawable) {
 	auto *stateManager = deviceManager->getStateManager();
 	stateManager->setWorldMatrix(*m_pLocalToWorld);
 	stateManager->updateMatrices();
+	stateManager->setDepthLayer(m_pInstance ? m_pInstance->m_isDrawBehindAll : false);
 
 	return false;
 }
