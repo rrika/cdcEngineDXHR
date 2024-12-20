@@ -92,7 +92,7 @@ public:
 	virtual uint32_t getContextWidth() = 0;
 	virtual uint32_t getContextHeight() = 0;
 
-	virtual void addPass(RenderPassType passType, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex);
+	virtual uint32_t addPass(RenderPassType passType, uint32_t order, uint32_t sortMode, uint32_t funcSetIndex);
 	virtual void method_78();
 	virtual uint32_t getPassOrder(uint32_t);
 	virtual void method_80();

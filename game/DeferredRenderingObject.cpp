@@ -1,3 +1,4 @@
+#include "CoronasManager.h"
 #include "DeferredRenderingObject.h"
 #include "cdcRender/CommonMaterial.h"
 #include "cdcRender/CommonScene.h"
@@ -324,7 +325,10 @@ void DeferredRenderingObject::Drawable::draw(cdc::Matrix *matrix, float arg) {
 	auto modelIndex = m_instance->GetMeshComponent().GetCurrentRenderModelIndex();
 	auto *rmi = static_cast<cdc::PCDX11RenderModelInstance*>(m_renderModelInstances[modelIndex]);
 
-	rmi->baseMask = 0x2000; // deferred lighting
+	if (deferredExtraData->lightRatherThanCorona)
+		rmi->baseMask = 0x2000; // deferred lighting
+	else
+		rmi->baseMask = coronasPass;
 	rmi->setMaterial(~0u, static_cast<cdc::CommonMaterial*>(deferredExtraData->material));
 	hackCalcInstanceParams(deferredExtraData, &matrixCopy, rmi->ext->instanceParams);
 

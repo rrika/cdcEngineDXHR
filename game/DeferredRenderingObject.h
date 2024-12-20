@@ -37,7 +37,7 @@ struct DeferredRenderingExtraData {
 	DeferredRenderingInstanceParam params[8]; // B8
 	uint8_t byteD8;
 	cdc::CommonMaterial *material; // DC
-	uint8_t byteE0;
+	uint8_t lightRatherThanCorona; // E0
 	uint8_t scaleModeE1;
 	uint8_t byteE2;
 	uint8_t gapE3[49];
