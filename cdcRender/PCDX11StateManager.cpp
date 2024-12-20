@@ -85,7 +85,8 @@ PCDX11StateManager::PCDX11StateManager(ID3D11DeviceContext *deviceContext, ID3D1
 	m_blendState = 0;
 	m_cullMode = ~0u;
 
-	m_isSkySphereModeEnabled = false; // TODO: true;
+	m_dirtyViewport = true;
+	m_isSkySphereModeEnabled = true;
 	m_isSkySphereMode = false;
 
 	m_projectMatrix = identity4x4;
@@ -160,6 +161,8 @@ void PCDX11StateManager::reset() {
 	m_cullMode = ~0u;
 
 	// TODO
+
+	m_dirtyViewport = true;
 }
 
 void PCDX11StateManager::setIndexBuffer(PCDX11IndexBuffer *indexBuffer) {
@@ -236,7 +239,12 @@ void PCDX11StateManager::setPrimitiveTopology(int topology) {
 }
 
 void PCDX11StateManager::setDepthLayer(bool layer) {
-	// TODO
+	if (m_isSkySphereModeEnabled && m_isSkySphereMode != layer) {
+		m_isSkySphereMode = layer;
+
+		m_dirtyViewport = true;
+		updateViewport();
+	}
 }
 
 void PCDX11StateManager::setCullMode(CullMode cullMode, bool frontIsCounterClockwise) {
@@ -846,6 +854,7 @@ void PCDX11StateManager::updateRenderTargets(
 	// TODO
 	m_renderTarget = renderTarget;
 	m_depthBuffer = depthBuffer;
+	m_dirtyViewport = true;
 
 	ID3D11RenderTargetView *renderTargetView = renderTarget ? renderTarget->getRenderTargetView() : nullptr;
 	ID3D11DepthStencilView *depthStencilView = depthBuffer ?
@@ -873,6 +882,9 @@ void PCDX11StateManager::updateRenderState() {
 
 void PCDX11StateManager::updateViewport() {
 	// TODO: proper implementation
+	if (!m_dirtyViewport)
+		return;
+
 	IRenderSurface *r = m_renderTarget ? (IRenderSurface*) m_renderTarget : (IRenderSurface*) m_depthBuffer;
 	float width = r ? r->getWidth() : 320;
 	float height = r ? r->getHeight() : 240;
@@ -894,6 +906,20 @@ void PCDX11StateManager::updateViewport() {
 	row[3] = 0.0f;
 	sceneBuffer.assignRow(45, row, 1); // SceneBuffer::ScreenResolution
 
+	if (m_isSkySphereModeEnabled) {
+		float splitPoint = maxDepth - (maxDepth-minDepth) * kSkySphereRange; // * 0.02f
+		if (m_isSkySphereMode)
+			minDepth = splitPoint;
+		else
+			maxDepth = splitPoint;
+	}
+
+	row[0] = maxDepth-minDepth;
+	row[1] = minDepth;
+	row[2] = 0.0f;
+	row[3] = 0.0f;
+	sceneBuffer.assignRow(22, row, 1); // SceneBuffer::ViewportDepthScaleOffset
+
 	D3D11_VIEWPORT viewport {
 		/*.TopLeftX=*/ 0,
 		/*.TopLeftY=*/ 0,
@@ -904,6 +930,12 @@ void PCDX11StateManager::updateViewport() {
 	};
 
 	m_deviceContext->RSSetViewports(1, &viewport);
+	m_dirtyViewport = false;
+}
+
+void PCDX11StateManager::getCompressedDepthRange(float& near, float& far) {
+	near = 0.0f;
+	far = 1.f - kSkySphereRange;
 }
 
 void PCDX11StateManager::setComputeShader(PCDX11ComputeShader *computeShader) {

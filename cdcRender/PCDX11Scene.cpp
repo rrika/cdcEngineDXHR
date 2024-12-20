@@ -133,7 +133,8 @@ void PCDX11Scene::updateUniforms() {
 	sceneBuffer.assignMatrix(4, screenMatrix); // SceneBuffer::ScreenMatrix
 
 	// for light shaders to translate the coordinates back
-	float compressNear = 0.0f, compressFar = 1.0f; // 0.98f;
+	float compressNear, compressFar;
+	stateManager->getCompressedDepthRange(compressNear, compressFar); // assign 0.0f and 0.98f
 	float compressRange = compressFar - compressNear;
 	float p10 = projectMatrix.m[2][2]; // = f / (f - n)
 	float p14 = projectMatrix.m[3][2]; // = n * f / (n - f)
