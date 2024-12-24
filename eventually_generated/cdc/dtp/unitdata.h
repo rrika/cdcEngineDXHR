@@ -52,7 +52,7 @@ struct UnitData {
 	uint32_t dword54;
 	uint32_t dword58;
 	uint32_t dword5C;
-	uint32_t dword60;
+	uint32_t m_scriptTypeID; // 60
 	uint32_t dword64;
 	uint32_t dword68;
 	uint32_t dword6C;
