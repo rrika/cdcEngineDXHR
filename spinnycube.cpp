@@ -1975,6 +1975,12 @@ int spinnyCube(HWND window,
 					continue;
 				ImGui::PushID(unit.name);
 				ImGui::Text("%s", unit.name);
+				auto scriptId = unit.level->unitData->m_scriptTypeID;
+				if (auto *ty = (cdc::ScriptType*)cdc::g_resolveSections[8]->GetBasePointer(scriptId)) {
+					ImGui::SameLine();
+					if (ImGui::SmallButton("Unit Type"))
+						uiact.select(ty);
+				}
 				ImGui::DragInt2("visible intros", unit.introShowRange);
 				ImGui::DragInt2("visible IMFs", unit.imfShowRange);
 				ImGui::PopID();
