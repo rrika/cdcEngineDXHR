@@ -4,6 +4,13 @@
 #include "cdcAnim/IAnimGraphMessageListener.h"
 #include "game/dtp/pickup.h"
 
+namespace cdc {
+
+class BinaryReader;
+class BinaryWriter;
+
+}
+
 struct InventorySlotSub {
 	// uint16_t word0 = 0;
 	// uint8_t byte2 = 0;
@@ -44,8 +51,8 @@ public:
 	virtual InventorySlot *getSlot(uint32_t) = 0; // 2C
 	virtual InventorySlot *firstSlotOfType(uint32_t) = 0; // 30
 	virtual bool checkFit(std::vector<uint32_t>&, std::vector<uint32_t>&) = 0; // 34
-	// virtual bool serialize(BinaryWriter&) = 0; // 38
-	// virtual bool deserialize(BinaryReader&) = 0; // 3C
+	virtual bool serialize(cdc::BinaryWriter&) = 0; // 38
+	virtual bool deserialize(cdc::BinaryReader&) = 0; // 3C
 };
 
 class InventorySystem :
@@ -88,8 +95,8 @@ public:
 	virtual void method24();
 	virtual void method28();
 	virtual void method2C();
-	// virtual void serialize(BinaryWriter&); // 30
-	// virtual void deserialize(BinaryReader&); // 34
+	virtual void serialize(cdc::BinaryWriter&); // 30
+	virtual void deserialize(cdc::BinaryReader&); // 34
 	virtual bool haveItem(uint16_t);
 	virtual void method3C();
 	virtual void method40();

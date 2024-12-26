@@ -4,6 +4,7 @@
 #include "ObjectiveManager.h"
 #include "cdcLocale/localstr.h"
 #include "cdcResource/DTPDataSection.h"
+#include "cdcSave/BinaryReaderWriter.h"
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Intro.h"
 #include "cdcWorld/stream.h"
@@ -134,8 +135,8 @@ void Mission::registerObjective(Objective *objective) {
 		m_secondaryObjectives.push_front(objective);
 }
 
-// void Mission::serialize(BinaryWriter&) { /*TODO*/ }
-// void Mission::deserialize(BinaryReader&) { /*TODO*/ }
+void Mission::serialize(BinaryWriter&) { /*TODO*/ }
+void Mission::deserialize(BinaryReader&) { /*TODO*/ }
 
 void Mission::insertInOrder(Objective *objective) {
 	auto& objectiveList = objective->isPrimaryObjective()
@@ -538,8 +539,8 @@ UILocator *Objective::getLocators(uint32_t& outNumLocators) {
 	return m_uiLocators;
 }
 
-// void Objective::serialize(BinaryWriter&) { /*TODO*/ }
-// void Objective::deserialize(BinaryReader&) { /*TODO*/ }
+void Objective::serialize(BinaryWriter&) { /*TODO*/ }
+void Objective::deserialize(BinaryReader&) { /*TODO*/ }
 
 //
 
@@ -692,6 +693,6 @@ void ObjectiveManager::leaveInProgress(Objective *objective) {
 	recomputeActiveObjectives();
 }
 
-// void ObjectiveManager::serialize(BinaryWriter&) { /*TODO*/ }
-// void ObjectiveManager::deserialize(BinaryReader&) { /*TODO*/ }
+void ObjectiveManager::serialize(BinaryWriter&) { /*TODO*/ }
+void ObjectiveManager::deserialize(BinaryReader&) { /*TODO*/ }
 // static void ObjectiveManager::message143(void *msgData) { /*TODO*/ }
