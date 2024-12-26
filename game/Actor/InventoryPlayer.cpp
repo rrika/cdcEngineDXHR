@@ -1,8 +1,10 @@
 #include <cstring>
 #include <unordered_set>
 #include "cdcResource/DTPDataSection.h"
+#include "cdcSave/BinaryReaderWriter.h"
 #include "InventoryPlayer.h"
 
+using namespace cdc;
 using namespace std;
 
 enum FindMode {
@@ -386,10 +388,12 @@ bool InventoryContainer::checkFit(
 	return true;
 }
 
-// bool InventoryContainer::serialize(BinaryWriter&) {
-// 	// TODO
-// }
+bool InventoryContainer::serialize(BinaryWriter&) {
+	// TODO
+	return true;
+}
 
-// bool InventoryContainer::deserialize(BinaryReader&) {
-// 	// TODO
-// }
+bool InventoryContainer::deserialize(BinaryReader&) {
+	// TODO
+	return true;
+}

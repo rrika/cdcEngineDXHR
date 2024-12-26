@@ -48,8 +48,8 @@ public:
 	InventorySlot *getSlot(uint32_t) override;
 	InventorySlot *firstSlotOfType(uint32_t) override;
 	bool checkFit(std::vector<uint32_t>&, std::vector<uint32_t>&) override;
-	// bool serialize(BinaryWriter&) override;
-	// bool deserialize(BinaryReader&) override;
+	bool serialize(cdc::BinaryWriter&) override;
+	bool deserialize(cdc::BinaryReader&) override;
 };
 
 class InventoryPlayer : public InventorySystem {

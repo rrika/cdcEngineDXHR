@@ -4,7 +4,13 @@
 #include "cdcMath/Math.h"
 #include "dtp/objective.h"
 
-namespace cdc { class CdcPlayer; }
+namespace cdc {
+
+class BinaryReader;
+class BinaryWriter;
+class CdcPlayer;
+
+}
 
 class Mission;
 class Objective;
@@ -48,8 +54,8 @@ public:
 	void reload();
 	void reloadIfInProgress();
 	void registerObjective(Objective*);
-	// void serialize(BinaryWriter&);
-	// void deserialize(BinaryReader&);
+	void serialize(cdc::BinaryWriter&);
+	void deserialize(cdc::BinaryReader&);
 
 	void insertInOrder(Objective*);
 	void reinsertInOrder(Objective*);
@@ -103,8 +109,8 @@ public:
 	const char *getState();
 	void stateTransition(ObjectiveState, bool force);
 	UILocator *getLocators(uint32_t& numLocators);
-	// void serialize(BinaryWriter&);
-	// void deserialize(BinaryReader&);
+	void serialize(cdc::BinaryWriter&);
+	void deserialize(cdc::BinaryReader&);
 };
 
 class ObjectiveManager {
@@ -135,7 +141,7 @@ public:
 	ObjectiveState getObjectiveState(uint32_t dtpIndex);
 	void enterInProgress(Objective*);
 	void leaveInProgress(Objective*);
-	// void serialize(BinaryWriter&);
-	// void deserialize(BinaryReader&);
+	void serialize(cdc::BinaryWriter&);
+	void deserialize(cdc::BinaryReader&);
 	// static void message143(void *msgData);
 };
