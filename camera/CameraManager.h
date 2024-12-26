@@ -63,6 +63,8 @@ public:
 	bool isCinematicCamera() override; // 58
 	bool isTransitionCamera() override; // 5C
 
+	float getNearPlane() override; // C0
+
 	cdc::Matrix *getActiveCameraMatrix() override; // D4
 	cdc::Matrix *getMatrix() override; // D8
 

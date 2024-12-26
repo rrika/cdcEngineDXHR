@@ -7,4 +7,5 @@ public:
 	void disable(ICamera *nextCamera) override { /* TODO */ }; // 30
 	Type getType() override { return kAnchored; } // 38
 	cdc::Matrix *getMatrix() override { /* TODO */ return nullptr; } // 48
+	float getNearPlane() override { return 40.f; } // 4C
 };

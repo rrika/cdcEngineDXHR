@@ -3,4 +3,5 @@
 
 class CinematicCamera : public GenericCamera {
 	Type getType() override { return kCinematic; } // 38
+	// inherit getNearPlane
 };

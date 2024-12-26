@@ -24,6 +24,8 @@ public:
 	virtual bool isCinematicCamera() = 0; // 58
 	virtual bool isTransitionCamera() = 0; // 5C
 
+	virtual float getNearPlane() = 0; // C0
+
 	virtual Matrix *getActiveCameraMatrix() = 0; // D4
 	virtual Matrix *getMatrix() = 0; // D8
 };

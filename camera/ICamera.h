@@ -20,6 +20,7 @@ public:
 	virtual void disable(ICamera *nextCamera) = 0; // 30
 	virtual Type getType() = 0; // 38
 	virtual Matrix *getMatrix() = 0; // 48
+	virtual float getNearPlane() = 0; // 4C
 };
 
 }
