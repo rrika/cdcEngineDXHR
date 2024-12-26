@@ -3,6 +3,7 @@
 #include "cdcObjects/ObjectManager.h"
 #include "cdcResource/DRMIndex.h"
 #include "cdcResource/DTPDataSection.h"
+#include "cdcScript/ByteCodeEnum.h"
 #include "cdcScript/DataType.h"
 #include "cdcScript/Decompiler.h"
 #include "cdcScript/ScriptDataCursor.h"
@@ -221,6 +222,176 @@ static void Init(UIActions& uiact, DataMember *member) {
 	}
 }
 
+static const char *opcodeNames[SCMD_NUM_BYTECODE] = {
+	/* [SCMD_NOP] = */ "NOP", // 0x0
+	/* [SCMD_POP] = */ "POP", // 0x1
+
+	/* [SCMD_PUSH] = */ "PUSH", // 0x2
+	/* [SCMD_PUSHI] = */ "PUSHI", // 0x3
+	/* [SCMD_PUSHI8] = */ "PUSHI8", // 0x4
+	/* [SCMD_PUSHC] = */ "PUSHC", // 0x5
+
+	/* [SCMD_PUSHL8] = */ "PUSHL8", // 0x6
+	/* [SCMD_PUSHL16] = */ "PUSHL16", // 0x7
+	/* [SCMD_PUSHL32] = */ "PUSHL32", // 0x8
+	/* [SCMD_PUSHLA] = */ "PUSHLA", // 0x9
+	/* [SCMD_PUSHLR] = */ "PUSHLR", // 0xA
+
+	/* [SCMD_PUSHS] = */ "PUSHS", // 0xB
+
+	/* [SCMD_PUSHS8] = */ "PUSHS8", // 0xC
+	/* [SCMD_PUSHS16] = */ "PUSHS16", // 0xD
+	/* [SCMD_PUSHS32] = */ "PUSHS32", // 0xE
+	/* [SCMD_PUSHSA] = */ "PUSHSA", // 0xF
+	/* [SCMD_PUSHSR] = */ "PUSHSR", // 0x10
+
+	/* [SCMD_PUSHM8] = */ "PUSHM8", // 0x11
+	/* [SCMD_PUSHM16] = */ "PUSHM16", // 0x12
+	/* [SCMD_PUSHM32] = */ "PUSHM32", // 0x13
+	/* [SCMD_PUSHMA] = */ "PUSHMA", // 0x14
+	/* [SCMD_PUSHMR] = */ "PUSHMR", // 0x15
+
+	/* [SCMD_PUSHT8] = */ "PUSHT8", // 0x16
+	/* [SCMD_PUSHT16] = */ "PUSHT16", // 0x17
+	/* [SCMD_PUSHT32] = */ "PUSHT32", // 0x18
+	/* [SCMD_PUSHTA] = */ "PUSHTA", // 0x19
+	/* [SCMD_PUSHTR] = */ "PUSHTR", // 0x1A
+
+	/* [SCMD_DREF8] = */ "DREF8", // 0x1B
+	/* [SCMD_DREF16] = */ "DREF16", // 0x1C
+	/* [SCMD_DREF32] = */ "DREF32", // 0x1D
+	/* [SCMD_DREFA] = */ "DREFA", // 0x1E
+	/* [SCMD_DREFR] = */ "DREFR", // 0x1F
+
+	/* [SCMD_DREFD] = */ "DREFD", // 0x20
+
+	/* [SCMD_BOUNDS] = */ "BOUNDS", // 0x21
+	/* [SCMD_DBOUNDS] = */ "DBOUNDS", // 0x22
+
+	/* [SCMD_MAP8] = */ "MAP8", // 0x23
+	/* [SCMD_MAP16] = */ "MAP16", // 0x24
+	/* [SCMD_MAP32] = */ "MAP32", // 0x25
+	/* [SCMD_MAPA] = */ "MAPA", // 0x26
+	/* [SCMD_MAPR] = */ "MAPR", // 0x27
+
+	/* [SCMD_MAPG] = */ "MAPG", // 0x28
+
+	/* [SCMD_IMAP8] = */ "IMAP8", // 0x29
+	/* [SCMD_IMAP16] = */ "IMAP16", // 0x2A
+	/* [SCMD_IMAP32] = */ "IMAP32", // 0x2B
+	/* [SCMD_IMAPA] = */ "IMAPA", // 0x2C
+	/* [SCMD_IMAPR] = */ "IMAPR", // 0x2D
+
+	/* [SCMD_MOVE8] = */ "MOVE8", // 0x2E
+	/* [SCMD_MOVE32] = */ "MOVE32", // 0x2F
+	/* [SCMD_MOVER] = */ "MOVER", // 0x30
+	/* [SCMD_MOVEC] = */ "MOVEC", // 0x31
+	/* [SCMD_MOVEM] = */ "MOVEM", // 0x32
+	/* [SCMD_MOVED] = */ "MOVED", // 0x33
+	/* [SCMD_MOVEU] = */ "MOVEU", // 0x34
+	/* [SCMD_MOVET] = */ "MOVET", // 0x35
+	/* [SCMD_MOVEN] = */ "MOVEN", // 0x36
+	/* [SCMD_MOVEAR] = */ "MOVEAR", // 0x37
+	/* [SCMD_MOVEAC] = */ "MOVEAC", // 0x38
+	/* [SCMD_MOVEAM] = */ "MOVEAM", // 0x39
+	/* [SCMD_MOVEAD] = */ "MOVEAD", // 0x3A
+	/* [SCMD_MOVEAU] = */ "MOVEAU", // 0x3B
+	/* [SCMD_MOVEAT] = */ "MOVEAT", // 0x3C
+
+	/* [SCMD_NEGI] = */ "NEGI", // 0x3D
+	/* [SCMD_ADDI] = */ "ADDI", // 0x3E
+	/* [SCMD_SUBI] = */ "SUBI", // 0x3F
+	/* [SCMD_MULI] = */ "MULI", // 0x40
+	/* [SCMD_DIVI] = */ "DIVI", // 0x41
+	/* [SCMD_MODI] = */ "MODI", // 0x42
+	/* [SCMD_LTI] = */ "LTI", // 0x43
+	/* [SCMD_LTEQI] = */ "LTEQI", // 0x44
+	/* [SCMD_EQI] = */ "EQI", // 0x45
+	/* [SCMD_EQI8] = */ "EQI8", // 0x46
+
+	/* [SCMD_NEGF] = */ "NEGF", // 0x47
+	/* [SCMD_ADDF] = */ "ADDF", // 0x48
+	/* [SCMD_SUBF] = */ "SUBF", // 0x49
+	/* [SCMD_MULF] = */ "MULF", // 0x4A
+	/* [SCMD_DIVF] = */ "DIVF", // 0x4B
+	/* [SCMD_LTF] = */ "LTF", // 0x4C
+	/* [SCMD_LTEQF] = */ "LTEQF", // 0x4D
+	/* [SCMD_EQF] = */ "EQF", // 0x4E
+
+	/* [SCMD_EQC] = */ "EQC", // 0x4F
+
+	/* [SCMD_NOTB] = */ "NOTB", // 0x50
+	/* [SCMD_ANDB] = */ "ANDB", // 0x51
+	/* [SCMD_ORB] = */ "ORB", // 0x52
+	/* [SCMD_XORB] = */ "XORB", // 0x53
+
+	/* [SCMD_AND] = */ "AND", // 0x54
+	/* [SCMD_OR] = */ "OR", // 0x55
+	/* [SCMD_XOR] = */ "XOR", // 0x56
+	/* [SCMD_SHL] = */ "SHL", // 0x57
+	/* [SCMD_SHR] = */ "SHR", // 0x58
+	/* [SCMD_INV] = */ "INV", // 0x59
+
+	/* [SCMD_FTOI] = */ "FTOI", // 0x5A
+	/* [SCMD_FTOB] = */ "FTOB", // 0x5B
+	/* [SCMD_ITOF] = */ "ITOF", // 0x5C
+	/* [SCMD_ITOB] = */ "ITOB", // 0x5D
+	/* [SCMD_BTOI] = */ "BTOI", // 0x5E
+	/* [SCMD_BTOF] = */ "BTOF", // 0x5F
+	/* [SCMD_CTOI] = */ "CTOI", // 0x60
+	/* [SCMD_CTOF] = */ "CTOF", // 0x61
+	/* [SCMD_CTOB] = */ "CTOB", // 0x62
+
+	/* [SCMD_JMP] = */ "JMP", // 0x63
+	/* [SCMD_JMPF] = */ "JMPF", // 0x64
+
+	/* [SCMD_CALLU] = */ "CALLU", // 0x65
+	/* [SCMD_CALL1] = */ "CALL1", // 0x66
+	/* [SCMD_CALL2] = */ "CALL2", // 0x67
+	/* [SCMD_CALL3] = */ "CALL3", // 0x68
+	/* [SCMD_CALL4] = */ "CALL4", // 0x69
+	/* [SCMD_CALL5] = */ "CALL5", // 0x6A
+
+	/* [SCMD_SSEQU] = */ "SSEQU", // 0x6B
+	/* [SCMD_SSEQ1] = */ "SSEQ1", // 0x6C
+	/* [SCMD_SSEQ2] = */ "SSEQ2", // 0x6D
+	/* [SCMD_SSEQ3] = */ "SSEQ3", // 0x6E
+	/* [SCMD_SSEQ4] = */ "SSEQ4", // 0x6F
+	/* [SCMD_SSEQ5] = */ "SSEQ5", // 0x70
+
+	/* [SCMD_PSEQU] = */ "PSEQU", // 0x71
+	/* [SCMD_PSEQ1] = */ "PSEQ1", // 0x72
+	/* [SCMD_PSEQ2] = */ "PSEQ2", // 0x73
+	/* [SCMD_PSEQ3] = */ "PSEQ3", // 0x74
+	/* [SCMD_PSEQ4] = */ "PSEQ4", // 0x75
+	/* [SCMD_PSEQ5] = */ "PSEQ5", // 0x76
+
+	/* [SCMD_START] = */ "START", // 0x77
+	/* [SCMD_TSSTART] = */ "TSSTART", // 0x78
+	/* [SCMD_TPSTART] = */ "TPSTART", // 0x79
+	/* [SCMD_TEND] = */ "TEND", // 0x7A
+
+	/* [SCMD_RET] = */ "RET", // 0x7B
+	/* [SCMD_SLEEP] = */ "SLEEP", // 0x7C
+	/* [SCMD_STATE] = */ "STATE", // 0x7D
+	/* [SCMD_ISTYPE] = */ "ISTYPE", // 0x7E
+	/* [SCMD_NEW] = */ "NEW", // 0x7F
+	/* [SCMD_WAIT] = */ "WAIT", // 0x80
+	/* [SCMD_PUSHD8] = */ "PUSHD8", // 0x81
+	/* [SCMD_PUSHD16] = */ "PUSHD16", // 0x82
+	/* [SCMD_PUSHD32] = */ "PUSHD32", // 0x83
+	/* [SCMD_PUSHDA] = */ "PUSHDA", // 0x84
+	/* [SCMD_MOVEP] = */ "MOVEP" // 0x85
+};
+
+static void ByteCode(UIActions& uiact, uint32_t *begin, uint32_t *end) {
+	for (uint32_t *cursor = begin; cursor < end; cursor++) {
+		uint32_t op = (*cursor) >> 24;
+		const char *name = op < SCMD_NUM_BYTECODE ? opcodeNames[op] : "INVALID";
+		ImGui::TextDisabled("%04x: %08x %-7s", cursor-begin, *cursor, name);
+	}
+}
+
 #endif
 
 void Decompile(UIActions& uiact, ScriptType& ty) {
@@ -292,7 +463,21 @@ void Decompile(UIActions& uiact, ScriptType& ty) {
 				ImGui::Text("arg_%x", m->m_offset);
 			}
 			ImGui::SameLine();
-			ImGui::Text(");");
+			if (!fn->m_scriptFunc.m_ptr)
+				ImGui::Text(");");
+			else if (fn->m_scriptFunc.size() == 0) {
+				ImGui::Text(") {");
+				ImGui::SameLine();
+				ImGui::TextDisabled("/* empty */");
+				ImGui::SameLine();
+				ImGui::Text("}");
+			} else {
+				ImGui::Text(") {");
+				ImGui::Indent();
+				ByteCode(uiact, fn->m_scriptFunc.begin(), fn->m_scriptFunc.end());
+				ImGui::Unindent();
+				ImGui::Text("}");
+			}
 		}
 	} else {
 		ImGui::TextDisabled("// no functions");

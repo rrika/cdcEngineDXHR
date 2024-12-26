@@ -45,7 +45,7 @@ public:
 	uint32_t paddingC;
 	uint32_t padding10;
 	CallbackCallFunction *nativeFunc; // 14
-	uint32_t padding18;
+	SArray<uint32_t> m_scriptFunc;
 };
 
 static_assert(sizeof(Function) == 0x1C);
