@@ -257,6 +257,9 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			}
 		}
 
+		if (instance->overridePose.size() > 1)
+			ImGui::Checkbox("Pose mode", &instance->enableOverridePose);
+
 		cdc::Object *object = instance->object;
 		if (false)
 			for (uint32_t i=0; i<object->numAnims; i++) {
