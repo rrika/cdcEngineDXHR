@@ -1,5 +1,7 @@
 #define NOMINMAX
 #include <d3d11_1.h>
+#undef near // can you guess why these need undefining?
+#undef far
 #include <cfloat>
 #include <algorithm>
 #include "cdcSys/Assert.h"
