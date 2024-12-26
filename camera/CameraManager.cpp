@@ -1,6 +1,8 @@
 #include "CameraManager.h"
 #include "cdcSys/Assert.h"
 
+using namespace cdc;
+
 CameraManager::CameraManager() {
 
 	cameras[0] = nullptr;            //  4
@@ -21,7 +23,7 @@ CameraManager::CameraManager() {
 	stack[sp++] = 1;
 }
 
-cdc::ICamera *CameraManager::getStackCamera(uint32_t i) {
+ICamera *CameraManager::getStackCamera(uint32_t i) {
 	switch (i) {
 	case 0: return cameras[activeCameraIndex];
 	case 1: return &playerCamera;      // cameras[1]
@@ -32,12 +34,12 @@ cdc::ICamera *CameraManager::getStackCamera(uint32_t i) {
 	case 7: return &objectDebugCamera; // cameras[9]
 	case 8: return &orbitDebugCamera;  // cameras[10]
 	default:
-		cdc::FatalError("CameraManager: invalid mode %d", i);
+		FatalError("CameraManager: invalid mode %d", i);
 		return nullptr;
 	}
 }
 
-void CameraManager::switchTo(cdc::ICamera *nextCamera) {
+void CameraManager::switchTo(ICamera *nextCamera) {
 	auto *prevCamera = activeCamera;
 	prevCamera->disable(nextCamera);
 	activeCamera = nextCamera;
@@ -119,10 +121,21 @@ bool CameraManager::isTransitionCamera() {
 	return stack[sp-1] == 2;
 }
 
-cdc::Matrix *CameraManager::getActiveCameraMatrix() {
+float CameraManager::getNearPlane() {
+	if (activeCamera->getType() == ICamera::kPlayer ||
+		activeCamera->getType() == ICamera::kCinematic)
+	{
+		auto near = activeCamera->getNearPlane();
+		if (near >= 40.f)
+			return near;
+	}
+	return 40;
+}
+
+Matrix *CameraManager::getActiveCameraMatrix() {
 	return activeCamera->getMatrix();
 }
 
-cdc::Matrix *CameraManager::getMatrix() {
+Matrix *CameraManager::getMatrix() {
 	return &matrix;
 }
