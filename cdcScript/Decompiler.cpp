@@ -384,12 +384,98 @@ static const char *opcodeNames[SCMD_NUM_BYTECODE] = {
 	/* [SCMD_MOVEP] = */ "MOVEP" // 0x85
 };
 
+void Signature(UIActions& uiact, uint32_t i, Function *fn);
+
 static void ByteCode(UIActions& uiact, uint32_t *begin, uint32_t *end) {
-	for (uint32_t *cursor = begin; cursor < end; cursor++) {
+	uint32_t *cursor = begin;
+	while (cursor < end) {
 		uint32_t op = (*cursor) >> 24;
+		uint32_t zx = (*cursor) & 0xffffff;
 		const char *name = op < SCMD_NUM_BYTECODE ? opcodeNames[op] : "INVALID";
 		ImGui::TextDisabled("%04x: %08x %-7s", cursor-begin, *cursor, name);
+		cursor++;
+
+		switch (op) {
+		case SCMD_PUSHC: // 0x5
+		{
+			const char *str = (const char*)*cursor++;
+			ImGui::SameLine();
+			ImGui::Text("\"%s\"", str);
+			break;
+		}
+		case SCMD_PUSHL8: // 0x6
+		case SCMD_PUSHL16: // 0x7
+		case SCMD_PUSHL32: // 0x8
+		case SCMD_PUSHLA: // 0x9
+		case SCMD_PUSHLR: //0xA
+			ImGui::SameLine();
+			ImGui::Text("local_%x", zx);
+			break;
+
+		case SCMD_PUSHS8: // 0xC
+		case SCMD_PUSHS16: // 0xD
+		case SCMD_PUSHS32: // 0xE
+		case SCMD_PUSHSA: // 0xF
+		case SCMD_PUSHSR: //0x10
+			ImGui::SameLine();
+			ImGui::Text("field_%x", zx);
+			break;
+
+		case SCMD_CALLU: // 0x65
+		case SCMD_CALL1: // 0x66
+		case SCMD_CALL4: // 0x69
+		{
+			auto *func = (Function*)*cursor++;
+			ImGui::SameLine();
+			Signature(uiact, 9999, func);
+			break;
+		}
+
+		case SCMD_CALL2: // 0x67
+			cursor++;
+			cursor++;
+			break;
+
+		case SCMD_CALL3: // 0x68
+		case SCMD_CALL5: // 0x6A
+			cursor++;
+			break;
+
+		case SCMD_ISTYPE: // 0x7E
+		{
+			auto *ty = (ScriptType*)*cursor++;
+			ImGui::SameLine();
+			ImGui::PushID(cursor);
+			if (ImGui::SmallButton(nameof(ty)))
+				uiact.select(ty);
+			ImGui::PopID();
+			break;
+		}
+
+		default: break;
+		}
 	}
+}
+
+void Signature(UIActions& uiact, uint32_t i, Function *fn) {
+	Prototype *pt = fn->prototype;
+	Type(uiact, &pt->returnType);
+	ImGui::SameLine();
+	ImGui::Text("method_%d(", i);
+	uint32_t numArgs = pt->GetNumArgs();
+	for (uint32_t j=0; j<numArgs; j++) {
+		if (j) {
+			ImGui::SameLine(0.f, 0.f);
+			ImGui::Text(",");
+		}
+		DataMember *m = &pt->args[j];
+		ImGui::SameLine();
+		Type(uiact, &m->m_type);
+		ImGui::SameLine();
+		ImGui::Text("arg_%x", m->m_offset);
+	}
+	ImGui::SameLine();
+	ImGui::Text(")");
 }
 
 #endif
@@ -446,33 +532,18 @@ void Decompile(UIActions& uiact, ScriptType& ty) {
 		uint32_t numFunctions = ty.blob->m_functions.size();
 		for (uint32_t i=0; i<numFunctions; i++) {
 			Function *fn = &ty.blob->m_functions[i];
-			Prototype *pt = fn->prototype;
-			Type(uiact, &pt->returnType);
-			ImGui::SameLine();
-			ImGui::Text("method_%d(", i);
-			uint32_t numArgs = pt->GetNumArgs();
-			for (uint32_t j=0; j<numArgs; j++) {
-				if (j) {
-					ImGui::SameLine(0.f, 0.f);
-					ImGui::Text(",");
-				}
-				DataMember *m = &pt->args[j];
-				ImGui::SameLine();
-				Type(uiact, &m->m_type);
-				ImGui::SameLine();
-				ImGui::Text("arg_%x", m->m_offset);
-			}
-			ImGui::SameLine();
+			Signature(uiact, i, fn);
+			ImGui::SameLine(0.f, 0.f);
 			if (!fn->m_scriptFunc.m_ptr)
-				ImGui::Text(");");
+				ImGui::Text(";");
 			else if (fn->m_scriptFunc.size() == 0) {
-				ImGui::Text(") {");
+				ImGui::Text(" {");
 				ImGui::SameLine();
 				ImGui::TextDisabled("/* empty */");
 				ImGui::SameLine();
 				ImGui::Text("}");
 			} else {
-				ImGui::Text(") {");
+				ImGui::Text(" {");
 				ImGui::Indent();
 				ByteCode(uiact, fn->m_scriptFunc.begin(), fn->m_scriptFunc.end());
 				ImGui::Unindent();
