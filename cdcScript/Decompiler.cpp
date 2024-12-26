@@ -285,7 +285,7 @@ void Decompile(UIActions& uiact, ScriptType& ty) {
 					ImGui::SameLine(0.f, 0.f);
 					ImGui::Text(",");
 				}
-				DataMember *m = &pt->args[i];
+				DataMember *m = &pt->args[j];
 				ImGui::SameLine();
 				Type(uiact, &m->m_type);
 				ImGui::SameLine();
