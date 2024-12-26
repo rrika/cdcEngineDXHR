@@ -658,13 +658,13 @@ int spinnyCube(HWND window,
 
 	float w = viewport.Width / viewport.Height; // width (aspect ratio)
 	float h = 1.0f;                             // height
-	float n = 1.0f;                             // near
+	float n = 40.0f;                            // near
 	float f = 100000.0f;                        // far
 
 	float scale = 1.f;
 	cdc::Vector modelRotation    = { 0.0f, 0.0f, 0.0f };
 	cdc::Vector modelScale       = { scale, scale, scale };
-	cdc::Vector modelTranslation = { 50.0f, 0.0f, 0.0f };
+	cdc::Vector modelTranslation = { 60.0f, 0.0f, 0.0f };
 
 	bool mouseLook = false;
 	bool useFrustumCulling = true;
@@ -681,11 +681,12 @@ int spinnyCube(HWND window,
 	CameraManager cameraManager;
 
 	cameraManager.activeCamera = &camera;
+	camera.m_nearPlane = n;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	cdc::RenderViewport renderViewport;
-	renderViewport.nearz = n;
+	renderViewport.nearz = cameraManager.getNearPlane();
 	renderViewport.farz = f;
 	renderViewport.fov = 0.925f;
 	renderViewport.aspect = w;
@@ -992,6 +993,7 @@ int spinnyCube(HWND window,
 		camera.matrix = viewMatrix;
 		cameraManager.update();
 		viewMatrix = *cameraManager.getMatrix(); // wow, it's nothing
+		renderViewport.nearz = cameraManager.getNearPlane();
 
 		// HACK: apply parabola movement
 		for (Instance *instance : InstanceManager::s_instances) {
