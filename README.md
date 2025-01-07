@@ -1,6 +1,6 @@
 # Welcome
 
-![Screenshot](/res/screenshot1.png)
+![Screenshot](/res/screenshot2.webp)
 
 Code here is decompiled with IDA Pro and manually cleaned up, uninlined and rewritten to use templates. It is not a matching decompilation, and there is no workflow to merge the functions here with functions from the binary. The .exe contains class names as part of RTTI (see objtree.txt) but there has been no source leak. There has however been a *debug info leak* for Tomb Raider (2013). It's a different game, but uses a similar engine. This debug info contains:
 - file names and line numbers
