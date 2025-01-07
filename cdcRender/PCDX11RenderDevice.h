@@ -152,7 +152,7 @@ public:
 	void method_D0() override;
 	void method_D4() override;
 	void method_D8() override;
-	void method_DC() override;
+	void DrawLineList(Matrix*, LineVertex*, uint32_t, uint32_t) override;
 	void method_EC() override;
 	IMaterial *createMaterial() override;
 	TextureMap *createTexture(uint32_t) override;

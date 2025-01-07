@@ -694,7 +694,7 @@ void PCDX11RenderDevice::method_D8() {
 	// TODO
 }
 
-void PCDX11RenderDevice::method_DC() {
+void PCDX11RenderDevice::DrawLineList(Matrix *m, LineVertex *pSourceVerts, uint32_t numLines, uint32_t polyFlags) {
 	// TODO
 }
 

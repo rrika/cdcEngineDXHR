@@ -1298,6 +1298,19 @@ int spinnyCube(HWND window,
 		if (!editorMode)
 			g_scene->RenderWithoutCellTracing(renderViewport);
 
+		{
+			// draw red/green/blue X/Y/Z lines
+			cdc::LineVertex lineVerts[6] = {
+				{  0.f,   0.f,   0.f, 0xff0000ff},
+				{100.f,   0.f,   0.f, 0xff0000ff},
+				{  0.f,   0.f,   0.f, 0xff00ff00},
+				{  0.f, 100.f,   0.f, 0xff00ff00},
+				{  0.f,   0.f,   0.f, 0xffff0000},
+				{  0.f,   0.f, 100.f, 0xffff0000}
+			};
+			renderDevice->DrawLineList(&cdc::identity4x4, lineVerts, 3, 0);
+		}
+
 		auto putTerrain = [&](cdc::IRenderTerrain *renderTerrain, cdc::Matrix& instanceMatrix) {
 
 			auto rtiIt = renderTerrainInstances.find(renderTerrain);

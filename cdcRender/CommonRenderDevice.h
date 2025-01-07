@@ -126,7 +126,7 @@ public:
 	virtual void method_D0() = 0;
 	virtual void method_D4() = 0;
 	virtual void method_D8() = 0;
-	virtual void method_DC() = 0;
+	virtual void DrawLineList(Matrix*, LineVertex*, uint32_t, uint32_t) = 0;
 	virtual void method_E0();
 	virtual void method_E4();
 	virtual RenderGlobalState *getGlobalState();
