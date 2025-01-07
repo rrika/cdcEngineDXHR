@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 namespace cdc {
 
@@ -54,6 +55,28 @@ enum DrawableTypeID { // 184
 	kDrawableTypeIDNGAPrimitves = 3,
 	kDrawableTypeFirstCustom = 4,
 	kMaxDrawableTypes = 16,
+};
+
+enum : uint32_t {
+	POLYFLAG_BLENDMODE   =        0x7,
+
+	POLYFLAG_DOUBLESIDED =       0x40,
+	POLYFLAG_NOCOLOR     =      0x100,
+	POLYFLAG_FADING      =      0x400, // no depth test either
+	POLYFLAG_SORTKEY     =     0x1000, // use the provided sort key
+
+	POLYFLAG_TRILIST     =    0x00000,
+	POLYFLAG_QUADLIST    =    0x10000,
+	POLYFLAG_TRISTRIP    =    0x20000,
+	POLYFLAG_LINELIST    =    0x30000,
+	POLYFLAG_PRIMTYPE    =    0x30000,
+
+	POLYFLAG_POSTFSX     =    0x40000, // force the respective pass mask
+	POLYFLAG_BGRSWAP     =   0x200000, // RGB <-> BGR swap
+	POLYFLAG_BRIGHTER    =   0x400000,
+	POLYFLAG_FSFX        =  0x1000000, // force the respective pass mask
+	POLYFLAG_2D          = 0x10000000,
+	POLYFLAG_DEPTHBIAS   = 0x20000000  // see PCDX11Material::setupDepthBias
 };
 
 }

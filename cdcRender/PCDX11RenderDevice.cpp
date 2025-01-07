@@ -513,9 +513,9 @@ void PCDX11RenderDevice::DrawIndexedPrimitive(
 	uint32_t flags = state->m_flags;
 	uint32_t passes = pContext->m_passes;
 
-	if (flags & 0x1000000)
+	if (flags & /*0x1000000*/ POLYFLAG_FSFX)
 		passes = 1 << kPassIndexFullScreenFX; // 4
-	else if (flags & 0x40000)
+	else if (flags & /*0x40000*/ POLYFLAG_POSTFSX)
 		passes = 1 << kPassIndexPostFSX; // 5
 
 	auto *material = state->m_pMaterial;
@@ -523,7 +523,7 @@ void PCDX11RenderDevice::DrawIndexedPrimitive(
 		// TODO: obtain material from 10C38
 	}
 
-	bool fading = (flags & 0x400) || sortKey != 0.f;
+	bool fading = (flags & /*0x400*/ POLYFLAG_FADING) || sortKey != 0.f;
 	passes &= material->GetRenderPassMask(fading);
 
 	// if (m_geometryIsVisible == false) {
@@ -532,7 +532,7 @@ void PCDX11RenderDevice::DrawIndexedPrimitive(
 	// }
 
 	if (passes) {
-		flags |= 0x1000;
+		flags |= /*0x1000*/ POLYFLAG_SORTKEY;
 		if (!pContext->m_isTransient)
 			pContext->NewState();
 
@@ -576,9 +576,9 @@ void PCDX11RenderDevice::DrawIndexedPrimitive(
 	uint32_t flags = state->m_flags;
 	uint32_t passes = pContext->m_passes;
 
-	if (flags & 0x1000000)
+	if (flags & /*0x1000000*/ POLYFLAG_FSFX)
 		passes = 1 << kPassIndexFullScreenFX; // 4
-	else if (flags & 0x40000)
+	else if (flags & /*0x40000*/ POLYFLAG_POSTFSX)
 		passes = 1 << kPassIndexPostFSX; // 5
 
 	auto *material = state->m_pMaterial;

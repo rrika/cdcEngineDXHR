@@ -13,16 +13,16 @@ PrimitiveInfo::PrimitiveInfo(uint32_t polyFlags, uint32_t numPrims, bool hasSour
 	m_polyFlags(polyFlags),
 	m_numPrims(numPrims)
 {
-	switch ((polyFlags >> 16) & 3) {
-	case 0:
+	switch ((polyFlags & POLYFLAG_PRIMTYPE) >> 16) {
+	case /*0*/ POLYFLAG_TRILIST >> 16:
 		m_numVertices = 3 * numPrims;
 		m_d3dPrimType = 4; // D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 		break;
-	case 1:
+	case /*1*/ POLYFLAG_QUADLIST >> 16:
 		m_numVertices = (hasSourceIndices ? 6 : 4) * numPrims;
 		m_d3dPrimType = 4; // D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 		break;
-	case 2:
+	case /*2*/ POLYFLAG_TRISTRIP >> 16:
 		m_numPrims = numPrims-2;
 		m_numVertices = numPrims;
 		m_d3dPrimType = 5; // D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
@@ -72,7 +72,12 @@ uint32_t PCDX11NGAPrimitive::BuildInstanceDataAndFlags(MaterialInstanceData& ins
 	instanceData.minDepth = m_pState->m_depthBoundsMin;
 	instanceData.maxDepth = m_pState->m_depthBoundsMax;
 	instanceData.stencilSettings64 = m_pState->m_pStencilParams;
-	instanceData.polyFlags = m_pState->m_flags & 0x20000540;
+	instanceData.polyFlags = m_pState->m_flags & (
+		POLYFLAG_DOUBLESIDED |
+		POLYFLAG_NOCOLOR |
+		POLYFLAG_FADING |
+		POLYFLAG_DEPTHBIAS
+	); // 0x20000540
 
 	uint32_t flags = m_pRenderDevice->getScene()->m_parity < 0.0f ? 2 : 0;
 	return flags;
@@ -222,7 +227,7 @@ void PCDX11NGAPrimitive::DrawPrimitive(PCDX11StreamDecl *pStreamDecl, bool isBac
 	stateManager->setStreamDecl(pStreamDecl);
 	stateManager->setVertexBuffer(pVertexBuffer);
 
-	if ((m_pState->m_flags & 0x100) != 0) {
+	if ((m_pState->m_flags & /*0x100*/ POLYFLAG_NOCOLOR) != 0) {
 		stateManager->setRenderTargetWriteMask(0); // depth-only?
 		PCDX11Material::invalidate();
 	}
@@ -238,7 +243,9 @@ void PCDX11NGAPrimitive::DrawPrimitive(PCDX11StreamDecl *pStreamDecl, bool isBac
 	
 	auto *d3d11DeviceContext = m_pRenderDevice->d3dDeviceContext111580;
 
-	if (m_pState->indexBuffer || (m_pState->m_flags & 0x30000) == 0x10000) {
+	bool isQuadList = (m_pState->m_flags & /*0x30000*/ POLYFLAG_PRIMTYPE) == /*0x10000*/ POLYFLAG_QUADLIST;
+
+	if (m_pState->indexBuffer || isQuadList) {
 		uint32_t startIndex, maxBatchSize;
 		if (m_pState->indexBuffer) {
 			auto *pIndexBuffer = static_cast<PCDX11IndexBuffer*>(m_pState->indexBuffer);
@@ -252,8 +259,7 @@ void PCDX11NGAPrimitive::DrawPrimitive(PCDX11StreamDecl *pStreamDecl, bool isBac
 		uint32_t numPrimsLeft = m_numPrims;
 		while (numPrimsLeft > 0) {
 			uint32_t batchSize = numPrimsLeft > maxBatchSize ? maxBatchSize : numPrimsLeft;
-			uint32_t indexCount = (m_pState->m_flags & 0x30000) == 0x10000
-				? 6 * batchSize : 3 * batchSize;
+			uint32_t indexCount = isQuadList ? 6 * batchSize : 3 * batchSize;
 			uint32_t baseVertex = pVertexBuffer->getBaseVertex();
 
 			stateManager->setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

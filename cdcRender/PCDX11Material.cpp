@@ -205,7 +205,7 @@ void PCDX11Material::setupDepthBias(MaterialInstanceData *matInstance) const {
 	if (materialBlob->negDepthBias) {
 		depthBias = -materialBlob->negDepthBias;
 		slopeScaledDepthBias = -materialBlob->negSlopeScaledDepthBias;
-	} else if (matInstance->polyFlags & 0x20000000) {
+	} else if (matInstance->polyFlags & /*0x20000000*/ POLYFLAG_DEPTHBIAS) {
 		depthBias = -1.0f;
 		slopeScaledDepthBias = -10.0f;
 	}
@@ -229,7 +229,7 @@ void PCDX11Material::setupStencil(
 	uint32_t matDword18 = materialBlob->dword18;
 	bool frontCounterClockwise = bool(flags & 2);
 	bool stencilDoubleSided = bool(stencilSettings->m_backParams & 1);
-	bool matInstanceDoubleSided = bool(matInstance->polyFlags & 0x40);
+	bool matInstanceDoubleSided = bool(matInstance->polyFlags & /*0x40*/ POLYFLAG_DOUBLESIDED);
 	bool materialDoubleSided = bool(matDword18 & 0x80);
 	bool materialRenderTwice = bool(matDword18 & 0x800);
 	bool materialCullFront = bool(matDword18 & 0x2000);
@@ -267,7 +267,7 @@ void PCDX11Material::setupSinglePassOpaque(
 	// redo some of what setupStencil did earlier
 	uint32_t matDword18 = materialBlob->dword18;
 	bool frontCounterClockwise = bool(flags & 2);
-	bool matInstanceDoubleSided = bool(matInstance->polyFlags & 0x40);
+	bool matInstanceDoubleSided = bool(matInstance->polyFlags & /*0x40*/ POLYFLAG_DOUBLESIDED);
 	bool materialDoubleSided = bool(matDword18 & 0x80);
 	bool materialRenderTwice = bool(matDword18 & 0x800);
 	bool materialCullFront = bool(matDword18 & 0x2000);
@@ -313,13 +313,16 @@ void PCDX11Material::setupSinglePassTranslucent(
 
 	stateManager->setOpacity(opacity);
 	stateManager->setDepthState(
-		(matInstance->polyFlags & 0x400) ? D3D11_COMPARISON_ALWAYS : D3D11_COMPARISON_LESS_EQUAL, 0);
+		(matInstance->polyFlags & /*0x400*/ POLYFLAG_FADING)
+			? D3D11_COMPARISON_ALWAYS
+			: D3D11_COMPARISON_LESS_EQUAL,
+		/*depthWrites=*/ false);
 
 
 	// redo some of what setupStencil did earlier
 	/*uint32_t matDword18 = materialBlob->dword18;
 	bool frontCounterClockwise = bool(flags & 2);
-	bool matInstanceDoubleSided = bool(matInstance->polyFlags & 0x40);
+	bool matInstanceDoubleSided = bool(matInstance->polyFlags & / *0x40* / POLYFLAG_DOUBLESIDED);
 	bool materialDoubleSided = bool(matDword18 & 0x80);
 	bool materialRenderTwice = bool(matDword18 & 0x800);
 	bool materialCullFront = bool(matDword18 & 0x2000);
@@ -655,7 +658,7 @@ PCDX11StreamDecl *PCDX11Material::SetupNormalMapPass(
 
 	uint32_t matDword18 = materialBlob->dword18;
 	bool frontCounterClockwise = bool(flags & 2);
-	bool matInstanceDoubleSided = bool(matInstance->polyFlags & 0x40);
+	bool matInstanceDoubleSided = bool(matInstance->polyFlags & /*0x40*/ POLYFLAG_DOUBLESIDED);
 	bool materialDoubleSided = bool(matDword18 & 0x80);
 	bool materialRenderTwice = bool(matDword18 & 0x800);
 	bool materialCullFront = bool(matDword18 & 0x2000);

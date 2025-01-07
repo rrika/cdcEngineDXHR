@@ -156,7 +156,7 @@ void PPPass::run(cdc::CommonRenderTarget **output, PPRTs *rts, cdc::RenderViewpo
 						renderDevice->SetGlobalParams(i-8, 1, variables[blob->variableIndices[i]].m_value.vec128);
 
 				// TODO: set up depth range properly
-				PPQuad(0.5 /*v.nearz + 10.0f*/, blob->material, &mip, 0.0f, /*primFlags=*/ 0x400, /*mask=*/ 8 /*0x42CB*/);
+				PPQuad(0.5 /*v.nearz + 10.0f*/, blob->material, &mip, 0.0f, /*primFlags=0x400*/ cdc::POLYFLAG_FADING, /*mask=*/ 8 /*0x42CB*/);
 			}
 
 			renderDevice->finishScene();
