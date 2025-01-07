@@ -175,6 +175,33 @@ void VertexDecl::Finalize() {
 	hash4 = h >> 32;
 }
 
+ShaderInputSpec *ShaderInputSpec::Create(uint32_t numElems, uint32_t modelType) {
+	uint32_t size = sizeof(ShaderInputSpec) + sizeof(ShaderInputElem) * numElems;
+	auto spec = (ShaderInputSpec*) new char[size];
+	memset((void*)spec, 0, size);
+	spec->numAttribs = numElems;
+	spec->dwordC = modelType;
+	return spec;
+}
+
+static int CompareInputElem(ShaderInputElem const *a, ShaderInputElem const *b) {
+	if (a->attribKindA < b->attribKindA)
+		return -1;
+	if (a->attribKindA > b->attribKindA)
+		return 1;
+	return 0;
+}
+
+ShaderInputSpec *ShaderInputSpec::Create(ShaderInputElem *elems, uint32_t numElems, uint32_t modelType) {
+	ShaderInputSpec *spec = Create(numElems, modelType);
+	memcpy(spec->attr, elems, sizeof(ShaderInputElem) * numElems);
+	uint64_t h = RunCRC64((const char*)spec->attr, sizeof(ShaderInputElem) * numElems);
+	qsort(spec->attr, numElems, sizeof(ShaderInputElem), (int(*)(const void*, const void*))CompareInputElem);
+	spec->hash0 = h & ~1;
+	spec->hash4 = h >> 32;
+	return spec;
+}
+
 uint16_t getLayoutAIndexFromHash(
 	VertexDecl *layoutA,
 	uint32_t hash)

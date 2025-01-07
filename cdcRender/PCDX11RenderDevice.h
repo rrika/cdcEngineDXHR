@@ -14,12 +14,13 @@ namespace cdc {
 class IRenderDrawable;
 class PCDX11BaseTexture;
 class PCDX11LightManager;
+class PCDX11Material;
 class PCDX11Pool;
 class PCDX11RenderContext;
 class PCDX11RenderTexture;
-class PCDX11StaticPool;
 class PCDX11SimpleDynamicVertexBuffer;
 class PCDX11SimpleStaticVertexBuffer;
+class PCDX11StaticPool;
 class PCDX11Texture;
 struct LightManagerSubB;
 
@@ -99,8 +100,9 @@ public:
 	PCDX11ShaderLib *shlib_4; // 10C2C, cs (fast blur)
 	PCDX11ShaderLib *shlib_3; // 10C30, cs (fast blur)
 	PCDX11ShaderLib *shlib_2; // 10C34, cs (bilateral blur)
-	PCDX11ShaderLib *shlib_1;
-	PCDX11ShaderLib *shlib_0;
+
+	PCDX11Material *m_pSimplePrimMaterials[7][2]; // 10C38
+
 	PCDX11VertexShaderTable shtab_vs_wvp_1_0; // 10D1C
 	PCDX11VertexShaderTable shtab_vs_ui;      // 10D38
 	PCDX11VertexShaderTable shtab_vs_wvp;     // 10D54

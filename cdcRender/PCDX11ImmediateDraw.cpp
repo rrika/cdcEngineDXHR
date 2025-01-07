@@ -103,8 +103,8 @@ void PCDX11NGAPrimitive::drawDepth(uint32_t funcSetIndex, IRenderDrawable *drawa
 	thisNGA->SetupTransform(prevNGA);
 
 	uint32_t flags = thisNGA->m_pRenderDevice->scene78->m_parity < 0.0f ? 2 : 0;
-	auto *pMaterial = static_cast<PCDX11Material*>(thisNGA->m_pState->m_pMaterial);
-	PCDX11StreamDecl *streamDecl = pMaterial->SetupDepthPass(
+	// auto *pMaterial = static_cast<PCDX11Material*>(thisNGA->m_pState->m_pMaterial);
+	PCDX11StreamDecl *streamDecl = thisNGA->m_pMaterial->SetupDepthPass(
 		thisNGA->m_pInstanceData,
 		thisNGA->m_pState->instanceParams,
 		/*vsSelect=*/ 0,
@@ -147,8 +147,8 @@ void PCDX11NGAPrimitive::drawComposite(uint32_t funcSetIndex, IRenderDrawable *d
 	// if (m_pIrradianceState)
 	// 	lightManager->assignCommonCB5(m_pIrradianceState);
 
-	auto *pMaterial = static_cast<PCDX11Material*>(thisNGA->m_pState->m_pMaterial);
-	PCDX11StreamDecl *streamDecl = pMaterial->SetupSinglePass(
+	// auto *pMaterial = static_cast<PCDX11Material*>(thisNGA->m_pState->m_pMaterial);
+	PCDX11StreamDecl *streamDecl = thisNGA->m_pMaterial->SetupSinglePass(
 		thisNGA->m_pInstanceData,
 		thisNGA->m_pState->instanceParams,
 		thisNGA->m_pLightSet,
@@ -174,8 +174,8 @@ void PCDX11NGAPrimitive::drawTranslucent(uint32_t funcSetIndex, IRenderDrawable 
 	// if (m_pIrradianceState)
 	// 	lightManager->assignCommonCB5(m_pIrradianceState);
 
-	auto *pMaterial = static_cast<PCDX11Material*>(thisNGA->m_pState->m_pMaterial);
-	PCDX11StreamDecl *streamDecl = pMaterial->SetupSinglePass(
+	// auto *pMaterial = static_cast<PCDX11Material*>(thisNGA->m_pState->m_pMaterial);
+	PCDX11StreamDecl *streamDecl = thisNGA->m_pMaterial->SetupSinglePass(
 		thisNGA->m_pInstanceData,
 		thisNGA->m_pState->instanceParams,
 		thisNGA->m_pLightSet,
@@ -195,8 +195,8 @@ void PCDX11NGAPrimitive::drawNormal(uint32_t funcSetIndex, IRenderDrawable *draw
 	thisNGA->SetupTransform(prevNGA);
 
 	uint32_t flags = thisNGA->m_pRenderDevice->scene78->m_parity < 0.0f ? 2 : 0;
-	auto *pMaterial = static_cast<PCDX11Material*>(thisNGA->m_pState->m_pMaterial);
-	PCDX11StreamDecl *streamDecl = pMaterial->SetupNormalMapPass(
+	// auto *pMaterial = static_cast<PCDX11Material*>(thisNGA->m_pState->m_pMaterial);
+	PCDX11StreamDecl *streamDecl = thisNGA->m_pMaterial->SetupNormalMapPass(
 		thisNGA->m_pInstanceData,
 		thisNGA->m_pState->instanceParams,
 		/*vsSelect=*/ 0,
@@ -204,7 +204,7 @@ void PCDX11NGAPrimitive::drawNormal(uint32_t funcSetIndex, IRenderDrawable *draw
 		flags,
 		/*opacity=*/ 1.0f,
 		0.0f);
-	uint32_t matDword18 = pMaterial->materialBlob->dword18;
+	uint32_t matDword18 = thisNGA->m_pMaterial->materialBlob->dword18;
 	bool materialRenderTwice = bool(matDword18 & 0x800);
 	thisNGA->DrawPrimitive(streamDecl, /*isBackBeforeFront=*/ materialRenderTwice, flags);
 }

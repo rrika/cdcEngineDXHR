@@ -23,6 +23,7 @@
 #include "PCDX11TerrainDrawable.h"
 #include "RenderPasses.h"
 #include "Types.h"
+#include "VertexDeclaration.h"
 #include "buffers/PCDX11DynamicIndexBuffer.h"
 #include "buffers/PCDX11DynamicVertexBuffer.h"
 #include "buffers/PCDX11SimpleDynamicVertexBuffer.h"
@@ -204,9 +205,209 @@ void PCDX11RenderDevice::createDefaultResources() {
 	shlib_4 = new PCDX11ShaderLib(shad::fastBlur0_cs, PCDX11ShaderLib::kCompute, this);
 	shlib_3 = new PCDX11ShaderLib(shad::fastBlur1_cs, PCDX11ShaderLib::kCompute, this);
 	shlib_2 = new PCDX11ShaderLib(shad::bilateralBlur_cs, PCDX11ShaderLib::kCompute, this);
-	shlib_1 = new PCDX11ShaderLib(shad::error_ps, PCDX11ShaderLib::kPixel, this);
-	shlib_0 = new PCDX11ShaderLib(shad::error_vs, PCDX11ShaderLib::kVertex, this);
+
+	static AllocRequester MEM_RENDER_MATERIAL;
+
+	MaterialBlob *templateA;
+	MaterialBlobSub *passA_0138;
+	MaterialBlobSub *passA_5;
+
+	MaterialBlob *templateB;
+	MaterialBlobSub *passB_0138;
+	MaterialBlobSub *passB_5;
+
+	{
+		ShaderInputElem siElems[] = {
+			{VertexElem::kPosition,  ~0u, 1,  0, 0.f, 0.f, 0.f, 0.f},
+			{VertexElem::kColor1,    ~0u, 8,  0, 0.f, 0.f, 0.f, 0.f},
+			{VertexElem::kTexcoord1, ~0u, 10, 0, 0.f, 0.f, 0.f, 0.f}
+		};
+		ShaderInputSpec *pInputSpec = cdc::ShaderInputSpec::Create(siElems, 3, 0);
+		MaterialTexRef *pTextureEntry = new MaterialTexRef { missingTexture, 0.f, 0, 0x21, 0, 1 };
+
+		templateA = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
+		memset(templateA, 0, sizeof(MaterialBlob));
+
+		templateA->word0 = 15;
+		templateA->word2 = 140;
+		templateA->m_id = 0;
+		templateA->renderTargetWriteMask = 0b1111;
+		// templateA->blendStateC
+		// templateA->blendFactors
+		templateA->word14 = 0;
+		templateA->fadeMode = MaterialBlob::kFadeAlphaBlend; // = 1
+		templateA->dword18 = 0x200; // see CommonMaterial::SetRenderPasses
+		templateA->dword1C = 0;
+		templateA->dword20 = 0xFF808080;
+		templateA->blendState24 = 0x6540541;
+		// templateA->byte_28
+		templateA->alphaThreshold = 127;
+		templateA->byte_2A = 0;
+		templateA->byte_2B = 0;
+		templateA->negDepthBias = 0;
+		templateA->negSlopeScaledDepthBias = 0.f;
+		templateA->stencilSettings34 = { 0xFF00000E, 0xFF00000E, 0xFFFF, 0 };
+		// templateA->name_44
+		// templateA->dword48
+
+		passA_0138 = (MaterialBlobSub*) AllocateMemory(sizeof(MaterialBlobSub), 16, &MEM_RENDER_MATERIAL);
+		templateA->subMat4C[0] = passA_0138;
+		templateA->subMat4C[1] = passA_0138;
+		templateA->subMat4C[3] = passA_0138;
+		templateA->subMat4C[8] = passA_0138;
+		memset(passA_0138, 0, sizeof(MaterialBlobSub));
+
+		passA_0138->shaderPixel = shlib_22; // m_pSimplePrimPS
+		passA_0138->shaderVertex = shlib_21; // m_pSimplePrimVS2D
+		passA_0138->vsLayout[0] = pInputSpec;
+		passA_0138->dword10 = 0;
+		passA_0138->psByte14 = 1;
+		passA_0138->psRefIndexCountB = 1;
+		passA_0138->psTextureRef = pTextureEntry;
+		passA_0138->vsBufferNumRows = 1;
+
+		passA_5 = (MaterialBlobSub*) AllocateMemory(sizeof(MaterialBlobSub), 16, &MEM_RENDER_MATERIAL);
+		templateA->subMat4C[5] = passA_5;
+		*passA_5 = *passA_0138;
+		passA_5->shaderPixel = shlib_8;
+		passA_5->shaderVertex = shlib_7; 
+
+		templateB = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
+		*templateB = *templateA;
+
+		passB_0138 = (MaterialBlobSub*) AllocateMemory(sizeof(MaterialBlobSub), 16, &MEM_RENDER_MATERIAL);
+		templateB->subMat4C[0] = passB_0138;
+		templateB->subMat4C[1] = passB_0138;
+		templateB->subMat4C[3] = passB_0138;
+		templateB->subMat4C[8] = passB_0138;
+		*passB_0138 = *passA_0138;
+		passB_0138->shaderVertex = shlib_20; // m_pSimplePrimVS3D
+
+		passB_5 = (MaterialBlobSub*) AllocateMemory(sizeof(MaterialBlobSub), 16, &MEM_RENDER_MATERIAL);
+		templateB->subMat4C[5] = passB_5;
+		*passB_5 = *passA_5;
+		passB_5->shaderVertex = shlib_6;
+	}
+
+	MaterialBlob *pMD;
+
+	pMD = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
+	*pMD = *templateA;
+	pMD->blendStateC = 0x6010010;
+	pMD->blendFactors = 0;
+	pMD->blendState24 = 0x6010010;
+	pMD->alphaThreshold = 127;
+	m_pSimplePrimMaterials[1][0] = new PCDX11Material(this);
+	m_pSimplePrimMaterials[1][0]->load(pMD);
+
+	pMD = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
+	*pMD = *templateA;
+	pMD->blendStateC = 0x6540541;
+	pMD->blendFactors = 0;
+	pMD->alphaThreshold = 1;
+	m_pSimplePrimMaterials[2][0] = new PCDX11Material(this);
+	m_pSimplePrimMaterials[2][0]->load(pMD);
+
+	pMD = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
+	*pMD = *templateA;
+	pMD->blendStateC = 0x26140141;
+	pMD->blendFactors = 0;
+	pMD->alphaThreshold = 1;
+	m_pSimplePrimMaterials[3][0] = new PCDX11Material(this);
+	m_pSimplePrimMaterials[3][0]->load(pMD);
+
+	pMD = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
+	*pMD = *templateA;
+	pMD->blendStateC = 0x26144145;
+	pMD->blendFactors = 0;
+	pMD->alphaThreshold = 1;
+	m_pSimplePrimMaterials[4][0] = new PCDX11Material(this);
+	m_pSimplePrimMaterials[4][0]->load(pMD);
+
+	pMD = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
+	*pMD = *templateA;
+	pMD->blendStateC = 0x47460461;
+	pMD->blendFactors = 0;
+	pMD->alphaThreshold = 1;
+	m_pSimplePrimMaterials[5][0] = new PCDX11Material(this);
+	m_pSimplePrimMaterials[5][0]->load(pMD);
+
+	pMD = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
+	*pMD = *templateA;
+	pMD->blendStateC = 0x7BA0BA1;
+	pMD->blendFactors = 0x808080;
+	pMD->alphaThreshold = 1;
+	m_pSimplePrimMaterials[6][0] = new PCDX11Material(this);
+	m_pSimplePrimMaterials[6][0]->load(pMD);
+
+	templateA->blendStateC = 0x7010010;
+	templateA->blendFactors = 0;
+	templateA->alphaThreshold = 127;
+	m_pSimplePrimMaterials[0][0] = new PCDX11Material(this);
+	m_pSimplePrimMaterials[0][0]->load(templateA);
+
+	// ----
+
+	pMD = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
+	*pMD = *templateB;
+	pMD->blendStateC = 0x6010010;
+	pMD->blendFactors = 0;
+	pMD->blendState24 = 0x6010010;
+	pMD->alphaThreshold = 127;
+	m_pSimplePrimMaterials[1][1] = new PCDX11Material(this);
+	m_pSimplePrimMaterials[1][1]->load(pMD);
+
+	pMD = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
+	*pMD = *templateB;
+	pMD->blendStateC = 0x6540541;
+	pMD->blendFactors = 0;
+	pMD->alphaThreshold = 1;
+	m_pSimplePrimMaterials[2][1] = new PCDX11Material(this);
+	m_pSimplePrimMaterials[2][1]->load(pMD);
+
+	pMD = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
+	*pMD = *templateB;
+	pMD->blendStateC = 0x26140141;
+	pMD->blendFactors = 0;
+	pMD->alphaThreshold = 1;
+	m_pSimplePrimMaterials[3][1] = new PCDX11Material(this);
+	m_pSimplePrimMaterials[3][1]->load(pMD);
+
+	pMD = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
+	*pMD = *templateB;
+	pMD->blendStateC = 0x26144145;
+	pMD->blendFactors = 0;
+	pMD->alphaThreshold = 1;
+	m_pSimplePrimMaterials[4][1] = new PCDX11Material(this);
+	m_pSimplePrimMaterials[4][1]->load(pMD);
+
+	pMD = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
+	*pMD = *templateB;
+	pMD->blendStateC = 0x47460461;
+	pMD->blendFactors = 0;
+	pMD->alphaThreshold = 1;
+	m_pSimplePrimMaterials[5][1] = new PCDX11Material(this);
+	m_pSimplePrimMaterials[5][1]->load(pMD);
+
+	pMD = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
+	*pMD = *templateB;
+	pMD->blendStateC = 0x7BA0BA1;
+	pMD->blendFactors = 0x808080;
+	pMD->alphaThreshold = 1;
+	m_pSimplePrimMaterials[6][1] = new PCDX11Material(this);
+	m_pSimplePrimMaterials[6][1]->load(pMD);
+
+	templateB->blendStateC = 0x7010010;
+	templateB->blendFactors = 0;
+	templateB->alphaThreshold = 127;
+	m_pSimplePrimMaterials[0][1] = new PCDX11Material(this);
+	m_pSimplePrimMaterials[0][1]->load(templateB);
+
+	// ----
+
 	// TODO
+	// shlib_1 = new PCDX11ShaderLib(shad::error_ps, PCDX11ShaderLib::kPixel, this);
+	// shlib_0 = new PCDX11ShaderLib(shad::error_vs, PCDX11ShaderLib::kVertex, this);
 }
 
 void PCDX11RenderDevice::createDefaultVertexAttribLayouts() {
@@ -339,8 +540,8 @@ PCDX11RenderDevice::~PCDX11RenderDevice() {
 	delete shlib_4;
 	delete shlib_3;
 	delete shlib_2;
-	delete shlib_1;
-	delete shlib_0;
+	// delete shlib_1;
+	// delete shlib_0;
 
 	for (uint32_t i=0; i<std::size(drawVertexDecls); i++)
 		VertexDecl::Destroy(drawVertexDecls[i]);
@@ -601,7 +802,9 @@ void PCDX11RenderDevice::DrawIndexedPrimitive(
 
 	auto *material = state->m_pMaterial;
 	if (material == nullptr) {
-		// TODO: obtain material from 10C38
+		material = m_pSimplePrimMaterials
+			[flags & POLYFLAG_BLENDMODE]
+			[!(flags & POLYFLAG_2D)];
 	}
 
 	bool fading = (flags & /*0x400*/ POLYFLAG_FADING) || sortKey != 0.f;
@@ -664,7 +867,9 @@ void PCDX11RenderDevice::DrawIndexedPrimitive(
 
 	auto *material = state->m_pMaterial;
 	if (material == nullptr) {
-		// TODO: obtain material from 10C38
+		material = m_pSimplePrimMaterials
+			[flags & POLYFLAG_BLENDMODE]
+			[!(flags & POLYFLAG_2D)];
 	}
 
 	bool fading = (flags & 0x400) || sortZ != 0.f;
