@@ -37,6 +37,7 @@ option(ENABLE_D3DCOMPILER "Build with d3dcompiler dependency" ${NOT_NATIVE_BUILD
 option(ENABLE_ASAN "Build with address sanitizer" OFF)
 
 configure_file(res/DXHRDC.shad DXHRDC.shad COPYONLY)
+configure_file(res/DX11SimplePrimVS3D.shaderlib DX11SimplePrimVS3D.shaderlib COPYONLY)
 configure_file(res/dtpdata.ids dtpdata.ids COPYONLY)
 
 if (NATIVE_BUILD)

@@ -22,6 +22,7 @@ static std::vector<char> loadWholeFile(const char *path) {
 }
 
 static std::vector<char> shaderBlob;
+static std::vector<char> shaderBlob2;
 
 namespace shad {
 
@@ -87,8 +88,6 @@ void loadBuiltinResources() {
 		return;
 
 	shaderBlob = loadWholeFile("DXHRDC.shad");
-	if (shaderBlob.empty())
-		shaderBlob = loadWholeFile("../DXHRDC.shad");
 
 	if (shaderBlob.empty()) {
 		cdc::FatalError("Couldn't open DXHRDC.shad");
@@ -125,7 +124,7 @@ void loadBuiltinResources() {
 	copy_17_ps       = probeShader(0x2ca90);
 	copy_18_vs       = probeShader(0x2e110);
 	aa_19_vs         = probeShader(0x2e360);
-	shader_20_vs     = probeShader(0x2e6a0);
+	shader_20_vs     = probeShader(0x2e6a0); // DX11SimplePrimVS3D, but broken
 	shader_21_vs     = probeShader(0x2ed40);
 	shader_22_ps     = probeShader(0x2fc90);
 
@@ -158,4 +157,8 @@ void loadBuiltinResources() {
 	shader_47 = probeShader(0x3b760);
 	shader_48 = probeShader(0x3de48);
 	shader_49 = probeShader(0x3e010);
+
+	shaderBlob2 = loadWholeFile("DX11SimplePrimVS3D.shaderlib");
+	if (!shaderBlob2.empty())
+		shader_20_vs = shaderBlob2.data();
 }
