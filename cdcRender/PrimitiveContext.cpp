@@ -36,6 +36,23 @@ PrimitiveContext::PrimitiveContext(bool isTransient, CommonRenderDevice *renderD
 void PrimitiveContext::NewState() {
 	// TODO
 }
+void PrimitiveContext::SetFlags(uint32_t flags) {
+	if (m_isTransient && m_dirtyBits == 0)
+		NewState();
+	m_dirtyBits |= 1;
+	m_pWriteState->m_flags = flags;
+}
+
+void PrimitiveContext::SetPasses(uint32_t passes) {
+	m_passes = passes;
+}
+
+void PrimitiveContext::SetMaterial(IMaterial *material) {
+	if (m_isTransient && m_dirtyBits == 0)
+		NewState();
+	m_dirtyBits |= 1;
+	m_pWriteState->m_pMaterial = material;
+}
 
 void PrimitiveContext::SetVertexDecl(VertexDecl *vd) {
 	if (m_isTransient && m_dirtyBits == 0)
@@ -59,8 +76,13 @@ void PrimitiveContext::SetIndexBuffer(CommonIndexBuffer *ib) {
 	m_pWriteState->indexBuffer = ib;
 }
 
-void PrimitiveContext::SetInstanceParam(uint32_t, Vector4Arg) {
+void PrimitiveContext::SetInstanceParam(uint32_t i, Vector4Arg v) {
 	// TODO
+	if (!m_pWriteState->instanceParams) {
+		m_pWriteState->instanceParams = m_pRenderDevice->linearAlloc30(0x80, 5);
+	}
+	m_dirtyBits |= 2;
+	((Vector4*)m_pWriteState->instanceParams)[i] = v;
 }
 
 void PrimitiveContext::SetInstanceTexture(uint32_t, TextureMap*) {

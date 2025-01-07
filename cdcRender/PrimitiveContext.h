@@ -45,6 +45,9 @@ public:
 	PrimitiveContext(bool isTransient, CommonRenderDevice *renderDevice);
 
 	void NewState();
+	void SetFlags(uint32_t);
+	void SetPasses(uint32_t);
+	void SetMaterial(IMaterial*);
 	void SetVertexDecl(VertexDecl*);
 	void SetVertexBuffer(CommonVertexBuffer*);
 	void SetIndexBuffer(CommonIndexBuffer*);
