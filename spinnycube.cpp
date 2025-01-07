@@ -690,10 +690,11 @@ int spinnyCube(HWND window,
 	renderViewport.farz = f;
 	renderViewport.fov = 0.925f;
 	renderViewport.aspect = w;
-	renderViewport.mask = 0x310B | coronasPass; // pass 0, 12. 13, 1, 8 and coronas
-	// pass 12 normals (function set 10, draw bottle normals)
-	// pass 13 deferred shading (just contains a cleardrawable)
-	// pass 1 composite (draw bottle textures)
+	renderViewport.mask = 0x710A | coronasPass; // pass 14, 12. 13, 1, 8 and coronas
+	// pass 14 non-normal depth (for lines)
+	// pass 12 normals
+	// pass 13 deferred shading
+	// pass 1 composite
 	// pass 3 translucent
 	// pass 8 runs last and is where I put imgui since it messes with the render state
 

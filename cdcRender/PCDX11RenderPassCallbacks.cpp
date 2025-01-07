@@ -139,7 +139,7 @@ bool PCDX11DepthPassCallbacks::pre(
 	CommonScene *scene = renderDevice->scene78;
 
 	if (scene->depthBuffer) {
-		// TODO: scene->depthBuffer->byte14 = 0;
+		static_cast<PCDX11DepthBuffer*>(scene->depthBuffer)->isLocked = false;
 		uint32_t clearMode = scene->viewport.clearMode;
 		if (clearMode == 24 || clearMode == 26) {
 			float color[] = {0.0f, 0.0f, 0.0f, 0.0f};
