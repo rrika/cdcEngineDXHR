@@ -498,9 +498,40 @@ void PCDX11RenderDevice::setRenderTarget() {
 }
 
 void PCDX11RenderDevice::DrawPrimitive(
-	Matrix*, TextureMap*, RenderVertex*, uint32_t, uint32_t, float)
+	Matrix *toWorld, TextureMap *pTexture, RenderVertex *pVerts,
+	uint32_t numPrims, uint32_t flags, float sortBias)
 {
-	// TODO
+	// if (m_isFrameFailed)
+	// 	return;
+	if (numPrims == 0)
+		return;
+
+	VertexDecl *pVertexDecl = drawVertexDecls[0]; // pos, color1, tex1, tex2
+	// bool geometryWasVisible = m_pRenderDevice->m_geometryIsVisible;
+
+	Vector4 instanceParam0 { 0.f, 0.f, 0.f, 0.f };
+
+	float p = (flags & /*0x400000*/ POLYFLAG_BRIGHTER) ? 2.f : 1.f;
+	if (flags & /*0x200000*/ POLYFLAG_BGRSWAP)
+		instanceParam0.y = p;
+	else
+		instanceParam0.x = p;
+
+	PrimitiveContext context(/*transient=*/true, this);
+	context.SetMaterial(nullptr);
+	context.SetInstanceTexture(0, pTexture);
+	context.SetInstanceParam(0, instanceParam0);
+	context.SetWorldMatrix(*toWorld);
+	context.SetFlags(flags);
+	context.SetPasses( // 0x400B
+		(1 << kPassIndexNonNormalDepth) |
+		(1 << kPassIndexTranslucent) |
+		(1 << kPassIndexComposite) |
+		(1 << kPassIndexDepth));
+
+	DrawIndexedPrimitive(&context, pVerts, pVertexDecl, 0, nullptr, numPrims, sortBias);
+
+	// m_pRenderDevice->m_geometryIsVisible = geometryWasVisible;
 }
 
 void PCDX11RenderDevice::DrawIndexedPrimitive(
