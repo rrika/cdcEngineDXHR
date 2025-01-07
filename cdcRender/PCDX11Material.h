@@ -29,12 +29,12 @@ class PCDX11Material :
 	static uint32_t mg_vsSelectAndFlags;// 00B37BE4
 
 	// these globals might be declared elsewhere
-	static PCDX11StreamDecl *mg_streamDecl;     // 00EAAD18
-	static VertexDecl *mg_layoutA;  // 00EAAD1C
-	static PCDX11Material *mg_material;         // 00EAAD20
-	static void *mg_cbdata;                     // 00EAAD24
+	static PCDX11StreamDecl *mg_streamDecl;      // 00EAAD18
+	static VertexDecl *mg_layoutA;               // 00EAAD1C
+	static PCDX11Material const *mg_material;    // 00EAAD20
+	static void *mg_cbdata;                      // 00EAAD24
 	static MaterialInstanceData *mg_matInstance; // 00EAAD28
-	static bool mg_tesselate;                   // 00EAAD2C
+	static bool mg_tesselate;                    // 00EAAD2C
 
 public:
 	PCDX11Material(PCDX11RenderDevice *renderDevice) :
@@ -47,14 +47,14 @@ public:
 	~PCDX11Material() override;
 	void method_18() override;
 
-	void setupVertexResources(uint32_t, MaterialBlobSub*, MaterialInstanceData*, char*, bool);
-	void setupPixelResources(uint32_t, MaterialBlobSub*, MaterialInstanceData*, char*, bool);
+	void setupVertexResources(uint32_t, MaterialBlobSub*, MaterialInstanceData*, char*, bool) const;
+	void setupPixelResources(uint32_t, MaterialBlobSub*, MaterialInstanceData*, char*, bool) const;
 
-	void setupDepthBias(MaterialInstanceData*);
-	void setupStencil(MaterialInstanceData*, bool, uint32_t);
+	void setupDepthBias(MaterialInstanceData*) const;
+	void setupStencil(MaterialInstanceData*, bool, uint32_t) const;
 
-	void setupSinglePassOpaque(PCDX11RenderDevice*, MaterialInstanceData*, uint32_t);
-	void setupSinglePassTranslucent(PCDX11RenderDevice*, MaterialInstanceData*, uint32_t, float);
+	void setupSinglePassOpaque(PCDX11RenderDevice*, MaterialInstanceData*, uint32_t) const;
+	void setupSinglePassTranslucent(PCDX11RenderDevice*, MaterialInstanceData*, uint32_t, float) const;
 	static void invalidate();
 
 	PCDX11StreamDecl *SetupDepthPass(
@@ -65,7 +65,7 @@ public:
 		VertexDecl *layout,
 		uint8_t flags,
 		float opacityMultiplier,
-		float floatY);
+		float floatY) const;
 
 	PCDX11StreamDecl *SetupShadowPass(
 		MaterialInstanceData*,
@@ -75,7 +75,7 @@ public:
 		VertexDecl *layout,
 		uint8_t flags,
 		float opacityMultiplier,
-		float floatY);
+		float floatY) const;
 
 	PCDX11StreamDecl *SetupBloomPass(
 		MaterialInstanceData*,
@@ -83,7 +83,7 @@ public:
 		uint32_t vsSelect,
 		VertexDecl *layout,
 		uint8_t flags,
-		float opacityMultiplier);
+		float opacityMultiplier) const;
 
 	PCDX11StreamDecl *SetupSinglePass(
 		MaterialInstanceData*,
@@ -94,7 +94,7 @@ public:
 		uint8_t flags,
 		bool isTranslucentPass,
 		float opacityMultiplier,
-		float lodDistance);
+		float lodDistance) const;
 
 	PCDX11StreamDecl *SetupNormalMapPass(
 		MaterialInstanceData*,
@@ -103,7 +103,7 @@ public:
 		VertexDecl *layout,
 		uint8_t flags,
 		float opacityMultiplier,
-		float floatY);
+		float floatY) const;
 };
 
 }

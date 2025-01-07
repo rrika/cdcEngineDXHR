@@ -21,8 +21,8 @@ public:
 	~CommonMaterial() = default;
 	virtual void method_18() = 0;
 
-	uint32_t GetBlendMode(); // 32
-	uint32_t GetFadeBlendMode(); // 52
+	uint32_t GetBlendMode() const; // 32
+	uint32_t GetFadeBlendMode() const; // 52
 	void InitInstanceData(MaterialInstanceData*, TextureMap**); // 116
 	void SetRenderPasses(); // 199
 };

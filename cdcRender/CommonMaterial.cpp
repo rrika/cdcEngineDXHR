@@ -29,11 +29,11 @@ void CommonMaterial::method_18() {
 	// TODO
 }
 
-uint32_t CommonMaterial::GetBlendMode() {
+uint32_t CommonMaterial::GetBlendMode() const {
 	return materialBlob->blendStateC;
 }
 
-uint32_t CommonMaterial::GetFadeBlendMode() {
+uint32_t CommonMaterial::GetFadeBlendMode() const {
 	switch (materialBlob->fadeMode) {
 	case /*0*/ MaterialBlob::kFadeOff:
 		return 0x07010010;

@@ -15,7 +15,7 @@ uint32_t PCDX11Material::mg_state = 0;
 uint32_t PCDX11Material::mg_vsSelectAndFlags;
 PCDX11StreamDecl *PCDX11Material::mg_streamDecl;
 VertexDecl *PCDX11Material::mg_layoutA;
-PCDX11Material *PCDX11Material::mg_material;
+PCDX11Material const *PCDX11Material::mg_material;
 void *PCDX11Material::mg_cbdata;
 MaterialInstanceData *PCDX11Material::mg_matInstance;
 bool PCDX11Material::mg_tesselate;
@@ -80,7 +80,7 @@ void PCDX11Material::setupVertexResources(
 	MaterialBlobSub* subMat,
 	MaterialInstanceData *matInstance,
 	char *cbData,
-	bool doEverything)
+	bool doEverything) const
 {
 	auto *stateManager = deviceManager->getStateManager();
 	auto *texref = subMat->vsTextureRef;
@@ -140,7 +140,7 @@ void PCDX11Material::setupPixelResources(
 	MaterialBlobSub *subMat,
 	MaterialInstanceData *subExt,
 	char *cbData,
-	bool doEverything)
+	bool doEverything) const
 {
 	auto *stateManager = deviceManager->getStateManager();
 	MaterialTexRef *texref = subMat->psTextureRef;
@@ -198,7 +198,7 @@ void PCDX11Material::setupPixelResources(
 	}
 }
 
-void PCDX11Material::setupDepthBias(MaterialInstanceData *matInstance) {
+void PCDX11Material::setupDepthBias(MaterialInstanceData *matInstance) const {
 	float depthBias = 0.0f;
 	float slopeScaledDepthBias = 0.0f;
 
@@ -219,7 +219,7 @@ void PCDX11Material::setupDepthBias(MaterialInstanceData *matInstance) {
 void PCDX11Material::setupStencil(
 	MaterialInstanceData *matInstance,
 	bool isColorPass_honorRenderTwice,
-	uint32_t flags)
+	uint32_t flags) const
 {
 	auto *stateManager = deviceManager->getStateManager();
 	StencilParams *stencilSettings = matInstance->stencilSettings64
@@ -250,7 +250,7 @@ void PCDX11Material::setupStencil(
 void PCDX11Material::setupSinglePassOpaque(
 	PCDX11RenderDevice *renderDevice,
 	MaterialInstanceData *matInstance,
-	uint32_t flags)
+	uint32_t flags) const
 {
 	auto *stateManager = deviceManager->getStateManager();
 	setupStencil(matInstance, true, flags);
@@ -284,7 +284,7 @@ void PCDX11Material::setupSinglePassTranslucent(
 	PCDX11RenderDevice *renderDevice,
 	MaterialInstanceData *matInstance,
 	uint32_t flags,
-	float opacityMultiplier)
+	float opacityMultiplier) const
 {
 	// lights use this function (eg. deferred_fast_omni_diffuse.drm)
 	auto *stateManager = deviceManager->getStateManager();
@@ -351,7 +351,7 @@ PCDX11StreamDecl *PCDX11Material::SetupDepthPass(
 	VertexDecl *layoutA,
 	uint8_t flags,
 	float opacityMultiplier,
-	float floatY)
+	float floatY) const
 {
 	if (mg_state != 1) {
 		mg_vsSelectAndFlags = -1;
@@ -460,7 +460,7 @@ PCDX11StreamDecl *PCDX11Material::SetupShadowPass(
 	VertexDecl *layout,
 	uint8_t flags,
 	float opacityMultiplier,
-	float floatY)
+	float floatY) const
 {
 	// TODO
 	return nullptr;
@@ -473,7 +473,7 @@ PCDX11StreamDecl *PCDX11Material::SetupBloomPass(
 	uint32_t vsSelect,
 	VertexDecl *layoutA,
 	uint8_t flags,
-	float opacityMultiplier)
+	float opacityMultiplier) const
 {
 	auto *stateManager = deviceManager->getStateManager();
 	const uint32_t subMaterialIndex = 4;
@@ -524,7 +524,7 @@ PCDX11StreamDecl *PCDX11Material::SetupSinglePass(
 	uint8_t flags,
 	bool isTranslucentPass,
 	float opacityMultiplier,
-	float lodDistance)
+	float lodDistance) const
 {
 	float opacity = matInstance->opacity * opacityMultiplier;
 	uint32_t blendState = materialBlob->blendStateC;
@@ -628,7 +628,7 @@ PCDX11StreamDecl *PCDX11Material::SetupNormalMapPass(
 	VertexDecl *layout,
 	uint8_t flags,
 	float opacityMultiplier,
-	float floatY)
+	float floatY) const
 {
 	auto *stateManager = deviceManager->getStateManager();
 
