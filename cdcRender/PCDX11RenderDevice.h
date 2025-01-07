@@ -44,6 +44,21 @@ public:
 		RenderList *next;
 	};
 
+	struct LineBatcher {
+		// DXHR uses LineVertex here which it can't pass into any DrawPrimitive function
+		// instead do it like TRAS which converts to RenderVertex
+		RenderVertex m_lineVertices[4000];
+		uint32_t m_numLines = 0;
+		uint32_t m_polyFlags = 0xffffffff;
+		PCDX11RenderDevice *m_pRenderDevice;
+
+		LineBatcher(PCDX11RenderDevice *rd) : m_pRenderDevice(rd) {}
+		void Flush();
+		void Draw(Matrix *m, LineVertex *pSourceVerts, uint32_t numLines, uint32_t polyFlags);
+	};
+
+	LineBatcher m_lineBatcher{this}; // 11B0
+
 	PCDX11RenderContext *renderContext_10CE8 = nullptr;
 	PCDX11RenderContext *renderContext_10CEC;
 

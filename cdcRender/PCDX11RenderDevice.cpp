@@ -1,3 +1,4 @@
+#include "cdcMath/MatrixInlines.h"
 #include "BuiltinResources.h"
 #include "drawables/PCDX11ClearDrawable.h"
 #include "drawables/PCDX11FastBlurDrawable.h"
@@ -69,6 +70,55 @@ PCDX11RenderDevice::RenderList::RenderList(PCDX11RenderDevice *renderDevice, uin
 		widthMaybe8 = renderTarget->getWidth();
 		heightMaybeC = renderTarget->getHeight();
 	}
+}
+
+void PCDX11RenderDevice::LineBatcher::Flush() {
+	if (m_numLines == 0 || m_polyFlags == 0xffffffff)
+		return;
+
+	uint32_t vsIndex = (m_polyFlags >> 28 & 1) ? 0 : 1;
+	PCDX11VertexShader *vs = m_pRenderDevice->shtab_vs_ui[vsIndex]; // 10D38
+	PCDX11PixelShader *ps = m_pRenderDevice->shtab_ps_passthrough[0]; // 10D90
+
+	// HACK: draw call not present in DXHR, taken from TRAS
+	m_pRenderDevice->DrawPrimitive(
+		&identity4x4,
+		nullptr,
+		m_lineVertices,
+		m_numLines,
+		m_polyFlags,
+		0);
+
+	m_numLines = 0;
+	m_polyFlags = 0xffffffff;
+}
+
+void PCDX11RenderDevice::LineBatcher::Draw(Matrix *m, LineVertex *pSourceVerts, uint32_t numLines, uint32_t polyFlags) {
+	for (; numLines > 2000; numLines -= 2000) {
+		Draw(m, pSourceVerts, 2000, polyFlags);
+		pSourceVerts += 2000;
+	}
+
+	if (polyFlags != m_polyFlags || m_numLines + numLines > 2000) {
+		Flush();
+		m_polyFlags = polyFlags;
+	}
+
+	for (uint32_t i=0; i<2*numLines; i++) {
+		Vector3 v {
+			pSourceVerts[i].vX,
+			pSourceVerts[i].vY,
+			pSourceVerts[i].vZ
+		};
+		Vector w = *m * v;
+		// HACK: convert to RenderVertex like TRAS
+		m_lineVertices[i].vX = w.x;
+		m_lineVertices[i].vY = w.y;
+		m_lineVertices[i].vZ = w.z;
+		m_lineVertices[i].nDiffuse = pSourceVerts[i].nDiffuse;
+	}
+
+	m_numLines += numLines;
 }
 
 PCDX11RenderDevice::PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t height) :
@@ -438,7 +488,7 @@ void PCDX11RenderDevice::finishScene() {
 		// return to current scene
 		scene7C = thisScene;
 	}
-	// TODO
+	m_lineBatcher.Flush();
 	static_cast<PCDX11Scene*>(scene7C)->Finalize(&renderList_current->drawableList);
 	scene7C = scene7C->parentScene;
 }
@@ -695,7 +745,9 @@ void PCDX11RenderDevice::method_D8() {
 }
 
 void PCDX11RenderDevice::DrawLineList(Matrix *m, LineVertex *pSourceVerts, uint32_t numLines, uint32_t polyFlags) {
-	// TODO
+	// if (m_isFrameFailed)
+	// 	return;
+	m_lineBatcher.Draw(m, pSourceVerts, numLines, polyFlags | /*0x30000*/ POLYFLAG_LINELIST);
 }
 
 void PCDX11RenderDevice::method_EC() {

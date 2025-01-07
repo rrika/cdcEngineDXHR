@@ -27,6 +27,10 @@ PrimitiveInfo::PrimitiveInfo(uint32_t polyFlags, uint32_t numPrims, bool hasSour
 		m_numVertices = numPrims;
 		m_d3dPrimType = 5; // D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
 		break;
+	case /*3*/ POLYFLAG_LINELIST >> 16: // HACK: not present in DXHR, taken from TRAS
+		m_numVertices = 2 * numPrims;
+		m_d3dPrimType = 2; // D3D11_PRIMITIVE_TOPOLOGY_LINELIST
+		break;		
 	default:
 		break;
 	}

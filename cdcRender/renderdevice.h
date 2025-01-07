@@ -10,6 +10,11 @@ struct RenderVertex { // line 294
 	float vU, vV;     uint32_t pad[2];
 };
 
+struct LineVertex { // line 336
+	float vX, vY, vZ;
+	uint32_t nDiffuse;
+};
+
 enum PCRendererType { // line 1755
 	RENDERER_DX9 = 0,
 	RENDERER_DX11 = 1
