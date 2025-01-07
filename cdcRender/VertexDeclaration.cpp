@@ -4,7 +4,7 @@
 
 namespace cdc {
 
-uint32_t VertexAttributeA::GetSize() {
+uint32_t VertexElem::GetSize() {
 	switch (format) {
 		case 0:
 		case 4:
@@ -134,10 +134,10 @@ static uint64_t RunCRC64(const char *pData, size_t numBytes) { // line 153
 	return ~h;
 }
 
-static int CompareVertexElem(VertexAttributeB const *a, VertexAttributeB const *b) {
-	if (a->attribKindA < b->attribKindA)
+static int CompareVertexElem(VertexElem const *a, VertexElem const *b) {
+	if (a->attribKind < b->attribKind)
 		return -1;
-	if (a->attribKindA > b->attribKindA)
+	if (a->attribKind > b->attribKind)
 		return 1;
 	return 0;
 }
@@ -167,7 +167,7 @@ void VertexDecl::Finalize() {
 		vertStrideB = strides[1];
 	}
 
-	qsort(attrib, numAttr, sizeof(VertexAttributeA), (int(*)(const void*, const void*))CompareVertexElem);
+	qsort(attrib, numAttr, sizeof(VertexElem), (int(*)(const void*, const void*))CompareVertexElem);
 
 	uint64_t h = RunCRC64((const char*)&numAttr, 8 + 8*numAttr);
 
@@ -227,7 +227,7 @@ DXGI_FORMAT MakeElementFormat(uint16_t format) {
 // But when using semanticFromEnum they will be mapped to Texcoord0 and
 // Texcoord1, which is what the pixel shader expects.
 
-void MakeD3DVertexElements(D3D11_INPUT_ELEMENT_DESC *dst, VertexAttributeA *src, uint32_t count, bool wineWorkaround) {
+void MakeD3DVertexElements(D3D11_INPUT_ELEMENT_DESC *dst, VertexElem *src, uint32_t count, bool wineWorkaround) {
 	uint32_t customSlots = 0;
 	for (uint32_t i=0; i<count; i++) {
 		dst[i].SemanticName = "";
@@ -236,28 +236,28 @@ void MakeD3DVertexElements(D3D11_INPUT_ELEMENT_DESC *dst, VertexAttributeA *src,
 		dst[i].Format = MakeElementFormat(src[i].format);
 		auto& elem = dst[i];
 		auto kind = src[i].attribKind;
-		if (kind == VertexAttributeA::kPosition) {
+		if (kind == VertexElem::kPosition) {
 			elem.SemanticName = wineWorkaround ? "SV_POSITION" : "POSITION";
 			elem.SemanticIndex = 0;
-		} else if (kind == VertexAttributeA::kNormal) {
+		} else if (kind == VertexElem::kNormal) {
 			elem.SemanticName = "NORMAL";
 			elem.SemanticIndex = 0;
-		} else if (kind == VertexAttributeA::kTangent) {
+		} else if (kind == VertexElem::kTangent) {
 			elem.SemanticName = "TANGENT";
 			elem.SemanticIndex = 0;
-		} else if (kind == VertexAttributeA::kBinormal) {
+		} else if (kind == VertexElem::kBinormal) {
 			elem.SemanticName = "BINORMAL";
 			elem.SemanticIndex = 0;
-		} else if (kind == VertexAttributeA::kTexcoord0) { // HACK
+		} else if (kind == VertexElem::kTexcoord0) { // HACK
 			elem.SemanticName = "TEXCOORD";
 			elem.SemanticIndex = 0;
-		} else if (kind == VertexAttributeA::kTexcoord1) {
+		} else if (kind == VertexElem::kTexcoord1) {
 			elem.SemanticName = "TEXCOORD";
 			elem.SemanticIndex = 1;
-		} else if (kind == VertexAttributeA::kTexcoord2) {
+		} else if (kind == VertexElem::kTexcoord2) {
 			elem.SemanticName = "TEXCOORD";
 			elem.SemanticIndex = 2;
-		} else if (kind == VertexAttributeA::kColor1) {
+		} else if (kind == VertexElem::kColor1) {
 			elem.SemanticName = "COLOR";
 			elem.SemanticIndex = 0;
 		} else {

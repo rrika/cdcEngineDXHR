@@ -16,9 +16,9 @@
 using namespace cdc;
 
 static cdc::VertexDecl *makeVertexDecl() {
-	std::vector<VertexAttributeA> attrs;
-	attrs.push_back({VertexAttributeA::kPosition,  0,  2, 0});
-	attrs.push_back({VertexAttributeA::kTexcoord1, 12, 1, 0});
+	std::vector<VertexElem> attrs;
+	attrs.push_back({VertexElem::kPosition,  0,  2, 0});
+	attrs.push_back({VertexElem::kTexcoord1, 12, 1, 0});
 	auto *vd = VertexDecl::Create(attrs.data(), attrs.size(), /*stride=*/ sizeof(float)*5);
 	return vd;
 }

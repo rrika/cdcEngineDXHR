@@ -6,7 +6,7 @@ class D3D11_INPUT_ELEMENT_DESC;
 
 namespace cdc {
 
-struct VertexAttributeA { // VertexElem
+struct VertexElem {
 
 	static const uint32_t kPosition = 0xD2F7D823;
 	static const uint32_t kNormal = 0x36F5E414;
@@ -41,17 +41,17 @@ struct VertexDecl {
 	uint8_t vertStrideA;
 	uint8_t vertStrideB;
 	uint32_t dwordC;
-	VertexAttributeA attrib[];
+	VertexElem attrib[];
 
-	static VertexDecl *Create(VertexAttributeA *attrs, uint32_t count, uint8_t stride) {
-		auto *p = (VertexDecl*)new char[16 + sizeof(VertexAttributeA) * count];
+	static VertexDecl *Create(VertexElem *attrs, uint32_t count, uint8_t stride) {
+		auto *p = (VertexDecl*)new char[16 + sizeof(VertexElem) * count];
 		p->hash0 = 0;
 		p->hash4 = 0;
 		p->numAttr = count;
 		p->vertStrideA = stride;
 		p->vertStrideB = 0;
-		p->dwordC = 0; // must be initialized for hashing to be determinisitc
-		memcpy(p->attrib, attrs, sizeof(VertexAttributeA) * count);
+		p->dwordC = 0; // must be initialized for hashing to be deterministic
+		memcpy(p->attrib, attrs, sizeof(VertexElem) * count);
 		p->Finalize();
 		return p;
 	}
@@ -88,7 +88,7 @@ uint16_t getLayoutAIndexFromHash(
 
 void MakeD3DVertexElements(
 	D3D11_INPUT_ELEMENT_DESC *dst,
-	VertexAttributeA *src,
+	VertexElem *src,
 	uint32_t count,
 	bool wineWorkaround);
 

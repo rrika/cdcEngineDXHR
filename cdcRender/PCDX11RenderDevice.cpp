@@ -160,22 +160,22 @@ void PCDX11RenderDevice::createDefaultResources() {
 }
 
 void PCDX11RenderDevice::createDefaultVertexAttribLayouts() {
-	std::vector<VertexAttributeA> attrs;
+	std::vector<VertexElem> attrs;
 	// hash, offset, format, bufferIndex
-	attrs.push_back({VertexAttributeA::kPosition,  0xffff, 2, 0});
-	attrs.push_back({VertexAttributeA::kColor1,    0xffff, 4, 0});
-	attrs.push_back({VertexAttributeA::kTexcoord1, 0xffff, 1, 0});
-	attrs.push_back({VertexAttributeA::kTexcoord2, 0xffff, 1, 0});
+	attrs.push_back({VertexElem::kPosition,  0xffff, 2, 0});
+	attrs.push_back({VertexElem::kColor1,    0xffff, 4, 0});
+	attrs.push_back({VertexElem::kTexcoord1, 0xffff, 1, 0});
+	attrs.push_back({VertexElem::kTexcoord2, 0xffff, 1, 0});
 	drawVertexDecls[0] = VertexDecl::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
 
 	attrs.clear();
-	attrs.push_back({VertexAttributeA::kPosition,  0xffff, 2, 0});
-	attrs.push_back({VertexAttributeA::kColor1,    0xffff, 4, 0});
-	attrs.push_back({VertexAttributeA::kTexcoord0, 0xffff, 1, 0}); // HACK
+	attrs.push_back({VertexElem::kPosition,  0xffff, 2, 0});
+	attrs.push_back({VertexElem::kColor1,    0xffff, 4, 0});
+	attrs.push_back({VertexElem::kTexcoord0, 0xffff, 1, 0}); // HACK
 	drawVertexDecls[5] = VertexDecl::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
 
 	attrs.clear();
-	attrs.push_back({VertexAttributeA::kPosition,  0xffff, 2, 0});
+	attrs.push_back({VertexElem::kPosition,  0xffff, 2, 0});
 	drawVertexDecls[6] = VertexDecl::Create(attrs.data(), attrs.size(), /*stride=*/ 0);
 
 	PCDX11VertexShader *vs;
