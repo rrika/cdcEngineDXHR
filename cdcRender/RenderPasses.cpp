@@ -119,6 +119,7 @@ void RenderPasses::sortAndDraw(
 	else
 		reqPass = requestedPassesScene;
 
+	uint32_t priorPasses = 0;
 	for (uint32_t passId; (passId = *reqPass) != -1; reqPass++) {
 		if (mask & (1 << passId)) {
 			RenderPass *pass = &passes[passId];
@@ -128,7 +129,6 @@ void RenderPasses::sortAndDraw(
 				IRenderPassCallback *callbacks = pass->callbacks;
 				DrawableList *list = &lists->drawableLists[lists->compactIndices[passId]];
 				uint32_t drawableCount = list->itemCount;
-				uint32_t priorPasses = 0;
 				if (!callbacks || callbacks->pre(renderDevice, passId, drawableCount, priorPasses)) {
 					priorPasses |= 1 << passId;
 					if (drawableCount) {
