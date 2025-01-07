@@ -54,7 +54,10 @@ bool PCDX11NormalPassCallbacks::pre(
 		static_cast<PCDX11DepthBuffer*>(db));
 
 	float color[] = {0.5, 0.5, 1.0, 1.0f};
-	renderDevice->clearRenderTargetNow(0b111, color, 1.f, 0);
+	if (priorPassesBitfield & (1 << kPassIndexNonNormalDepth)) // HACK: don't clear buffer prepared by non-normal depth pass
+		renderDevice->clearRenderTargetNow(0b1, color, 1.f, 0);
+	else
+		renderDevice->clearRenderTargetNow(0b111, color, 1.f, 0);
 
 	return true;
 }
@@ -141,10 +144,10 @@ bool PCDX11DepthPassCallbacks::pre(
 	if (scene->depthBuffer) {
 		static_cast<PCDX11DepthBuffer*>(scene->depthBuffer)->isLocked = false;
 		uint32_t clearMode = scene->viewport.clearMode;
-		if (clearMode == 24 || clearMode == 26) {
+		// if (clearMode == 24 || clearMode == 26) {
 			float color[] = {0.0f, 0.0f, 0.0f, 0.0f};
 			renderDevice->clearRenderTargetNow(2, color, 1.0, 0);
-		}
+		// }
 	}
 
 	stateManager->pushRenderTargets(nullptr, static_cast<PCDX11DepthBuffer*>(scene->depthBuffer));
