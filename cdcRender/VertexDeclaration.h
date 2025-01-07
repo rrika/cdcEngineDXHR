@@ -63,7 +63,7 @@ struct VertexDecl {
 	}
 };
 
-struct VertexAttributeB {
+struct ShaderInputElem {
 	uint32_t attribKindA; // hash
 	uint32_t nextAttribIndex;
 	uint16_t attribKindB; // enum
@@ -79,7 +79,7 @@ struct ShaderInputSpec {
 	uint32_t hash4;
 	uint32_t numAttribs;
 	uint32_t dwordC;
-	VertexAttributeB attr[];
+	ShaderInputElem attr[];
 };
 
 uint16_t getLayoutAIndexFromHash(

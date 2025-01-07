@@ -79,7 +79,7 @@ PCDX11StreamDecl *PCDX11StreamDeclCache::buildStreamDecl(
 		uint32_t numElements = 0;
 		uint32_t secondaryBufferByteOffset = 0;
 		uint32_t secondaryBufferCount = 0;
-		VertexAttributeB *attribB = &layoutB->attr[0];
+		ShaderInputElem *attribB = &layoutB->attr[0];
 		for (uint32_t i=0; i<layoutB->numAttribs; i++) {
 			indexB = i;
 			if ((attribB->field_A & forbiddenBit) == 0) {
