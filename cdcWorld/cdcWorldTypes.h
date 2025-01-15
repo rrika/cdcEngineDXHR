@@ -4,7 +4,18 @@
 
 namespace cdc { class RenderMesh; }
 
-struct HInfo;
+struct HInfo {
+	uint32_t numHSpheres;
+	void *hsphereList;
+	uint32_t numHBoxes;
+	void *hboxList;
+	uint32_t numHMarkers;
+	void *hmarkerList;
+	uint32_t numHCapsules;
+	void *hcapsuleList;
+	uint32_t numHGeoms;
+	void *hgeomList;
+};
 
 struct Segment {
 	uint32_t pad0[8];
