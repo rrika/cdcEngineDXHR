@@ -1,2 +1,4 @@
 target_sources(dxhr PRIVATE
-	Mesh.cpp)
+	CollisionManager.cpp
+	Mesh.cpp
+	SweptSphere.cpp)
