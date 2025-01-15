@@ -4,7 +4,8 @@
 namespace cdc {
 
 class GeomPoint : public Geom {
-	// empty
+public:
+	GeomPoint(Vector3Arg pos) : Geom(pos) {}
 };
 
 }
