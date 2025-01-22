@@ -10,11 +10,30 @@ struct AABBCollisionTreeNode;
 using AABBCollisionCB = bool(AABBCollisionDataNode*, AABBCollisionDataNode*); // line 63
 
 struct AABBCollisionNode { // line 71
-	// layout not confirmed
-	Vector3 m_min;
-	Vector3 m_max;
+	uint32_t m_min[3]; // 0
+	uint32_t m_max[3]; // C
+
+	bool Overlap(AABBCollisionNode const& other) {
+		return m_min[0] < other.max[0]
+			&& m_max[0] > other.min[0]
+			&& m_min[1] < other.max[1]
+			&& m_max[1] > other.min[1]
+			&& m_min[2] < other.max[2]
+			&& m_max[2] > other.min[2];
+	}
 };
 
+struct AABBCollisionDataNode : AABBCollisionNode { // line 139
+	uint32_t dword18;
+	uint16_t m_nextDataOffset; // 1C
+}
+
+struct AABBCollisionTreeNode : AABBCollisionNode { // line 203
+	uint32_t m_rightChild; // 18
+	AABBCollisionDataNode *m_dataPtr; // 1C
+};
+
+/*
 struct AABBCollisionDataNode : AABBCollisionNode { // line 139
 	// layout not confirmed
 	uint16_t nextIndex;
@@ -41,5 +60,44 @@ struct AABBCollisionTreeNode : AABBCollisionNode { // line 203
 		AABBCollisionNode& box,
 		AABBCollisionCB *fn);
 };
+*/
+
+struct AABBCollisionJobInstance;
+
+struct AABBCollision { // line 296
+	void AddJobW(AABBCollisionJobInstance *i);
+	void Allocate();
+};
+
+struct AABBCollisionJobInstance { // line 353
+	// uint32_t dword0; // flags
+	// uint32_t dword4; // inTreePtr
+	// uint16_t word8; // inMaxTreeNodes
+	// uint16_t wordA; // inNumDataNodes
+	// uint32_t dwordC; // inDataNodePtrs
+	// uint32_t dword10; // inTreePtr2
+	// uint32_t dword14; // inNumDataNodes2
+	// uint32_t dword18; // inDataNodePtrs2
+	// uint32_t dword1C; // inMaxColPairPtrs
+	// uint32_t dword20; // outNumTreeNodes
+	// uint32_t dword24; // outNextDataNodeOffsets
+	// uint32_t dword28; // outNumColPairPtrs
+	// uint32_t dword2C; // outColPairPtrs
+};
+/*
+	uint32_t
+	cdc::AABBCollisionTreeNode*
+	ushort
+	ushort
+	cdc::AABBCollisionDataNode*
+	cdc::AABBCollisionTreeNode*
+	uint32_t
+	cdc::AABBCollisionDataNode*
+	uint32_t
+	uint32_t
+	short *
+	uint32_t
+	cdc::AABBCollisionDataNode**
+*/
 
 }

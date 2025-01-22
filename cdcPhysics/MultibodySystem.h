@@ -4,9 +4,13 @@
 
 namespace cdc {
 
+struct MultibodyAABBCollision;
+
 class MultibodySystemImpl : public MultibodySystem {
+	PhysicsGeometryImpl *firstGeometry; // 2050
 	int32_t nc; // 2094
 	int32_t maxContactsUsed; // 2098
+	MultibodyAABBCollision *m_aabbCollision;
 	int32_t lock; // 20DC
 public:
 	// ...

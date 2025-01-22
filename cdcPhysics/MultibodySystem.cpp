@@ -13,9 +13,7 @@ void MultibodySystemImpl::StoreContactForces() {
 }
 
 void MultibodySystemImpl::StepImpl_StartCollisionSetup(bool preserveForces) { // line 787
-	// TODO
-	// MultibodyAABBCollision::CollisionSetup_Start
-	//   
+	m_aabbCollision->CollisionSetup_Start();
 }
 
 void MultibodySystemImpl::StepImpl_FinishCollisionSetup() { // line 810
