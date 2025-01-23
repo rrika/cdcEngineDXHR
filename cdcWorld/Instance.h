@@ -58,6 +58,8 @@ public:
 
 	cdc::IDrawable *instanceDrawable = nullptr; // 23C
 
+	cdc::PhysicsBody *physicsBody = nullptr; // 284
+
 	cdc::BallisticComponent ballisticComponent; // 2A0
 	UserDataComponent *userDataComponent = nullptr; // 2E0
 	cdc::AnimComponentV2 *animComponentV2 = nullptr; // 2F8
