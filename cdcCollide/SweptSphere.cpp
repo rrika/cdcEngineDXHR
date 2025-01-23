@@ -1,5 +1,5 @@
 #include "SweptSphere.h"
-#include "cdcPhysics/MultibodySystemImpl.h"
+#include "cdcPhysics/MultibodySystem.h"
 
 namespace cdc {
 

@@ -4,6 +4,6 @@ class Instance;
 
 class InstanceComponent {
 public:
-	// virtual void method_0();
-	// virtual void method_4();
+	// virtual void SaveState(BinaryWriter*);
+	// virtual void RestoreState(BinaryReader*);
 };

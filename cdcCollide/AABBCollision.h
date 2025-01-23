@@ -14,23 +14,29 @@ struct AABBCollisionNode { // line 71
 	uint32_t m_max[3]; // C
 
 	bool Overlap(AABBCollisionNode const& other) {
-		return m_min[0] < other.max[0]
-			&& m_max[0] > other.min[0]
-			&& m_min[1] < other.max[1]
-			&& m_max[1] > other.min[1]
-			&& m_min[2] < other.max[2]
-			&& m_max[2] > other.min[2];
+		return m_min[0] < other.m_max[0]
+			&& m_max[0] > other.m_min[0]
+			&& m_min[1] < other.m_max[1]
+			&& m_max[1] > other.m_min[1]
+			&& m_min[2] < other.m_max[2]
+			&& m_max[2] > other.m_min[2];
 	}
 };
 
 struct AABBCollisionDataNode : AABBCollisionNode { // line 139
 	uint32_t dword18;
 	uint16_t m_nextDataOffset; // 1C
-}
+};
 
 struct AABBCollisionTreeNode : AABBCollisionNode { // line 203
 	uint32_t m_rightChild; // 18
 	AABBCollisionDataNode *m_dataPtr; // 1C
+
+	uint32_t CollideTree(
+		AABBCollisionDataNode **outDataNodePtrs,
+		uint32_t maxOutDataNodePtrs,
+		AABBCollisionNode const& box,
+		AABBCollisionCB *fn);
 };
 
 /*
@@ -65,8 +71,8 @@ struct AABBCollisionTreeNode : AABBCollisionNode { // line 203
 struct AABBCollisionJobInstance;
 
 struct AABBCollision { // line 296
-	void AddJobW(AABBCollisionJobInstance *i);
-	void Allocate();
+	static void AddJobW(AABBCollisionJobInstance *i);
+	static void Allocate();
 };
 
 struct AABBCollisionJobInstance { // line 353
@@ -83,6 +89,9 @@ struct AABBCollisionJobInstance { // line 353
 	// uint32_t dword24; // outNextDataNodeOffsets
 	// uint32_t dword28; // outNumColPairPtrs
 	// uint32_t dword2C; // outColPairPtrs
+	void Init() {
+		/* TODO */
+	}
 };
 /*
 	uint32_t

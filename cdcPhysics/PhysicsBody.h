@@ -1,13 +1,17 @@
 #pragma once
+#include "Multibody.h"
 
 namespace cdc {
 
-struct PhysicsBody {
+class PhysicsBodyImpl : public PhysicsBody {
+public:
+	MultibodySystemImpl *multibody; // 130
+	PhysicsBodyImpl *prev; // 134
+	PhysicsBodyImpl *next; // 138
 	//
-};
-
-struct PhysicsBodyImpl : public PhysicsBody {
-	//
+	void Clear() {
+		// TODO
+	}
 };
 
 }

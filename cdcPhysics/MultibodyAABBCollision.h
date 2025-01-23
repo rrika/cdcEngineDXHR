@@ -4,6 +4,8 @@
 namespace cdc {
 
 struct AABBCollisionDataNode;
+struct AABBCollisionTreeNode;
+struct AABBCollisionJobInstance;
 struct AABBCollisionNode;
 
 class MultibodyAABBCollision {

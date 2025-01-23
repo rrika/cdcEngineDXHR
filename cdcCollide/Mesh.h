@@ -32,6 +32,10 @@ struct Mesh { // line 104
 	uint16_t word42; // m_height
 };
 
+struct MeshInstance {
+	// TODO
+};
+
 /*
 struct cdc::MeshInstance
 	source: /Volumes/BobSource/tombraider/Companies/Feral/Development/Products/TombRaider/Source/cdc/runtime/cdcCollide/Mesh.h:194

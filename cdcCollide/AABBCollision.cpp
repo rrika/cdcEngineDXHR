@@ -13,7 +13,7 @@ void AABBCollision::Allocate() { // line 215
 uint32_t AABBCollisionTreeNode::CollideTree( // line 479
 	AABBCollisionDataNode **outDataNodePtrs,
 	uint32_t maxOutDataNodePtrs,
-	AABBCollisionNode& box,
+	AABBCollisionNode const& box,
 	AABBCollisionCB *fn
 ) {
 	if (!Overlap(box))
@@ -27,29 +27,29 @@ uint32_t AABBCollisionTreeNode::CollideTree( // line 479
 
 	while (ns) {
 		AABBCollisionTreeNode *node = nodeStack[--ns];
-		if (node->m_rightIndex) {
+		if (node->m_rightChild) {
 
 			AABBCollisionTreeNode *leftNode = node+1;
 			if (leftNode->Overlap(box))
 				nodeStack[ns++] = leftNode;
 
-			AABBCollisionTreeNode *rightNode = node+node->m_rightIndex;
+			AABBCollisionTreeNode *rightNode = node+node->m_rightChild;
 			if (rightNode->Overlap(box))
 				nodeStack[ns++] = rightNode;
 
 		} else {
-			if (AABBCollisionDataNode *node = node->m_dataPtr) {
+			if (AABBCollisionDataNode *dnode = node->m_dataPtr) {
 				while (true) {
-					if (node->Overlap(box)) {
+					if (dnode->Overlap(box)) {
 						if (outDataNodePtrs && numHits < maxOutDataNodePtrs) {
-							outDataNodePtrs[numHits++] = node;
+							outDataNodePtrs[numHits++] = dnode;
 						}
 						if (fn)
-							fn(node, nullptr);
+							fn(dnode, nullptr);
 					}
-					if (node->m_nextDataOffset == 0)
+					if (dnode->m_nextDataOffset == 0)
 						break;
-					node += node->m_nextDataOffset;
+					dnode += dnode->m_nextDataOffset;
 				}
 			}
 		}

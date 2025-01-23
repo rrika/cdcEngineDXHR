@@ -11,7 +11,7 @@ MultibodyAABBCollision *Create() { // line 170
 
 void MultibodyAABBCollision::Allocate() { // line 188
 	// TODO
-	aabbCollision::Allocate();
+	AABBCollision::Allocate();
 }
 
 uint32_t MultibodyAABBCollision::PrimQuery( // line 1721
@@ -19,8 +19,9 @@ uint32_t MultibodyAABBCollision::PrimQuery( // line 1721
 	uint32_t maxOutPtrs,
 	AABBCollisionNode const& box)
 {
+	uint32_t numOutPtrs = 0;
 	if (primTreeNumNodes) {
-		uint32_t numOutPtrs = primTreeRootNode->CollideTree(outPtrs, maxOutPtrs, box, /*fn=*/nullptr);
+		numOutPtrs = primTreeRootNode->CollideTree(outPtrs, maxOutPtrs, box, /*fn=*/nullptr);
 		if (numOutPtrs > maxOutPtrs)
 			numOutPtrs = maxOutPtrs;
 	}
@@ -36,7 +37,7 @@ void MultibodyAABBCollision::MeshTreeResetDataNodes() { // line 1999
 
 uint8_t MultibodyAABBCollision::ColSetup_InitMeshInstances(AABBCollisionJobInstance*& aabbMeshJobInsts) { // line 2061
 	if (byte0 == 0)
-		return;
+		return 0;
 
 	// TODO
 	MeshTreeResetDataNodes();
@@ -67,6 +68,7 @@ uint8_t MultibodyAABBCollision::ColSetup_InitMeshInstances(AABBCollisionJobInsta
 
 uint8_t MultibodyAABBCollision::ColSetup_InitMeshInstances2(AABBCollisionJobInstance*& aabbMeshJobInsts) {
 	// TODO
+	return 0;
 }
 
 void MultibodyAABBCollision::CollisionSetup_Start() { // line 2293
@@ -74,7 +76,7 @@ void MultibodyAABBCollision::CollisionSetup_Start() { // line 2293
 	AABBCollisionJobInstance *jobInsts2;
 	uint8_t count = ColSetup_InitMeshInstances(jobInsts);
 	ColSetup_InitMeshInstances2(jobInsts2);
-	ColSetup_RunJobs(jobInsts, count, jobInsts2)
+	// ColSetup_RunJobs(jobInsts, count, jobInsts2);
 
 }
 
