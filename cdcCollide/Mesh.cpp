@@ -1,93 +1,252 @@
 #include "Mesh.h"
+#include "collideMB.h"
+#include "cdcMath/MatrixInlines.h"
 
 namespace cdc {
 
+class Geom;
+
 struct CollisionParams { // line 1011
-/*
-		0[4]	inAction: enum cdc::CollisionParams::Action
-		4[12]	<padding>
-		16[16]	inStart: struct cdc::Vector3
-		32[16]	inEnd: struct cdc::Vector3
-		48[4]	inLambda: cdc::float32
-		52[4]	inGeom: * const struct cdc::Geom
-		56[4]	inMeshInstance: * const struct cdc::MeshInstance
-		60[1]	inFaceCollideFlags: cdc::uint8
-		61[3]	<padding>
-		64[4]	inResults: * struct cdc::SegmentResult
-		68[4]	inMaxResults: cdc::uint32
-		72[4]	outNumResults: cdc::uint32
-		76[4]	outLambda: cdc::float32
-		80[16]	outNormal: struct cdc::Vector3
-		96[4]	outFace: * struct cdc::IndexedFace
-		100[4]	outNumFaceChecks: cdc::uint32
-		104[8]	<padding>
-		112[16]	outGeomHitPoint: struct cdc::Vector3
-		128[16]	startInStreamSpace: struct cdc::Vector3
-		144[16]	endInStreamSpace: struct cdc::Vector3
-		160[16]	dirInStreamSpace: struct cdc::Vector3
-		176[4]	facesPtr: * struct cdc::IndexedFace
-		180[12]	<padding>
-*/
-/*
-	int dword0;
-	char gap_4[12];
-	int var_10;
-	int var_14;
-	int var_18;
-	int var_1C;
-	int var_20;
-	int var_24;
-	int var_28;
-	int var_2C;
-	float var_30;
-	int var_34;
-	cdc_MeshInstance *var_38;
-	char var_3C;
-	char gap_3D[3];
-	CTTuple *var_40;
-	int lastTriangle;
-	int triangleIndex;
-	float var_4C;
-	int var_50;
-	int var_54;
-	int var_58;
-	int var_5C;
-	cdc_IndexedFace *var_60;
-	int var_64;
-	int var_68;
-	int var_6C;
-	_DWORD dword70;
-	_DWORD dword74;
-	_DWORD dword78;
-	_DWORD dword7C;
-	_DWORD dword80;
-	_DWORD dword84;
-	_DWORD dword88;
-	_DWORD dword8C;
-	_DWORD dword90;
-	_DWORD dword94;
-	_DWORD dword98;
-	_DWORD dword9C;
-	cdc_IndexedFace *triangles;
-*/
+	enum Action {
+		COLLIDESEGMENT_ONERESULT = 0x0,
+		COLLIDESEGMENT_MANYRESULTS = 0x1,
+		COLLIDESWEPTGEOM = 0x2
+	};
+
+	Action inAction; // 0
+	Vector3 inStart; // 10
+	Vector3 inEnd; // 20
+	float inLambda; // 30
+	Geom const* inGeom; // 34
+	MeshInstance *inMeshInstance; // 38
+	uint8_t inFaceCollideFlags; // 3C
+	SegmentResult *inResults; // 40
+	uint32_t inMaxResults; // 44
+	uint32_t outNumResults; // 48
+	float outLambda; // 4C
+	Vector3 outNormal; // 50
+	IndexedFace *outFace; // 60
+	uint32_t outNumFaceChecks; // 64
+	Vector3 startInStreamSpace; // 70
+	Vector3 endInStreamSpace; // 74
+	Vector3 dirInStreamSpace; // 90
+	IndexedFace *facesPtr; // A0
+};
+
+bool HandleLeafNode(AABBNode *leaf, CollisionParams *cp) { // line 1064
+	if (cp->inAction == CollisionParams::COLLIDESEGMENT_MANYRESULTS && cp->outNumResults >= cp->inMaxResults)
+		return false;
+
+	uint8_t numFaces = leaf->m_numFaces;
+	FaceIndex firstFace = leaf->m_index;
+
+	float inLambda = cp->inLambda;
+	MeshInstance const *mi = cp->inMeshInstance;
+	IndexedFace *faces = cp->facesPtr;
+
+	bool hit = false;
+
+	for (unsigned i=0; i < numFaces; i++) {
+		FaceIndex iFace = firstFace + i;
+		IndexedFace *f = faces + iFace;
+
+		if (f->collisionFlags & cp->inFaceCollideFlags && !(f->adjacencyFlags & 0x40)) {
+
+			cp->outNumFaceChecks++;
+			MTriangle tri;
+			mi->GetTriangle(&tri, f);
+			if (cp->inAction == CollisionParams::COLLIDESEGMENT_ONERESULT) {
+				float lambda = 1.f;
+				Vector3 normal;
+				if (CollideSegmentAndTri(
+					&lambda,
+					&normal,
+					cp->startInStreamSpace,
+					cp->dirInStreamSpace,
+					tri))
+				{
+					cp->inResults[cp->outNumResults++] = {f, lambda};
+					if (cp->outNumResults == cp->inMaxResults)
+						return false;
+				}
+
+			} else if (cp->inAction == CollisionParams::COLLIDESEGMENT_MANYRESULTS) {
+				// TODO
+
+			} else if (cp->inAction == CollisionParams::COLLIDESWEPTGEOM) {
+				// TODO
+			}
+		}
+	}
+
+	return hit;
+}
+
+struct NodeSegment { // line 1162
+	AABBNode *node;
+	float lo;
 };
 
 void Probe(CollisionParams *cp) { // line 1192
-	// TODO
+	float lambda;
+	Vector3 normal;
+	CollideCode cc;
+	auto *mi = cp->inMeshInstance;
+	Vector3 start, end, dir;
+
+	bool sweptGeom = cp->inAction == CollisionParams::COLLIDESWEPTGEOM;
+
+	if (sweptGeom) {
+		// TODO
+	} else {
+		cc = CollideSegmentAndAlignedBox(lambda, start, dir, mi->m_bbox);
+	}
+
+	if (cc == NO_HIT)
+		return;
+
+	if (mi->m_flags & 2) {
+		Matrix inv;
+		OrthonormalInverse3x4(&inv, mi->m_transformation);
+		start = inv * start;
+		end = inv * end;
+		dir = {end - start};
+		if (sweptGeom) {
+			// TODO
+		}
+	}
+
+	if (!sweptGeom) {
+		// TODO: calculate 1/dir
+	}
+
+	uint32_t ns = 0;
+	NodeSegment stack[256];
+	stack[ns++] = {mi->m_mesh->m_root, cp->inLambda};
+
+	while (ns) {
+		NodeSegment *nodeSegment = &stack[--ns];
+		if (lambda < nodeSegment->lo)
+			continue;
+
+		if (nodeSegment->node->m_numFaces > 0) {
+			if (HandleLeafNode(nodeSegment->node, cp))
+				cp->inLambda = cp->outLambda;
+			continue;
+
+		} else {
+			if (sweptGeom) {
+				// TODO
+			} else {
+				// TODO
+			}
+
+		}
+	}
 }
 
-/*
+void Mesh::GetTriangle(MTriangle *tri, IndexedFace *f) const {
+	if (m_vertexType == VERTEX_FLOAT32) {
+		tri->v0 = ((Vector3*)vertices)[f->i0];
+		tri->v1 = ((Vector3*)vertices)[f->i1];
+		tri->v2 = ((Vector3*)vertices)[f->i2];
 
-IndexedFace *MeshInstance::CollideSegment(...) { // line 1475
-	// TODO
-	// Probe();
+	} else /* VERTEX_INT16 */ {
+		// TODO
+	}
 }
 
-IndexedFace *MeshInstance::CollideSweptGeom(...) { // line 1534
-	// TODO
-	// Probe();
+void MeshInstance::GetTriangle(MTriangle *tri, IndexedFace *f) const {
+	m_mesh->GetTriangle(tri, f);
+	if (m_flags & 2) {
+		tri->v0 = m_transformation * tri->v0;
+		tri->v1 = m_transformation * tri->v1;
+		tri->v2 = m_transformation * tri->v2;
+		// TODO: apply m_flags & 1
+	}
 }
 
-*/
+IndexedFace *MeshInstance::CollideSegment( // line 1475
+		Vector3& point,
+		Vector3& normal,
+		float *lambda,
+		Vector3Arg start,
+		Vector3Arg end,
+		uint8_t faceCollideFlags
+) {
+	CollisionParams cp = {
+		/*Action inAction=*/ CollisionParams::COLLIDESEGMENT_ONERESULT,
+		/*Vector3 inStart=*/ start,
+		/*Vector3 inEnd=*/ end,
+		/*float inLambda=*/ lambda ? *lambda : 1.f,
+		/*Geom const* inGeom=*/ nullptr,
+		/*MeshInstance *inMeshInstance=*/ this,
+		/*uint8_t inFaceCollideFlags=*/ faceCollideFlags,
+		/*SegmentResult *inResults=*/ nullptr,
+		/*uint32_t inMaxResults=*/ 0, // uninitialized
+		/*uint32_t outNumResults=*/ 0,
+		/*float outLambda=*/ 0.f,
+		/*Vector3 outNormal=*/ {}, // uninitialized
+		/*IndexedFace *outFace=*/ nullptr,
+		/*uint32_t outNumFaceChecks=*/ 0
+
+		/*Vector3 startInStreamSpace=*/ 
+		/*Vector3 endInStreamSpace=*/
+		/*Vector3 dirInStreamSpace=*/
+		/*IndexedFace *facesPtr=*/
+	};
+
+	Probe(&cp);
+
+	if (cp.outFace) {
+		point = {start + (start+-end) * cp.outLambda};
+		normal = cp.outNormal;
+		if (lambda)
+			*lambda = cp.outLambda;
+	}
+
+	return cp.outFace;
+}
+
+IndexedFace *MeshInstance::CollideSweptGeom( // line 1534
+	Vector3& point,
+	Vector3& normal,
+	float& lambda,
+	Vector3Arg start,
+	Vector3Arg end,
+	uint8_t faceCollideFlags
+) {
+	CollisionParams cp = {
+		/*Action inAction=*/ CollisionParams::COLLIDESWEPTGEOM,
+		/*Vector3 inStart=*/ start,
+		/*Vector3 inEnd=*/ end,
+		/*float inLambda=*/ lambda,
+		/*Geom const* inGeom=*/ nullptr,
+		/*MeshInstance *inMeshInstance=*/ this,
+		/*uint8_t inFaceCollideFlags=*/ faceCollideFlags,
+		/*SegmentResult *inResults=*/ nullptr,
+		/*uint32_t inMaxResults=*/ 0, // uninitialized
+		/*uint32_t outNumResults=*/ 0,
+		/*float outLambda=*/ 0.f,
+		/*Vector3 outNormal=*/ {}, // uninitialized
+		/*IndexedFace *outFace=*/ nullptr,
+		/*uint32_t outNumFaceChecks=*/ 0
+
+		/*Vector3 startInStreamSpace=*/ 
+		/*Vector3 endInStreamSpace=*/
+		/*Vector3 dirInStreamSpace=*/
+		/*IndexedFace *facesPtr=*/
+	};
+
+	Probe(&cp);
+
+	if (cp.outFace) {
+		point = {start + (start+-end) * cp.outLambda};
+		normal = cp.outNormal;
+		lambda = cp.outLambda;
+	}
+
+	return cp.outFace;
+}
 
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include "cdcMath/Math.h"
 
 namespace cdc {
 
@@ -26,5 +27,26 @@ struct IndexedFace { // line 131
 	uint16_t clientFlags; // E
 	uint32_t materialType; // 10
 };
+
+enum CollideCode { // line 194
+	NO_HIT = 0,
+	HIT = 1,
+	HIT_INSIDE = 2,
+	HIT_CYLINDER_ENDCAP_X = 3,
+	HIT_CYLINDER_ENDCAP_Y = 4
+};
+
+CollideCode CollideSegmentAndAlignedBox(
+	float& lambda,
+	Vector3Arg s,
+	Vector3Arg d,
+	BBox& bbox);
+
+CollideCode CollideSegmentAndTri( // line 287
+	float *lambda,
+	Vector3 *normal,
+	Vector3Arg s,
+	Vector3Arg d,
+	MTriangle const& tri);
 
 }

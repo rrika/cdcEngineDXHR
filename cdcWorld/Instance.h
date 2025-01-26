@@ -1,6 +1,8 @@
 #pragma once
 #include <cstdint>
 #include "cdcAnim/TransformComponent.h"
+#include "cdcCollide/CollideComponent.h"
+#include "cdcKit/Physics/MultibodyComponent.h"
 #include "cdcMath/Math.h"
 #include "cdcObjects/BallisticComponent.h"
 #include "cdcObjects/ObjectComponent.h"
@@ -11,6 +13,7 @@
 namespace cdc {
 	class AnimComponentV2;
 	class IDrawable;
+	class PhysicsBody;
 	class SceneEntity;
 	struct Object;
 }
@@ -54,11 +57,13 @@ public:
 	void *introData; // 128
 	cdc::ObjectComponent objectComponent; // 138
 
+	cdc::CollideComponent collideComponent; // 16C
+
 	cdc::MeshComponent meshComponent {this}; // 218
 
 	cdc::IDrawable *instanceDrawable = nullptr; // 23C
 
-	cdc::PhysicsBody *physicsBody = nullptr; // 284
+	cdc::MultibodyComponent multibodyComponent; // 250
 
 	cdc::BallisticComponent ballisticComponent; // 2A0
 	UserDataComponent *userDataComponent = nullptr; // 2E0

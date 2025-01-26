@@ -1,5 +1,7 @@
 #pragma once
 #include <cstdint>
+#include "cdcCollide/collideMB.h"
+#include "cdcMath/Math.h"
 
 namespace cdc {
 
@@ -11,6 +13,13 @@ struct AABBNode { // line 52
 	uint32_t m_numFaces : 8; // 18
 	uint32_t m_index : 24; // 1C
 };
+
+struct SegmentResult { // line 86
+	IndexedFace *face;
+	float lambda;
+};
+
+struct MTriangle;
 
 struct Mesh { // line 104
 
@@ -30,43 +39,42 @@ struct Mesh { // line 104
 	uint32_t dword3C; // m_numNonManifoldEdges
 	VertexType m_vertexType; // 40
 	uint16_t word42; // m_height
+
+
+	void GetTriangle(MTriangle *tri, IndexedFace *f) const;
 };
 
-struct MeshInstance {
-	// TODO
-};
+struct MeshInstance { // line 194
+	Matrix m_transformation;
+	Vector3 m_streamOffset;
+	BBox m_bbox;
+	void *ptr70; // m_clientData, m_internalClientData
+	Mesh *m_mesh; // 74
+	uint16_t m_flags; // 78
+	uint16_t dword7A;
+	uint32_t dword7C;
 
-/*
-struct cdc::MeshInstance
-	source: /Volumes/BobSource/tombraider/Companies/Feral/Development/Products/TombRaider/Source/cdc/runtime/cdcCollide/Mesh.h:194
-	size: 144
-	members:
-		0[64]	m_transformation: struct cdc::Matrix
-		64[16]	m_streamOffset: struct cdc::Vector3
-		80[32]	m_bbox: struct cdc::BBox
-		112[4]	m_clientData: * void
-		116[4]	m_internalClientData: * void
-		120[4]	m_mesh: * struct cdc::Mesh
-		124[4]	m_collisionScenePrev: * struct cdc::MeshInstance
-		128[4]	m_collisionSceneNext: * struct cdc::MeshInstance
-		132[2]	m_flags: cdc::uint16
-		134[10]	<padding>
+	void GetTriangle(MTriangle *tri, IndexedFace *f) const;
+	IndexedFace *CollideSegment(
+		Vector3& point,
+		Vector3& normal,
+		float *lambda,
+		Vector3Arg start,
+		Vector3Arg end,
+		uint8_t faceCollideFlags);
 
-		#pragma pack(push, 1)
-struct __declspec(align(2)) cdc_MeshInstance
-{
-	Matrix4x4 mat0;
-	Matrix4x3 mat40;
-	void *ptr70;
-	cdc_Mesh *cd1;
-	_WORD bits;
-	_WORD dword7A;
-	_DWORD dword7C;
+	IndexedFace *CollideSweptGeom(
+		Vector3& point,
+		Vector3& normal,
+		float& lambda,
+		Vector3Arg start,
+		Vector3Arg end,
+		uint8_t faceCollideFlags);
 };
-#pragma pack(pop)
-*/
 
 struct CollisionParams;
+
+bool HandleLeafNode(AABBNode *leaf, CollisionParams *cp);
 void Probe(CollisionParams *cp);
 
 }

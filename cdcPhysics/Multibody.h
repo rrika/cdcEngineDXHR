@@ -8,6 +8,7 @@ namespace dtp { struct rigidbody; }
 namespace cdc {
 
 class Contact;
+class Matrix;
 class PhysicsBody;
 class PhysicsGeometry;
 class PhysicsJoint;
@@ -48,8 +49,8 @@ public:
 	// virtual void method_64() = 0;
 	// virtual void method_68() = 0;
 	// virtual void method_6C() = 0;
-	virtual void CreateAnimatedGeomsFromModel(Instance*, int32_t, dtp::rigidbody const*, bool) = 0;
-	// virtual bool CreateBodyFromModel(Instance*, int32_t, dtp::rigidbody const*, Matrix*, float) = 0;
+	// virtual void CreateAnimatedGeomsFromModel(Instance*, int32_t, dtp::rigidbody const*, bool) = 0;
+	virtual bool CreateBodyFromModel(Instance*, int32_t, dtp::rigidbody const*, Matrix*, float) = 0;
 	// virtual PhysicsBody* CreateBodyFromBone(Instance*, int32_t, int32_t, dtp::rigidbody const*, Matrix*) = 0;
 	// virtual void CalcMassPropertiesFromHPrim(HPrim const*, MassProperties*) = 0;
 	// virtual void method_80() = 0;
@@ -79,6 +80,7 @@ public:
 
 class PhysicsBody { // line 299
 public:
+	void SetName(const char*);
 	// TODO
 };
 

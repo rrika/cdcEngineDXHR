@@ -57,6 +57,7 @@ extern Matrix identity4x4;
 
 Vector& operator+=(Vector& a, VectorArg b);
 Vector operator+(VectorArg a, VectorArg b);
+Vector operator-(VectorArg a, VectorArg b);
 Vector operator*(VectorArg a, float b);
 Vector operator-(VectorArg a);
 
