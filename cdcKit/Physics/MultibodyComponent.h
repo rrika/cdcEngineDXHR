@@ -10,7 +10,10 @@ class Instance;
 namespace cdc {
 
 class PhysicsBody;
-struct MultibodyEvent;
+
+struct MultibodyEvent { // line 34
+	// TODO
+};
 
 class MultibodyComponent : public InstanceComponent { // called cdc::RigidbodyComponent in TR
 public:

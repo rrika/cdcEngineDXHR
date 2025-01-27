@@ -3,6 +3,10 @@
 
 namespace cdc {
 
+inline Matrix& Matrix::operator*=(float t) { // line 130
+	return *this = *this * t;
+}
+
 inline Vector3 operator*(MatrixArg m, Vector3Arg v) { // line 195
 	return {
 		m.m[0][0] * v.x + m.m[1][0] * v.y + m.m[2][0] * v.z + m.m[3][0],

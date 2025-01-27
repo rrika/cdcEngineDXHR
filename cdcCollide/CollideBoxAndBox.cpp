@@ -11,7 +11,7 @@ CollideCode CollideSweptAABBs( // line 662
 		[4]	bMax: const cdc::Vector3Arg
 		[4]	vb: const cdc::Vector3Arg
 ) {
-
+	
 }
 
 }

@@ -1,7 +1,10 @@
 #include <cstring>
 #include "MultibodyClient.h"
 #include "cdcMath/Math.h"
+#include "cdcMath/MatrixInlines.h"
 #include "cdcPhysics/MassProperties.h"
+#include "cdcPhysics/PhysicsBody.h" // SetName etc. are inlines
+#include "cdcSys/Trace.h"
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/Object.h"
 
@@ -9,18 +12,22 @@ using namespace cdc;
 
 MultibodyClient *gMultibodySystem = nullptr;
 
+void MULTIBODY_PrintWarning(const char *fmt, ...) { // line 646
+	// TODO
+}
+
 bool MultibodyClient::CreateBodyFromModel(
 	Instance *instance, int32_t modelNum,
 	dtp::rigidbody const *prop, Matrix *pMatCenterOfMass, float massOverride
 ) {
-	auto *hmodel = instance->collideComponent.m_hModelList[modelNum];
+	auto *hmodel = &instance->collideComponent.GetHModelList()[modelNum];
 	if (!hmodel || hmodel->numHPrims <= 0)
 		return false;
 
 	// TODO: loop over prims
 
 	auto *body = CreateBody();
-	body->setInstance(instance);
+	body->SetClientData((void*)instance);
 	if (strlen(instance->object->name) >= 0x80)
 		body->SetName("NAME TOO LONG");
 	else {
@@ -41,21 +48,24 @@ bool MultibodyClient::CreateBodyFromModel(
 		massProp.mass = 666.f;
 		massProp.I = identity4x4 * 66600000.f;
 	}
+	Vector center = massProp.center;
 	if (pMatCenterOfMass) {
 		*pMatCenterOfMass = identity4x4;
-		pMatCenterOfMass->m[3][0] = massProp.center.x;
-		pMatCenterOfMass->m[3][1] = massProp.center.y;
-		pMatCenterOfMass->m[3][2] = massProp.center.z;
+		pMatCenterOfMass->m[3][0] = center.x;
+		pMatCenterOfMass->m[3][1] = center.y;
+		pMatCenterOfMass->m[3][2] = center.z;
 	}
 	// InitBodyPosition
-	body->SetMassProperties(&massProp);
+	body->SetMassProperties(massProp);
 	if (prop) {
 		// InitBodyProperties(body, prop);
 	}
 
-	AddGeometriesToBody();
+	Vector3 ncenter = {-center};
+	AddGeometriesToBody(body, hmodel, &ncenter, prop, instance);
 
 	instance->multibodyComponent.m_body = body;
 	instance->multibodyComponent.m_centerOfMass = massProp.center;
+	return true;
 }
 

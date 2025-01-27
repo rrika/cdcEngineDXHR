@@ -41,6 +41,7 @@ struct Matrix {
 	void RotZ(float sina, float cosa);
 	void RotY(float sina, float cosa);
 	void RotX(float sina, float cosa);
+	inline Matrix& operator*=(float t);
 };
 
 using MatrixArg = Matrix const&;
@@ -50,6 +51,8 @@ inline float Abs(float A) { return A < 0 ? -A : A; } // line 2931
 void OrthonormalInverse3x4(Matrix *result, Matrix& m);
 
 Matrix operator*(const Matrix& m1, const Matrix& m2);
+Matrix operator*(MatrixArg matA, float valB);
+Matrix operator*(float valA, MatrixArg matB);
 bool operator==(const Matrix& m1, const Matrix& m2);
 inline bool operator!=(const Matrix& m1, const Matrix& m2) { return !(m1 == m2); }
 Matrix transpose(Matrix);

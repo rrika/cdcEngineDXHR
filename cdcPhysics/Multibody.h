@@ -2,6 +2,7 @@
 #include <cstdint>
 
 class Instance;
+struct HModel;
 
 namespace dtp { struct rigidbody; }
 
@@ -13,6 +14,7 @@ class PhysicsBody;
 class PhysicsGeometry;
 class PhysicsJoint;
 class Vector3;
+struct MassProperties;
 struct MeshInstance;
 
 using NearCallback = bool(MeshInstance*, PhysicsGeometry*, PhysicsGeometry*); // line 60
@@ -53,11 +55,11 @@ public:
 	virtual bool CreateBodyFromModel(Instance*, int32_t, dtp::rigidbody const*, Matrix*, float) = 0;
 	// virtual PhysicsBody* CreateBodyFromBone(Instance*, int32_t, int32_t, dtp::rigidbody const*, Matrix*) = 0;
 	// virtual void CalcMassPropertiesFromHPrim(HPrim const*, MassProperties*) = 0;
-	// virtual void method_80() = 0;
-	// virtual void method_84() = 0;
+	// virtual void CalcMassPropertiesFromHModel(HModel const*, int32_t, MassProperties*) = 0;
+	virtual void CalcMassPropertiesFromHModel(HModel const*, MassProperties*) = 0;
 	// virtual PhysicsGeometry* CreateGeometryFromHPrim(HPrim*, Vector3 const*, dtp::rigidbody const*, Instance*) = 0;
 	// virtual void AddGeometriesToBody(PhysicsBody*, HModel const*, int32_t, Vector3 const*, dtp::rigidbody const*, Instance*) = 0;
-	// virtual void AddGeometriesToBody(PhysicsBody*, HModel const*, Vector3 const*, dtp::rigidbody const*, Instance*) = 0;
+	virtual void AddGeometriesToBody(PhysicsBody*, HModel const*, Vector3 const*, dtp::rigidbody const*, Instance*) = 0;
 	// virtual void InitBodyProperties(PhysicsBody*, dtp::rigidbody const*) = 0;
 	// virtual void SyncBodyProperties(PhysicsBody*, dtp::rigidbody const*) = 0;
 	// virtual void ApplyExternalForces(uint32_t, Instance*, Instance*, Vector3 const*, Vector3 const*, Vector3 const*, Vector3 const*) = 0;
@@ -81,6 +83,8 @@ public:
 class PhysicsBody { // line 299
 public:
 	void SetName(const char*);
+	void SetMassProperties(MassProperties const&);
+	void SetClientData(void*); // in practice this is an Instance* pointer
 	// TODO
 };
 
@@ -125,5 +129,6 @@ public:
 	// TODO
 };
 
+extern void MULTIBODY_PrintWarning(const char *fmt, ...);
 
 }

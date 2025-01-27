@@ -14,7 +14,7 @@ void MassProperties::Set(float mass_, Vector3Arg center_, MatrixArg I_) {
 	I = I_;
 }
 
-void MassProperties::Set(float mass, MatrixArg I) {
+void MassProperties::Set(float mass_, MatrixArg I_) {
 	mass = mass_;
 	center.SetZero();
 	I = I_;
@@ -41,10 +41,12 @@ void MassProperties::SetBox(float mass, Vector3Arg width) {
 	float yy = inflated.y * inflated.y;
 	float zz = inflated.z * inflated.z;
 
+	// TODO
+
 	I = identity4x4;
-	I.m[0][0] = Ixx;
-	I.m[1][1] = Iyy;
-	I.m[2][2] = Izz;
+	I.m[0][0] = 0; //Ixx;
+	I.m[1][1] = 0; //Iyy;
+	I.m[2][2] = 0; //Izz;
 }
 
 void MassProperties::SetCapsule(float mass_, float r, float L) {
@@ -120,15 +122,11 @@ void MassProperties::Add(MassProperties const& other) {
 	I += other.I;
 }
 
-bool MassProperties::CheckValidity() {
+bool MassProperties::CheckValidity() const {
 	return mass > 0 &&
 		I.m[0][0] > 0 &&
 		I.m[1][1] > 0 &&
 		I.m[2][2] > 0;
-}
-
-void MassProperties::MassProperties() {
-	// TODO
 }
 
 }

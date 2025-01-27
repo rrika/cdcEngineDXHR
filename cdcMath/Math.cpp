@@ -24,6 +24,19 @@ Vector Vector::Normalize3() {
     return {x*d, y*d, z*d, w*d};
 }
 
+Matrix operator*(MatrixArg matA, float valB) { // Matrix.cpp:58
+    return {{
+        { matA.m[0][0] * valB, matA.m[0][1] * valB, matA.m[0][2] * valB, matA.m[0][3] * valB },
+        { matA.m[1][0] * valB, matA.m[1][1] * valB, matA.m[1][2] * valB, matA.m[1][3] * valB },
+        { matA.m[2][0] * valB, matA.m[2][1] * valB, matA.m[2][2] * valB, matA.m[2][3] * valB },
+        { matA.m[3][0] * valB, matA.m[3][1] * valB, matA.m[3][2] * valB, matA.m[3][3] * valB }
+    }};
+}
+
+Matrix operator*(float valA, MatrixArg matB) { // Matrix.cpp:68
+    return matB * valA;
+}
+
 void Matrix::Build_XYZOrder(float *angles) { // Matrix.cpp:283
     *this = identity4x4;
     RotZ(sin(angles[2]), cos(angles[2]));

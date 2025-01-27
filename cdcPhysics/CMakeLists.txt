@@ -1,3 +1,5 @@
 target_sources(dxhr PRIVATE
+	MassProperties.cpp
 	MultibodyAABBCollision.cpp
-	MultibodySystem.cpp)
+	MultibodySystem.cpp
+	PhysicsBody.cpp)

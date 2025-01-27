@@ -17,8 +17,7 @@ struct MassProperties {
 	void Translate(Vector3Arg);
 	void Rotate(MatrixArg R);
 	void Add(MassProperties const& other);
-	bool CheckValidity();
-	MassProperties();
+	bool CheckValidity() const;
 };
 
 }
