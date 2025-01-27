@@ -3,6 +3,18 @@
 
 namespace cdc {
 
+inline void Vector::SetZero() { // line 88
+	x = y = z = w = 0.f;
+}
+
+inline Vector& Vector::operator*=(float valB) { // line 120
+	x *= valB;
+	y *= valB;
+	z *= valB;
+	w *= valB;
+	return *this;
+}
+
 inline Vector3 operator+(Vector3Arg vecA, Vector3Arg vecB) { // line 363
 	return {
 		vecA.x + vecB.x,

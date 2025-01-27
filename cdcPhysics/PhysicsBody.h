@@ -6,6 +6,8 @@
 
 namespace cdc {
 
+bool InvertSymmetric3x3(cdc::Matrix*, cdc::MatrixArg);
+
 class MultibodySystemImpl;
 
 class PhysicsBodyImpl : public PhysicsBody { // line 28
@@ -29,8 +31,6 @@ public:
 		// TODO
 	}
 };
-
-bool InvertSymmetric3x3(Matrix*, MatrixArg);
 
 inline void PhysicsBody::SetName(const char *name) {
 	auto *b = static_cast<PhysicsBodyImpl*>(this);

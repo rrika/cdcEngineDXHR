@@ -1,4 +1,6 @@
 #include "MassProperties.h"
+#include "cdcMath/MatrixInlines.h"
+#include "cdcMath/VectorInlines.h"
 
 namespace cdc {
 
@@ -66,8 +68,7 @@ void MassProperties::SetCapsule(float mass_, float r, float L) {
 	float cmhs;
 
 	float Ixx, Iyy, Izz;
-	Ixx = Iyy = 
-
+	// Ixx = Iyy =  TODO
 
 	I = identity4x4;
 	I.m[0][0] = Ixx;
@@ -116,7 +117,7 @@ void MassProperties::Rotate(MatrixArg R) {
 }
 
 void MassProperties::Add(MassProperties const& other) {
-	center = center*mass + other.center*other.mass;
+	center = {center*mass + other.center*other.mass};
 	center *= 1.f / (mass + other.mass);
 	mass += other.mass;
 	I += other.I;

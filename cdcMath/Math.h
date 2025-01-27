@@ -14,11 +14,13 @@ public:
 		};
 	};
 
+	void SetZero();
 	void SafeNormalize3();
 	Vector Normalize3();
 	bool IsZero2() const;
 	bool IsZero3() const;
 	bool IsZero4() const;
+	inline Vector& operator*=(float valB);
 };
 
 class Quat : public Vector {};
@@ -42,6 +44,7 @@ struct Matrix {
 	void RotY(float sina, float cosa);
 	void RotX(float sina, float cosa);
 	inline Matrix& operator*=(float t);
+	inline Matrix& operator+=(Matrix const& b);
 };
 
 using MatrixArg = Matrix const&;

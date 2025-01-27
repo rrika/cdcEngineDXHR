@@ -129,6 +129,6 @@ public:
 	// TODO
 };
 
-extern void MULTIBODY_PrintWarning(const char *fmt, ...);
-
 }
+
+extern void MULTIBODY_PrintWarning(const char *fmt, ...);

@@ -25,4 +25,11 @@ inline Vector4 operator*(MatrixArg m, Vector4Arg v) { // line 196
 	};
 }
 
+inline Matrix& Matrix::operator+=(MatrixArg b) { // line 221
+	for (int i=0; i<4; i++)
+		for (int j=0; j<4; j++)
+			m[i][j] += b.m[i][j];
+	return *this;
+}
+
 }
