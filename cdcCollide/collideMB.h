@@ -6,6 +6,7 @@ namespace cdc {
 
 using VertIndex = uint32_t; // line 17
 using FaceIndex = uint32_t; // line 18
+using FaceCount = uint32_t; // line 25
 
 struct MTriangle { // line 75
 	Vector3 v0; // 0

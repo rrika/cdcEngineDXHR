@@ -24,22 +24,20 @@ class PhysicsGeometryImpl : public PhysicsGeometry { // line 26
 	PhysicsGeometryImpl* prev; // 78
 	PhysicsGeometryImpl* next; // 7C
 	PhysicsBodyImpl* body; // 80
-	// PhysicsGeometryImpl* bnext;
+	PhysicsGeometryImpl* bnext; // 84
 	// void *clientData;
 	// cdc::ImplicitGeometryDestructionCallback *clientDestruct;
 	// uint32_t uniqueIndex;
-	// unsigned char category;
+	// unsigned char category; // 9D
 	// CollisionPrimitiveImpl collisionPrim;
 
-	// uint32_t body80;
-	// uint32_t dword84;
 	// uint32_t dword88;
 	// uint32_t dword8C;
 	// MultibodyAABBCollision *mbAABB; // 90
 	// uint32_t dword94;
 	// uint8_t gap98[4];
 	// uint8_t byte9C;
-	// uint8_t byte9D;
+	// uint8_t byte9D; // category
 	// uint8_t byte9E;
 	// uint8_t byte9F;
 };

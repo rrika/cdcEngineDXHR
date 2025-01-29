@@ -19,6 +19,12 @@ public:
 		// [1][0] [1][1]
 		// [2][0] [2][1] [2][2]
 	Matrix invI;
+	Vector3 x;     // 80, position
+	Quat q;        // 90, rotation
+	Vector3 v;     // A0, velocity
+	Vector3 omega; // B0, angular velocity
+	Vector3 F;     // C0, force
+	Vector3 T;     // D0, torque
 	char name[32]; // 110
 	MultibodySystemImpl *multibody; // 130
 	PhysicsBodyImpl *prev; // 134
@@ -26,10 +32,11 @@ public:
 	void *clientData; // 148
 	float mass; // 14C
 	float invMass; // 150
+	uint32_t flags; // 15C
 	//
-	void Clear() {
-		// TODO
-	}
+	void Clear();
+	Quat ComputeQuaternionUpdate(float dt);
+	void UpdatePosition(float dt);
 };
 
 inline void PhysicsBody::SetName(const char *name) {
@@ -47,7 +54,7 @@ inline void PhysicsBody::SetMassProperties(MassProperties const& props) {
 		MULTIBODY_PrintWarning("WARNING: Body %s has bad mass properties\n", b->name);
 		b->mass = 666.f;
 		b->I = 66666.f * identity4x4;
-		// flags |= 4;
+		b->flags |= 4;
 	}
 	b->invMass = 1 / b->mass;
 	InvertSymmetric3x3(&b->invI, b->I);

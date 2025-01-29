@@ -1,9 +1,10 @@
 #include "cdcCollide/CollisionManager.h" // for CollideMesh and CollideGeometries
 #include "cdcCollide/SweptSphere.h" // for CollidePhantoms
-#include "MultibodySystem.h"
 #include "MultibodyAABBCollision.h"
+#include "MultibodySystem.h"
 #include "PhysicsBody.h"
 #include "PhysicsGeometry.h"
+#include "TimeStepIsland.h"
 
 namespace cdc {
 
@@ -23,6 +24,7 @@ PhysicsBody *MultibodySystem::CreateBody() {
 	if (b->next)
 		b->next->prev = b;
 	mb->nb++;
+	return b;
 }
 
 void MultibodySystem::DestroyBody(PhysicsBody*) {
@@ -78,7 +80,18 @@ void MultibodySystem::Relocate(Vector3 const*) {
 // -------- //
 
 void MultibodySystemImpl::TimeStepIslands(float timeStep, bool preserveForces) { // TimeStep.cpp:302
-	// TODO
+	if (false) {
+		// TODO
+		TimeStepIsland tsi;
+		tsi.Setup();
+		tsi.Process(nullptr);
+		tsi.Update(preserveForces);
+
+	} else {
+		// HACK
+		for (auto *body = firstBody; body; body = body->next)
+			body->UpdatePosition(timeStep);
+	}
 }
 
 void MultibodySystemImpl::StoreContactForces() {
@@ -96,11 +109,11 @@ void MultibodySystemImpl::StepImpl_FinishCollisionSetup() { // line 810
 }
 
 void MultibodySystemImpl::StepImpl_StartGeomCollision() { // line 820
-	CollideGeometries(this);
+	CollideGeometries(this); // -> cdcCollision/CollisionManager.h
 }
 
 void MultibodySystemImpl::StepImpl_CollidePhantoms() { // line 837
-	CollidePhantoms(this);
+	CollidePhantoms(this); // -> cdcCollision/SweptSphere.h
 }
 
 void MultibodySystemImpl::StepImpl_FinishGeomCollision() { // line 851
@@ -108,7 +121,7 @@ void MultibodySystemImpl::StepImpl_FinishGeomCollision() { // line 851
 }
 
 void MultibodySystemImpl::StepImpl_CollideMesh(float dt) { // line 867
-	CollideMesh(this, dt);
+	CollideMesh(this, dt); // -> cdcCollision/CollisionManager.h
 }
 
 void MultibodySystemImpl::StepImpl_TimeStep(float timeStep, bool preserveForces) { // line 882
@@ -132,7 +145,7 @@ void MultibodySystemImpl::StepImpl_Atomic(float timeStep, bool preserveForces) {
 	StepImpl_CollidePhantoms();
 	StepImpl_FinishGeomCollision();
 	StepImpl_CollideMesh(timeStep);
-	StepImpl_TimeStep(timeStep, preserveForces);
+	StepImpl_TimeStep(timeStep, preserveForces); // vel += force; pos += vel;
 	StepImpl_Finish();
 }
 

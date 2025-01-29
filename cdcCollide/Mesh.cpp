@@ -1,10 +1,63 @@
-#include "Mesh.h"
-#include "collideMB.h"
 #include "cdcMath/MatrixInlines.h"
+#include "collideMB.h"
+#include "CollideUtils.h"
+#include "Mesh.h"
 
 namespace cdc {
 
 class Geom;
+
+FaceCount MeshInstance::Query(FaceIndex *nearFaces, FaceCount maxFaces, BBox const& queryBox, uint8_t faceCollideFlags) { // line 920
+	BBox b = queryBox;
+	b.bMin = {b.bMin - m_streamOffset}; // TODO: operator-=
+	b.bMax = {b.bMax - m_streamOffset}; // TODO: operator-=
+
+	if (TestAlignedBoxAndAlignedBox(b.bMin, b.bMax, m_bbox.bMin, m_bbox.bMax) == false)
+		return 0;
+
+	if (m_flags & 2) {
+		Matrix inv;
+		OrthonormalInverse3x4(&inv, m_transformation);
+		b = CalcXformedBBox(b, inv);
+	}
+
+	uint32_t ns = 0;
+	AABBNode *nodeStack[256];
+	nodeStack[ns++] = m_mesh->m_root;
+
+	FaceCount numNearFaces = 0;
+
+	while (ns) {
+		if (numNearFaces >= maxFaces)
+			break;
+
+		AABBNode *node = nodeStack[--ns];
+		if (node->m_numFaces > 0) {
+			uint16_t limit = node->m_index + node->m_numFaces;
+			for (uint16_t i = node->m_index; i < limit; i++) {
+				if (numNearFaces >= maxFaces)
+					break;
+
+				IndexedFace& face = m_mesh->m_faces[i];
+				if (face.collisionFlags & faceCollideFlags)
+					if (!(face.adjacencyFlags & 0x40))
+						nearFaces[numNearFaces++] = i;
+			}
+
+		} else {
+			AABBNode *lhs = &node[1];
+			if (lhs->TestBBox(b))
+				nodeStack[ns++] = lhs;
+
+			AABBNode *rhs = &node[node->m_index];
+			if (rhs->TestBBox(b))
+				nodeStack[ns++] = rhs;
+		}
+	}
+
+	return numNearFaces;
+}
+
 
 struct CollisionParams { // line 1011
 	enum Action {
@@ -142,27 +195,6 @@ void Probe(CollisionParams *cp) { // line 1192
 			}
 
 		}
-	}
-}
-
-void Mesh::GetTriangle(MTriangle *tri, IndexedFace *f) const {
-	if (m_vertexType == VERTEX_FLOAT32) {
-		tri->v0 = ((Vector3*)vertices)[f->i0];
-		tri->v1 = ((Vector3*)vertices)[f->i1];
-		tri->v2 = ((Vector3*)vertices)[f->i2];
-
-	} else /* VERTEX_INT16 */ {
-		// TODO
-	}
-}
-
-void MeshInstance::GetTriangle(MTriangle *tri, IndexedFace *f) const {
-	m_mesh->GetTriangle(tri, f);
-	if (m_flags & 2) {
-		tri->v0 = m_transformation * tri->v0;
-		tri->v1 = m_transformation * tri->v1;
-		tri->v2 = m_transformation * tri->v2;
-		// TODO: apply m_flags & 1
 	}
 }
 
