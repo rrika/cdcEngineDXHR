@@ -69,3 +69,10 @@ bool MultibodyClient::CreateBodyFromModel(
 	return true;
 }
 
+void MultibodyClient::CalcMassPropertiesFromHModel(HModel const*, MassProperties*) {
+	// TODO
+}
+
+void MultibodyClient::AddGeometriesToBody(PhysicsBody*, HModel const*, Vector3 const*, dtp::rigidbody const*, Instance*) {
+	// TODO
+}

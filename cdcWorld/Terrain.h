@@ -2,7 +2,7 @@
 #include <cstdint>
 #include "cdcMath/Math.h"
 
-namespace cdc { class Mesh; }
+namespace cdc { struct Mesh; struct MeshInstance; }
 
 struct StreamUnitPortal;
 
@@ -13,8 +13,8 @@ struct Terrain {
 	uint32_t countWaterSurfaces;
 	void **pptrC;
 	void *ptr10;
-	uint32_t numMatricesAndCDLinks;
-	cdc::Matrix *matricesAndCDLinks;
-	uint32_t numCollisionData;
-	cdc::Mesh *collisionData;
+	uint32_t numMeshInstances;
+	cdc::MeshInstance *meshInstances;
+	uint32_t numMeshes;
+	cdc::Mesh *meshes; // 20
 };

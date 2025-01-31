@@ -4,7 +4,7 @@
 
 namespace cdc {
 
-using VertIndex = uint32_t; // line 17
+using VertIndex = uint16_t; // line 17
 using FaceIndex = uint32_t; // line 18
 using FaceCount = uint32_t; // line 25
 

@@ -25,6 +25,7 @@ void ResolveSection::Create() {
 	g_resolveSections[10] = new cdc::MaterialSection();
 	g_resolveSections[11] = new cdc::ObjectSection();
 	g_resolveSections[12] = new cdc::RenderResourceSection();
+	g_resolveSections[13] = new cdc::GenericSection(); // HACK, for collision data
 }
 
 void ResolveSection::Destroy() {

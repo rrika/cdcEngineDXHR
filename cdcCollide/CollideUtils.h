@@ -13,9 +13,9 @@ inline bool TestAlignedBoxAndAlignedBox( // line 77
 		aMax.x > bMin.x &&
 		aMax.y > bMin.y &&
 		aMax.z > bMin.z &&
-		aMin.x > bMax.x &&
-		aMin.y > bMax.y &&
-		aMin.z > bMax.z;
+		aMin.x < bMax.x &&
+		aMin.y < bMax.y &&
+		aMin.z < bMax.z;
 }
 
 inline BBox CalcXformedBBox(BBox const& A, Matrix const& M) { // line 163

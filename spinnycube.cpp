@@ -22,6 +22,8 @@
 #include "cdc/dtp/objectproperties/sfxmarker.h"
 #include "cdc/dtp/soundplex.h"
 #include "cdc/dtp/unitdata.h"
+#include "cdcCollide/collideMB.h"
+#include "cdcCollide/Mesh.h"
 #include "cdcFile/ArchiveFileSystem.h"
 #include "cdcFile/FileHelpers.h" // for archiveFileSystem_default
 #include "cdcFile/FileSystem.h" // for enum cdc::FileRequest::Priority
@@ -1310,6 +1312,62 @@ int spinnyCube(HWND window,
 				{  0.f,   0.f, 100.f, 0xffff0000}
 			};
 			renderDevice->DrawLineList(&cdc::identity4x4, lineVerts, 3, 0);
+		}
+
+		for (auto& unit : StreamTracker) {
+			if (!unit.used)
+				continue;
+
+			cdc::BBox aroundCamera {
+				cameraPos - cdc::Vector3{100, 100, 100},
+				cameraPos + cdc::Vector3{100, 100, 100}
+			};
+			cdc::Level *level = unit.level;
+			if (auto *terrain = level->terrain) {
+				for (uint32_t i=0; i < terrain->numMeshInstances; i++) {
+					cdc::MeshInstance *meshInstance = &terrain->meshInstances[i];
+					cdc::Mesh *mesh = meshInstance->m_mesh;
+					std::vector<cdc::LineVertex> verts;
+					for (uint32_t j=0; j<std::min(20u, mesh->dword30); j++) {
+						cdc::IndexedFace& f = meshInstance->m_mesh->m_faces[j];
+						if (f.i0 == f.i1 || f.i0 == f.i2 || f.i1 == f.i2)
+							continue;
+						cdc::MTriangle mt;
+						meshInstance->GetTriangle(&mt, &f);
+						cdc::LineVertex a {mt.v0.x, mt.v0.y, mt.v0.z, 0xffffffff};
+						cdc::LineVertex b {mt.v1.x, mt.v1.y, mt.v1.z, 0xffffffff};
+						cdc::LineVertex c {mt.v2.x, mt.v2.y, mt.v2.z, 0xffffffff};
+						verts.push_back(a);
+						verts.push_back(b);
+						verts.push_back(b);
+						verts.push_back(c);
+						verts.push_back(c);
+						verts.push_back(a);
+					}
+					renderDevice->DrawLineList(&cdc::identity4x4, verts.data(), verts.size()/2, 0);
+					/*uint32_t faceIndices[50];
+					uint32_t faceCount = meshInstance->Query(faceIndices, 50, aroundCamera, 0xff);
+					std::vector<cdc::LineVertex> verts;
+					faceIndices[0] = 0;
+					if (faceCount == 0 && meshInstance->m_mesh->dword30)
+						faceCount = 1;
+					for (uint32_t j=0; j<faceCount; j++) {
+						printf(" face%d", j);
+						cdc::MTriangle mt;
+						meshInstance->GetTriangle(&mt, &meshInstance->m_mesh->m_faces[faceIndices[j]]);
+						cdc::LineVertex a {mt.v0.x, mt.v0.y, mt.v0.z, 0xffffffff};
+						cdc::LineVertex b {mt.v1.x, mt.v1.y, mt.v1.z, 0xffffffff};
+						cdc::LineVertex c {mt.v2.x, mt.v2.y, mt.v2.z, 0xffffffff};
+						verts.push_back(a);
+						verts.push_back(b);
+						verts.push_back(b);
+						verts.push_back(c);
+						verts.push_back(c);
+						verts.push_back(a);
+					}
+					renderDevice->DrawLineList(&cdc::identity4x4, verts.data(), verts.size()/2, 0);*/
+				}
+			}
 		}
 
 		auto putTerrain = [&](cdc::IRenderTerrain *renderTerrain, cdc::Matrix& instanceMatrix) {

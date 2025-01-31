@@ -12,16 +12,16 @@ struct AABBNode { // line 52
 	float f_min[3]; // 0
 	float f_max[3]; // C
 	uint16_t m_index; // 18
-	uint32_t m_numFaces; // 1A
+	uint8_t m_numFaces; // 1A
 
 	bool TestBBox(BBox const& other) const {
 		return
 			f_max[0] > other.bMin.x &&
 			f_max[1] > other.bMin.y &&
 			f_max[2] > other.bMin.z &&
-			f_min[0] > other.bMax.x &&
-			f_min[1] > other.bMax.y &&
-			f_min[2] > other.bMax.z;
+			f_min[0] < other.bMax.x &&
+			f_min[1] < other.bMax.y &&
+			f_min[2] < other.bMax.z;
 	}
 };
 
@@ -53,9 +53,9 @@ struct Mesh { // line 104
 
 	void GetTriangle(MTriangle *tri, IndexedFace *f) const { // line 132
 		if (m_vertexType == VERTEX_FLOAT32) {
-			tri->v0 = ((Vector3*)vertices)[f->i0];
-			tri->v1 = ((Vector3*)vertices)[f->i1];
-			tri->v2 = ((Vector3*)vertices)[f->i2];
+			tri->v0 = *(Vector3*)&((float*)vertices)[3 * f->i0];
+			tri->v1 = *(Vector3*)&((float*)vertices)[3 * f->i1];
+			tri->v2 = *(Vector3*)&((float*)vertices)[3 * f->i2];
 
 		} else /* VERTEX_INT16 */ {
 			// TODO
@@ -75,12 +75,12 @@ struct MeshInstance { // line 194
 
 	void GetTriangle(MTriangle *tri, IndexedFace *f) const { // line 281
 		m_mesh->GetTriangle(tri, f);
-		if (m_flags & 2) {
+		/*if (m_flags & 2) {
 			tri->v0 = m_transformation * tri->v0;
 			tri->v1 = m_transformation * tri->v1;
 			tri->v2 = m_transformation * tri->v2;
 			// TODO: apply m_flags & 1
-		}
+		}*/
 	}
 
 	FaceCount Query(FaceIndex *nearFaces, FaceCount maxFaces, BBox const& queryBox, uint8_t faceCollideFlags);

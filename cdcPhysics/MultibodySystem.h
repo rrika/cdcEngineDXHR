@@ -15,6 +15,7 @@ struct MeshCollection {
 };
 
 class MultibodySystemImpl : public MultibodySystem {
+public:
 	friend class MultibodySystem;
 
 	uint32_t numCollections = 8; // 18

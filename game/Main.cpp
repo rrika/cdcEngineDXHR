@@ -9,6 +9,7 @@
 #include "game/ui/ui.h"
 #include "cdcGameShell/cdcGameShell.h"
 #include "cdcKit/Animation/anitracker.h"
+#include "cdcKit/Physics/MultibodyClient.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcRender/PCDX11DeviceManager.h"
 #include "postprocessing/PPManager.h"
@@ -221,7 +222,8 @@ void MAIN_Init() { // 2312
 	// TODO
 	Resolve::Create();
 	// TODO
-	RegisterGameObjects(); // TODO: call through other function
+	RegisterGameObjects(); // TODO: call through Gameloop::SystemInit
+	gMultibodySystem = new MultibodyClient(); // TODO: call through Gameloop::SystemInit
 	// TODO
 	MAIN_DoMainInit();
 	// TODO
