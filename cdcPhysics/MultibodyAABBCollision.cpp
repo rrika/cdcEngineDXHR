@@ -4,17 +4,21 @@
 
 namespace cdc {
 
-MultibodyAABBCollision *Create() { // line 170
+MultibodyAABBCollision *Create(MultibodySystemImpl *mb) { // line 170
 	auto *aabbCollision = new MultibodyAABBCollision;
-	aabbCollision->Allocate();
+	aabbCollision->Allocate(mb);
 	return aabbCollision;
 }
 
-void MultibodyAABBCollision::Allocate() { // line 188
-	// TODO
+void MultibodyAABBCollision::Allocate(MultibodySystemImpl *mb) { // line 188
+	multibodySystem = mb;
+	maxMeshInstances = 2000; // Note: This is more than 8 * 200 from
+		// MultibodySystemImpl::numCollections = 8
+		// MultibodySystemImpl::numMeshInstancesPerCollection = 200
+	meshDataFirstNode = new AABBCollisionDataNode[maxMeshInstances];
+	primTreeRootNode = new AABBCollisionTreeNode[/*TODO*/ 2*maxMeshInstances];
 	AABBCollision::Allocate();
 }
-
 
 void MultibodyAABBCollision::MeshInstAdd(MeshInstance *mi) { // line 338
 	uint32_t totalMeshNodes = meshDataNumNodes + meshDataNumNewNodes;
@@ -28,7 +32,8 @@ void MultibodyAABBCollision::MeshInstAdd(MeshInstance *mi) { // line 338
 		{mi->m_bbox.bMax + mi->m_streamOffset}
 	);
 	if (totalMeshNodes < maxMeshInstances) {
-		meshDataFirstNode[totalMeshNodes++].SetDataNode(node, (void*)mi, false, 0);
+		meshDataFirstNode[totalMeshNodes].SetDataNode(node, (void*)mi, false, 0);
+		meshDataNumNewNodes++;
 	}
 }
 
