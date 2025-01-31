@@ -8,8 +8,17 @@ struct MultibodyAABBCollision;
 class PhysicsBodyImpl;
 class PhysicsGeometryImpl;
 
+struct MeshCollection {
+	MeshInstance **meshInstances; // 0
+	// uint32_t dword4;
+	uint32_t numMeshInstances; // 8
+};
+
 class MultibodySystemImpl : public MultibodySystem {
 	friend class MultibodySystem;
+
+	uint32_t numCollections = 8; // 18
+	uint32_t numMeshInstancesPerCollection = 200; // 1C
 
 	PhysicsBodyImpl *unusedBodies; // 2034
 	PhysicsBodyImpl *firstBody; // 204C
@@ -17,10 +26,14 @@ class MultibodySystemImpl : public MultibodySystem {
 	int32_t nb; // 2084
 	int32_t nc; // 2094
 	int32_t maxContactsUsed; // 2098
-	MultibodyAABBCollision *m_aabbCollision;
+	MultibodyAABBCollision *m_aabbCollision; // 20D0
+	MeshCollection *m_meshCollections; // 20D4
 	int32_t lock; // 20DC
 public:
 	// ...
+
+	MultibodySystemImpl();
+	~MultibodySystemImpl();
 
 	void TimeStepIslands(float timeStep, bool preserveForces);
 	void StoreContactForces();

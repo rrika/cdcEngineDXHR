@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <cstring> // memcpy
 #include "cdcMath/Math.h"
 
 namespace cdc {
@@ -9,9 +10,27 @@ struct AABBCollisionTreeNode;
 
 using AABBCollisionCB = bool(AABBCollisionDataNode*, AABBCollisionDataNode*); // line 63
 
+inline uint32_t floatToSortableInt(float f) {
+	uint32_t n;
+	memcpy(&n, &f, 4);
+	if (n < 0x80000000)
+		return n | 0x80000000;
+	else
+		return ~n;
+}
+
 struct AABBCollisionNode { // line 71
 	uint32_t m_min[3]; // 0
 	uint32_t m_max[3]; // C
+
+	void SetBBox(Vector3 min, Vector3 max) {
+		m_min[0] = floatToSortableInt(min.x);
+		m_min[1] = floatToSortableInt(min.y);
+		m_min[2] = floatToSortableInt(min.z);
+		m_max[0] = floatToSortableInt(max.x);
+		m_max[1] = floatToSortableInt(max.y);
+		m_max[2] = floatToSortableInt(max.z);
+	}
 
 	bool Overlap(AABBCollisionNode const& other) {
 		return m_min[0] < other.m_max[0]
@@ -24,8 +43,13 @@ struct AABBCollisionNode { // line 71
 };
 
 struct AABBCollisionDataNode : AABBCollisionNode { // line 139
-	uint32_t dword18;
+	void *m_client;
 	uint16_t m_nextDataOffset; // 1C
+	bool m_collideInternal; // 1E
+
+	void SetDataNode(
+		AABBCollisionNode const& box, void *client,
+		bool collideInternal, uint16_t nextDataOffset);
 };
 
 struct AABBCollisionTreeNode : AABBCollisionNode { // line 203

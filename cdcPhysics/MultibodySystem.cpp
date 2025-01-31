@@ -77,7 +77,32 @@ void MultibodySystem::Relocate(Vector3 const*) {
 	// TODO
 }
 
+void MultibodySystem::addMeshInstances(uint32_t index, MeshInstance **instances, uint32_t numInstances) {
+	auto *mb = static_cast<MultibodySystemImpl*>(this);
+	for (uint32_t i=0; i<numInstances; i++) {
+		mb->m_meshCollections[index].meshInstances[i] = instances[i];
+		mb->m_aabbCollision->MeshInstAdd(instances[i]);
+	}
+}
+
 // -------- //
+
+MultibodySystemImpl::MultibodySystemImpl() {
+	// TODO
+	m_meshCollections = new MeshCollection[numCollections];
+	for (uint32_t i=0; i<numCollections; i++)
+		m_meshCollections[i] = {
+			new MeshInstance*[numMeshInstancesPerCollection],
+			0
+		};
+}
+
+MultibodySystemImpl::~MultibodySystemImpl() {
+	// TODO
+	for (uint32_t i=0; i<numCollections; i++)
+		delete m_meshCollections[i].meshInstances;
+	delete m_meshCollections;
+}
 
 void MultibodySystemImpl::TimeStepIslands(float timeStep, bool preserveForces) { // TimeStep.cpp:302
 	if (false) {

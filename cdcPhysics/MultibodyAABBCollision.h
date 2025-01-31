@@ -7,6 +7,7 @@ struct AABBCollisionDataNode;
 struct AABBCollisionTreeNode;
 struct AABBCollisionJobInstance;
 struct AABBCollisionNode;
+struct MeshInstance;
 
 class MultibodyAABBCollision {
 	uint8_t byte0;
@@ -16,10 +17,12 @@ class MultibodyAABBCollision {
 	bool primTreeDirty; // 1C
 	AABBCollisionTreeNode *primTreeRootNode; // 20
 	uint32_t primTreeNumNodes; // 28
+	uint32_t maxMeshInstances; // 64
 public:
 	static MultibodyAABBCollision *Create();
 	MultibodyAABBCollision() {} // line 224
 	void Allocate();
+	void MeshInstAdd(MeshInstance *mi);
 	uint32_t PrimQuery(AABBCollisionDataNode **outPtrs, uint32_t maxOutPtrs, AABBCollisionNode const& box);
 	void MeshTreeResetDataNodes();
 	uint8_t ColSetup_InitMeshInstances(AABBCollisionJobInstance*& aabbMeshJobInsts);

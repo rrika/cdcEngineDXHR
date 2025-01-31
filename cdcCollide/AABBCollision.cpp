@@ -10,6 +10,17 @@ void AABBCollision::Allocate() { // line 215
 	// TODO
 }
 
+void AABBCollisionDataNode::SetDataNode(
+	AABBCollisionNode const& box, void *client,
+	bool collideInternal, uint16_t nextDataOffset
+) {
+	*static_cast<AABBCollisionNode*>(this) = box;
+	m_client = client;
+	m_nextDataOffset = nextDataOffset;
+	m_collideInternal = collideInternal;
+}
+
+
 uint32_t AABBCollisionTreeNode::CollideTree( // line 479
 	AABBCollisionDataNode **outDataNodePtrs,
 	uint32_t maxOutDataNodePtrs,

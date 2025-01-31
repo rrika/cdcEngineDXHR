@@ -2,6 +2,7 @@
 #include <cstdint>
 #include "cdcCollide/collideMB.h"
 #include "cdcMath/Math.h"
+#include "cdcMath/MatrixInlines.h"
 
 namespace cdc {
 
@@ -65,7 +66,7 @@ struct Mesh { // line 104
 struct MeshInstance { // line 194
 	Matrix m_transformation;
 	Vector3 m_streamOffset;
-	BBox m_bbox; // in world-space
+	BBox m_bbox; // post-streamoffset, pre-transformation
 	void *ptr70; // m_clientData, m_internalClientData
 	Mesh *m_mesh; // 74
 	uint16_t m_flags; // 78

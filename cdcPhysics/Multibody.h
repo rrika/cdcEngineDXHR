@@ -78,6 +78,8 @@ public:
 	int32_t QueryBox(Vector3 const*, Vector3 const*, PhysicsGeometry**, int32_t);
 	int32_t QueryGeometry(Contact*, int32_t, PhysicsGeometry*);
 	void Relocate(Vector3 const*);
+
+	void addMeshInstances(uint32_t index, MeshInstance **instances, uint32_t numInstances);
 };
 
 class PhysicsBody { // line 299

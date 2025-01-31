@@ -1,4 +1,5 @@
 #include "cdcCollide/AABBCollision.h"
+#include "cdcCollide/Mesh.h"
 #include "cdcPhysics/MultibodyAABBCollision.h"
 
 namespace cdc {
@@ -12,6 +13,23 @@ MultibodyAABBCollision *Create() { // line 170
 void MultibodyAABBCollision::Allocate() { // line 188
 	// TODO
 	AABBCollision::Allocate();
+}
+
+
+void MultibodyAABBCollision::MeshInstAdd(MeshInstance *mi) { // line 338
+	uint32_t totalMeshNodes = meshDataNumNodes + meshDataNumNewNodes;
+	for (uint32_t i = 0; i < totalMeshNodes; i++)
+		if (meshDataFirstNode[i].m_client == mi)
+			return;
+
+	AABBCollisionNode node;
+	node.SetBBox(
+		{mi->m_bbox.bMin + mi->m_streamOffset},
+		{mi->m_bbox.bMax + mi->m_streamOffset}
+	);
+	if (totalMeshNodes < maxMeshInstances) {
+		meshDataFirstNode[totalMeshNodes++].SetDataNode(node, (void*)mi, false, 0);
+	}
 }
 
 uint32_t MultibodyAABBCollision::PrimQuery( // line 1721
