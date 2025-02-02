@@ -40,7 +40,7 @@ struct Mesh { // line 104
 	};
 
 	BBox m_box; // 0
-	void *vertices; // 20
+	void *m_vertices; // 20
 	IndexedFace *m_faces; // 24
 	AABBNode *m_root; // 28
 	uint32_t m_numFaces; // 30
@@ -53,9 +53,9 @@ struct Mesh { // line 104
 
 	void GetTriangle(MTriangle *tri, IndexedFace *f) const { // line 132
 		if (m_vertexType == VERTEX_FLOAT32) {
-			tri->v0 = *(Vector3*)&((float*)vertices)[3 * f->i0];
-			tri->v1 = *(Vector3*)&((float*)vertices)[3 * f->i1];
-			tri->v2 = *(Vector3*)&((float*)vertices)[3 * f->i2];
+			tri->v0 = *(Vector3*)&((float*)m_vertices)[3 * f->i0];
+			tri->v1 = *(Vector3*)&((float*)m_vertices)[3 * f->i1];
+			tri->v2 = *(Vector3*)&((float*)m_vertices)[3 * f->i2];
 
 		} else /* VERTEX_INT16 */ {
 			// TODO
@@ -75,12 +75,12 @@ struct MeshInstance { // line 194
 
 	void GetTriangle(MTriangle *tri, IndexedFace *f) const { // line 281
 		m_mesh->GetTriangle(tri, f);
-		/*if (m_flags & 2) {
+		if (m_flags & 2) {
 			tri->v0 = m_transformation * tri->v0;
 			tri->v1 = m_transformation * tri->v1;
 			tri->v2 = m_transformation * tri->v2;
 			// TODO: apply m_flags & 1
-		}*/
+		}
 	}
 
 	FaceCount Query(FaceIndex *nearFaces, FaceCount maxFaces, BBox const& queryBox, uint8_t faceCollideFlags);

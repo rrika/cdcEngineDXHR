@@ -5,13 +5,25 @@
 namespace cdc {
 
 using VertIndex = uint16_t; // line 17
-using FaceIndex = uint32_t; // line 18
+using FaceIndex = uint16_t; // line 18
 using FaceCount = uint32_t; // line 25
+
+struct CPoint { // line 50
+	Vector3 position;    // 0
+	Vector3 normal;      // 10
+	float separation;    // 20
+	FaceIndex faceIndex; // 24
+};
 
 struct MTriangle { // line 75
 	Vector3 v0; // 0
 	Vector3 v1; // 10
 	Vector3 v2; // 20
+};
+
+struct MSphere { // line 91
+	Vector3 x; // 0
+	float radius; // 10
 };
 
 struct BBox { // line 110
@@ -39,6 +51,13 @@ enum CollideCode { // line 194
 	HIT_CYLINDER_ENDCAP_Y = 4
 };
 
+CollideCode CollideSegmentAndSphere(
+	float& lambda,
+	cdc::Vector3 *normal,
+	Vector3Arg s,
+	Vector3Arg d,
+	MSphere const& sphere);
+
 CollideCode CollideSegmentAndAlignedBox(
 	float& lambda,
 	Vector3Arg s,
@@ -51,5 +70,23 @@ CollideCode CollideSegmentAndTri( // line 287
 	Vector3Arg s,
 	Vector3Arg d,
 	MTriangle const& tri);
+
+int32_t CollideTriAndCapsule(
+	CPoint *contacts,
+	int32_t maxContacts,
+	MTriangle const& tri,
+	Vector3Arg s,
+	Vector3Arg t,
+	float radius,
+	uint8_t adjacencyFlags,
+	bool unknown);
+
+int32_t CollideTriAndSphere(
+	CPoint *contacts,
+	Vector3Arg p,
+	float radius,
+	MTriangle const& tri,
+	uint8_t adjacencyFlags,
+	bool unknown);
 
 }

@@ -10,8 +10,8 @@ class Geom;
 
 FaceCount MeshInstance::Query(FaceIndex *nearFaces, FaceCount maxFaces, BBox const& queryBox, uint8_t faceCollideFlags) { // line 920
 	BBox b = queryBox;
-	// b.bMin = {b.bMin - m_streamOffset}; // TODO: operator-=
-	// b.bMax = {b.bMax - m_streamOffset}; // TODO: operator-=
+	b.bMin = {b.bMin - m_streamOffset}; // TODO: operator-=
+	b.bMax = {b.bMax - m_streamOffset}; // TODO: operator-=
 
 	printf("%f %f %f %f %f %f\n",
 		b.bMin.x,

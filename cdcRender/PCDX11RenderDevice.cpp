@@ -113,10 +113,10 @@ void PCDX11RenderDevice::LineBatcher::Draw(Matrix *m, LineVertex *pSourceVerts, 
 		};
 		Vector w = *m * v;
 		// HACK: convert to RenderVertex like TRAS
-		m_lineVertices[i].vX = w.x;
-		m_lineVertices[i].vY = w.y;
-		m_lineVertices[i].vZ = w.z;
-		m_lineVertices[i].nDiffuse = pSourceVerts[i].nDiffuse;
+		m_lineVertices[2*m_numLines + i].vX = w.x;
+		m_lineVertices[2*m_numLines + i].vY = w.y;
+		m_lineVertices[2*m_numLines + i].vZ = w.z;
+		m_lineVertices[2*m_numLines + i].nDiffuse = pSourceVerts[i].nDiffuse;
 	}
 
 	m_numLines += numLines;
