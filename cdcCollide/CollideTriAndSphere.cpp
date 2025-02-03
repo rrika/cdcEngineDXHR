@@ -177,6 +177,7 @@ int32_t CollideTriAndSphere(
 		//contacts->tnormal = h02.UnitVec();
 	}
 
+	// HACK: the game does not perform this check (how does it work then?)
 	if (inside21 > 0.f && inside02 > 0.f && inside10 > 0.f) {
 		// closest point is inside triangle
 		float u = 1.f / (inside02 + inside10 + inside21);

@@ -1399,6 +1399,7 @@ int spinnyCube(HWND window,
 				m.m[3][2]
 			};
 
+			bool capsule = false;
 			float radius = 100.f;
 			{ // 3 hoops
 				auto *matrix = new (renderDevice) cdc::Matrix;
@@ -1411,14 +1412,30 @@ int spinnyCube(HWND window,
 				matrix->m[3][2] = position.z;
 
 				renderDevice->DrawLineList(matrix, hoops.data(), hoops.size()/2, 0);
+				if (capsule) {
+					matrix->m[3][2] += radius * 2.5f;
+					renderDevice->DrawLineList(matrix, hoops.data(), hoops.size()/2, 0);
+				}
 			}
 
 			for (auto [level, meshInstance] : meshInstances) {
 				std::vector<cdc::LineVertex> verts;
 				cdc::Vector3 c = {position - level->sceneCenterOffset};
 				cdc::MSphere sphere { c, radius };
+				cdc::Vector3 c2 = c; c2.z += radius * 2.f;
 				cdc::CPoint contacts[100];
-				uint32_t numContacts = CollideMeshInstanceAndSphere(contacts, 100, sphere, meshInstance, 0xff, true);
+				uint32_t numContacts;
+				if (capsule == false)
+					numContacts = CollideMeshInstanceAndSphere(contacts, 100, sphere, meshInstance, 0xff, true);
+				else {
+					cdc::BBox bbox {
+						c  - cdc::Vector3 { radius, radius, radius },
+						c2 + cdc::Vector3 { radius, radius, radius }
+					};
+					numContacts = CollideMeshInstanceAndCapsule(contacts, 100, meshInstance,
+						c, c2, radius, bbox, 0xff, true);
+				}
+
 				for (uint32_t i=0; i<numContacts; i++) {
 					auto p = contacts[i].position;
 					auto n = contacts[i].normal;
