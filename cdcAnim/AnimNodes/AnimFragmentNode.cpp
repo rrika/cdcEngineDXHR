@@ -337,9 +337,9 @@ void AnimFragmentNode::DecompressFrame(AnimContextData *data, uint32_t keyIndex,
 				float dot = Dot3(rotDelta, rotDelta);
 				if (dot > 0.25) {
 					if (rotA.IsZero3()) {
-						rotA = {rotB.Normalize3() * (1.f / twoPi)};
+						rotA = {rotB.UnitVec() * (1.f / twoPi)};
 					} else {
-						rotA = rotA - Vector3{rotA.Normalize3()} * (twoPi * floor(sqrtf(dot)+0.5f));
+						rotA = rotA - Vector3{rotA.UnitVec()} * (twoPi * floor(sqrtf(dot)+0.5f));
 					}
 				}
 

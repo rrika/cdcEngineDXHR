@@ -1,4 +1,5 @@
 #include "Math.h"
+#include "VectorInlines.h"
 #include <cstring>
 #include <cmath>
 
@@ -16,12 +17,12 @@ void Vector::SafeNormalize3() {
     }
 }
 
-Vector Vector::Normalize3() {
+void Vector::Normalize3() {
     // HACK
     float d = x*x + y*y + z*z;
     d = sqrt(d);
     d = 1.0f/d;
-    return {x*d, y*d, z*d, w*d};
+    *this *= d;
 }
 
 Matrix operator*(MatrixArg matA, float valB) { // Matrix.cpp:58

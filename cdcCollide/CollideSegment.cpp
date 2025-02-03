@@ -71,8 +71,9 @@ CollideCode CollideSegmentAndTri( // line 230
 				return NO_HIT;
 			if (-drift1 >= -0.00001192092895507812 * impact && impact * 1.000011920928955 >= drift2-drift1) {
 
+				n.Normalize3();
 				*lambda = offset / impact;
-				*normal = {n.Normalize3()};
+				*normal = {n};
 				return HIT;
 			}
 		}

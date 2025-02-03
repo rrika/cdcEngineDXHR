@@ -220,7 +220,7 @@ Vector DeferredRenderingObject::Drawable::calcInstanceParamRow(
 			};
 
 			if (param.multiplyMode == 2)
-				v = v.Normalize3();
+				v.Normalize3();
 		}
 	}
 

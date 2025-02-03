@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 #include "Math.h"
 
 namespace cdc {
@@ -13,6 +14,11 @@ inline Vector& Vector::operator*=(float valB) { // line 120
 	z *= valB;
 	w *= valB;
 	return *this;
+}
+
+
+inline float Vector3::LenSquared() const { // line 257
+	return x*x + y*y + z*z;
 }
 
 inline Vector3 operator+(Vector3Arg vecA, Vector3Arg vecB) { // line 363
@@ -57,6 +63,24 @@ inline Vector Cross3(VectorArg vecA, VectorArg vecB) { // line 637
 		a[2] * b[0] - a[0] * b[2],
 		a[0] * b[1] - a[1] * b[0],
 		a[3] * b[3] - a[3] * b[3]
+	};
+}
+
+inline Vector CompMin4(VectorArg vecA, VectorArg vecB) { // line 711
+	return {
+		fminf(vecA.x, vecB.x),
+		fminf(vecA.y, vecB.y),
+		fminf(vecA.z, vecB.z),
+		fminf(vecA.w, vecB.w)
+	};
+}
+
+inline Vector CompMax4(VectorArg vecA, VectorArg vecB) { // line 723
+	return {
+		fmaxf(vecA.x, vecB.x),
+		fmaxf(vecA.y, vecB.y),
+		fmaxf(vecA.z, vecB.z),
+		fmaxf(vecA.w, vecB.w)
 	};
 }
 

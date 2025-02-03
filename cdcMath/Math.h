@@ -2,6 +2,7 @@
 
 namespace cdc {
 
+class Vector3;
 class Vector {
 public:
 	union {
@@ -16,7 +17,7 @@ public:
 
 	void SetZero();
 	void SafeNormalize3();
-	Vector Normalize3();
+	void Normalize3();
 	bool IsZero2() const;
 	bool IsZero3() const;
 	bool IsZero4() const;
@@ -27,7 +28,15 @@ class Quat : public Vector {};
 class Euler : public Vector {};
 class Scalar : public Vector {};
 class Vector2 : public Vector {};
-class Vector3 : public Vector {};
+class Vector3 : public Vector {
+public:
+	inline float LenSquared() const;
+	Vector3 UnitVec() {
+		Vector3 copy = *this;
+		copy.Normalize3();
+		return copy;
+	}
+};
 class Vector4 : public Vector {};
 using QuatArg = Quat const&;
 using EulerArg = Euler const&;
