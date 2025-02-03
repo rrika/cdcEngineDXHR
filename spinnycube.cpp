@@ -1347,117 +1347,154 @@ int spinnyCube(HWND window,
 			renderDevice->DrawLineList(&cdc::identity4x4, lineVerts, 3, 0);
 		}
 
+		std::vector<std::pair<cdc::Level*, cdc::MeshInstance*>> meshInstances;
+
 		for (auto& unit : StreamTracker) {
 			if (!unit.used)
 				continue;
 
 			cdc::Level *level = unit.level;
 			if (auto *terrain = level->terrain) {
-				for (uint32_t i=0; i < std::min(4u, terrain->numMeshInstances); i++) {
+				for (uint32_t i=0; i < terrain->numMeshInstances; i++) {
 					cdc::MeshInstance *meshInstance = &terrain->meshInstances[i];
-					cdc::Mesh *mesh = meshInstance->m_mesh;
-					std::vector<cdc::LineVertex> verts;
-					if (false) {
-						cdc::BBox bbox;
-						if (false)
-							bbox = meshInstance->m_bbox;
-						else {
-							cdc::AABBNode node = *mesh->m_root;
-							bbox = {
-								{node.f_min[0], node.f_min[1], node.f_min[2]},
-								{node.f_max[0], node.f_max[1], node.f_max[2]},
-							};
-						}
-						cdc::LineVertex v000 {bbox.bMin.x, bbox.bMin.y, bbox.bMin.z, 0xffffffff};
-						cdc::LineVertex v001 {bbox.bMin.x, bbox.bMin.y, bbox.bMax.z, 0xffffffff};
-						cdc::LineVertex v010 {bbox.bMin.x, bbox.bMax.y, bbox.bMin.z, 0xffffffff};
-						cdc::LineVertex v011 {bbox.bMin.x, bbox.bMax.y, bbox.bMax.z, 0xffffffff};
-						cdc::LineVertex v100 {bbox.bMax.x, bbox.bMin.y, bbox.bMin.z, 0xffffffff};
-						cdc::LineVertex v101 {bbox.bMax.x, bbox.bMin.y, bbox.bMax.z, 0xffffffff};
-						cdc::LineVertex v110 {bbox.bMax.x, bbox.bMax.y, bbox.bMin.z, 0xffffffff};
-						cdc::LineVertex v111 {bbox.bMax.x, bbox.bMax.y, bbox.bMax.z, 0xffffffff};
-
-						verts.push_back(v000);
-						verts.push_back(v001);
-						verts.push_back(v010);
-						verts.push_back(v011);
-						verts.push_back(v100);
-						verts.push_back(v101);
-						verts.push_back(v110);
-						verts.push_back(v111);
-
-						verts.push_back(v000);
-						verts.push_back(v010);
-						verts.push_back(v001);
-						verts.push_back(v011);
-						verts.push_back(v100);
-						verts.push_back(v110);
-						verts.push_back(v101);
-						verts.push_back(v111);
-
-						verts.push_back(v000);
-						verts.push_back(v100);
-						verts.push_back(v001);
-						verts.push_back(v101);
-						verts.push_back(v010);
-						verts.push_back(v110);
-						verts.push_back(v011);
-						verts.push_back(v111);
-
-					} else if (false) {
-						for (uint32_t j=0; j<mesh->m_numFaces; j++) {
-							cdc::IndexedFace& f = meshInstance->m_mesh->m_faces[j];
-							if (f.i0 == f.i1 || f.i0 == f.i2 || f.i1 == f.i2)
-								continue;
-							cdc::MTriangle mt;
-							meshInstance->GetTriangle(&mt, &f);
-							cdc::LineVertex a {mt.v0.x, mt.v0.y, mt.v0.z, 0xffffffff};
-							cdc::LineVertex b {mt.v1.x, mt.v1.y, mt.v1.z, 0xffffffff};
-							cdc::LineVertex c {mt.v2.x, mt.v2.y, mt.v2.z, 0xffffffff};
-							verts.push_back(a);
-							verts.push_back(b);
-							verts.push_back(b);
-							verts.push_back(c);
-							verts.push_back(c);
-							verts.push_back(a);
-						}
-					} else {
-						float boxSize = 1000.f;
-						cdc::BBox aroundCamera {
-							cameraPos - level->sceneCenterOffset - cdc::Vector3{boxSize, boxSize, boxSize},
-							cameraPos - level->sceneCenterOffset + cdc::Vector3{boxSize, boxSize, boxSize}
-						};
-						cdc::FaceIndex faceIndices[100];
-						uint32_t faceCount = meshInstance->Query(faceIndices, 100, aroundCamera, 0xff);
-						for (uint32_t j=0; j<faceCount; j++) {
-							cdc::MTriangle mt;
-							meshInstance->GetTriangle(&mt, &meshInstance->m_mesh->m_faces[faceIndices[j]]);
-							cdc::LineVertex a {mt.v0.x, mt.v0.y, mt.v0.z, 0xffffffff};
-							cdc::LineVertex b {mt.v1.x, mt.v1.y, mt.v1.z, 0xffffffff};
-							cdc::LineVertex c {mt.v2.x, mt.v2.y, mt.v2.z, 0xffffffff};
-							verts.push_back(a);
-							verts.push_back(b);
-							verts.push_back(b);
-							verts.push_back(c);
-							verts.push_back(c);
-							verts.push_back(a);
-						}
-					}
-					auto *matrix = new (renderDevice) cdc::Matrix;
-					*matrix = cdc::identity4x4;
-					if (c0) {
-						matrix->m[3][0] += level->sceneCenterOffset.x;
-						matrix->m[3][1] += level->sceneCenterOffset.y;
-						matrix->m[3][2] += level->sceneCenterOffset.z;
-					}
-					if (c1) {
-						matrix->m[3][0] += meshInstance->m_streamOffset.x;
-						matrix->m[3][1] += meshInstance->m_streamOffset.y;
-						matrix->m[3][2] += meshInstance->m_streamOffset.z;
-					}
-					renderDevice->DrawLineList(matrix, verts.data(), verts.size()/2, 0);
+					meshInstances.emplace_back(level, meshInstance);
 				}
 			}
+		}
+
+
+		for (Instance *instance : InstanceManager::s_instances) {
+			if (!instance->sphereCollider)
+				continue;
+			cdc::MSphere sphere { instance->position, 400.f };
+			std::vector<cdc::LineVertex> verts;
+			for (auto [level, meshInstance] : meshInstances) {
+				cdc::CPoint contacts[100];
+				uint32_t numContacts = CollideMeshInstanceAndSphere(contacts, 100, sphere, meshInstance, 0xff, false);
+				for (uint32_t i=0; i<numContacts; i++) {
+					auto p = contacts[i].position;
+					auto c = instance->position;
+					verts.push_back({p.x, p.y, p.z, 0xffff0000});
+					verts.push_back({c.x, c.y, c.z, 0x00ff0000});
+				}
+				auto *matrix = new (renderDevice) cdc::Matrix;
+				*matrix = cdc::identity4x4;
+				if (c0) {
+					matrix->m[3][0] += level->sceneCenterOffset.x;
+					matrix->m[3][1] += level->sceneCenterOffset.y;
+					matrix->m[3][2] += level->sceneCenterOffset.z;
+				}
+				if (c1) {
+					matrix->m[3][0] += meshInstance->m_streamOffset.x;
+					matrix->m[3][1] += meshInstance->m_streamOffset.y;
+					matrix->m[3][2] += meshInstance->m_streamOffset.z;
+				}
+				renderDevice->DrawLineList(matrix, verts.data(), verts.size()/2, 0);
+			}
+		}
+
+		for (auto [level, meshInstance] : meshInstances) {
+			cdc::Mesh *mesh = meshInstance->m_mesh;
+			std::vector<cdc::LineVertex> verts;
+			if (false) {
+				cdc::BBox bbox;
+				if (false)
+					bbox = meshInstance->m_bbox;
+				else {
+					cdc::AABBNode node = *mesh->m_root;
+					bbox = {
+						{node.f_min[0], node.f_min[1], node.f_min[2]},
+						{node.f_max[0], node.f_max[1], node.f_max[2]},
+					};
+				}
+				cdc::LineVertex v000 {bbox.bMin.x, bbox.bMin.y, bbox.bMin.z, 0xffffffff};
+				cdc::LineVertex v001 {bbox.bMin.x, bbox.bMin.y, bbox.bMax.z, 0xffffffff};
+				cdc::LineVertex v010 {bbox.bMin.x, bbox.bMax.y, bbox.bMin.z, 0xffffffff};
+				cdc::LineVertex v011 {bbox.bMin.x, bbox.bMax.y, bbox.bMax.z, 0xffffffff};
+				cdc::LineVertex v100 {bbox.bMax.x, bbox.bMin.y, bbox.bMin.z, 0xffffffff};
+				cdc::LineVertex v101 {bbox.bMax.x, bbox.bMin.y, bbox.bMax.z, 0xffffffff};
+				cdc::LineVertex v110 {bbox.bMax.x, bbox.bMax.y, bbox.bMin.z, 0xffffffff};
+				cdc::LineVertex v111 {bbox.bMax.x, bbox.bMax.y, bbox.bMax.z, 0xffffffff};
+
+				verts.push_back(v000);
+				verts.push_back(v001);
+				verts.push_back(v010);
+				verts.push_back(v011);
+				verts.push_back(v100);
+				verts.push_back(v101);
+				verts.push_back(v110);
+				verts.push_back(v111);
+
+				verts.push_back(v000);
+				verts.push_back(v010);
+				verts.push_back(v001);
+				verts.push_back(v011);
+				verts.push_back(v100);
+				verts.push_back(v110);
+				verts.push_back(v101);
+				verts.push_back(v111);
+
+				verts.push_back(v000);
+				verts.push_back(v100);
+				verts.push_back(v001);
+				verts.push_back(v101);
+				verts.push_back(v010);
+				verts.push_back(v110);
+				verts.push_back(v011);
+				verts.push_back(v111);
+
+			} else if (false) {
+				for (uint32_t j=0; j<mesh->m_numFaces; j++) {
+					cdc::IndexedFace& f = meshInstance->m_mesh->m_faces[j];
+					if (f.i0 == f.i1 || f.i0 == f.i2 || f.i1 == f.i2)
+						continue;
+					cdc::MTriangle mt;
+					meshInstance->GetTriangle(&mt, &f);
+					cdc::LineVertex a {mt.v0.x, mt.v0.y, mt.v0.z, 0xffffffff};
+					cdc::LineVertex b {mt.v1.x, mt.v1.y, mt.v1.z, 0xffffffff};
+					cdc::LineVertex c {mt.v2.x, mt.v2.y, mt.v2.z, 0xffffffff};
+					verts.push_back(a);
+					verts.push_back(b);
+					verts.push_back(b);
+					verts.push_back(c);
+					verts.push_back(c);
+					verts.push_back(a);
+				}
+			} else {
+				float boxSize = 1000.f;
+				cdc::BBox aroundCamera {
+					cameraPos - level->sceneCenterOffset - cdc::Vector3{boxSize, boxSize, boxSize},
+					cameraPos - level->sceneCenterOffset + cdc::Vector3{boxSize, boxSize, boxSize}
+				};
+				cdc::FaceIndex faceIndices[100];
+				uint32_t faceCount = meshInstance->Query(faceIndices, 100, aroundCamera, 0xff);
+				for (uint32_t j=0; j<faceCount; j++) {
+					cdc::MTriangle mt;
+					meshInstance->GetTriangle(&mt, &meshInstance->m_mesh->m_faces[faceIndices[j]]);
+					cdc::LineVertex a {mt.v0.x, mt.v0.y, mt.v0.z, 0xffffffff};
+					cdc::LineVertex b {mt.v1.x, mt.v1.y, mt.v1.z, 0xffffffff};
+					cdc::LineVertex c {mt.v2.x, mt.v2.y, mt.v2.z, 0xffffffff};
+					verts.push_back(a);
+					verts.push_back(b);
+					verts.push_back(b);
+					verts.push_back(c);
+					verts.push_back(c);
+					verts.push_back(a);
+				}
+			}
+			auto *matrix = new (renderDevice) cdc::Matrix;
+			*matrix = cdc::identity4x4;
+			if (c0) {
+				matrix->m[3][0] += level->sceneCenterOffset.x;
+				matrix->m[3][1] += level->sceneCenterOffset.y;
+				matrix->m[3][2] += level->sceneCenterOffset.z;
+			}
+			if (c1) {
+				matrix->m[3][0] += meshInstance->m_streamOffset.x;
+				matrix->m[3][1] += meshInstance->m_streamOffset.y;
+				matrix->m[3][2] += meshInstance->m_streamOffset.z;
+			}
+			renderDevice->DrawLineList(matrix, verts.data(), verts.size()/2, 0);
 		}
 
 		auto putTerrain = [&](cdc::IRenderTerrain *renderTerrain, cdc::Matrix& instanceMatrix) {

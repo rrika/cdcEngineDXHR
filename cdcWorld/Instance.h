@@ -70,6 +70,7 @@ public:
 	cdc::AnimComponentV2 *animComponentV2 = nullptr; // 2F8
 
 	bool enableOverridePose = false; // HACK
+	bool sphereCollider = false; // HACK
 	std::vector<cdc::Matrix> overridePose; // HACK
 
 public:

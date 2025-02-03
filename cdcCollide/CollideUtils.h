@@ -88,6 +88,31 @@ inline bool TestAlignedBoxAndAlignedBox( // line 77
 		aMin.z < bMax.z;
 }
 
+inline float PointToSegmentDistance( // line 136
+	float *lambda,
+	Vector3 *closestPoint,
+	Vector3Arg point,
+	Vector3Arg s,
+	Vector3Arg t
+) {
+	Vector3 cp = s;
+	float l = 0.f;
+
+	Vector3 d = t - s;
+	float dSquared = d.LenSquared();
+
+	if (dSquared != 0.f) {
+		l = Dot3(point - s, d) / dSquared;
+		l = clamp(l, 0.f, 1.f);
+		cp = s + d * l;
+	}
+
+	if (lambda) *lambda = l;
+	if (closestPoint) *closestPoint = s;
+
+	return (point - cp).LenSquared();
+}
+
 inline BBox CalcXformedBBox(BBox const& A, Matrix const& M) { // line 163
 	// TODO
 	return A;

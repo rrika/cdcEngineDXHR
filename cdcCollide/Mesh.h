@@ -109,4 +109,23 @@ struct CollisionParams;
 bool HandleLeafNode(AABBNode *leaf, CollisionParams *cp);
 void Probe(CollisionParams *cp);
 
+int32_t CollideMeshInstanceAndSphere(
+	CPoint *contacts,
+	int32_t maxContacts,
+	MSphere const& sphere,
+	MeshInstance *meshInstance,
+	uint8_t faceCollideFlags,
+	bool unknown);
+
+int32_t CollideMeshInstanceAndCapsule(
+	CPoint *contacts,
+	int32_t maxContacts,
+	MeshInstance *meshInstance,
+	Vector3Arg sGlobal,
+	Vector3Arg tGlobal,
+	float radius,
+	BBox aabb,
+	uint8_t faceCollideFlags,
+	bool unknown);
+
 }
