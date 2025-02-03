@@ -11,6 +11,7 @@ using FaceCount = uint32_t; // line 25
 struct CPoint { // line 50
 	Vector3 position;    // 0
 	Vector3 normal;      // 10
+	Vector3 tnormal;      // 10
 	float separation;    // 20
 	FaceIndex faceIndex; // 24
 };

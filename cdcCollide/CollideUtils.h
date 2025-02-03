@@ -108,7 +108,7 @@ inline float PointToSegmentDistance( // line 136
 	}
 
 	if (lambda) *lambda = l;
-	if (closestPoint) *closestPoint = s;
+	if (closestPoint) *closestPoint = cp;
 
 	return (point - cp).LenSquared();
 }

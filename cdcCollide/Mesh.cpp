@@ -12,7 +12,7 @@ FaceCount MeshInstance::Query(FaceIndex *nearFaces, FaceCount maxFaces, BBox con
 	BBox b = queryBox;
 	b.bMin = {b.bMin - m_streamOffset}; // TODO: operator-=
 	b.bMax = {b.bMax - m_streamOffset}; // TODO: operator-=
-
+/*
 	printf("%f %f %f %f %f %f\n",
 		b.bMin.x,
 		b.bMin.y,
@@ -30,25 +30,25 @@ FaceCount MeshInstance::Query(FaceIndex *nearFaces, FaceCount maxFaces, BBox con
 		m_bbox.bMax.y,
 		m_bbox.bMax.z
 	);
-
+*/
 	if (TestAlignedBoxAndAlignedBox(b.bMin, b.bMax, m_bbox.bMin, m_bbox.bMax) == false)
 		return 0;
 
-	printf("in\n");
+	//printf("in\n");
 
 	if (m_flags & 2) {
 		Matrix inv;
 		OrthonormalInverse3x4(&inv, m_transformation);
 		b = CalcXformedBBox(b, inv);
 
-		printf("  tf %f %f %f %f %f %f\n",
+		/*printf("  tf %f %f %f %f %f %f\n",
 			b.bMin.x,
 			b.bMin.y,
 			b.bMin.z,
 			b.bMax.x,
 			b.bMax.y,
 			b.bMax.z
-		);
+		);*/
 	}
 
 	uint32_t ns = 0;
@@ -65,8 +65,8 @@ FaceCount MeshInstance::Query(FaceIndex *nearFaces, FaceCount maxFaces, BBox con
 		if (node->m_numFaces > 0) {
 			uint16_t limit = node->m_index + node->m_numFaces;
 			for (uint16_t i = node->m_index; i < limit; i++) {
-				printf(" node %d gives range %d..+%d\n",
-					node-m_mesh->m_root, node->m_index, node->m_numFaces);
+				// printf(" node %d gives range %d..+%d\n",
+				// 	node-m_mesh->m_root, node->m_index, node->m_numFaces);
 				if (numNearFaces >= maxFaces)
 					break;
 

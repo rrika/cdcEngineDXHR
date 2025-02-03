@@ -1362,20 +1362,75 @@ int spinnyCube(HWND window,
 			}
 		}
 
+		if (false) {
+			cdc::CPoint cp;
+			cdc::Vector3 testCenter {0.5f, -0.5f, 0.5};
+			cdc::MTriangle mtri {
+				{0.f, 0.f, 0.f},
+				{1.f, 0.f, 0.f},
+				{0.f, 1.f, 0.f},
+			};
+			cdc::CollideTriAndSphere(&cp, testCenter, 1.f, mtri, 0x38, true);
+		}
+
+		std::vector<cdc::LineVertex> hoops;
+		for (uint32_t i=0; i<20; i++) {
+			float angle0 = 3.14159265f * 2 * i / 20;
+			float s0 = sin(angle0);
+			float c0 = cos(angle0);
+			float angle1 = 3.14159265f * 2 * (i+1) / 20;
+			float s1 = sin(angle1);
+			float c1 = cos(angle1);
+			hoops.push_back({s0, c0, 0, 0xffff8080});
+			hoops.push_back({s1, c1, 0, 0xffff8080});
+			hoops.push_back({0, s0, c0, 0xff80ff80});
+			hoops.push_back({0, s1, c1, 0xff80ff80});
+			hoops.push_back({c0, 0, s0, 0xff8080ff});
+			hoops.push_back({c1, 0, s1, 0xff8080ff});
+		}
 
 		for (Instance *instance : InstanceManager::s_instances) {
 			if (!instance->sphereCollider)
 				continue;
-			cdc::MSphere sphere { instance->position, 400.f };
-			std::vector<cdc::LineVertex> verts;
+			auto& m = instance->GetTransformComponent().m_matrix[0];
+			cdc::Vector3 position = {
+				m.m[3][0],
+				m.m[3][1],
+				m.m[3][2]
+			};
+
+			float radius = 100.f;
+			{ // 3 hoops
+				auto *matrix = new (renderDevice) cdc::Matrix;
+				*matrix = cdc::identity4x4;
+				matrix->m[0][0] = radius;
+				matrix->m[1][1] = radius;
+				matrix->m[2][2] = radius;
+				matrix->m[3][0] = position.x;
+				matrix->m[3][1] = position.y;
+				matrix->m[3][2] = position.z;
+
+				renderDevice->DrawLineList(matrix, hoops.data(), hoops.size()/2, 0);
+			}
+
 			for (auto [level, meshInstance] : meshInstances) {
+				std::vector<cdc::LineVertex> verts;
+				cdc::Vector3 c = {position - level->sceneCenterOffset};
+				cdc::MSphere sphere { c, radius };
 				cdc::CPoint contacts[100];
-				uint32_t numContacts = CollideMeshInstanceAndSphere(contacts, 100, sphere, meshInstance, 0xff, false);
+				uint32_t numContacts = CollideMeshInstanceAndSphere(contacts, 100, sphere, meshInstance, 0xff, true);
 				for (uint32_t i=0; i<numContacts; i++) {
 					auto p = contacts[i].position;
-					auto c = instance->position;
-					verts.push_back({p.x, p.y, p.z, 0xffff0000});
-					verts.push_back({c.x, c.y, c.z, 0x00ff0000});
+					auto n = contacts[i].normal;
+					auto t = contacts[i].tnormal;
+					auto q = p + n * (radius * 0.2f);
+					auto r = q + t * (radius * 0.05f);
+					verts.push_back({c.x, c.y, c.z, 0xff0000ff});
+					verts.push_back({p.x, p.y, p.z, 0xffffff00});
+					verts.push_back({p.x, p.y, p.z, 0xffffff00});
+					verts.push_back({q.x, q.y, q.z, 0xffff0000});
+					verts.push_back({q.x, q.y, q.z, 0xffff0000});
+					verts.push_back({r.x, r.y, r.z, 0xffff00ff});
 				}
 				auto *matrix = new (renderDevice) cdc::Matrix;
 				*matrix = cdc::identity4x4;
@@ -1383,11 +1438,6 @@ int spinnyCube(HWND window,
 					matrix->m[3][0] += level->sceneCenterOffset.x;
 					matrix->m[3][1] += level->sceneCenterOffset.y;
 					matrix->m[3][2] += level->sceneCenterOffset.z;
-				}
-				if (c1) {
-					matrix->m[3][0] += meshInstance->m_streamOffset.x;
-					matrix->m[3][1] += meshInstance->m_streamOffset.y;
-					matrix->m[3][2] += meshInstance->m_streamOffset.z;
 				}
 				renderDevice->DrawLineList(matrix, verts.data(), verts.size()/2, 0);
 			}
