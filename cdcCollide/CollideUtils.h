@@ -24,8 +24,8 @@ inline float SegmentToSegmentDistance( // line 66
 	Vector3 d1 = t1 - s1;
 	Vector3 d2 = t2 - s2;
 	Vector3 c = s1 - s2;
-	float d11 = Dot3(d1, d1);
-	float d22 = Dot3(d2, d2);
+	float d11 = d1.LenSquared();
+	float d22 = d2.LenSquared();
 	float lam1, lam2;
 
 	if (d11 >= kEpsilon && d22 >= kEpsilon) {	
@@ -70,7 +70,7 @@ inline float SegmentToSegmentDistance( // line 66
 
 	c = cp1 - cp2;
 
-	return Dot3(c, c);
+	return c.LenSquared();
 }
 
 inline bool TestAlignedBoxAndAlignedBox( // line 77

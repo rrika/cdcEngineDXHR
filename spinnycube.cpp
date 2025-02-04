@@ -1373,6 +1373,18 @@ int spinnyCube(HWND window,
 			cdc::CollideTriAndSphere(&cp, testCenter, 1.f, mtri, 0x38, true);
 		}
 
+		if (false) {
+			cdc::CPoint cp[10];
+			cdc::Vector3 testS {0.5f, -0.5f, 0.5};
+			cdc::Vector3 testT {0.5f, -0.5f, 2.0};
+			cdc::MTriangle mtri {
+				{0.f, 0.f, 0.f},
+				{1.f, 0.f, 0.f},
+				{0.f, 1.f, 0.f},
+			};
+			cdc::CollideTriAndCapsule(cp, 10, mtri, testS, testT, 1.f, 0x38, true);
+		}
+
 		std::vector<cdc::LineVertex> hoops;
 		for (uint32_t i=0; i<20; i++) {
 			float angle0 = 3.14159265f * 2 * i / 20;
@@ -1399,7 +1411,7 @@ int spinnyCube(HWND window,
 				m.m[3][2]
 			};
 
-			bool capsule = false;
+			bool capsule = true;
 			float radius = 100.f;
 			{ // 3 hoops
 				auto *matrix = new (renderDevice) cdc::Matrix;
@@ -1420,20 +1432,21 @@ int spinnyCube(HWND window,
 
 			for (auto [level, meshInstance] : meshInstances) {
 				std::vector<cdc::LineVertex> verts;
-				cdc::Vector3 c = {position - level->sceneCenterOffset};
-				cdc::MSphere sphere { c, radius };
-				cdc::Vector3 c2 = c; c2.z += radius * 2.f;
+				cdc::Vector3 c1 = {position - level->sceneCenterOffset};
+				cdc::MSphere sphere { c1, radius };
+				cdc::Vector3 c2 = c1; c2.z += radius * 2.5f;
+				cdc::Vector3 c = capsule ? (c1+c2) * 0.5 : c1;
 				cdc::CPoint contacts[100];
 				uint32_t numContacts;
 				if (capsule == false)
 					numContacts = CollideMeshInstanceAndSphere(contacts, 100, sphere, meshInstance, 0xff, true);
 				else {
 					cdc::BBox bbox {
-						c  - cdc::Vector3 { radius, radius, radius },
+						c1 - cdc::Vector3 { radius, radius, radius },
 						c2 + cdc::Vector3 { radius, radius, radius }
 					};
 					numContacts = CollideMeshInstanceAndCapsule(contacts, 100, meshInstance,
-						c, c2, radius, bbox, 0xff, true);
+						c1, c2, radius, bbox, 0xff, true);
 				}
 
 				for (uint32_t i=0; i<numContacts; i++) {

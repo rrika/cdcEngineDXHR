@@ -10,10 +10,11 @@ int32_t ComputeEdgeContact( // line 28
 	float radius,
 	Vector3Arg v0,
 	Vector3Arg v1,
-	Vector3Arg v2,
+	Vector3Arg v2, // ignored
 	Vector3Arg triNormal
 ) {
-	Vector3 cp1, cp2;
+	Vector3 cp1; // along capsule spine
+	Vector3 cp2; // along triangle
 	float distSqr = SegmentToSegmentDistance(cp1, cp2, s, t, v0, v1, nullptr, nullptr);
 	if (radius * radius < distSqr)
 		return 0;
@@ -22,8 +23,9 @@ int32_t ComputeEdgeContact( // line 28
 	if (normal.LenSquared() < 1e-6f)
 		normal = triNormal;
 	normal.Normalize3();
-	contacts->position = cp2 - normal * radius;
-	contacts->normal = normal;
+	contacts->position = cp2; // - normal * radius; (moving contact to other side for clarity)
+	contacts->normal = {-normal}; // why is this negation needed
+	contacts->tnormal = triNormal;
 	contacts->separation = sqrtf(distSqr) - radius;
 	return 1;
 }
@@ -43,7 +45,7 @@ int32_t CollideTriAndCapsule( // line 65
 		return CollideTriAndSphere(contacts, s, radius, tri, adjacencyFlags, reqCenterOfMassAbove);
 
 	float kInflate = 1.0000119f;
-	Vector3 weakAvg = (tri.v0 + tri.v1 + tri.v2) * (kInflate / 3);
+	Vector3 weakAvg = (tri.v0 + tri.v1 + tri.v2) * 0.0000039736433f;
 	Vector3 h0 = tri.v0 * kInflate - weakAvg;
 	Vector3 h1 = tri.v1 * kInflate - weakAvg;
 	Vector3 h2 = tri.v2 * kInflate - weakAvg;
@@ -105,8 +107,10 @@ int32_t CollideTriAndCapsule( // line 65
 	uint32_t numContacts = 0;
 
 	if (insideS && sSeparation < 0.f) {
-		contacts[numContacts].position = s - normal * radius;
+		// contacts[numContacts].position = s - normal * radius;
+		contacts[numContacts].position = s - normal * sLevel; // (moving contact to other side for clarity)
 		contacts[numContacts].normal = normal;
+		contacts[numContacts].tnormal = normal;
 		contacts[numContacts].separation = sSeparation;
 		numContacts++;
 	}
@@ -115,8 +119,10 @@ int32_t CollideTriAndCapsule( // line 65
 		return numContacts;
 
 	if (insideT && tSeparation < 0.f) {
-		contacts[numContacts].position = t - normal * radius;
+		// contacts[numContacts].position = t - normal * radius;
+		contacts[numContacts].position = t - normal * tLevel; // (moving contact to other side for clarity)
 		contacts[numContacts].normal = normal;
+		contacts[numContacts].tnormal = normal;
 		contacts[numContacts].separation = tSeparation;
 		numContacts++;
 	}
