@@ -23,7 +23,7 @@ int32_t ComputeEdgeContact( // line 28
 	if (normal.LenSquared() < 1e-6f)
 		normal = triNormal;
 	normal.Normalize3();
-	contacts->position = cp2; // - normal * radius; (moving contact to other side for clarity)
+	contacts->position = cp2 + normal * radius;
 	contacts->normal = {-normal}; // why is this negation needed
 	contacts->tnormal = triNormal;
 	contacts->separation = sqrtf(distSqr) - radius;
@@ -107,8 +107,7 @@ int32_t CollideTriAndCapsule( // line 65
 	uint32_t numContacts = 0;
 
 	if (insideS && sSeparation < 0.f) {
-		// contacts[numContacts].position = s - normal * radius;
-		contacts[numContacts].position = s - normal * sLevel; // (moving contact to other side for clarity)
+		contacts[numContacts].position = s - normal * radius;
 		contacts[numContacts].normal = normal;
 		contacts[numContacts].tnormal = normal;
 		contacts[numContacts].separation = sSeparation;
@@ -119,8 +118,7 @@ int32_t CollideTriAndCapsule( // line 65
 		return numContacts;
 
 	if (insideT && tSeparation < 0.f) {
-		// contacts[numContacts].position = t - normal * radius;
-		contacts[numContacts].position = t - normal * tLevel; // (moving contact to other side for clarity)
+		contacts[numContacts].position = t - normal * radius;
 		contacts[numContacts].normal = normal;
 		contacts[numContacts].tnormal = normal;
 		contacts[numContacts].separation = tSeparation;

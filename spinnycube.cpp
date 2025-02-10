@@ -1449,10 +1449,21 @@ int spinnyCube(HWND window,
 						c1, c2, radius, bbox, 0xff, true);
 				}
 
+				auto crossLines = [&](cdc::Vector3Arg p, uint32_t color) {
+					float d = 10.f;
+					verts.push_back({p.x + d, p.y, p.z, color});
+					verts.push_back({p.x - d, p.y, p.z, color});
+					verts.push_back({p.x, p.y + d, p.z, color});
+					verts.push_back({p.x, p.y - d, p.z, color});
+					verts.push_back({p.x, p.y, p.z + d, color});
+					verts.push_back({p.x, p.y, p.z - d, color});
+				};
+
 				for (uint32_t i=0; i<numContacts; i++) {
 					auto p = contacts[i].position;
 					auto n = contacts[i].normal;
 					auto t = contacts[i].tnormal;
+					/*
 					auto q = p + n * (radius * 0.2f);
 					auto r = q + t * (radius * 0.05f);
 					verts.push_back({c.x, c.y, c.z, 0xff0000ff});
@@ -1461,6 +1472,13 @@ int spinnyCube(HWND window,
 					verts.push_back({q.x, q.y, q.z, 0xffff0000});
 					verts.push_back({q.x, q.y, q.z, 0xffff0000});
 					verts.push_back({r.x, r.y, r.z, 0xffff00ff});
+					*/
+					auto q = p - (n * contacts[i].separation);
+
+					crossLines(p, 0xffffff00);
+					verts.push_back({p.x, p.y, p.z, 0xffffff00});
+					verts.push_back({q.x, q.y, q.z, 0xffff0000});
+					crossLines(q, 0xffff0000);
 				}
 				auto *matrix = new (renderDevice) cdc::Matrix;
 				*matrix = cdc::identity4x4;
