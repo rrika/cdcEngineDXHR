@@ -25,6 +25,14 @@ public:
 	Vector3 omega; // B0, angular velocity
 	Vector3 F;     // C0, force
 	Vector3 T;     // D0, torque
+	Vector3 Fc;    // E0, force c?
+	Vector3 Tc;    // F0, torque c?
+	// SleepProperties {
+	float linearThreshold; // 100
+	float angularThreshold; // 104
+	float sleepDelay; // 108
+	bool autoSleep; // 10C
+	// } sleep;
 	char name[32]; // 110
 	MultibodySystemImpl *multibody; // 130
 	PhysicsBodyImpl *prev; // 134
