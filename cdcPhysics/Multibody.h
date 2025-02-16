@@ -84,9 +84,10 @@ public:
 
 class PhysicsBody { // line 299
 public:
-	void SetName(const char*);
-	void SetMassProperties(MassProperties const&);
-	void SetClientData(void*); // in practice this is an Instance* pointer
+	inline void SetName(const char*);
+	inline void SetMassProperties(MassProperties const&);
+	inline void SetClientData(void*); // in practice this is an Instance* pointer
+	void PutToSleep();
 	// TODO
 };
 

@@ -1,16 +1,31 @@
 #pragma once
 #include <cstdint>
+#include "cdcCollide/AABBCollision.h"
 
 namespace cdc {
 
 class MultibodySystemImpl;
-struct AABBCollisionDataNode;
-struct AABBCollisionTreeNode;
-struct AABBCollisionJobInstance;
-struct AABBCollisionNode;
 struct MeshInstance;
 
-class MultibodyAABBCollision {
+struct AABBPrimBoxPair;
+struct AABBPrimBoxSub10;
+
+struct AABBPrimBox { // line 23
+	uint32_t flags; // 0
+	AABBCollisionDataNode *aabb; // 4
+	AABBPrimBox *next; // 8
+	AABBPrimBoxPair *pairList; // C
+	AABBPrimBoxSub10 *sub10;
+	AABBCollisionNode tightBBox; // 14
+};
+
+struct AABBPrimBoxPair { // line 55
+	AABBPrimBox *otherBox;
+	AABBPrimBoxPair *next;
+};
+
+class MultibodyAABBCollision { // line 129
+public:
 	uint8_t byte0;
 	AABBCollisionDataNode *meshDataFirstNode = nullptr; // 10
 	uint32_t meshDataNumNodes = 0; // 14

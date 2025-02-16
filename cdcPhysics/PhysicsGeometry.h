@@ -3,43 +3,46 @@
 
 namespace cdc {
 
+class Geom;
+struct AABBPrimBox;
+
 class PhysicsGeometryImpl : public PhysicsGeometry { // line 26
-	// Vector3 dx;
-	// Quat dq;
-	// float restitution;
+public:
+	enum Type : uint8_t {
+		Box = 0,
+		Capsule = 1,
+		Plane = 2,
+		Sphere = 3,
+		CDCGeom = 4,
+		Unknown = 5
+	};
 
-	// __m128 oword0;
-	// __m128 oword10;
-	// __m128 oword20;
-	// __m128 quatMaybe30;
-	// __m128 quatMaybe40;
-	// uint8_t gap50[16];
-	// float float60;
-	// float float64;
-	// uint32_t dword68;
-	// float float6C;
-	// float float70;
-
-	float mu; // 74
-	PhysicsGeometryImpl* prev; // 78
-	PhysicsGeometryImpl* next; // 7C
-	PhysicsBodyImpl* body; // 80
-	PhysicsGeometryImpl* bnext; // 84
-	// void *clientData;
+	Vector3 dx; // 0
+	Vector3 x; // 10
+	Vector3 x0; // 20
+	Quat dq; // 30
+	Quat q; // 40
+	Vector3 width; // 50
+	float radius; // 60
+	float length; // 64
+	Geom *geom; // 68
+	float volume; // 6C
+	float restitution; // 70
+	float mu; // 74, friction
+	PhysicsGeometryImpl *prev; // 78
+	PhysicsGeometryImpl *next; // 7C
+	PhysicsBodyImpl *body; // 80
+	PhysicsGeometryImpl *bnext; // 84
+	void *clientData; // 88
 	// cdc::ImplicitGeometryDestructionCallback *clientDestruct;
 	// uint32_t uniqueIndex;
-	// unsigned char category; // 9D
-	// CollisionPrimitiveImpl collisionPrim;
-
-	// uint32_t dword88;
-	// uint32_t dword8C;
-	// MultibodyAABBCollision *mbAABB; // 90
-	// uint32_t dword94;
-	// uint8_t gap98[4];
-	// uint8_t byte9C;
-	// uint8_t byte9D; // category
-	// uint8_t byte9E;
-	// uint8_t byte9F;
+	MultibodyAABBCollision *mbAABB; // 90
+	AABBPrimBox *primAABB; // 94
+	// uint32_t dword98;
+	Type type; // 9C
+	uint8_t category; // 9D
+	uint8_t flags; // 9E
+	bool tempPrimitive; // 9F
 };
 
 }

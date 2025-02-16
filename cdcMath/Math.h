@@ -48,6 +48,7 @@ using Vector4Arg = Vector4 const&;
 
 struct Matrix {
 	float m[4][4];
+	void Build(QuatArg q);
 	void Build_XYZOrder(float *angles);
 	void RotZ(float sina, float cosa);
 	void RotY(float sina, float cosa);
@@ -60,6 +61,7 @@ using MatrixArg = Matrix const&;
 
 inline float Abs(float A) { return A < 0 ? -A : A; } // line 2931
 
+Matrix Mul3x3(MatrixArg matA, MatrixArg matB);
 void OrthonormalInverse3x4(Matrix *result, Matrix& m);
 
 Matrix operator*(const Matrix& m1, const Matrix& m2);

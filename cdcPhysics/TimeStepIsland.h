@@ -1,6 +1,13 @@
 #pragma once
+#include <cstdint>
 
 namespace cdc {
+
+class ContactJoint;
+class PhysicsBodyImpl;
+class Vector3;
+struct Matrix;
+struct TimeStepIslandParams;
 
 struct JMapEntry {
 	uint32_t index0;
@@ -8,7 +15,7 @@ struct JMapEntry {
 };
 
 class TimeStepIsland {
-	uint32_t params; // 0
+	TimeStepIslandParams *params; // 0
 	uint32_t dword4;
 	uint32_t dword8;
 	Matrix *invI_global; // C
@@ -21,9 +28,9 @@ class TimeStepIsland {
 	// uint32_t dword24;
 	// uint32_t dword28;
 	// uint32_t dword2C;
-	PhysicsBodyImpl *bodies; // 30
+	PhysicsBodyImpl **bodies; // 30
 	void *joints; // 34
-	ContactJoint *contactJoints; // 38
+	ContactJoint **contactJoints; // 38
 	Vector3 *fc; // 3C
 	Vector3 *J; // 40
 	Vector3 *B; // 44

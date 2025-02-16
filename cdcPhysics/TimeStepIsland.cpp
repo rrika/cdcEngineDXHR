@@ -1,4 +1,10 @@
 #include <cmath>
+#include "cdcMath/Math.h"
+#include "cdcMath/MatrixInlines.h"
+#include "cdcMath/VectorInlines.h"
+#include "ContactJoint.h"
+#include "MultibodySystem.h"
+#include "PhysicsBody.h"
 #include "TimeStepIsland.h"
 
 namespace cdc {
@@ -15,13 +21,13 @@ void TimeStepIsland::MapTempVariables() { // line 166
 
 void TimeStepIsland::Setup() { // line 231, runs before LCPSetup
 	for (int16_t i = 0; i < nbi; i++) {
-		Matrix rot = Matrix::BuildFromQuat(body.q);
 		PhysicsBodyImpl *body = bodies[i];
-		invI_global[i] = Mul3x3(rot, Mul3x3(body.I, transpose(rot)));
+		Matrix rot; rot.Build(body->q);
+		invI_global[i] = Mul3x3(rot, Mul3x3(body->I, transpose(rot)));
 		body->T += body->Tc;
-		body->F += body->Fc + (body->mass * params->gravity);
-		body->v *= clamp(1.f - body->linearDamping * params->dt24, 0.f, 1.f);
-		body->omega *= clamp(1.f - body->angularDamping * params->dt24, 0.f, 1.f);
+		body->F += body->Fc + (body->mass * params->jtParams.gravity);
+		body->v *= clamp(1.f - body->linearDamping * params->dt, 0.f, 1.f);
+		body->omega *= clamp(1.f - body->angularDamping * params->dt, 0.f, 1.f);
 	}
 
 	m = 0;
@@ -34,8 +40,8 @@ void TimeStepIsland::Setup() { // line 231, runs before LCPSetup
 }
 
 void TimeStepIsland::ComputeJacobian() { // line 302
-	float inv_dt = params->dt24 == 0.f ? 0.f :
-		1 / params->dt24;
+	float inv_dt = params->dt == 0.f ? 0.f :
+		1 / params->dt;
 
 	if (m < 0)
 		return;
@@ -52,14 +58,14 @@ void TimeStepIsland::ComputeJacobian() { // line 302
 
 	for (int16_t i = 0; i < nci; i++) {
 		auto *ci = contactJoints[i];
-		ci->ComputeJacobian(J, cPos, cVel, lo, hi, x, params);
+		ci->ComputeJacobian(J, cPos, cVel, lo, hi, x, params->jtParams);
 		uint32_t numGamma = ci->byteF8 & 15;
 		for (int16_t j = 0; j < ci->byteF8; j++) {
 			bool hasBody1 = ci->byteF9 & 0x80;
 			JMap[x].index0 = hasBody1 ? ci->body1->index : ~0u;
 			JMap[x].index4 =            ci->body2->index;
 			lambda[x]      = ci->lambda[j];
-			gamma[x]       = j >= numGamma ? gamma * inv_dt : 0.f;
+			gamma[x]       = j >= numGamma ? ci->gamma * inv_dt : 0.f;
 			x++;
 		}
 	}
@@ -85,13 +91,13 @@ void TimeStepIsland::Compute_fc() { // line 380
 }
 
 void TimeStepIsland::LCPSetup() { // line 410, runs after Setup
-	float inv_dt = params->dt24 == 0.f ? 0.f :
-		1 / params->dt24;
+	float inv_dt = params->dt == 0.f ? 0.f :
+		1 / params->dt;
 
 	for (int16_t i = 0; i < nbi; i++) {
 		// fc[+0] =         velocity/dt +  force/mass
 		// fc[+1] = angular_velocity/dt + torque/intertial_tensor
-		PhysicsBodyImpl& b = bodies[i];
+		PhysicsBodyImpl& b = *bodies[i];
 		fc[2*i + 0] = b.v * inv_dt + b.invMass * b.F;
 		fc[2*i + 1] = b.omega * inv_dt + Mul3x3(invI_global[i], b.T);
 	}
@@ -104,9 +110,9 @@ void TimeStepIsland::LCPSetup() { // line 410, runs after Setup
 		int16_t x4 = (uint16_t)JMap[i].index4;
 		float r = 0.f, s = 0.f;
 		if (x0 >= 0) {
-			PhysicsBodyImpl& b = bodies[x0];
+			PhysicsBodyImpl& b = *bodies[x0];
 			Bcol[0] = b.invMass * Jrow[0];
-			Bcol[1] = Mul3x3(invI_global[i], Jrow[1])
+			Bcol[1] = Mul3x3(invI_global[i], Jrow[1]);
 			Vector3 n = fc[2*x0 + 0] * Jrow[0];
 			Vector3 o = fc[2*x0 + 1] * Jrow[1];
 			r += (n.x + n.y + n.z) + (o.x + o.y + o.z);
@@ -117,7 +123,7 @@ void TimeStepIsland::LCPSetup() { // line 410, runs after Setup
 			Bcol[0] = {0.f, 0.f, 0.f};
 			Bcol[1] = {0.f, 0.f, 0.f};
 		}
-		PhysicsBodyImpl& b = bodies[x4];
+		PhysicsBodyImpl& b = *bodies[x4];
 		Bcol[2] = b.invMass * Jrow[2];
 		Bcol[3] = Mul3x3(invI_global[i], Jrow[3]);
 		Vector3 n = fc[2*x4 + 0] * Jrow[2];
@@ -139,8 +145,8 @@ void TimeStepIsland::LCPSetup() { // line 410, runs after Setup
 
 void TimeStepIsland::LCPIter() { // line 538
 	uint16_t iter = iterations;
-	if (iterations < maxIterations)
-		iterations = maxIterations;
+	if (iterations < minIterations)
+		iterations = minIterations;
 
 	for (uint16_t i = 0; i < iter; i++) {
 		Vector3 const *Jrow = J;
@@ -189,6 +195,7 @@ void TimeStepIsland::LCPIter() { // line 538
 }
 
 void TimeStepIsland::Process(char *tempVariablesMemory) { // line 597
+	float dt = params->dt;
 	if (m <= 0)
 		return;
 
@@ -236,7 +243,7 @@ void TimeStepIsland::Process(char *tempVariablesMemory) { // line 597
 	}
 	// apply forces
 	for (int16_t i = 0; i < nbi; i++) {
-		PhysicsBodyImpl& b = bodies[x0];
+		PhysicsBodyImpl& b = *bodies[i];
 		if (b.flags & 2)
 			continue;
 		b.v += fc[2*i + 0] * dt;
@@ -245,15 +252,15 @@ void TimeStepIsland::Process(char *tempVariablesMemory) { // line 597
 }
 
 void TimeStepIsland::Update(bool preserveForces) { // line 690
-	float dt = param->dt24;
+	float dt = params->dt;
 	float maxTimer = 0.f;
 	float maxDelay = 0.f;
 	int32_t numStill = 0.f;
 	for (int16_t i = 0; i < nbi; i++) {
-		PhysicsBodyImpl& b = bodies[x0];
+		PhysicsBodyImpl& b = *bodies[i];
 		if (b.flags & 2)
 			continue;
-		b.v += b.F * (dt * b.invMass)
+		b.v += b.F * (dt * b.invMass);
 		b.omega += dt * Mul3x3(invI_global[i], b.T);
 		if (b.v.LenSquared() >= 600*600) {
 			// TODO: speed limit?
@@ -271,7 +278,7 @@ void TimeStepIsland::Update(bool preserveForces) { // line 690
 
 		bool bflags2 = b.flags & 2;
 		b.flags &= ~2;
-		if (bflags2 && b.autosleep) {
+		if (bflags2 && b.autoSleep) {
 			// TODO
 			maxTimer = std::max(maxTimer, b.sleepTimer);
 		}
@@ -281,7 +288,7 @@ void TimeStepIsland::Update(bool preserveForces) { // line 690
 		maxTimer = fmaxf(0.f, maxTimer - dt);
 	}
 	for (int16_t i = 0; i < nbi; i++) {
-		PhysicsBodyImpl& b = bodies[x0];
+		PhysicsBodyImpl& b = *bodies[i];
 		b.sleepTimer = maxTimer;
 		if (maxTimer == 0.f) {
 			b.PutToSleep();

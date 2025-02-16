@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include "PhysicsJoint.h"
 #include "Multibody.h"
 
 namespace cdc {
@@ -12,6 +13,14 @@ struct MeshCollection {
 	MeshInstance **meshInstances; // 0
 	// uint32_t dword4;
 	uint32_t numMeshInstances; // 8
+};
+
+struct TimeStepIslandParams { // line 63
+	JointParams jtParams; // 0
+	int16_t playerPhysicsWarnings; // 20
+	float dt; // 24, see also jtParams.dt
+	float sorOmega; // 28
+	float beta; // 2C
 };
 
 class MultibodySystemImpl : public MultibodySystem {

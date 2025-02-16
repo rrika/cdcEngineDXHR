@@ -48,11 +48,30 @@ inline Vector3 operator*(Vector3Arg vecA, float valB) { // line 388
 	};
 }
 
+inline Vector3 operator*(float valA, Vector3Arg vecB) {
+	return {
+		valA * vecB.x,
+		valA * vecB.y,
+		valA * vecB.z,
+		0.0f,
+	};
+}
+
 inline float Dot3(VectorArg vecA, VectorArg vecB) { // line 575
 	return
 		vecA.x * vecB.x +
 		vecA.y * vecB.y +
 		vecA.z * vecB.z;
+}
+
+// I DISAGREE WITH CDC HERE: just use Dot3 if you need the dot product
+// I'll have this one return the element-wise product
+inline Vector3 operator*(Vector3Arg vecA, Vector3Arg vecB) { // line 600
+	return {
+		vecA.x * vecB.x,
+		vecA.y * vecB.y,
+		vecA.z * vecB.z
+	};
 }
 
 inline Vector Cross3(VectorArg vecA, VectorArg vecB) { // line 637

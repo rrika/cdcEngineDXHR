@@ -8,6 +8,11 @@ bool InvertSymmetric3x3(Matrix *B, MatrixArg A) { // line 24
 	return false;
 }
 
+void PhysicsBody::PutToSleep() { // line 296
+	auto *b = static_cast<PhysicsBodyImpl*>(this);
+	// TODO
+}
+
 void PhysicsBodyImpl::Clear() { // line 307
 	// TODO
 }

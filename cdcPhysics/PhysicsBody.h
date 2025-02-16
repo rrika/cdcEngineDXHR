@@ -40,7 +40,11 @@ public:
 	void *clientData; // 148
 	float mass; // 14C
 	float invMass; // 150
-	uint32_t flags; // 15C
+	float linearDamping; // 154
+	float angularDamping; // 158
+  	uint32_t flags; // 15C
+  	float sleepTimer; // 160
+  	uint32_t index; // 164
 	//
 	void Clear();
 	Quat ComputeQuaternionUpdate(float dt);

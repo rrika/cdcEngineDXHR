@@ -1,6 +1,7 @@
 target_sources(dxhr PRIVATE
 	CalcSkeleton.cpp
 	CellStreamPrediction.cpp
+	DebugDraw.cpp
 	GameTracker.cpp
 	Instance.cpp
 	InstncG2.cpp

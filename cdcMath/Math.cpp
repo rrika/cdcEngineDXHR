@@ -38,6 +38,36 @@ Matrix operator*(float valA, MatrixArg matB) { // Matrix.cpp:68
     return matB * valA;
 }
 
+Matrix Mul3x3(MatrixArg matA, MatrixArg matB) { // Matrix.cpp:112
+    Matrix const& m1 = matA;
+    Matrix const& m2 = matB;
+    return {
+        m1.m[0][0] * m2.m[0][0] + m1.m[1][0] * m2.m[0][1] + m1.m[2][0] * m2.m[0][2],
+        m1.m[0][1] * m2.m[0][0] + m1.m[1][1] * m2.m[0][1] + m1.m[2][1] * m2.m[0][2],
+        m1.m[0][2] * m2.m[0][0] + m1.m[1][2] * m2.m[0][1] + m1.m[2][2] * m2.m[0][2],
+        0.f,
+
+        m1.m[0][0] * m2.m[1][0] + m1.m[1][0] * m2.m[1][1] + m1.m[2][0] * m2.m[1][2],
+        m1.m[0][1] * m2.m[1][0] + m1.m[1][1] * m2.m[1][1] + m1.m[2][1] * m2.m[1][2],
+        m1.m[0][2] * m2.m[1][0] + m1.m[1][2] * m2.m[1][1] + m1.m[2][2] * m2.m[1][2],
+        0.f,
+
+        m1.m[0][0] * m2.m[2][0] + m1.m[1][0] * m2.m[2][1] + m1.m[2][0] * m2.m[2][2],
+        m1.m[0][1] * m2.m[2][0] + m1.m[1][1] * m2.m[2][1] + m1.m[2][1] * m2.m[2][2],
+        m1.m[0][2] * m2.m[2][0] + m1.m[1][2] * m2.m[2][1] + m1.m[2][2] * m2.m[2][2],
+        0.f,
+
+        0.f,
+        0.f,
+        0.f,
+        1.f, // huh
+    };
+}
+
+void Matrix::Build(QuatArg q) { // Matrix.cpp:169
+    // TODO
+}
+
 void Matrix::Build_XYZOrder(float *angles) { // Matrix.cpp:283
     *this = identity4x4;
     RotZ(sin(angles[2]), cos(angles[2]));

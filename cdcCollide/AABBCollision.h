@@ -19,6 +19,16 @@ inline uint32_t floatToSortableInt(float f) {
 		return ~n;
 }
 
+inline float sortableIntToFloat(uint32_t n) {
+	if (n < 0x80000000)
+		return ~n;
+	else
+		return n & ~0x80000000;
+	float f;
+	memcpy(&n, &f, 4);
+	return f;
+}
+
 struct AABBCollisionNode { // line 71
 	uint32_t m_min[3]; // 0
 	uint32_t m_max[3]; // C
@@ -45,7 +55,8 @@ struct AABBCollisionNode { // line 71
 struct AABBCollisionDataNode : AABBCollisionNode { // line 139
 	void *m_client;
 	uint16_t m_nextDataOffset; // 1C
-	bool m_collideInternal; // 1E
+	uint16_t m_collideInternal : 1; // 1E[0]
+	uint16_t compositeInstanceId : 15; // 1E[15:1]
 
 	void SetDataNode(
 		AABBCollisionNode const& box, void *client,
@@ -55,6 +66,10 @@ struct AABBCollisionDataNode : AABBCollisionNode { // line 139
 struct AABBCollisionTreeNode : AABBCollisionNode { // line 203
 	uint32_t m_rightChild; // 18
 	AABBCollisionDataNode *m_dataPtr; // 1C
+
+	bool IsLeaf() { return m_rightChild != 0; } // line 236
+	AABBCollisionTreeNode *GetLeftChild() { return this+1; } // line 238
+	AABBCollisionTreeNode *GetRightChild() { return this+m_rightChild; } // line 239
 
 	uint32_t CollideTree(
 		AABBCollisionDataNode **outDataNodePtrs,

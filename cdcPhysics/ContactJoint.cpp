@@ -1,4 +1,8 @@
+#include <cmath>
+#include "cdcMath/VectorInlines.h"
 #include "ContactJoint.h"
+#include "PhysicsBody.h"
+#include "PhysicsJoint.h"
 
 namespace cdc {
 
@@ -12,8 +16,8 @@ void ContactJoint::Set( // line 25
 		// TODO
 	}
 	for (uint32_t i=0; i < numPoints; i++) {
-		geometry1[i] = contact->geometry1;
-		geometry2[i] = contact->geometry2;
+		geometry1[i] = contacts[0].geometry1;
+		geometry2[i] = contacts[0].geometry2;
 	}
 	if (friction == 0.f) {
 		byteF8 = numPoints;
@@ -34,15 +38,17 @@ void ContactJoint::ComputeJacobian( // line 192
 	uint32_t count = byteF9 & 15;
 	float gravL = fsqrt(params.gravity.LenSquared());
 	if (body1 == nullptr) {
-
+		// TODO
 	}
+	uint32_t row = row0;
 	while (count--) {
-		cPos[…] = …;
-		lo[…] = …;
-		hi[…] = …;
+		cPos[row] = 0.f; // TODO
+		lo[row] = 0.f; // TODO
+		hi[row] = 0.f; // TODO
+		row0++;
 	}
-	if (… < friction) {
-
+	if (0.f /*TODO*/ < friction) {
+		// TODO
 	}
 }
 

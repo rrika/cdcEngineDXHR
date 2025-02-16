@@ -6,7 +6,6 @@ target_sources(dxhr PRIVATE
 	CollideTriAndCapsule.cpp
 	CollideTriAndSphere.cpp
 	CollisionManager.cpp
-	CollisionPrimitive.cpp
 	LineProbeUtils.cpp
 	Mesh.cpp
 	SweptSphere.cpp)

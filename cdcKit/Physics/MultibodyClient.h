@@ -1,5 +1,13 @@
 #pragma once
 #include "cdcPhysics/MultibodySystem.h"
+#include "cdcWorld/cdcWorldTypes.h" // for HPrim
+
+struct GeometryClientData { // line 262
+	Instance *instance;
+	HPrim *prim;
+	// cdc::RagdollBone *bone;
+	// cdc::ProxyComponent *proxy;
+};
 
 class MultibodyClient : public cdc::MultibodySystemImpl { // line 322
 public:
