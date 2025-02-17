@@ -5,7 +5,15 @@ namespace cdc {
 
 class GeomBox : public Geom {
 public:
-	Vector3 extents;
+	Vector3 m_extents; // 30
+
+	Vector3 GetLocalSupportPoint(Vector3Arg n) const override {
+		return {
+			n.x < 0.f ? -m_extents.x : m_extents.x,
+			n.y < 0.f ? -m_extents.y : m_extents.y,
+			n.z < 0.f ? -m_extents.z : m_extents.z
+		};
+	}
 };
 
 }

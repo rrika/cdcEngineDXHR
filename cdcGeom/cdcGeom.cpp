@@ -32,7 +32,89 @@ struct HGeomCommand {
 
 namespace cdc {
 
-Geom *NEW_Geom(HGeomCommand *cmd) {
+bool Intersects(Geom const& g1, Geom const& g2, float boundaryTolerance, int maxIterations) { // line 164
+	// Gilbert-Johnson-Keerthi algorithm for overlap detection
+
+	Vector3 c1 = g1.GetGlobalCenter();
+	Vector3 c2 = g2.GetGlobalCenter();
+	Vector3 cd = c2-c1;
+
+	Vector3 dir = -cd;
+	if (dir.IsZero3())
+		return true;
+
+	// A
+	Vector3 a = g2.GetGlobalSupportPoint(dir) - g1.GetGlobalSupportPoint(-dir);
+	if (Dot3(a, dir) <= 0.f)
+		return false;
+
+	dir = Cross3(a, dir);
+	if (dir.IsZero3())
+		return true;
+
+	// C
+	Vector3 c = g2.GetGlobalSupportPoint(dir) - g1.GetGlobalSupportPoint(-dir);
+	if (Dot3(c, dir) <= 0.f)
+		return false;
+
+	dir = Cross3(a-cd, c-cd);
+
+	// flip sign
+	if (Dot3(dir, cd) > 0.f) {
+		dir = -dir;
+		std::swap(a, c);
+	}
+
+	while (maxIterations-- > 0) {
+		// B
+		Vector3 b = g2.GetGlobalSupportPoint(dir) - g1.GetGlobalSupportPoint(-dir);
+		if (Dot3(b, dir) <= 0.f)
+			return false;
+
+		if (Vector3 n = Cross3(a, b); Dot3(n, cd) < 0.f) {
+			c = b; // discard C
+			dir = Cross3(a-cd, b-cd);
+			continue;
+
+		} else if (Vector3 n = Cross3(a, c); Dot3(n, cd) < 0.f) {
+			a = b; // discard A
+			dir = Cross3(b-cd, c-cd);
+			continue;
+		}
+
+		while (maxIterations-- > 0) {
+			dir = Cross3(b-a, c-a);
+			if (Dot3(dir, a) >= 0.f)
+				return true;
+
+			Vector3 d = g2.GetGlobalSupportPoint(dir) - g1.GetGlobalSupportPoint(-dir);
+			dir.Normalize3();
+			if (Dot3(d, dir) >= 0.f)
+				return false;
+
+			if (boundaryTolerance >= Dot3(dir, d-b))
+				return false;
+
+			Vector3 indicator = Cross3(cd, d);
+
+			if (Dot3(indicator, a) <= 0.f) {
+				if (Dot3(indicator, b) <= 0.f)
+					a = d;
+				else
+					c = d;
+
+			} else {
+				if (Dot3(indicator, c) <= 0.f)
+					b = d;
+				else
+					a = d;
+			}
+		}
+	}
+	return false;
+}
+
+Geom *NEW_Geom(HGeomCommand *cmd) { // line 572
 	cmd->floatList = cmd->floatData;
 	Vector3 pos {
 		cmd->floatData[0],

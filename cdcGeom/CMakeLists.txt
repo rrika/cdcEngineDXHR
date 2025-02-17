@@ -1,2 +1,3 @@
 target_sources(dxhr PRIVATE
-	cdcGeom.cpp)
+	cdcGeom.cpp
+	Geom.cpp)
