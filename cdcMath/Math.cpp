@@ -64,8 +64,14 @@ Matrix Mul3x3(MatrixArg matA, MatrixArg matB) { // Matrix.cpp:112
     };
 }
 
+Vector3 QuatRotate(QuatArg q, Vector3Arg v) { // line Quat.cpp:378
+    // TODO
+    return v;
+}
+
 void Matrix::Build(QuatArg q) { // Matrix.cpp:169
     // TODO
+    *this = identity4x4;
 }
 
 void Matrix::Build_XYZOrder(float *angles) { // Matrix.cpp:283

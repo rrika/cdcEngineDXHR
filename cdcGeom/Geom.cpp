@@ -8,8 +8,8 @@ Vector3 Geom::GetLocalCenter() const {
 
 Vector3 Geom::GetGlobalSupportPoint(Vector3Arg n) const {
 	Quat unrotation {-m_rotation.x, -m_rotation.y, -m_rotation.z, m_rotation.w};
-	return m_position + QuatRotate(m_rotation,
-		GetLocalSupportPoint(QuatRotate(unrotation, n)));
+	return {m_position + QuatRotate(m_rotation,
+		GetLocalSupportPoint(QuatRotate(unrotation, n)))};
 }
 
 Vector3 Geom::GetGlobalCenter() const {

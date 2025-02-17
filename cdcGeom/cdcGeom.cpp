@@ -1,4 +1,5 @@
 #include <cstdint>
+#include "cdcMath/VectorInlines.h"
 #include "cdcGeom.h"
 #include "GeomBox.h"
 #include "GeomDisc.h"
@@ -48,7 +49,7 @@ bool Intersects(Geom const& g1, Geom const& g2, float boundaryTolerance, int max
 	if (Dot3(a, dir) <= 0.f)
 		return false;
 
-	dir = Cross3(a, dir);
+	dir = {Cross3(a, dir)};
 	if (dir.IsZero3())
 		return true;
 
@@ -57,7 +58,7 @@ bool Intersects(Geom const& g1, Geom const& g2, float boundaryTolerance, int max
 	if (Dot3(c, dir) <= 0.f)
 		return false;
 
-	dir = Cross3(a-cd, c-cd);
+	dir = {Cross3(a-cd, c-cd)};
 
 	// flip sign
 	if (Dot3(dir, cd) > 0.f) {
@@ -71,19 +72,19 @@ bool Intersects(Geom const& g1, Geom const& g2, float boundaryTolerance, int max
 		if (Dot3(b, dir) <= 0.f)
 			return false;
 
-		if (Vector3 n = Cross3(a, b); Dot3(n, cd) < 0.f) {
+		if (Vector3 n = {Cross3(a, b)}; Dot3(n, cd) < 0.f) {
 			c = b; // discard C
-			dir = Cross3(a-cd, b-cd);
+			dir = {Cross3(a-cd, b-cd)};
 			continue;
 
-		} else if (Vector3 n = Cross3(a, c); Dot3(n, cd) < 0.f) {
+		} else if (Vector3 n = {Cross3(a, c)}; Dot3(n, cd) < 0.f) {
 			a = b; // discard A
-			dir = Cross3(b-cd, c-cd);
+			dir = {Cross3(b-cd, c-cd)};
 			continue;
 		}
 
 		while (maxIterations-- > 0) {
-			dir = Cross3(b-a, c-a);
+			dir = {Cross3(b-a, c-a)};
 			if (Dot3(dir, a) >= 0.f)
 				return true;
 
@@ -95,7 +96,7 @@ bool Intersects(Geom const& g1, Geom const& g2, float boundaryTolerance, int max
 			if (boundaryTolerance >= Dot3(dir, d-b))
 				return false;
 
-			Vector3 indicator = Cross3(cd, d);
+			Vector3 indicator = {Cross3(cd, d)};
 
 			if (Dot3(indicator, a) <= 0.f) {
 				if (Dot3(indicator, b) <= 0.f)

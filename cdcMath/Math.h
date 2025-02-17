@@ -62,6 +62,8 @@ using MatrixArg = Matrix const&;
 inline float Abs(float A) { return A < 0 ? -A : A; } // line 2931
 
 Matrix Mul3x3(MatrixArg matA, MatrixArg matB);
+Vector3 QuatRotate(QuatArg q, Vector3Arg v);
+
 void OrthonormalInverse3x4(Matrix *result, Matrix& m);
 
 Matrix operator*(const Matrix& m1, const Matrix& m2);
@@ -77,5 +79,6 @@ Vector operator+(VectorArg a, VectorArg b);
 Vector operator-(VectorArg a, VectorArg b);
 Vector operator*(VectorArg a, float b);
 Vector operator-(VectorArg a);
+inline Vector3 operator-(Vector3Arg x) { return {-x}; }
 
 }

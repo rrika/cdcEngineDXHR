@@ -10,6 +10,7 @@ public:
 	Vector3 center;
 	Geom *g1;
 	Geom *g2;
+	Vector3 GetLocalSupportPoint(Vector3Arg n) const override { /* TODO */ }
 };
 
 }
