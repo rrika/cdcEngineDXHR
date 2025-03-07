@@ -111,7 +111,7 @@ public:
 	GCPtr(GCPtr const& target) : GCPtrBase(target.Get()) {}
 	GCPtr() : GCPtrBase() {}
 	GCPtr& operator=(T *other) { Assign(other); return *this; }
-	GCPtr& operator=(GCPtr const& other) { Assign(other.get()); return *this; }
+	GCPtr& operator=(GCPtr const& other) { Assign(other.Get()); return *this; }
 	T* Get() const { return (T*)target; }
 	operator T*() const { return target; }
 };
