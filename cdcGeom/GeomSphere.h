@@ -4,9 +4,9 @@
 namespace cdc {
 
 class GeomSphere : public Geom {
-public:
 	float radius;
 
+public:
 	GeomSphere(Vector3Arg x, float radius) :
 		Geom(x), radius(radius)
 	{}

@@ -2,6 +2,7 @@
 
 namespace cdc {
 
+class Euler;
 class Vector3;
 class Vector {
 public:
@@ -24,12 +25,17 @@ public:
 	inline Vector& operator*=(float valB);
 };
 
-class Quat : public Vector {};
+class Quat : public Vector {
+public:
+	static Quat Build(Vector3 const& v1, Vector3 const& v2);
+	static Quat Build(Euler const& e);
+};
 class Euler : public Vector {};
 class Scalar : public Vector {};
 class Vector2 : public Vector {};
 class Vector3 : public Vector {
 public:
+	inline bool CanNormalize() const;
 	inline float LenSquared() const;
 	Vector3 UnitVec() {
 		Vector3 copy = *this;
@@ -79,6 +85,6 @@ Vector operator+(VectorArg a, VectorArg b);
 Vector operator-(VectorArg a, VectorArg b);
 Vector operator*(VectorArg a, float b);
 Vector operator-(VectorArg a);
-inline Vector3 operator-(Vector3Arg x) { return {-x}; }
+inline Vector3 operator-(Vector3Arg x) { return {-(Vector&)x}; }
 
 }

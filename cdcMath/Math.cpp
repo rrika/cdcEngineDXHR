@@ -5,7 +5,7 @@
 
 namespace cdc {
 
-void Vector::SafeNormalize3() {
+void Vector::SafeNormalize3() { // Vector.cpp:27
     // HACK
     float d = x*x + y*y + z*z;
     if (d > 0.0f) {
@@ -17,7 +17,7 @@ void Vector::SafeNormalize3() {
     }
 }
 
-void Vector::Normalize3() {
+void Vector::Normalize3() { // VectorInlines.h:179
     // HACK
     float d = x*x + y*y + z*z;
     d = sqrt(d);
@@ -67,6 +67,39 @@ Matrix Mul3x3(MatrixArg matA, MatrixArg matB) { // Matrix.cpp:112
 Vector3 QuatRotate(QuatArg q, Vector3Arg v) { // line Quat.cpp:378
     // TODO
     return v;
+}
+
+Quat Quat::Build(Vector3Arg v1, Vector3Arg v2) {
+    // instead of whatever the hell the original code was doing
+    Vector3 cross = {Cross3(v1, v2)};
+    Quat q {
+        Dot3(v1, v2) + sqrtf(v1.LenSquared() * v2.LenSquared()),
+        cross.x,
+        cross.y,
+        cross.z
+    };
+    // q.Normalize(); // TODO
+    return q;
+}
+
+Quat Quat::Build(Euler const& eulerAng) {
+    float v2 = eulerAng.x * 0.5;
+    float v3 = eulerAng.y * 0.5;
+    float v4 = eulerAng.z * 0.5;
+    float v6 = cos(v2);
+    float v8 = cos(v3);
+    float v10 = cos(v4);
+    float v11 = sin(v2);
+    float a2c = sin(v3);
+    float v12 = sin(v4);
+    float cosPitchYaw = v10 * v8;
+    float sinPitchYaw = v12 * a2c;
+    return {
+        cosPitchYaw * v11 - sinPitchYaw * v6,
+        v11 * v8 * v12 + a2c * v6 * v10,
+        v12 * (v6 * v8) - v10 * (v11 * a2c),
+        cosPitchYaw * v6 + sinPitchYaw * v11,
+    };
 }
 
 void Matrix::Build(QuatArg q) { // Matrix.cpp:169

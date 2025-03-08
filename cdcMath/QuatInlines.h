@@ -12,4 +12,8 @@ inline Quat operator*(QuatArg quatA, QuatArg quatB) { // line 63
 	};
 }
 
+void Quat::Normalize(){
+	*this *= 1.f / sqrtf(x*x + y*y + z*z + w*w);
+}
+
 }

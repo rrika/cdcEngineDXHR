@@ -126,24 +126,78 @@ Geom *NEW_Geom(HGeomCommand *cmd) { // line 572
 	case kGeomSphere:
 		return new GeomSphere(pos, /*radius=*/ cmd->floatData[3]);
 
-	case kGeomBox:
-		return new GeomBox(); // TODO
+	case kGeomBox: {
+		Euler euler{
+			cmd->floatData[3],
+			cmd->floatData[4],
+			cmd->floatData[5]};
+		Vector3 extents {
+			cmd->floatData[6],
+			cmd->floatData[7],
+			cmd->floatData[8]};
+		Quat quat(euler);
+		auto *box = new GeomBox(extents);
+		box->m_position = pos;
+		box->m_rotation = quat;
+		return box;
+	}
 
-	case kGeomRect:
-		return new GeomRect(); // TODO
+	case kGeomRect: {
+		Euler euler{
+			cmd->floatData[3],
+			cmd->floatData[4],
+			cmd->floatData[5]};
+		Vector2 extents {
+			cmd->floatData[6],
+			cmd->floatData[7]};
+		Quat quat(euler);
+		auto *rect = new GeomRect(extents);
+		rect->m_position = pos;
+		rect->m_rotation = quat;
+		return rect;
+	}
 
-	case kGeomDisc:
-		return new GeomDisc(); // TODO
-
+	case kGeomDisc: {
+		Euler euler{
+			cmd->floatData[3],
+			cmd->floatData[4],
+			cmd->floatData[5]};
+		Quat quat(euler);
+		float radius = cmd->floatData[6];
+		auto *disc = new GeomDisc(pos, quat, radius);
+		return disc;
+	}
 
 	case kGeomPoint:
 		return new GeomPoint(pos);
 
-	case kGeomSweep:
-		return new GeomSweep(); // TODO
+	case kGeomSweep: {
+		Euler euler{
+			cmd->floatData[3],
+			cmd->floatData[4],
+			cmd->floatData[5]};
+		Quat quat(euler);
+		auto *g1 = NEW_Geom(cmd->gc1);
+		auto *g2 = NEW_Geom(cmd->gc2);
+		auto *sweep = new GeomSweep(g1, g2);
+		sweep->m_position += pos;
+		sweep->m_rotation = quat;
+		return sweep;
+	}
 
-	case kGeomWrap:
-		return new GeomWrap(); // TODO
+	case kGeomWrap: {
+		Euler euler{
+			cmd->floatData[3],
+			cmd->floatData[4],
+			cmd->floatData[5]};
+		Quat quat(euler);
+		auto *g1 = NEW_Geom(cmd->gc1);
+		auto *g2 = NEW_Geom(cmd->gc2);
+		auto *wrap = new GeomWrap(g1, g2);
+		wrap->m_position += pos;
+		wrap->m_rotation = quat;
+		return wrap;
+	}
 
 	case kGeomSegment:
 		return new GeomSegment(

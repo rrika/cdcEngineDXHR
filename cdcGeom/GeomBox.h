@@ -4,8 +4,10 @@
 namespace cdc {
 
 class GeomBox : public Geom {
-public:
 	Vector3 m_extents; // 30
+
+public:
+	GeomBox(Vector3 extents) : m_extents(extents) {}
 
 	Vector3 GetLocalSupportPoint(Vector3Arg n) const override {
 		return {

@@ -16,6 +16,10 @@ inline Vector& Vector::operator*=(float valB) { // line 120
 	return *this;
 }
 
+inline bool Vector3::CanNormalize() const { // line 212
+	float l = LenSquared();
+	return std::isnormal(l);
+}
 
 inline float Vector3::LenSquared() const { // line 257
 	return x*x + y*y + z*z;

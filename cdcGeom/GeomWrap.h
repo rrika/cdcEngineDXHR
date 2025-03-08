@@ -4,12 +4,16 @@
 namespace cdc {
 
 class GeomWrap : public Geom {
+	Vector3 m_x1 = {0.f, 0.f, 0.f};
+	Vector3 m_x2 = {0.f, 0.f, 0.f};
+	Vector3 m_center;
+	Geom *m_g1;
+	Geom *m_g2;
+
 public:
-	Vector3 x1;
-	Vector3 x2;
-	Vector3 center;
-	Geom *g1;
-	Geom *g2;
+	GeomWrap(Geom *g1, Geom *g2) : m_g1(g1), m_g2(g2) {
+		m_center = (g1->GetGlobalCenter() + g2->GetGlobalCenter()) * 0.5f;
+	}
 	Vector3 GetLocalSupportPoint(Vector3Arg n) const override { /* TODO */ }
 };
 

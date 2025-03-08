@@ -337,5 +337,26 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			}
 			ImGui::EndListBox();
 		}
+
+		Segment *segments = currentModel->oldSegmentList;
+		for (auto i=0u; i < currentModel->oldNumSegments; i++) {
+			HInfo *hInfo = segments[i].hInfo;
+			if (!hInfo)
+				continue;
+			auto numH = 
+				hInfo->numHSpheres +
+				hInfo->numHBoxes +
+				hInfo->numHMarkers +
+				hInfo->numHCapsules +
+				hInfo->numHGeoms;
+			// if (numH == 0)
+			// 	continue;
+			ImGui::Text("segment %d - %d sph %d box %d mrk %d cap %d geom", i,
+				hInfo->numHSpheres,
+				hInfo->numHBoxes,
+				hInfo->numHMarkers,
+				hInfo->numHCapsules,
+				hInfo->numHGeoms);
+		}
 	}
 }

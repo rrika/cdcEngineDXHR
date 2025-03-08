@@ -10,6 +10,7 @@ public:
 
 	Geom() : m_position{0, 0, 0}, m_rotation{0, 0, 0, 1} {}
 	Geom(Vector3Arg pos) : m_position(pos), m_rotation{0, 0, 0, 1} {}
+	Geom(QuatArg rot, Vector3Arg pos) : m_position(pos), m_rotation(rot) {}
 
 	virtual ~Geom() = default; // 0
 	virtual Vector3 GetLocalSupportPoint(Vector3Arg n) const = 0; // 4
