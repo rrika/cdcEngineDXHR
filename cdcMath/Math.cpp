@@ -17,6 +17,15 @@ void Vector::SafeNormalize3() { // Vector.cpp:27
     }
 }
 
+Vector QuatMul(VectorArg a, VectorArg b) { // Vector.cpp:115
+    return {
+        b.x * a.w + b.w * a.x + b.z * a.y - b.y * a.z,
+        b.w * a.y + b.y * a.w + b.x * a.z - b.z * a.x,
+        b.w * a.z + b.z * a.w + b.y * a.x - b.x * a.y,
+        a.w * b.w - (b.z * a.z + a.x * b.x + b.y * a.y)
+    };
+}
+
 void Vector::Normalize3() { // VectorInlines.h:179
     // HACK
     float d = x*x + y*y + z*z;
@@ -65,8 +74,9 @@ Matrix Mul3x3(MatrixArg matA, MatrixArg matB) { // Matrix.cpp:112
 }
 
 Vector3 QuatRotate(QuatArg q, Vector3Arg v) { // line Quat.cpp:378
-    // TODO
-    return v;
+    Vector v_ {v.x, v.y, v.z, 0.f};
+    Quat conjQ {-q.x, -q.y, -q.z, q.w};
+    return {QuatMul(QuatMul(q, v_), conjQ)};
 }
 
 Quat Quat::Build(Vector3Arg v1, Vector3Arg v2) {

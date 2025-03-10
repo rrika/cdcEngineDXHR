@@ -351,12 +351,21 @@ void buildUI(UIActions& uiact, Instance *instance) {
 				hInfo->numHGeoms;
 			// if (numH == 0)
 			// 	continue;
-			ImGui::Text("segment %d - %d sph %d box %d mrk %d cap %d geom", i,
+			ImGui::Text("segment %d - %d sph  %d box  %d mrk  %d cap  %d geom", i,
 				hInfo->numHSpheres,
 				hInfo->numHBoxes,
 				hInfo->numHMarkers,
 				hInfo->numHCapsules,
 				hInfo->numHGeoms);
+			for (auto j=0u; j < hInfo->numHBoxes; j++) {
+				HBox& box = hInfo->hboxList[j];
+				ImGui::Text("  box %f %f %f   %f %f %f   %f %f %f %f",
+					box.width.x, box.width.y, box.width.z,
+					box.pos.x, box.pos.y, box.pos.z,
+					box.quat.x, box.quat.y, box.quat.z, box.quat.w
+				);
+
+			}
 		}
 	}
 }

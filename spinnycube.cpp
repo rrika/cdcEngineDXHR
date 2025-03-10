@@ -2304,6 +2304,47 @@ int spinnyCube(HWND window,
 							}
 						}
 				}
+
+				if (model)
+					for (uint32_t i=0; i<model->oldNumSegments; i++) {
+						Segment& segment = model->oldSegmentList[i];
+						if (segment.hInfo) {
+							for (uint32_t j=0; j<segment.hInfo->numHBoxes; j++) {
+								HBox& box = segment.hInfo->hboxList[j];
+								cdc::Vector m = cdc::QuatRotate(box.quat, {box.width.x/2, 0.f, 0.f});
+								cdc::Vector n = cdc::QuatRotate(box.quat, {0.f, box.width.y/2, 0.f});
+								cdc::Vector o = cdc::QuatRotate(box.quat, {0.f, 0.f, box.width.z/2});
+								cdc::Vector vcorners[8] = {
+									box.pos - m - n - o,
+									box.pos + m - n - o,
+									box.pos - m + n - o,
+									box.pos + m + n - o,
+									box.pos - m - n + o,
+									box.pos + m - n + o,
+									box.pos - m + n + o,
+									box.pos + m + n + o
+								};
+								cdc::LineVertex corners[8] {
+									{vcorners[0].x, vcorners[0].y, vcorners[0].z, 0xffffffff},
+									{vcorners[1].x, vcorners[1].y, vcorners[1].z, 0xffffffff},
+									{vcorners[2].x, vcorners[2].y, vcorners[2].z, 0xffffffff},
+									{vcorners[3].x, vcorners[3].y, vcorners[3].z, 0xffffffff},
+									{vcorners[4].x, vcorners[4].y, vcorners[4].z, 0xffffffff},
+									{vcorners[5].x, vcorners[5].y, vcorners[5].z, 0xffffffff},
+									{vcorners[6].x, vcorners[6].y, vcorners[6].z, 0xffffffff},
+									{vcorners[7].x, vcorners[7].y, vcorners[7].z, 0xffffffff}
+								};
+								cdc::LineVertex lines[] = {
+									corners[0], corners[1], corners[1], corners[3], corners[3], corners[2], corners[2], corners[0],
+									corners[4], corners[5], corners[5], corners[7], corners[7], corners[6], corners[6], corners[4],
+									corners[0], corners[4], corners[1], corners[5], corners[2], corners[6], corners[3], corners[7]
+								};
+								// ignoring box.quat
+								renderDevice->DrawLineList(&matrices[i], lines, 12, 0);
+							}
+						}
+					}
+
 				if (auto *instanceDrawable = uiact.selectedInstance->instanceDrawable)
 					static_cast<cdc::InstanceDrawable*>(instanceDrawable)->AddToDirtyList();
 			}

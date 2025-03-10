@@ -80,9 +80,10 @@ struct GameplayGameData {
 
 struct HSphere {
 	HPrimFlags flags;
-	char id;
-	char rank;
-	char indexInSphereList;
+	char id_or_rank;
+	// char id;
+	// char rank;
+	char indexInSphereList; // 3
 	uint16_t radius;
 	Position position;
 	unsigned int radiusSquared;
@@ -90,17 +91,24 @@ struct HSphere {
 	GameplayGameData gameplay;
 };
 
+static_assert(sizeof(HSphere) == 0x24);
+
 struct HBox {
-	cdc::Vector3 width;
-	cdc::Vector3 pos;
-	cdc::Quat quat;
+	cdc::Vector3 width; // 0
+	cdc::Vector3 pos; // 10
+	cdc::Quat quat; // 20
 	HPrimFlags flags;
-	char id;
-	char rank;
-	char indexInBoxList;
+	char id_or_rank;
+	// char id;
+	// char rank;
+	char indexInBoxList; // 23
 	PhysCollideGameData physCollide;
 	GameplayGameData gameplay;
+	uint32_t pad;
+	uint32_t padd;
 };
+
+static_assert(sizeof(HBox) == 0x50);
 
 struct HGeomCommand {
 	HGeomCommand *gc1;
@@ -117,9 +125,10 @@ struct HGeom {
 	cdc::Vector3 centerOfMass;
 	float inertiaTensor[9];
 	HPrimFlags flags;
-	char id;
-	char rank;
-	char indexInGeomList;
+	char id_or_rank;
+	// char id;
+	// char rank;
+	char indexInGeomList; // 57
 	PhysCollideGameData physCollide;
 	GameplayGameData gameplay;
 	HGeomCommand *geomCommand;
@@ -178,7 +187,7 @@ struct HInfo {
 	uint32_t numHSpheres;
 	void *hsphereList;
 	uint32_t numHBoxes;
-	void *hboxList;
+	HBox *hboxList;
 	uint32_t numHMarkers;
 	void *hmarkerList;
 	uint32_t numHCapsules;

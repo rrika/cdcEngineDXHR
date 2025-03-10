@@ -67,6 +67,7 @@ using MatrixArg = Matrix const&;
 
 inline float Abs(float A) { return A < 0 ? -A : A; } // line 2931
 
+Vector QuatMul(VectorArg a, VectorArg b);
 Matrix Mul3x3(MatrixArg matA, MatrixArg matB);
 Vector3 QuatRotate(QuatArg q, Vector3Arg v);
 
