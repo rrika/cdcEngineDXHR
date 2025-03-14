@@ -68,7 +68,7 @@ retry:
 
 	switch (snd->m_type) {
 	case dtp::SoundPlex::SoundPlexSelector_Silence: // 0
-		plex = new SoundPlexTimeIn(*(float*)snd->m_data, controls, controls3d, owner);
+		plex = new SoundPlexTimeIn(*(float*)snd->m_data, nullptr, controls, controls3d, owner);
 		break;
 
 	case dtp::SoundPlex::SoundPlexSelector_Reference1: // 1
@@ -186,8 +186,15 @@ SoundHandle SoundPlexCollection::StartPaused( // 178
 	auto *owner = new SoundOwner();
 	SoundPlex *plex;
 
+	// delay = 2.f; for testing function of SoundPlexTimeIn
+
 	if (delay > 0.0f) {
-		// plex = ...
+		plex = new SoundPlexTimeIn(
+			delay,
+			snd,
+			&owner->controls,
+			&owner->controls3d,
+			owner);
 
 	} else {
 		plex = SoundPlexCollection::Create(
