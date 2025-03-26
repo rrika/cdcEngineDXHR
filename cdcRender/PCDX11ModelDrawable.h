@@ -10,7 +10,7 @@ class PCDX11RenderDevice;
 class PCDX11StateManager;
 class PCDX11StreamDecl;
 class PoseData;
-struct LightReceiverData;
+struct PCDX11LightSet;
 
 class PCDX11ModelDrawable : public IRenderDrawable {
 
@@ -20,7 +20,7 @@ class PCDX11ModelDrawable : public IRenderDrawable {
 	PrimGroup *primGroup; // 18
 	PersistentPGData *tab0Ext128; // 1C
 	PoseData *poseData; // 20
-	LightReceiverData *lightReceiverData; // 24
+	PCDX11LightSet *lightReceiverData; // 24
 	float *lightConstantBufferData; // 28
 	float opacity; // 2C
 	float float30; // 30

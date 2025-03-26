@@ -14,7 +14,7 @@ class PCDX11LightManager;
 class PCDX11RenderDevice;
 class PCDX11RenderLight;
 
-struct RenderLightData {
+struct PCDX11DeferredLight {
 	PCDX11RenderLight *renderLight0;
 	uint32_t scene4;
 	uint32_t dword8;
@@ -74,17 +74,16 @@ struct RenderLightData {
 	uint32_t dword300;
 	uint8_t byte304;
 
-	void render(void*, void*);
-	void render1(void*, void*);
-	void render2(void*, void*);
+	void RenderShadowMap(const uint32_t *pOffset, uint32_t size);
+	void RenderShadowMapSpot(const uint32_t *pOffset, uint32_t size);
+	void RenderShadowMapDirectional(const uint32_t *pOffset, uint32_t size);
 };
 
-// PCDX11LightSet
-struct LightReceiverData {
-	LightReceiverData *nextMaybe;
+struct PCDX11LightSet { // light receiver
+	PCDX11LightSet *nextMaybe;
 	uint16_t word4;
 	uint16_t word6;
-	RenderLightData *dword8[16];
+	PCDX11DeferredLight *dword8[16];
 	PCDX11ConstantBuffer *cb48;
 	PCDX11BitmapTexture *GlobalModulationMapTextures[3];
 };
@@ -95,34 +94,34 @@ struct u32pair {
 };
 
 struct LightManagerSubA {
-	std::vector<RenderLightData*> lightData;
+	std::vector<PCDX11DeferredLight*> lightData;
 	std::vector<PCDX11RenderLight*> lights;
 };
 
-struct LightManagerSubB {
+struct PCDX11LightManagerData {
 	PCDX11RenderLight *lights[1024];
 	uint32_t count;
-};
-
-struct LightManagerSubC {
-	RenderLightData *array0[12];
-	uint32_t array30[12];
-	u32pair array60[6];
-	uint32_t array90[12];
-	uint32_t arrayC0[12];
-	uint32_t dwordF0;
-	uint32_t dwordF4;
-	uint32_t dwordF8;
-	uint32_t dwordFC;
-	uint32_t dword100;
-
-	void renderLights(PCDX11LightManager*);
 };
 
 class PCDX11LightManager :
 	public PCDX11InternalResource,
 	public CommonLightManager
 {
+	struct ShadowMapPool {
+		PCDX11DeferredLight *m_pLights[12];
+		uint32_t array30[12];
+		u32pair array60[6];
+		uint32_t array90[12];
+		uint32_t arrayC0[12];
+		uint32_t dwordF0;
+		uint32_t dwordF4;
+		uint32_t m_numLights; // F8
+		uint32_t dwordFC;
+		uint32_t dword100;
+
+		void Render(PCDX11LightManager*);
+	};
+
 	PCDX11RenderDevice *renderDevice; // 10
 	// uint32_t dword14;
 	// uint32_t dword18;
@@ -142,25 +141,25 @@ class PCDX11LightManager :
 	// uint8_t f601[2047];
 	// uint32_t dwordE00;
 	// uint32_t dwordE04;
-	// LightManagerSubB *subB;
-	// LightReceiverData *receiver_E0C;
-	// LightReceiverData *receiver_E10;
+	// PCDX11LightManagerData *subB;
+	// PCDX11LightSet *receiver_E0C;
+	// PCDX11LightSet *receiver_E10;
 	// uint32_t *mostRecentAssignmentToCommonCB5; // E14
 	// PCDX11DepthBuffer *depthBuffer; // E18
 	uint32_t pixelShaderIndexBaseE1C;
 	uint32_t pixelShaderIndexBaseE20;
-	// LightManagerSubC subC;
+	// ShadowMapPool m_shadowMapPool;
 
 public:
 	PCDX11LightManager(CommonRenderDevice *renderDevice);
 	~PCDX11LightManager();
 
-	LightManagerSubB *allocateSubB();
-	void fillLightBuffer(LightReceiverData *receiverData);
-	LightReceiverData *makeReceiver();
-	void renderLights(LightManagerSubB *subB);
-	void assignCommonCB5(char *src);
-	void setAttenuationSampler();
+	PCDX11LightManagerData *BeginSubFrame();
+	void ApplySinglePassLightsInternal(PCDX11LightSet *receiverData);
+	PCDX11LightSet *BuildLightState();
+	void BeginFlush(PCDX11LightManagerData *subB);
+	void ApplyIrradianceStateInternal(char *src);
+	void UpdateCombinedLightTexture();
 
 	bool internalCreate() override;
 	void internalRelease() override;

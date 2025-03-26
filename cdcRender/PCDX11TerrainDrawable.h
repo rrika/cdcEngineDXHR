@@ -38,7 +38,7 @@ public:
 	Matrix *m_pLocalToWorld; // 2C
 	Vector4 *m_pInstanceParams; // 30
 	uint32_t m_lightConstantBufferData; // 34 (PCDX11IrradianceState)
-	LightReceiverData *m_lightReceiverData; // 38 (PCDX11LightSet)
+	PCDX11LightSet *m_lightReceiverData; // 38
 
 	PCDX11TerrainDrawable(
 		RenderTerrainGroup *pGroup,

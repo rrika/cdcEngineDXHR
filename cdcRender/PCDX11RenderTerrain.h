@@ -9,7 +9,7 @@ namespace cdc {
 class CommonRenderTerrainInstance;
 class PCDX11DeferredLight;
 class PCDX11StaticIndexBuffer;
-struct LightReceiverData;
+struct PCDX11LightSet;
 struct PCDX11TerrainState;
 struct RenderTerrainData;
 struct RenderTerrainVertexBuffer;
@@ -37,7 +37,7 @@ public:
 	struct RenderChunk {
 		TerrainChunk *m_pGeometry;
 		union {
-			LightReceiverData *m_pLightSet; // PCDX11LightSet
+			PCDX11LightSet *m_pLightSet;
 			PCDX11DeferredLight *pShadowLight;
 		};
 		uint32_t m_passes;

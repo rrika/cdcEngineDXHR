@@ -49,7 +49,7 @@ PCDX11ModelDrawable::PCDX11ModelDrawable(
 	flags34 = (primGroup[0].triangleCount << 8) | flags;
 
 	auto lightManager = static_cast<PCDX11LightManager*>(renderModel->renderDevice->lightManager);
-	lightReceiverData = lightManager->makeReceiver(/*TODO*/);
+	lightReceiverData = lightManager->BuildLightState(/*TODO*/);
 	lightConstantBufferData = nullptr;
 }
 
@@ -466,11 +466,11 @@ void PCDX11ModelDrawable::buildAndAssignLightBuffer(
 {
 	auto lightManager = static_cast<PCDX11LightManager*>(renderModel->renderDevice->lightManager);
 	// if (lightManager->lightDataX_E10 != lightReceiverData)
-		lightManager->fillLightBuffer(lightReceiverData);
+		lightManager->ApplySinglePassLightsInternal(lightReceiverData);
 
 	if (lightConstantBufferData) {
 		// if (lightManager->mostRecentAssignmentToCommonCB5 != lightConstantBufferData)
-			lightManager->assignCommonCB5((char*)lightConstantBufferData);
+			lightManager->ApplyIrradianceStateInternal((char*)lightConstantBufferData);
 	}
 }
 

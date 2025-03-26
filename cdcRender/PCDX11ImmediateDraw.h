@@ -8,7 +8,7 @@ class PCDX11Material;
 class PCDX11RenderDevice;
 class PCDX11StreamDecl;
 struct MaterialInstanceData;
-struct LightReceiverData;
+struct PCDX11LightSet;
 
 struct PrimitiveInfo { // belongs in .cpp file
 	uint32_t m_polyFlags;
@@ -24,7 +24,7 @@ public:
 	PCDX11RenderDevice *m_pRenderDevice; // C
 	PrimitiveContext::State *m_pState; // 10
 	const PCDX11Material *m_pMaterial; // 14
-	LightReceiverData *m_pLightSet; // const PCDX11LightSet *m_pLightSet; // 18
+	PCDX11LightSet *m_pLightSet; // 18
 	float *m_pIrradianceState; // const PCDX11IrradianceState* m_pIrradianceState; // 1C
 	MaterialInstanceData *m_pInstanceData; // 20
 	uint32_t m_numPrims; // 24

@@ -22,7 +22,7 @@ class PCDX11SimpleDynamicVertexBuffer;
 class PCDX11SimpleStaticVertexBuffer;
 class PCDX11StaticPool;
 class PCDX11Texture;
-struct LightManagerSubB;
+struct PCDX11LightManagerData;
 
 class PCDX11RenderDevice :
 	public PCDX11InternalResource,
@@ -39,7 +39,7 @@ public:
 		PCDX11RenderTarget *renderTarget; // 10
 		PCDX11DepthBuffer *depthBuffer; // 14
 		DrawableList drawableList; // 18
-		LightManagerSubB *lightManagerSubB; // 28
+		PCDX11LightManagerData *lightManagerSubB; // 28
 		// uint8_t byte2C;
 		// uint8_t byte2D;
 		RenderList *next;

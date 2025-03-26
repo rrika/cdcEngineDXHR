@@ -616,7 +616,7 @@ bool PCDX11RenderDevice::beginRenderList(float *scale) {
 
 	renderList_current = new (linear30, 0, true) RenderList(this, dimensionsPtr);
 	auto *lightManager = static_cast<PCDX11LightManager*>(this->lightManager);
-	renderList_current->lightManagerSubB = lightManager->allocateSubB();
+	renderList_current->lightManagerSubB = lightManager->BeginSubFrame();
 	// TODO
 	return true;
 }
@@ -1282,10 +1282,10 @@ void PCDX11RenderDevice::drawRenderListsInternal(void *arg) {
 		};
 		stateManager->accessCommonCB(1).assignRow(24, timeVector, 1); // SceneBuffer::TimeVector
 
-		static_cast<PCDX11LightManager*>(lightManager)->setAttenuationSampler();
+		static_cast<PCDX11LightManager*>(lightManager)->UpdateCombinedLightTexture();
 		while (renderList_processing) {
 			// TODO
-			getLightManager()->renderLights(renderList_processing->lightManagerSubB);
+			getLightManager()->BeginFlush(renderList_processing->lightManagerSubB);
 			renderList_processing->drawableList.draw(renderPasses.drawers, /*funcSetIndex=*/0);
 			renderList_processing = renderList_processing->next;
 		}

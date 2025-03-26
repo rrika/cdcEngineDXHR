@@ -298,11 +298,11 @@ bool PCDX11TerrainDrawable::setMatrix(IRenderDrawable *prevDrawable) {
 void PCDX11TerrainDrawable::buildAndAssignLightBuffer() {
 	auto lightManager = static_cast<PCDX11LightManager*>(m_pTerrain->renderDevice->lightManager);
 	// if (lightManager->lightDataX_E10 != m_lightReceiverData)
-		lightManager->fillLightBuffer(m_lightReceiverData);
+		lightManager->ApplySinglePassLightsInternal(m_lightReceiverData);
 
 	if (m_lightConstantBufferData) {
 		// if (lightManager->mostRecentAssignmentToCommonCB5 != m_lightConstantBufferData)
-			lightManager->assignCommonCB5((char*)m_lightConstantBufferData);
+			lightManager->ApplyIrradianceStateInternal((char*)m_lightConstantBufferData);
 	}
 }
 

@@ -6,19 +6,19 @@
 
 namespace cdc {
 
-void RenderLightData::render(void*, void*) {
+void PCDX11DeferredLight::RenderShadowMap(const uint32_t*, uint32_t) {
 	// TODO
 }
 
-void RenderLightData::render1(void*, void*) {
+void PCDX11DeferredLight::RenderShadowMapSpot(const uint32_t*, uint32_t) {
 	// TODO
 }
 
-void RenderLightData::render2(void*, void*) {
+void PCDX11DeferredLight::RenderShadowMapDirectional(const uint32_t*, uint32_t) {
 	// TODO
 }
 
-void LightManagerSubC::renderLights(PCDX11LightManager *lightManager) {
+void PCDX11LightManager::ShadowMapPool::Render(PCDX11LightManager *lightManager) {
 	// TODO
 }
 
@@ -32,12 +32,12 @@ PCDX11LightManager::~PCDX11LightManager() {
 	delete attenuationSampler430;
 }
 
-LightManagerSubB *PCDX11LightManager::allocateSubB() {
+PCDX11LightManagerData *PCDX11LightManager::BeginSubFrame() {
 	// TODO
 	return nullptr;
 }
 
-void PCDX11LightManager::fillLightBuffer(LightReceiverData *receiverData) {
+void PCDX11LightManager::ApplySinglePassLightsInternal(PCDX11LightSet *receiverData) {
 
 	auto stateManager = deviceManager->getStateManager();
 	stateManager->setPsConstantBuffer(4, &staticConstantBuffer438);
@@ -63,22 +63,22 @@ void PCDX11LightManager::fillLightBuffer(LightReceiverData *receiverData) {
 	// TODO
 }
 
-LightReceiverData *PCDX11LightManager::makeReceiver() {
+PCDX11LightSet *PCDX11LightManager::BuildLightState() { // new light receiver
 	// TODO
 	return nullptr;
 }
 
-void PCDX11LightManager::renderLights(LightManagerSubB *subB) {
+void PCDX11LightManager::BeginFlush(PCDX11LightManagerData *subB) {
 	// TODO
 	deviceManager->getStateManager()->setTextureAndSampler(14, nullptr, 256, 0.0f);
 	// TODO
 }
 
-void PCDX11LightManager::assignCommonCB5(char *src) {
+void PCDX11LightManager::ApplyIrradianceStateInternal(char *src) { // assign cb5
 	// TODO
 }
 
-void PCDX11LightManager::setAttenuationSampler() {
+void PCDX11LightManager::UpdateCombinedLightTexture() {
 	deviceManager->getStateManager()->setTextureAndSampler(15, attenuationSampler430, 1, 0.0f);
 }
 
