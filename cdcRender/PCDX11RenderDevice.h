@@ -113,7 +113,7 @@ public:
 	PCDX11PixelShaderTable shtab_ps_errorColor; // 10DF0
 
 	PCDX11StreamDeclCache streamDeclCache; // 1112D4
-	PCDX11Texture *missingTexture; // 1112F0
+	PCDX11Texture *missingTexture = nullptr; // 1112F0
 
 	PCDX11SimpleStaticVertexBuffer *fullScreenQuadVB; // 11156C
 	PCDX11SimpleDynamicVertexBuffer *quadVB; // 111570
