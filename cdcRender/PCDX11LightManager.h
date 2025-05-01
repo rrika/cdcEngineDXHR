@@ -14,35 +14,39 @@ class PCDX11LightManager;
 class PCDX11RenderDevice;
 class PCDX11RenderLight;
 
-struct PCDX11DeferredLight {
+class PCDX11DeferredLight { // line 531
+	struct LightParams {
+		float float10;
+		uint32_t dword14;
+		float float18;
+		float float1C;
+		uint32_t dword20;
+		float float24;
+		float float28;
+		float float2C;
+		uint32_t dword30;
+		float float34;
+		float float38;
+		float float3C;
+		uint32_t dword40;
+		uint32_t dword44;
+		float float48;
+		uint32_t dword4C;
+		float float50;
+		float float54;
+		float float58;
+		float float5C;
+		uint32_t dword60;
+		uint32_t dword64;
+		uint32_t dword68;
+		uint32_t dword6C;
+	};
+
 	PCDX11RenderLight *renderLight0;
 	uint32_t scene4;
 	uint32_t dword8;
 	uint8_t gapC[4];
-	float float10;
-	uint32_t dword14;
-	float float18;
-	float float1C;
-	uint32_t dword20;
-	float float24;
-	float float28;
-	float float2C;
-	uint32_t dword30;
-	float float34;
-	float float38;
-	float float3C;
-	uint32_t dword40;
-	uint32_t dword44;
-	float float48;
-	uint32_t dword4C;
-	float float50;
-	float float54;
-	float float58;
-	float float5C;
-	uint32_t dword60;
-	uint32_t dword64;
-	uint32_t dword68;
-	uint32_t dword6C;
+	LightParams m_params; // 10
 	uint32_t dword70;
 	uint8_t byte74;
 	uint8_t byte75;
@@ -51,26 +55,18 @@ struct PCDX11DeferredLight {
 	float float7C;
 	float float80;
 	uint8_t gap84[12];
-	Matrix matrix4x490;
-	Matrix matrix4x4D0;
-	uint8_t gap110[32];
-	uint32_t dword130;
-	uint32_t dword134;
-	uint32_t dword138;
-	uint32_t dword13C;
-	uint32_t dword140;
-	uint32_t dword144;
-	uint32_t dword148;
-	uint32_t dword14C;
-	uint8_t gap150[64];
+	Matrix m_worldToLight; // 90
+	Matrix m_lightToWorld; // D0
+	Matrix m_modulationTransform; // 110
+	Matrix m_shadowMapTransform; // 150
 	DrawableList drawableList190;
 	DrawableList drawableList1A0;
 	DrawableList drawableList1B0;
 	DrawableList drawableList1C0;
 	uint32_t dword1D0;
 	uint8_t gap1D4[268];
-	float m128_2E0[4];
-	float m128_2F0[4];
+	Vector m128_2E0;
+	Vector m128_2F0;
 	uint32_t dword300;
 	uint8_t byte304;
 
