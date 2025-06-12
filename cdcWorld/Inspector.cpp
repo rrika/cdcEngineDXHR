@@ -275,12 +275,15 @@ void buildUI(UIActions& uiact, Instance *instance) {
 				}
 			}
 	}
-	if (ImGui::CollapsingHeader("Intro", ImGuiTreeNodeFlags_DefaultOpen)) {
-		ImGui::Text("uniqueID %d/0x%x", instance->intro->uniqueID, instance->intro->uniqueID);
-		buildUI(uiact, instance->intro);
-	}
-	if (instance->intro == nullptr && ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
-		buildUI(uiact, instance->object);
+	if (instance->intro) {
+		if (ImGui::CollapsingHeader("Intro", ImGuiTreeNodeFlags_DefaultOpen)) {
+			ImGui::Text("uniqueID %d/0x%x", instance->intro->uniqueID, instance->intro->uniqueID);
+			buildUI(uiact, instance->intro);
+		}
+	} else {
+		if (ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
+			buildUI(uiact, instance->object);
+		}
 	}
 	if (ImGui::CollapsingHeader("SoundComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
 		dtp::ObjectBaseData *dtpData = instance->object->dtpData;

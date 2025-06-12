@@ -5,6 +5,7 @@ namespace cdc {
 	class IRenderTerrain;
 	class RenderMesh;
 	class ScriptType;
+	class Vector;
 	struct MaterialBlobSub;
 	struct ModelBatch;
 	struct VertexDecl;
@@ -28,6 +29,8 @@ struct UIActions {
 	virtual void select(dtp::Intro *intro) = 0;
 	virtual void select(dtp::IMFRef *imfRef) = 0;
 	virtual void select(Instance *instance) = 0;
+
+	virtual cdc::Vector getToolPosition() = 0;
 
 	virtual void origin(void *) = 0;
 };

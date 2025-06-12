@@ -331,6 +331,8 @@ struct SpinnyUIActions : public UIActions {
 
 	void *selectedMovable = nullptr;
 
+	cdc::Vector toolPosition;
+
 	void select(cdc::IRenderTerrain *renderTerrain) override {
 		selectedModel = nullptr;
 		selectedRenderTerrain = renderTerrain;
@@ -364,6 +366,10 @@ struct SpinnyUIActions : public UIActions {
 	void select(Instance *instance) override {
 		selectedInstance = instance;
 		selectedMovable = (void*)instance;
+	}
+
+	cdc::Vector getToolPosition() override {
+		return toolPosition;
 	}
 
 	void origin(void *ptr) override {
@@ -996,6 +1002,10 @@ int spinnyCube(HWND window,
 		cameraManager.update();
 		viewMatrix = *cameraManager.getMatrix(); // wow, it's nothing
 		renderViewport.nearz = cameraManager.getNearPlane();
+		uiact.toolPosition = cameraPos + cdc::Vector{
+			cameraRotate.m[0][2],
+			cameraRotate.m[1][2],
+			cameraRotate.m[2][2]} * 300.f;
 
 		// HACK: apply parabola movement
 		for (Instance *instance : InstanceManager::s_instances) {

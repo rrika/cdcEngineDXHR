@@ -14,7 +14,10 @@
 #if ENABLE_IMGUI
 #include "../imgui/imgui.h"
 #include "cdcResource/ResolveSection.h"
+#include "cdcWorld/Instance.h" // for spawning
+#include "cdcWorld/InstanceManager.h" // for spawning
 #include "cdcWorld/Object.h"
+#include "cdc/dtp/objectproperties/intro.h" // for spawning
 #endif
 
 #ifndef _WIN32
@@ -174,7 +177,7 @@ ObjectTracker *getByObjectListIndex(uint32_t objectListIndex) {
 }
 
 ObjectTracker *allocObjectSlot(int32_t id, uint16_t state) {
-	if (id <= 0 || id >= g_objectManager->objectList->count)
+	if (id <= 0 || id > g_objectManager->objectList->count)
 		return nullptr;
 
 	uint32_t i = 0;
@@ -342,6 +345,25 @@ uint32_t buildUI(UIActions& uiact, cdc::Object *obj) {
 		if (ImGui::SmallButton("Show")) hide = false;
 	} else {
 		if (ImGui::SmallButton("Hide")) hide = true;
+	}
+
+	ImGui::SameLine();
+	if (ImGui::SmallButton("Spawn")) {
+		dtp::Intro dummyIntro {};
+		cdc::Vector3 pos = {uiact.getToolPosition()};
+		cdc::Euler rot{};
+		Instance *instance = InstanceManager::CreateInstance(&dummyIntro);
+		instance->DefaultInit(
+			obj,
+			/*modelNum=*/ 0,
+			9999999,
+			nullptr,
+			nullptr,
+			&pos,
+			&rot,
+			nullptr,
+			/*flags=*/ 0);
+		instance->InitCommonComponents(true, true);
 	}
 
 	for (uint32_t j = 0; j < obj->numModels; j++) {
