@@ -85,6 +85,7 @@ elseif (MSVC)
 		spinnycube.cpp)
 	target_link_libraries(dxhr PRIVATE
 		user32 advapi32 d3d11)
+	add_link_options(/largeaddressaware)
 
 	if (ENABLE_D3DCOMPILER)
 		target_link_libraries(dxhr PRIVATE
@@ -115,7 +116,7 @@ else()
 		-Wno-ignored-attributes
 		-Wno-pragma-pack
 		-Wno-deprecated-declarations)
-	add_link_options(-g -target ${triple} -fuse-ld=lld-link)
+	add_link_options(-g -target ${triple} -fuse-ld=lld-link -Wl,/largeaddressaware)
 	add_executable(dxhr
 		spinnycube.cpp)
 	include_directories(SYSTEM
