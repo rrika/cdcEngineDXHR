@@ -297,7 +297,7 @@ Block *RangeAllocator::AllocExtra(uint32_t size, uint32_t alignment) {
 		uint32_t end = last->m_start + pad + size;
 		if (end > m_start + m_capacity)
 			return nullptr;
-		if (end > limit) {
+		if (end <= limit) {
 			incSize = end - m_last->m_start;
 			if (incSize)
 				goto increase;
@@ -308,7 +308,7 @@ Block *RangeAllocator::AllocExtra(uint32_t size, uint32_t alignment) {
 		//if (end > m_start + m_capacity)
 		if (m_size + pad + size > m_capacity)
 			return nullptr;
-		if (end > limit) {
+		if (end <= limit) {
 			incSize = pad + size;
 			if (incSize)
 				goto increase;
