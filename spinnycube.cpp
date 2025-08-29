@@ -1312,6 +1312,47 @@ int spinnyCube(HWND window,
 			renderDevice->DrawLineList(&cdc::identity4x4, lineVerts, 3, 0);
 		}
 
+		if (auto i = uiact.selectedInstance; i && i->objectFamilyId == 82) { // trigger
+			struct TriggerIntroData {
+				char pad[0x18];
+				uint32_t shape;
+				float extents[3];
+				float radius;
+			};
+
+			auto *data = (TriggerIntroData*)i->introData;
+
+			float x = data->shape ? data->extents[0] : data->radius;
+			float y = data->shape ? data->extents[1] : data->radius;
+			float z = data->shape ? data->extents[2] : data->radius;
+
+			// draw red/green/blue X/Y/Z lines
+			cdc::LineVertex lineVerts[24] = {
+				{ -x, -y, -z, 0xff0000ff}, {  x, -y, -z, 0xff0000ff},
+				{ -x, -y,  z, 0xff0000ff}, {  x, -y,  z, 0xff0000ff},
+				{ -x,  y, -z, 0xff0000ff}, {  x,  y, -z, 0xff0000ff},
+				{ -x,  y,  z, 0xff0000ff}, {  x,  y,  z, 0xff0000ff},
+
+				{ -x, -y, -z, 0xff00ff00}, { -x,  y, -z, 0xff00ff00},
+				{ -x, -y,  z, 0xff00ff00}, { -x,  y,  z, 0xff00ff00},
+				{  x, -y, -z, 0xff00ff00}, {  x,  y, -z, 0xff00ff00},
+				{  x, -y,  z, 0xff00ff00}, {  x,  y,  z, 0xff00ff00},
+
+				{ -x, -y, -z, 0xffff0000}, { -x, -y,  z, 0xffff0000},
+				{ -x,  y, -z, 0xffff0000}, { -x,  y,  z, 0xffff0000},
+				{  x, -y, -z, 0xffff0000}, {  x, -y,  z, 0xffff0000},
+				{  x,  y, -z, 0xffff0000}, {  x,  y,  z, 0xffff0000},
+			};
+
+			cdc::Matrix m;
+			m.Build_XYZOrder(i->rotation.vec128);
+			m.m[3][0] = i->position.x;
+			m.m[3][1] = i->position.y;
+			m.m[3][2] = i->position.z;
+
+			renderDevice->DrawLineList(&m, lineVerts, 12, 0);
+		}
+
 		auto putTerrain = [&](cdc::IRenderTerrain *renderTerrain, cdc::Matrix& instanceMatrix) {
 
 			auto rtiIt = renderTerrainInstances.find(renderTerrain);
