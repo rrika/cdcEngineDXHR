@@ -185,8 +185,8 @@ std::vector<DRMSectionHeader> hackResolveReceiver(
 	memcpy(sectionHeaders.data(), data.data() + sizeof(header), sizeof(DRMSectionHeader) * header.sectionCount);
 
 	uint32_t cursor = 32 + header.sectionCount*20;
-	uint32_t dependencyDrmListOffset = cursor; cursor += header.dependencyDrmListSize;
 	uint32_t dependencyObjListOffset = cursor; cursor += header.dependencyObjListSize;
+	uint32_t dependencyDrmListOffset = cursor; cursor += header.dependencyDrmListSize;
 	cursor = (cursor+15) & ~15;
 
 	if (requestDependencies) {
