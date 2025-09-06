@@ -47,8 +47,8 @@ struct CellDataHeader { // line 121
 	uint32_t dword4;
 	uint32_t dword8;
 	uint32_t dwordC;
-	float vec10[4]; // bbox.mins
-	float vec20[4]; // bbox.maxs
+	float vec10[4]; // bbox.center
+	float vec20[4]; // bbox.extent
 	uint32_t dword30;
 	uint16_t word34;
 	uint16_t word36;
