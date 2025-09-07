@@ -4,9 +4,10 @@ DRMIndex drmIndex;
 
 bool locate(void *ptr, cdc::DRMSectionHeader *&header, ptrdiff_t &offset) {
 	auto addr = uintptr_t(ptr);
-	auto it = drmIndex.loadedSections.upper_bound(addr-1);
-	if (it == drmIndex.loadedSections.end())
+	auto it = drmIndex.loadedSections.upper_bound(addr);
+	if (it == drmIndex.loadedSections.begin())
 		return false;
+	--it;
 
 	auto begin = it->first;
 	auto &loaded = it->second;
