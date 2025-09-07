@@ -4,6 +4,7 @@
 #include <functional>
 #include <iterator>
 #include <memory>
+#include <unordered_set>
 #include <variant>
 #include "config.h" // for ENABLE_IMGUI and ENABLE_D3DCOMPILER
 
@@ -1814,6 +1815,10 @@ int spinnyCube(HWND window,
 				ImGui::Text("rtmask %01x",
 					material->materialBlob->renderTargetWriteMask);
 
+				std::vector<cdc::TextureMap*> textures;
+				std::unordered_set<cdc::TextureMap*> seenTextures;
+				seenTextures.insert(nullptr); // never record a null
+
 				for (uint32_t i = 0; i < 16; i++) {
 					ImGui::PushID(i);
 					auto *submat = material->materialBlob->subMat4C[i];
@@ -1836,10 +1841,26 @@ int spinnyCube(HWND window,
 						if (i == 3) { ImGui::SameLine(); ImGui::Text("opaque"); }
 						if (i == 7) { ImGui::SameLine(); ImGui::Text("normals"); }
 						if (i == 8) { ImGui::SameLine(); ImGui::Text("translucent/deferred light"); }
+
+						cdc::MaterialTexRef *texref = submat->psTextureRef;
+						for (uint32_t i = 0; i < submat->psRefIndexEndA; i++) {
+							auto *tex = texref[i].tex;
+							if (tex && seenTextures.insert(tex).second)
+								textures.push_back(tex);
+						}
 					}
 					ImGui::PopID();
 				}
 				ImGui::PopID();
+
+				// texture previews (all submaterials)
+				for (cdc::TextureMap *tex : textures) {
+					auto *srv = static_cast<cdc::PCDX11Texture*>(tex)->createShaderResourceView();
+					ImGui::Image(srv, ImVec2(64, 64));
+					uiact.origin(tex);
+					ImGui::SameLine();
+				}
+				ImGui::NewLine();
 			}
 			if (uiact.selectedSubMaterial) {
 				ImGui::Separator();
@@ -1859,6 +1880,7 @@ int spinnyCube(HWND window,
 					bool g0 = i < submat->psRefIndexEndA;
 					bool g1 = i >= submat->psRefIndexEndA && i < submat->psRefIndexBeginB;
 					bool g2 = i >= submat->psRefIndexBeginB && i < submat->psRefIndexBeginB + submat->psRefIndexCountB;
+					auto *srv = texref[i].tex ? static_cast<cdc::PCDX11Texture*>(texref[i].tex)->createShaderResourceView() : 0;
 					ImGui::Text("texref %d: slot %d %s %p %p",
 						i,
 						texref[i].slotIndex,
@@ -1867,7 +1889,7 @@ int spinnyCube(HWND window,
 						g2 ? "instnc" :
 						"unused",
 						texref[i].tex,
-						texref[i].tex ? static_cast<cdc::PCDX11Texture*>(texref[i].tex)->createShaderResourceView() : 0);
+						srv);
 					if (g1 || g2) {
 						ImGui::SameLine();
 						ImGui::Text("0x%x+%d",
@@ -1881,6 +1903,15 @@ int spinnyCube(HWND window,
 					}
 				}
 				ImGui::Unindent();
+
+				// texture previews (single submaterial)
+				for (uint32_t i = 0; i < submat->psRefIndexEndA; i++) {
+					auto *srv = texref[i].tex ? static_cast<cdc::PCDX11Texture*>(texref[i].tex)->createShaderResourceView() : 0;
+					if (i)
+						ImGui::SameLine();
+					ImGui::Image(srv, ImVec2(64, 64));
+					uiact.origin(texref[i].tex);
+				}
 
 				ImGui::Text("vs cb4 %d..%d", submat->vsBufferFirstRow, submat->vsBufferFirstRow + submat->vsBufferNumRows);
 				ImGui::Text("ps cb4 %d..%d", submat->psBufferFirstRow, submat->psBufferFirstRow + submat->psBufferNumRows);
