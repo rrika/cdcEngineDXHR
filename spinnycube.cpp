@@ -1761,6 +1761,17 @@ int spinnyCube(HWND window,
 				}
 			} else if (uiact.selectedRenderTerrain) {
 				auto *terrain = static_cast<cdc::PCDX11RenderTerrain*>(uiact.selectedRenderTerrain);
+				ImGui::PushID("vb");
+				uint32_t numVertexBuffers = terrain->m_pResourceData->pHeader->numVertexBuffers;
+				ImGui::Text("# vb = %d", numVertexBuffers);
+				for (uint32_t i = 0; i < numVertexBuffers; i++) {
+					cdc::RenderTerrainVertexBuffer *buffer = &terrain->m_pVertexBuffers[i];
+					ImGui::PushID(i);
+					ImGui::Text("buffer %d: %d vertices, buffer=%p", i, buffer->numVertices, buffer->pPrimaryVertexBuffer);
+					ImGui::PopID();
+				}
+				ImGui::PopID();
+				ImGui::PushID("g");
 				uint32_t numGroups = terrain->m_pResourceData->pHeader->numGroups;
 				ImGui::Text("# groups = %d", numGroups);
 				for (uint32_t i = 0; i < numGroups; i++) {
@@ -1782,6 +1793,7 @@ int spinnyCube(HWND window,
 						group->flags ^= 0x8000;
 					ImGui::PopID();
 				}
+				ImGui::PopID();
 			}
 			ImGui::PopID();
 			if (uiact.selectedMaterial) {
