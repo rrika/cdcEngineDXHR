@@ -2075,6 +2075,44 @@ int spinnyCube(HWND window,
 							cameraPos.y = center[1];
 							cameraPos.z = center[2];
 						}
+
+						// buttons for renderterrain
+						if (cell->pTerrainData && cell->pTerrainData->pTerrain) {
+							cdc::IRenderTerrain *rt = cell->pTerrainData->pTerrain;
+							ImGui::SameLine();
+							if (ImGui::SmallButton("embedded terrain"))
+								uiact.select(rt);
+						}
+
+						// buttons for stream group
+						if (cell->pHeader &&
+							cell->pHeader->streamGroup50 &&
+							cell->pHeader->streamGroup50->streamFileName)
+						{
+							cdc::CellStreamGroupData *streamgroup = cell->pHeader->streamGroup50;
+							ImGui::SameLine();
+							dtp::IntermediateMesh *im = nullptr;
+							if (streamgroup->resolveObject && isLoaded(streamgroup->resolveObject)) {
+								im = cdc::GetIMFPointerFromId(cell->pHeader->streamGroupDtp54);
+								if (!im) {
+									ImGui::Text("dtp not loaded");
+								} else if (im->m_type == cdc::IMFType_TerrainInstance) {
+									auto *rt = (cdc::IRenderTerrain *)im->pRenderModel;
+									bool isLoaded = renderTerrainInstances.find(rt) != renderTerrainInstances.end();
+									ImGui::BeginDisabled(isLoaded == false);
+									if (ImGui::SmallButton("stream terrain"))
+										uiact.select(rt);
+									ImGui::EndDisabled();
+								} else {
+									ImGui::Text("dtp->m_type=%d", (int)im->m_type);
+								}
+								ImGui::SameLine();
+							}
+							ImGui::Text("(streamgroup %s, dtp %x)", streamgroup->streamFileName, cell->pHeader->streamGroupDtp54);
+							if (im)
+								uiact.origin(im);
+						}
+
 						ImGui::PopID();
 					}
 					ImGui::PopID();
