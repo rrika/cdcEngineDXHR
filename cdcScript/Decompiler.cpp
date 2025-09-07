@@ -13,6 +13,7 @@
 #include "cdcWorld/stream.h"
 #include "game/DX3Player.h"
 #include "game/ObjectiveManager.h"
+#include "game/dtp/objecttypes/globaldatabase.h"
 #include "UIActions.h"
 
 #if ENABLE_IMGUI
@@ -20,6 +21,8 @@
 #endif
 
 using namespace cdc;
+
+extern GlobalDatabase *globalDatabase;
 
 static const char* nameof(ScriptType *ty) {
 	if (!ty)
@@ -157,8 +160,36 @@ static void InitNative(UIActions& uiact, ScriptType *ty, void *init_) {
 		}
 		uiact.origin((void*)init);
 
+	} else if (strcmp(ntyname, "action") == 0) {
+		struct ActionDtp { const char *name; }; // in logicactionresource_database.drm
+		struct ActionInit { ActionDtp *actionDtp; };
+		auto *init = *(ActionInit**)init_;
+		ImGui::Text("action %s", init->actionDtp ? init->actionDtp->name : nullptr);
+		uiact.origin(init->actionDtp);
+
+	} else if (strcmp(ntyname, "goal") == 0) {
+		struct GoalInit { uint32_t goalIndex; };
+		auto *init = *(GoalInit**)init_;
+		if (globalDatabase) {
+			auto& goal = globalDatabase->goals[init->goalIndex];
+			ImGui::Text("goal %s", goal.name);
+			uiact.origin(&goal);
+		} else {
+			ImGui::Text("goal %d", init->goalIndex);
+		}
+
+	} else if (strcmp(ntyname, "barkevent") == 0) {
+		struct BarkEventInit { uint32_t barkEvent; };
+		auto *init = *(BarkEventInit**)init_;
+		if (globalDatabase) {
+			ImGui::Text("barkevent %s", globalDatabase->barkEvents[init->barkEvent]);
+		} else {
+			ImGui::Text("barkevent %d", init->barkEvent);
+		}
+
 	} else {
 		ImGui::Text("todo(%s)", ntyname);
+		uiact.origin(init_);
 	}
 }
 
