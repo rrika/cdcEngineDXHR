@@ -545,6 +545,14 @@ void Decompile(UIActions& uiact, ScriptType& ty) {
 			} else {
 				ImGui::Text(" {");
 				ImGui::Indent();
+				for (auto& m : fn->m_locals) {
+					Type(uiact, &m.m_type);
+					ImGui::SameLine();
+					ImGui::Text("local_%x", m.m_offset);
+					Init(uiact, &m);
+					ImGui::SameLine(0.f, 0.f);
+					ImGui::Text(";");
+				}
 				ByteCode(uiact, fn->m_scriptFunc.begin(), fn->m_scriptFunc.end());
 				ImGui::Unindent();
 				ImGui::Text("}");

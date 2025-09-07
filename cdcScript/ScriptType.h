@@ -25,11 +25,11 @@ struct Prototype { // 377
 	uint16_t vtIndex; // 6
 	uint16_t id8;
 	uint16_t idA;
-	DataMember *args;
+	SArray<DataMember> args;
 	DataType returnType;
 
 	uint32_t GetNumArgs() {
-		return args ? ((uint32_t*)args)[-1] : 0;
+		return args ? args.size() : 0;
 	}
 };
 
@@ -42,7 +42,7 @@ public:
 	Prototype *prototype;
 	uint8_t  flags; // 4
 	uint32_t padding8;
-	uint32_t paddingC;
+	SArray<DataMember> m_locals;
 	uint32_t padding10;
 	CallbackCallFunction *nativeFunc; // 14
 	SArray<uint32_t> m_scriptFunc;
