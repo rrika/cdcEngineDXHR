@@ -211,33 +211,33 @@ void Instance::DefaultInit( // line 2977
 		if (!modular) modular = (dtp::ModularHuman*)(0x8 + (char*)derivedObjProp);
 		auto *rmiUnique = realInstanceDrawable->getSelectedRMI();
 		if (auto *m = modular->material8)
-			rmiUnique->setMaterial(m->GetId(), m);
+			rmiUnique->SetMaterial(m->GetId(), m);
 		if (auto *m = modular->materialC)
-			rmiUnique->setMaterial(m->GetId(), m);
+			rmiUnique->SetMaterial(m->GetId(), m);
 		if (auto *m = modular->material10)
-			rmiUnique->setMaterial(m->GetId(), m);
+			rmiUnique->SetMaterial(m->GetId(), m);
 		if (modular->upperBody) {
 			auto *rmiUpper = g_renderDevice->createRenderModelInstance(modular->upperBody);
 			if (auto *m = modular->material18)
-				rmiUpper->setMaterial(m->GetId(), m);
+				rmiUpper->SetMaterial(m->GetId(), m);
 			if (auto *m = modular->material1C)
-				rmiUpper->setMaterial(m->GetId(), m);
+				rmiUpper->SetMaterial(m->GetId(), m);
 			realInstanceDrawable->m_additionalModelInstances.push_back({true, rmiUpper});
 		}
 		if (modular->hands) {
 			auto *rmiHands = g_renderDevice->createRenderModelInstance(modular->hands);
 			if (auto *m = modular->material24)
-				rmiHands->setMaterial(m->GetId(), m);
+				rmiHands->SetMaterial(m->GetId(), m);
 			realInstanceDrawable->m_additionalModelInstances.push_back({true, rmiHands});
 		}
 		if (modular->lowerBody) {
 			auto *rmiLower = g_renderDevice->createRenderModelInstance(modular->lowerBody);
 			if (auto *m = modular->material2C)
-				rmiLower->setMaterial(m->GetId(), m);
+				rmiLower->SetMaterial(m->GetId(), m);
 			if (auto *m = modular->material30)
-				rmiLower->setMaterial(m->GetId(), m);
+				rmiLower->SetMaterial(m->GetId(), m);
 			if (auto *m = modular->material34)
-				rmiLower->setMaterial(m->GetId(), m);
+				rmiLower->SetMaterial(m->GetId(), m);
 			realInstanceDrawable->m_additionalModelInstances.push_back({true, rmiLower});
 		}
 	}

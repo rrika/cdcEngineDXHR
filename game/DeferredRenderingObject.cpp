@@ -342,7 +342,7 @@ void DeferredRenderingObject::Drawable::draw(cdc::Matrix *matrix, float arg) {
 		rmi->baseMask = 0x2000; // deferred lighting
 	else
 		rmi->baseMask = coronasPass;
-	rmi->setMaterial(~0u, static_cast<cdc::CommonMaterial*>(deferredExtraData->material));
+	rmi->SetMaterial(~0u, static_cast<cdc::CommonMaterial*>(deferredExtraData->material));
 	hackCalcInstanceParams(deferredExtraData, &matrixCopy, rmi->ext->instanceParams);
 
 	// patch textures (even though this render model is shared between instances)

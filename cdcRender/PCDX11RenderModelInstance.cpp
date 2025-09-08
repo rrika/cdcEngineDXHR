@@ -9,7 +9,7 @@
 
 namespace cdc {
 
-void PCDX11RenderModelInstance::setMaterial(uint32_t selector, IMaterial *material) {
+void PCDX11RenderModelInstance::SetMaterial(uint32_t selector, IMaterial *material) {
 	// TODO
 	ModelData *mesh = renderMesh->getMesh();
 	for (uint32_t i=0; i < mesh->primGroupCount; i++) {
