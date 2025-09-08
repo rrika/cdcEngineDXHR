@@ -41,7 +41,9 @@ public:
 protected:
 	RenderMesh *renderMesh;
 	NonPersistentPGData *tab0Ext16; // 24
-	PersistentPGData *tab0Ext128; // 2C
+	PersistentPGData *m_pPrimGroupInstances; // 28, owned
+	PersistentPGData *tab0Ext128; // 2C, borrowed
+	RenderModelInstanceData *m_pInstanceData; // 30, owned (via RenderDevice internal allocator)
 	RenderModelInstanceData *m_pCurrentInstanceData; // 34
 
 public:
@@ -50,15 +52,16 @@ public:
 	{
 		tab0Ext16 = renderMesh->getTab0Ext16();
 		tab0Ext128 = renderMesh->getTab0Ext128();
+		m_pPrimGroupInstances = nullptr;
+		m_pInstanceData = nullptr;
 		m_pCurrentInstanceData = nullptr;
 	}
 	~CommonRenderModelInstance() {
-		delete m_pCurrentInstanceData;
+		FreeInstanceData();
 	}
 
 	RenderModelInstanceData *accessInstanceData() {
-		if (m_pCurrentInstanceData == nullptr)
-			m_pCurrentInstanceData = new RenderModelInstanceData;
+		SaveInstanceData(true);
 		return m_pCurrentInstanceData;
 	}
 
@@ -70,6 +73,9 @@ public:
 	}
 
 	void SetProjectionOverride(Matrix const *m) override {
+		if (m_pInstanceData || m)
+			SaveInstanceData(true);
+
 		if (m_pCurrentInstanceData && m) {
 			m_pCurrentInstanceData->projectOverride = *m;
 			m_pCurrentInstanceData->projectOverrideValid = true; 
@@ -78,6 +84,10 @@ public:
 
 	PersistentPGData *getPersistentPGData() override { return tab0Ext128; } // TODO: confirm
 	NonPersistentPGData *getNonPersistentPGData() override { return tab0Ext16; } // TODO: confirm
+
+protected:
+	void SaveInstanceData(bool);
+	void FreeInstanceData();
 };
 
 }
