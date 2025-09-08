@@ -29,6 +29,7 @@ public:
 
 	PCDX11RenderModel const *GetRenderMesh() const override { return static_cast<PCDX11RenderModel*>(renderMesh); } // 18, covariant here for our convenience
 	void recordDrawables(IMatrixState*) override; // 84
+	CommonRenderDevice *GetRenderDevicePtr() override; // 94
 
 private:
 	PCDX11RenderModel *getRenderModel() { return static_cast<PCDX11RenderModel*>(renderMesh); }

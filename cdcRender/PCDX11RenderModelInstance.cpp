@@ -94,4 +94,8 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 	}
 }
 
+CommonRenderDevice *PCDX11RenderModelInstance::GetRenderDevicePtr() { // 94
+	return PCDX11RenderExternalResource::renderDevice;
+}
+
 }

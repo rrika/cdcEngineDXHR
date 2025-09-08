@@ -3,6 +3,7 @@
 
 namespace cdc {
 
+class CommonRenderDevice;
 class IMaterial;
 class IMatrixState;
 class RenderMesh;
@@ -19,6 +20,7 @@ public:
 	virtual PersistentPGData *getPersistentPGData() = 0; // 74
 	virtual NonPersistentPGData *getNonPersistentPGData() = 0; // 78
 	virtual void recordDrawables(IMatrixState*) = 0; // 84
+	virtual CommonRenderDevice *GetRenderDevicePtr() = 0; // 94
 };
 
 }
