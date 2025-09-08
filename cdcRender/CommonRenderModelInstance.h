@@ -55,6 +55,8 @@ public:
 		delete ext;
 	}
 
+	void SetMaterial(uint32_t selector, IMaterial *material) override;
+
 	void SetDrawBehindAll(bool depthLayer) override {
 		ModelData *md = renderMesh->getMesh();
 		md->flags.depthLayer = depthLayer;

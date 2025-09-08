@@ -28,6 +28,7 @@ target_sources(dxhr PRIVATE
 	BuiltinResources.cpp
 	CommonMaterial.cpp
 	CommonRenderDevice.cpp
+	CommonRenderModelInstance.cpp
 	CommonRenderTerrainInstance.cpp
 	CommonScene.cpp
 	LinearAllocator.cpp

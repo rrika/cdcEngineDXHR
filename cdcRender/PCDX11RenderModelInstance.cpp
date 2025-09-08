@@ -9,17 +9,6 @@
 
 namespace cdc {
 
-void PCDX11RenderModelInstance::SetMaterial(uint32_t selector, IMaterial *material) {
-	// TODO
-	ModelData *mesh = renderMesh->getMesh();
-	for (uint32_t i=0; i < mesh->primGroupCount; i++) {
-		uint32_t primGroup20 = mesh->primGroups[i].dword20;
-		if (selector == ~0u || selector == primGroup20 ||
-			primGroup20 == 0 && selector == tab0Ext128[i].material->GetId())
-			tab0Ext128[i].material = (PCDX11Material*)material;
-	}
-}
-
 void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 	// TODO
 	uint32_t baseMask = this->baseMask;
