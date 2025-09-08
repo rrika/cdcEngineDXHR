@@ -5,6 +5,7 @@
 #include "cdcLocale/localstr.h"
 #include "cdcRender/CommonMaterial.h"
 #include "cdcRender/MaterialData.h"
+#include "cdcRender/surfaces/PCDX11Texture.h"
 #include "cdcResource/DTPDataSection.h"
 #include "cdcResource/ResolveSection.h"
 #include "cdcScene/SceneEntity.h"
@@ -68,6 +69,16 @@ void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
 	if (extra->material)
 		if (ImGui::SmallButton("show override material"))
 			uiact.select(extra->material);
+
+	// texture
+	for (uint32_t i=0; i<4; i++) {
+		if (auto *tex = extra->texture[i]) {
+			auto *srv = static_cast<cdc::PCDX11Texture*>(tex)->createShaderResourceView();
+			ImGui::Image(srv, ImVec2(64, 64));
+			ImGui::SameLine();
+		}
+	}
+	ImGui::NewLine();
 
 	// scale
 	ImGui::Text("scale mode %d",
@@ -176,11 +187,14 @@ void buildUI(UIActions& uiact, LensFlareAndCoronaExtraData *extra) {
 			i, extra->mode[i]);
 	}
 
-	ImGui::Text("texture 0 %p", extra->texture[0]);
-	ImGui::Text("texture 1 %p", extra->texture[1]);
-	ImGui::Text("texture 2 %p", extra->texture[2]);
-	ImGui::Text("texture 3 %p", extra->texture[3]);
-	ImGui::Text("material %p", extra->material);
+	// texture
+	for (uint32_t i=0; i<4; i++) {
+		if (auto *tex = extra->texture[i]) {
+			auto *srv = static_cast<cdc::PCDX11Texture*>(tex)->createShaderResourceView();
+			ImGui::Image(srv, ImVec2(64, 64));
+			ImGui::SameLine();
+		}
+	}
 }
 
 void buildUI(UIActions& uiact, dtp::Intro *intro) {
