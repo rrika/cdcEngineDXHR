@@ -648,7 +648,7 @@ int spinnyCube(HWND window,
 	cdc::RenderModelInstance *lightRenderModelInstance =
 		renderDevice->createRenderModelInstance(lightRenderModel);
 
-	cdc::Vector4 *lightInstanceParams = static_cast<cdc::CommonRenderModelInstance*>(lightRenderModelInstance)->ext->instanceParams;
+	cdc::Vector4 *lightInstanceParams = static_cast<cdc::CommonRenderModelInstance*>(lightRenderModelInstance)->accessInstanceData()->instanceParams;
 	// taken from a random light draw in renderdoc
 	float lightRadius = 2.0f;
 	float invLightRadius = 1.0f / lightRadius;
@@ -1104,7 +1104,7 @@ int spinnyCube(HWND window,
 						rmi->baseMask = 0x2000; // deferred lighting
 					else
 						rmi->baseMask = coronasPass;
-					hackCalcInstanceParams(deferredExtraData, &instanceMatrix, rmi->ext->instanceParams);
+					hackCalcInstanceParams(deferredExtraData, &instanceMatrix, rmi->accessInstanceData()->instanceParams);
 
 					// patch textures (even though this render model is shared between instances)
 					cdc::PersistentPGData *ppg = rmi->getPersistentPGData();
@@ -1116,7 +1116,7 @@ int spinnyCube(HWND window,
 				} else if (objFamily == 0x5b) {
 					rmi->baseMask = 0x100A; // normals, composite, translucent, for now
 					auto *lensFlareExtraData = (LensFlareAndCoronaExtraData*)extraData;
-					hackCalcInstanceParams(lensFlareExtraData, &instanceMatrix, /*invView*/ &renderViewport.viewMatrix, rmi->ext->instanceParams);
+					hackCalcInstanceParams(lensFlareExtraData, &instanceMatrix, /*invView*/ &renderViewport.viewMatrix, rmi->accessInstanceData()->instanceParams);
 
 					// patch textures (even though this render model is shared between instances)
 					cdc::PersistentPGData *ppg = rmi->getPersistentPGData();
@@ -1137,11 +1137,11 @@ int spinnyCube(HWND window,
 
 					if (extraData && closeEnough) {
 						// assume this is an interactable object, give it an outline
-						rmi->ext->instanceParams[0] = {0.069f, 0.f, 0.f, 0.f};
+						rmi->accessInstanceData()->instanceParams[0] = {0.069f, 0.f, 0.f, 0.f};
 						rmi->baseMask = 0x300A; // normals, deferred, composite, translucent. this is further narrowed down by CommonMaterial::SetRenderPasses
 					} else {
 						// IMF without outline
-						rmi->ext->instanceParams[0] = {0.969f, 0.f, 0.f, 0.f};
+						rmi->accessInstanceData()->instanceParams[0] = {0.969f, 0.f, 0.f, 0.f};
 						rmi->baseMask = 0x100A; // normals, composite, translucent. this is further narrowed down by CommonMaterial::SetRenderPasses
 					}
 				}
@@ -1440,7 +1440,7 @@ int spinnyCube(HWND window,
 					recycleRMI.emplace_back(cellRMIDrawable);
 					auto *rmi = static_cast<cdc::PCDX11RenderModelInstance*>(cellRMIDrawable->rmi);
 					rmi->baseMask = 0x1002; // normals & composite
-					rmi->ext->instanceParams[0] = { // assign a distinguishable color for this cell
+					rmi->accessInstanceData()->instanceParams[0] = { // assign a distinguishable color for this cell
 						halton[i].x,
 						halton[i].y,
 						halton[i].z,

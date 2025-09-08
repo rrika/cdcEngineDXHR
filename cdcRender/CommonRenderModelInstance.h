@@ -42,17 +42,22 @@ protected:
 	RenderMesh *renderMesh;
 	NonPersistentPGData *tab0Ext16; // 24
 	PersistentPGData *tab0Ext128; // 2C
+	RenderModelInstanceData *m_pCurrentInstanceData; // 34
+
 public:
-	RenderModelInstanceData *ext; // 34
 	CommonRenderModelInstance(RenderMesh *renderMesh) :
 		renderMesh(renderMesh)
 	{
 		tab0Ext16 = renderMesh->getTab0Ext16();
 		tab0Ext128 = renderMesh->getTab0Ext128();
-		ext = new RenderModelInstanceData; // HACK
+		m_pCurrentInstanceData = new RenderModelInstanceData; // HACK
 	}
 	~CommonRenderModelInstance() {
-		delete ext;
+		delete m_pCurrentInstanceData;
+	}
+
+	RenderModelInstanceData *accessInstanceData() {
+		return m_pCurrentInstanceData;
 	}
 
 	void SetMaterial(uint32_t selector, IMaterial *material) override;
@@ -63,9 +68,9 @@ public:
 	}
 
 	void SetProjectionOverride(Matrix const *m) override {
-		if (ext && m) {
-			ext->projectOverride = *m;
-			ext->projectOverrideValid = true; 
+		if (m_pCurrentInstanceData && m) {
+			m_pCurrentInstanceData->projectOverride = *m;
+			m_pCurrentInstanceData->projectOverrideValid = true; 
 		}
 	}
 

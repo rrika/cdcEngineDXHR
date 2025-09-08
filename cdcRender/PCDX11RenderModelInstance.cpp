@@ -46,7 +46,7 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 			flags |= 2;
 	}
 
-	if (ext->projectOverrideValid) // HACK
+	if (m_pCurrentInstanceData->projectOverrideValid) // HACK
 		flags ^= 2;
 
 	for (uint32_t i=0; i<mesh->meshCount; i++) {
@@ -81,7 +81,7 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 
 			auto drawable = new (renderDevice->getLinear(), 6, true) PCDX11ModelDrawable(
 				getRenderModel(),
-				ext,
+				m_pCurrentInstanceData,
 				sub,
 				primGroup,
 				tab0ext128,

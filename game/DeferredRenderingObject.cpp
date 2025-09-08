@@ -343,7 +343,7 @@ void DeferredRenderingObject::Drawable::draw(cdc::Matrix *matrix, float arg) {
 	else
 		rmi->baseMask = coronasPass;
 	rmi->SetMaterial(~0u, static_cast<cdc::CommonMaterial*>(deferredExtraData->material));
-	hackCalcInstanceParams(deferredExtraData, &matrixCopy, rmi->ext->instanceParams);
+	hackCalcInstanceParams(deferredExtraData, &matrixCopy, rmi->accessInstanceData()->instanceParams);
 
 	// patch textures (even though this render model is shared between instances)
 	cdc::PersistentPGData *ppg = rmi->getPersistentPGData();
