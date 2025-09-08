@@ -256,12 +256,15 @@ void hackCalcInstanceParams(DeferredRenderingExtraData *extra, Matrix *m, Vector
 	objToWorld.m[0][0] *= scale.x;
 	objToWorld.m[0][1] *= scale.x;
 	objToWorld.m[0][2] *= scale.x;
+	objToWorld.m[0][3] *= scale.x;
 	objToWorld.m[1][0] *= scale.y;
 	objToWorld.m[1][1] *= scale.y;
 	objToWorld.m[1][2] *= scale.y;
+	objToWorld.m[1][3] *= scale.y;
 	objToWorld.m[2][0] *= scale.z;
 	objToWorld.m[2][1] *= scale.z;
 	objToWorld.m[2][2] *= scale.z;
+	objToWorld.m[2][3] *= scale.z;
 
 	// write the modified matrix back out
 	*m = objToWorld;
@@ -279,6 +282,9 @@ void hackCalcInstanceParams(DeferredRenderingExtraData *extra, Matrix *m, Vector
 	worldToObj.m[2][0] *= invScale.x;
 	worldToObj.m[2][1] *= invScale.y;
 	worldToObj.m[2][2] *= invScale.z;
+	worldToObj.m[3][0] *= invScale.x;
+	worldToObj.m[3][1] *= invScale.y;
+	worldToObj.m[3][2] *= invScale.z;
 
 	cachedMatrixMulChain_setup(&objToWorld, &worldToObj);
 
