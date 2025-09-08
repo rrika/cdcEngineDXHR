@@ -1,3 +1,4 @@
+#include "CommonRenderDevice.h"
 #include "CommonRenderModelInstance.h"
 #include "PCDX11Material.h" // for cast
 
@@ -23,7 +24,8 @@ void CommonRenderModelInstance::SaveInstanceData(bool isModelInstData) { // line
 	if (isModelInstData) {
 		// allocate a plain RenderModelInstanceData
 		if (m_pInstanceData == nullptr) {
-			auto *data = new RenderModelInstanceData;
+			auto *renderDevice = GetRenderDevicePtr();
+			auto *data = (RenderModelInstanceData*)renderDevice->InternalAlloc(sizeof(RenderModelInstanceData));
 			m_pCurrentInstanceData = data;
 			m_pInstanceData = data;
 			memset(data, 0, sizeof(RenderModelInstanceData));
@@ -47,7 +49,12 @@ void CommonRenderModelInstance::SaveInstanceData(bool isModelInstData) { // line
 }
 
 void CommonRenderModelInstance::FreeInstanceData() { // line 800
-	delete m_pInstanceData;
+	if (m_pInstanceData) {
+		auto *renderDevice = GetRenderDevicePtr();
+		renderDevice->InternalFree(m_pInstanceData);
+		m_pInstanceData = nullptr;
+	}
+
 	// TODO
 	delete[] m_pPrimGroupInstances;
 	// TODO

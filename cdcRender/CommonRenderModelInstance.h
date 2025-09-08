@@ -56,9 +56,6 @@ public:
 		m_pInstanceData = nullptr;
 		m_pCurrentInstanceData = nullptr;
 	}
-	~CommonRenderModelInstance() {
-		FreeInstanceData();
-	}
 
 	RenderModelInstanceData *accessInstanceData() {
 		SaveInstanceData(true);

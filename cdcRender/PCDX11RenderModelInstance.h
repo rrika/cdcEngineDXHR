@@ -20,6 +20,11 @@ public:
 	{
 		baseMask = 0x52CB;
 	}
+	~PCDX11RenderModelInstance() {
+		// need to call this here rather than in ~CommonRenderModelInstance.
+		// else call to GetRenderDevicePtr() fails (because object is partially destroyed)
+		FreeInstanceData();
+	}
 
 	void resFree() override { /*TODO*/ };
 	void resFill(void* src, uint32_t size, uint32_t offset) override { /*empty*/ };
