@@ -20,6 +20,21 @@ void CommonRenderModelInstance::SetMaterial(uint32_t selector, IMaterial *materi
 	// ComputeCombinedNodeFlags();
 }
 
+void CommonRenderModelInstance::SetInstanceTexture(uint32_t drawGroupId, uint32_t index, TextureMap *pTextureMap) { // line 398
+	ModelData *mesh = renderMesh->getMesh();
+	if (mesh->vsSelect == -1)
+		return;
+
+	SaveInstanceData(/*isModelInstData=*/false);
+	for (uint32_t i=0; i < mesh->primGroupCount; i++) {
+		// TODO
+		uint32_t primGroup20 = mesh->primGroups[i].dword20;
+		if (drawGroupId == ~0u || drawGroupId == primGroup20 ||
+			primGroup20 == 0 && drawGroupId == tab0Ext128[i].material->GetId())
+			tab0Ext128[i].sub10.pInstanceTextures[index] = pTextureMap; // TODO
+	}
+}
+
 void CommonRenderModelInstance::SaveInstanceData(bool isModelInstData) { // line 722
 	if (isModelInstData) {
 		// allocate a plain RenderModelInstanceData

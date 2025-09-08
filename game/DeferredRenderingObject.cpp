@@ -345,12 +345,11 @@ void DeferredRenderingObject::Drawable::draw(cdc::Matrix *matrix, float arg) {
 	rmi->SetMaterial(~0u, static_cast<cdc::CommonMaterial*>(deferredExtraData->material));
 	hackCalcInstanceParams(deferredExtraData, &matrixCopy, rmi->accessInstanceData()->instanceParams);
 
-	// patch textures (even though this render model is shared between instances)
-	cdc::PersistentPGData *ppg = rmi->getPersistentPGData();
-	if (deferredExtraData->texture[0]) ppg->sub10.pInstanceTextures[0] = deferredExtraData->texture[0];
-	if (deferredExtraData->texture[1]) ppg->sub10.pInstanceTextures[1] = deferredExtraData->texture[1];
-	if (deferredExtraData->texture[2]) ppg->sub10.pInstanceTextures[2] = deferredExtraData->texture[2];
-	if (deferredExtraData->texture[3]) ppg->sub10.pInstanceTextures[3] = deferredExtraData->texture[3];
+	// patch textures
+	if (deferredExtraData->texture[0]) rmi->SetInstanceTexture(0, 0, deferredExtraData->texture[0]);
+	if (deferredExtraData->texture[1]) rmi->SetInstanceTexture(0, 1, deferredExtraData->texture[1]);
+	if (deferredExtraData->texture[2]) rmi->SetInstanceTexture(0, 2, deferredExtraData->texture[2]);
+	if (deferredExtraData->texture[3]) rmi->SetInstanceTexture(0, 3, deferredExtraData->texture[3]);
 
 	InstanceDrawable::draw(&matrixCopy, arg);
 }

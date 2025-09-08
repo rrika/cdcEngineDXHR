@@ -62,6 +62,7 @@ public:
 		return m_pCurrentInstanceData;
 	}
 
+	void SetInstanceTexture(uint32_t drawGroupId, uint32_t index, TextureMap *pTextureMap) override;
 	void SetMaterial(uint32_t selector, IMaterial *material) override;
 
 	void SetDrawBehindAll(bool depthLayer) override {

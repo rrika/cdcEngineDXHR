@@ -1106,24 +1106,22 @@ int spinnyCube(HWND window,
 						rmi->baseMask = coronasPass;
 					hackCalcInstanceParams(deferredExtraData, &instanceMatrix, rmi->accessInstanceData()->instanceParams);
 
-					// patch textures (even though this render model is shared between instances)
-					cdc::PersistentPGData *ppg = rmi->getPersistentPGData();
-					if (deferredExtraData->texture[0]) ppg->sub10.pInstanceTextures[0] = deferredExtraData->texture[0];
-					if (deferredExtraData->texture[1]) ppg->sub10.pInstanceTextures[1] = deferredExtraData->texture[1];
-					if (deferredExtraData->texture[2]) ppg->sub10.pInstanceTextures[2] = deferredExtraData->texture[2];
-					if (deferredExtraData->texture[3]) ppg->sub10.pInstanceTextures[3] = deferredExtraData->texture[3];
+					// patch textures
+					if (deferredExtraData->texture[0]) rmi->SetInstanceTexture(0, 0, deferredExtraData->texture[0]);
+					if (deferredExtraData->texture[1]) rmi->SetInstanceTexture(0, 1, deferredExtraData->texture[1]);
+					if (deferredExtraData->texture[2]) rmi->SetInstanceTexture(0, 2, deferredExtraData->texture[2]);
+					if (deferredExtraData->texture[3]) rmi->SetInstanceTexture(0, 3, deferredExtraData->texture[3]);
 
 				} else if (objFamily == 0x5b) {
 					rmi->baseMask = 0x100A; // normals, composite, translucent, for now
 					auto *lensFlareExtraData = (LensFlareAndCoronaExtraData*)extraData;
 					hackCalcInstanceParams(lensFlareExtraData, &instanceMatrix, /*invView*/ &renderViewport.viewMatrix, rmi->accessInstanceData()->instanceParams);
 
-					// patch textures (even though this render model is shared between instances)
-					cdc::PersistentPGData *ppg = rmi->getPersistentPGData();
-					if (lensFlareExtraData->texture[0]) ppg->sub10.pInstanceTextures[0] = lensFlareExtraData->texture[0];
-					if (lensFlareExtraData->texture[1]) ppg->sub10.pInstanceTextures[1] = lensFlareExtraData->texture[1];
-					if (lensFlareExtraData->texture[2]) ppg->sub10.pInstanceTextures[2] = lensFlareExtraData->texture[2];
-					if (lensFlareExtraData->texture[3]) ppg->sub10.pInstanceTextures[3] = lensFlareExtraData->texture[3];
+					// patch textures
+					if (lensFlareExtraData->texture[0]) rmi->SetInstanceTexture(0, 0, lensFlareExtraData->texture[0]);
+					if (lensFlareExtraData->texture[1]) rmi->SetInstanceTexture(0, 1, lensFlareExtraData->texture[1]);
+					if (lensFlareExtraData->texture[2]) rmi->SetInstanceTexture(0, 2, lensFlareExtraData->texture[2]);
+					if (lensFlareExtraData->texture[3]) rmi->SetInstanceTexture(0, 3, lensFlareExtraData->texture[3]);
 
 				} else {
 					cdc::Vector4 pos {
