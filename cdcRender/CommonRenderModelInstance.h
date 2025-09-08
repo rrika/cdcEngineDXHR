@@ -50,13 +50,15 @@ public:
 	{
 		tab0Ext16 = renderMesh->getTab0Ext16();
 		tab0Ext128 = renderMesh->getTab0Ext128();
-		m_pCurrentInstanceData = new RenderModelInstanceData; // HACK
+		m_pCurrentInstanceData = nullptr;
 	}
 	~CommonRenderModelInstance() {
 		delete m_pCurrentInstanceData;
 	}
 
 	RenderModelInstanceData *accessInstanceData() {
+		if (m_pCurrentInstanceData == nullptr)
+			m_pCurrentInstanceData = new RenderModelInstanceData;
 		return m_pCurrentInstanceData;
 	}
 

@@ -66,7 +66,7 @@ void PCDX11ModelDrawable::drawDepth(uint32_t funcSetIndex, IRenderDrawable *draw
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupDepthPass(
 		&mt0x128->sub10,
-		(void*)thisModel->ext->instanceParams,
+		thisModel->ext ? (void*)thisModel->ext->instanceParams : nullptr,
 		mesh->vsSelect,
 		false,
 		(VertexDecl*)thisModel->meshSub->format,
@@ -91,7 +91,7 @@ void PCDX11ModelDrawable::drawShadow(uint32_t funcSetIndex, IRenderDrawable *dra
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupShadowPass(
 		&mt0x128->sub10,
-		(void*)thisModel->ext->instanceParams,
+		thisModel->ext ? (void*)thisModel->ext->instanceParams : nullptr,
 		(*(char**)lightManager->ptr434)[276],
 		mesh->vsSelect,
 		(VertexDecl*)thisModel->meshSub->format,
@@ -139,7 +139,7 @@ void PCDX11ModelDrawable::drawComposite(uint32_t funcSetIndex, IRenderDrawable *
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupSinglePass(
 		&mt0x128->sub10,
-		(void*)thisModel->ext->instanceParams,
+		thisModel->ext ? (void*)thisModel->ext->instanceParams : nullptr,
 		thisModel->lightConstantBufferData,
 		mesh->vsSelect,
 		(VertexDecl*)thisModel->meshSub->format,
@@ -171,7 +171,7 @@ void PCDX11ModelDrawable::drawTranslucent(uint32_t funcSetIndex, IRenderDrawable
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupSinglePass(
 		&mt0x128->sub10,
-		(void*)thisModel->ext->instanceParams,
+		thisModel->ext ? (void*)thisModel->ext->instanceParams : nullptr,
 		thisModel->lightConstantBufferData,
 		mesh->vsSelect,
 		(VertexDecl*)thisModel->meshSub->format,
@@ -200,7 +200,7 @@ void PCDX11ModelDrawable::drawNormal(uint32_t funcSetIndex, IRenderDrawable *dra
 	PersistentPGData *mt0x128 = thisModel->tab0Ext128;
 	PCDX11StreamDecl *streamDecl = mt0x128->material->SetupNormalMapPass(
 		&mt0x128->sub10,
-		(void*)thisModel->ext->instanceParams,
+		thisModel->ext ? (void*)thisModel->ext->instanceParams : nullptr,
 		mesh->vsSelect,
 		(VertexDecl*)thisModel->meshSub->format,
 		(uint8_t)thisModel->flags34,

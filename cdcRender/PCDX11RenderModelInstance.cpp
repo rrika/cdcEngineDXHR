@@ -46,7 +46,7 @@ void PCDX11RenderModelInstance::recordDrawables(IMatrixState *matrixState) {
 			flags |= 2;
 	}
 
-	if (m_pCurrentInstanceData->projectOverrideValid) // HACK
+	if (m_pCurrentInstanceData && m_pCurrentInstanceData->projectOverrideValid) // HACK
 		flags ^= 2;
 
 	for (uint32_t i=0; i<mesh->meshCount; i++) {
