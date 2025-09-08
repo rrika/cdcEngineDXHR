@@ -228,6 +228,28 @@ Vector DeferredRenderingObject::Drawable::calcInstanceParamRow(
 	return v;
 }
 
+float DeferredRenderingExtraData::fadeByDistance(float dist) {
+	float factor = 1.f;
+	if (farFadeEnable && farFadeStart + farFadeWidth < dist)
+		return 0.f;
+	if (nearFadeEnable && nearFadeStart - nearFadeWidth > dist && nearFadeLevel == 0.f)
+		return 0.f;
+	if (farFadeEnable && farFadeStart < dist) {
+		float f = 1.0 - (dist - farFadeStart) / farFadeWidth;
+		if (f <= 0.f) f = 0.f;
+		if (f >= 1.f) f = 1.f;
+		factor = f;
+	}
+	if (nearFadeEnable && nearFadeStart > dist) {
+		float f = (dist - (nearFadeStart - nearFadeWidth)) / nearFadeWidth;
+		if (f <= 0.f) f = 0.f;
+		if (f >= 1.f) f = 1.f;
+		f = (1.0 - nearFadeLevel) * f + nearFadeLevel;
+		factor *= f;
+	}
+	return factor;
+}
+
 void hackCalcInstanceParams(DeferredRenderingExtraData *extra, Matrix *m, Vector4 *instanceParams) {
 	Vector unpacked0 = extra->packedVectors[0].unpack();
 	Vector unpacked1 = extra->packedVectors[1].unpack();
@@ -288,6 +310,26 @@ void hackCalcInstanceParams(DeferredRenderingExtraData *extra, Matrix *m, Vector
 
 	cachedMatrixMulChain_setup(&objToWorld, &worldToObj);
 
+	// distance fading
+	Matrix *cameraToWorld = cachedMatrixMulChain_eval(2, 1);
+	Matrix *objectToWorld = cachedMatrixMulChain_eval(0, 1);
+	Vector3 distVec = Vector3{
+		cameraToWorld->m[3][0] - objectToWorld->m[3][0],
+		cameraToWorld->m[3][1] - objectToWorld->m[3][1],
+		cameraToWorld->m[3][2] - objectToWorld->m[3][2],
+	};
+	float dist = sqrtf(Dot3(distVec, distVec));
+	float fade = extra->fadeByDistance(dist);
+	if (fade == 0.f)
+		return;
+	if (fade < 1.f) {
+		unpacked0 = unpacked0 * fade;
+		unpacked1 = unpacked1 * fade;
+		unpacked2 = unpacked2 * fade;
+		unpacked3 = unpacked3 * fade;
+	}
+
+	//
 	uint32_t i = 0;
 
 	if (extra->instanceParamFromMatrixB7) {

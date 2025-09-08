@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "Inspector.h"
 #include "3rdParty/imgui/imgui.h"
 #include "cdc/dtp/objectproperties/intro.h"
@@ -177,6 +178,40 @@ void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
 				transformMode[param.multiplyMode],
 				spaces[param.matrixP],
 				spaces[param.matrixQ]);
+	}
+
+	// fade
+	float distanceRange = 5000.f;
+	ImGui::Checkbox("Far fade", &extra->farFadeEnable);
+	ImGui::SliderFloat2("Far fade start/range", &extra->farFadeStart, 0.f, distanceRange);
+	ImGui::Checkbox("Near fade", &extra->nearFadeEnable);
+	ImGui::SliderFloat2("Near fade start/range", &extra->nearFadeStart, 0.f, distanceRange);
+	ImGui::SliderFloat("Near fade level", &extra->nearFadeLevel, 0.f, 1.f);
+
+	if (extra->farFadeEnable || extra->nearFadeEnable) {
+		float plotWidth = ImGui::GetWindowWidth(); // TODO: subtract border
+		float plotHeight = 100.f;
+		ImVec2 p = ImGui::GetCursorScreenPos();
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+		ImVec2 points[6] = {
+			ImVec2(0.f, 0.f),
+			ImVec2(extra->nearFadeStart - extra->nearFadeWidth, 0.f),
+			ImVec2(extra->nearFadeStart, 0.f),
+			ImVec2(extra->farFadeStart, 0.f),
+			ImVec2(extra->farFadeStart + extra->farFadeWidth, 0.f),
+			ImVec2(distanceRange, 0.f)
+		};
+		qsort(points, 6, sizeof(ImVec2),
+			[](void const *a, void const *b) -> int {
+				return int(*(float const*)a-*(float const*)b);});
+		for (uint32_t i=0; i<6; i++) {
+			points[i].y = extra->fadeByDistance(points[i].x);
+			points[i].x = p.x + points[i].x * plotWidth / distanceRange;
+			points[i].y = p.y + (1.f-points[i].y) * plotHeight;
+		}
+		draw_list->AddPolyline(points, 6, IM_COL32(255,255,0,255), false, 2.0f);
+		ImGui::Dummy(ImVec2(plotWidth, plotHeight));
 	}
 }
 

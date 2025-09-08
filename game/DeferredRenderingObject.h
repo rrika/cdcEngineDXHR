@@ -22,14 +22,17 @@ struct DeferredRenderingExtraData {
 	float scale[3]; // 78
 	float float84;
 	float angle88;
-	uint8_t byte8C;
-	float float90;
-	float float94;
-	uint8_t byte98;
-	float float9C;
-	float floatA0;
-	float floatA4;
+
+	bool farFadeEnable; // 8C
+	float farFadeStart; // 90
+	float farFadeWidth; // 94
+
+	bool nearFadeEnable; // 98
+	float nearFadeStart; // 9C
+	float nearFadeWidth; // A0
+	float nearFadeLevel; // A4
 	float floatA8;
+
 	uint8_t gapAC[9];
 	uint8_t sourceSpaceB5;
 	uint8_t targetSpaceB6;
@@ -43,6 +46,8 @@ struct DeferredRenderingExtraData {
 	uint8_t gapE3[49];
 	uint32_t dword114;
 	uint32_t dword118;
+
+	float fadeByDistance(float dist);
 };
 
 struct DeferredRenderingObject {
