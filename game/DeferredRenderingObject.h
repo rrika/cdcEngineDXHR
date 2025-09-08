@@ -21,7 +21,7 @@ struct DeferredRenderingExtraData {
 	uint8_t gap74[4];
 	float scale[3]; // 78
 	float float84;
-	float float88;
+	float angle88;
 	uint8_t byte8C;
 	float float90;
 	float float94;

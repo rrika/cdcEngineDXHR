@@ -83,10 +83,14 @@ void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
 	// scale
 	ImGui::Text("scale mode %d",
 		extra->scaleModeE1);
-	if (extra->scaleModeE1 == 1)
+	if (extra->scaleModeE1 == 1 || extra->scaleModeE1 == 2)
 		ImGui::SliderFloat("Scale", extra->scale, 0, 10000.f);
 	else
 		ImGui::SliderFloat3("Scale", extra->scale, 0, 10000.f);
+
+	// angle
+	if (extra->scaleModeE1 == 2)
+		ImGui::SliderFloat("Angle", &extra->angle88, 0, 180.f);
 
 	// packed[...]
 	const char *labels_packed[] = {"packed[0]", "packed[1]", "packed[2]", "packed[3]"};
@@ -140,7 +144,7 @@ void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
 		"view to camera (row 2)",
 		"view to camera (row 3)",
 		"not implemented 34",
-		"not implemented 35",
+		"inverse scale and cos(angle)",
 		"unused" // 36
 	};
 	const char *spaces[] = {

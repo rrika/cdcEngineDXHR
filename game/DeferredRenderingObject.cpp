@@ -96,7 +96,7 @@ Vector DeferredRenderingObject::Drawable::calcInstanceParamRow(
 	Vector *vec6,
 	Vector *vec7,
 	Vector *scale,
-	float value9
+	float angle
 ) {
 	// for deferred_fast_omni_diffuse it's like this
 	// (taken from det_city_limb_clinic.drm section 0)
@@ -198,8 +198,9 @@ Vector DeferredRenderingObject::Drawable::calcInstanceParamRow(
 		break;
 	}
 
+	case 35: v = {1.0f/scale->x, 1.0f/scale->y, 1.0f/scale->z, cosf(angle*3.141592741012573f/360.f)}; break;
+
 	case 34:
-	case 35:
 	default:
 		// FatalError("not implemented mode=%d", param.mode);
 		return {};
@@ -241,6 +242,11 @@ void hackCalcInstanceParams(DeferredRenderingExtraData *extra, Matrix *m, Vector
 	if (extra->scaleModeE1 == 1) {
 		scale.y = scale.x;
 		scale.z = scale.x;
+	} else if (extra->scaleModeE1 == 2) {
+		float s = sin(extra->angle88 * 3.141592741012573f / 356.f);
+		float x = scale.x;
+		scale.x = scale.y = sqrt( x*x*s*s / (1-s*s) );
+		scale.z = x;
 	}
 
 	Matrix objToWorld = *m;
@@ -303,7 +309,7 @@ void hackCalcInstanceParams(DeferredRenderingExtraData *extra, Matrix *m, Vector
 				&extra->plainVectors[2],
 				&extra->plainVectors[3],
 				&scale,
-				extra->float88
+				extra->angle88
 			)};
 		}
 	}
