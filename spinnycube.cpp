@@ -135,6 +135,7 @@ extern HCURSOR ImGui_ImplWin32_Arrow;
 
 extern uint32_t *pickupDatabase;
 cdc::MultiplexStream *neverAskedForThis = nullptr;
+cdc::MultiplexStream *sha_tym_penthouse_music = nullptr;
 uint32_t subtitleIndex = 0;
 uint32_t coronasPass = 0;
 
@@ -144,6 +145,13 @@ void howDoYouHandleAllOfThis() {
 
 	((cdc::MultiplexStreamImpl*)neverAskedForThis)->hackSample->Play();
 	subtitleIndex = 7497;
+}
+
+void penthouse_music() {
+	if (!sha_tym_penthouse_music)
+		sha_tym_penthouse_music = cdc::MultiplexStream::CreateMusicStream("sha_tym_penthouse_music");
+
+	((cdc::MultiplexStreamImpl*)sha_tym_penthouse_music)->hackSample->Play();
 }
 
 cdc::Vector halton[512];
@@ -1527,6 +1535,7 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Show animations")) { showAnimationsWindow = true; }
 				if (ImGui::MenuItem("Show objectives")) { showObjectivesWindow = true; }
 				if (ImGui::MenuItem("Show post-processing")) { showPostProcessingWindow = true; }
+				if (ImGui::MenuItem("Play penthouse music")) { penthouse_music(); }
 				if (ImGui::MenuItem("I never asked for this")) { howDoYouHandleAllOfThis(); }
 				ImGui::EndMenu();
 			}

@@ -36,6 +36,8 @@ bool MultiplexStreamImpl::Init(StreamType streamType, uint8_t priority, const ch
 		// TODO
 		
 	} else if (streamType == /*2*/ kMusicStream) {
+		sprintf(mulname, "%smusic\\%s\\%s.mul", "pc-w\\", name, name);
+		sprintf(drmname, "%smusic\\%s\\%s.drm", "pc-w\\", name, name);
 		// TODO
 	}
 
@@ -51,6 +53,17 @@ MultiplexStream *MultiplexStream::CreateSoundStream( // line 2676
 ) {
 	auto stream = new MultiplexStreamImpl();
 	if (stream->Init(kSoundStream, priority, name))
+		return stream;
+
+	// TODO: cleanup
+	return nullptr;
+}
+
+MultiplexStream *MultiplexStream::CreateMusicStream( // line 2729
+	const char *name
+) {
+	auto stream = new MultiplexStreamImpl();
+	if (stream->Init(kMusicStream, 110, name))
 		return stream;
 
 	// TODO: cleanup

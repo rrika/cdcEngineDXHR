@@ -187,6 +187,11 @@ static void InitNative(UIActions& uiact, ScriptType *ty, void *init_) {
 			ImGui::Text("barkevent %d", init->barkEvent);
 		}
 
+	} else if (strcmp(ntyname, "music") == 0) {
+		struct MusicInit { const char *name; uint32_t slotIndex; };
+		auto *init = *(MusicInit**)init_;
+		ImGui::Text("%s in slot %d", init->name, init->slotIndex);
+
 	} else {
 		ImGui::Text("todo(%s)", ntyname);
 		uiact.origin(init_);

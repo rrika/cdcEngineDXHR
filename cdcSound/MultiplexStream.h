@@ -38,6 +38,7 @@ public:
 	static void SetSoundDirectory(const char *dir);
 	static void SetCinematicDirectory(const char *dir);
 	static MultiplexStream *CreateSoundStream(const char *name, uint8_t priority);
+	static MultiplexStream *CreateMusicStream(const char *name);
 };
 
 class MultiplexStreamImpl : public MultiplexStream { // line 239
