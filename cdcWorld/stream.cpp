@@ -55,10 +55,14 @@ static void buildUnitsUI(bool main, bool scn) {
 		bool isScn = name[0] == 's' && name[1] == '_';
 		if ((isScn ? scn : main) == false)
 			continue;
-		// ImGui::Text("%s", objList->entries[i].name);
-		if (ImGui::SmallButton(objList->entries[i].name)) {
-			Gameloop::InitiateLevelLoad(objList->entries[i].name, nullptr);
+		// ImGui::Text("%s", name);
+		char filename[256];
+		GameShell::LOAD_UnitFileName(filename, name);
+		ImGui::BeginDisabled(getDefaultFileSystem()->FileExists(filename) == false);
+		if (ImGui::SmallButton(name)) {
+			Gameloop::InitiateLevelLoad(name, nullptr);
 		}
+		ImGui::EndDisabled();
 	}
 }
 
