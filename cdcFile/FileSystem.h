@@ -40,6 +40,7 @@ class FileSystem {
 public:
 	virtual FileRequest *createRequest(FileReceiver*, const char*, uint32_t) = 0; // 00
 	virtual File *createFile(const char*) = 0; // 04
+	virtual bool FileExists(const char*) = 0; // 08
 	virtual uint32_t getSize(const char*) = 0; // 0C
 	virtual void setLanguageMask(uint32_t) = 0; // 1C
 	virtual uint32_t getLanguageMask() = 0; // 20

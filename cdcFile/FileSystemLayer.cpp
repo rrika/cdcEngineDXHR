@@ -10,6 +10,10 @@ File *FileSystemLayer::createFile(const char *path) {
 	return wrapped->createFile(path);
 }
 
+bool FileSystemLayer::FileExists(const char *path) {
+	return wrapped->FileExists(path);
+}
+
 uint32_t FileSystemLayer::getSize(const char *path) {
 	return wrapped->getSize(path);
 }

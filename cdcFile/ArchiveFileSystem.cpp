@@ -168,9 +168,15 @@ File *ArchiveFileSystem::createFile(const char *path) {
 	return nullptr;
 }
 
+bool ArchiveFileSystem::FileExists(const char *path) {
+	if (strnicmp("\\\\local\\", path, 6) == 0)
+		return wrapped->FileExists(path + 6);
+	return lookupEntry(path) != nullptr;
+}
+
 uint32_t ArchiveFileSystem::getSize(const char *path) {
 	if (strnicmp("\\\\local\\", path, 6) == 0)
-		return wrapped->getSize(path);
+		return wrapped->getSize(path + 6);
 	else if (auto *entry = lookupEntry(path))
 		return entry->uncompressedSize;
 	else
