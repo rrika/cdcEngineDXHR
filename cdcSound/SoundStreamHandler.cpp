@@ -113,7 +113,9 @@ void SoundStreamHandler::Start() { // line 1143
 		// if (m_channelCount > 1)
 		// 	voice->SyncWhenStarted();
 		// static_cast<VoiceImpl*>(channel.voice)->SetControls(channel.controls, channel.controls3d);
-		// static_cast<VoiceImpl*>(channel.voice)->setVolumeLeftRight(m_streamHeader->volLeft[i], m_streamHeader->volRight[i]);
+		static_cast<VoiceImpl*>(channel.voice)->setVolumeLeftRight(
+			impl->m_streamHeader->volLeft[i],
+			impl->m_streamHeader->volRight[i]);
 	}
 	// impl->m_isRunning = true;
 }

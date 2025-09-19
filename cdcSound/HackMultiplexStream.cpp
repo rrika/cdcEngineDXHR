@@ -74,7 +74,6 @@ vector<Sample*> loadAndDemultiplex(STRHEADER *header, const char *path) {
 	// printf("Sample::Create size=%x startLoop=%d endLoop=%d hertz=%d\n", streams[0].size(), startLoop, endLoop, header->hertz);
 	// printf("first bytes: %02x %02x %02x %02x\n", streams[0][0], streams[0][1], streams[0][2], streams[0][3]);
 
-	// only consider channel 0
 	vector<Sample*> samples;
 	for (uint32_t i = 0; i < header->channelCount; i++) {
 		Sample *s = Sample::Create(0, streams[i].size(), startLoop, endLoop, header->hertz);

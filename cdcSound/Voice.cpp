@@ -41,6 +41,19 @@ void VoiceImpl::SetControls(
 	// TODO
 }
 
+void VoiceImpl::setVolumeLeftRight(float left, float right) {
+	SND_SetFMODModeFlag(m_channel, FMOD_2D);
+	float center = 0.f, back = 0.f;
+	float lfe = 0.f; // TODO: globalSoundInfo->defaults30->lfe68
+	if (left == right) center = right;
+	// if () back =.0.5f;
+	m_channel->setSpeakerMix(
+		left, right,
+		center, lfe,
+		left*back, right*back,
+		0.f, 0.f);
+}
+
 Voice::UpdateCode VoiceImpl::Update() { // 498
 	if (m_bStoppedFMOD)
 		return kNormal;

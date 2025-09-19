@@ -48,6 +48,7 @@ public:
 	void SetControls(
 		SoundTypes::Controls *controls,
 		SoundTypes::Controls3d *controls3d);
+	void setVolumeLeftRight(float, float);
 	UpdateCode Update();
 	float Update3D(float& directOcclusion, float& reverbOcclusion);
 	FMOD_RESULT EndCallback();
