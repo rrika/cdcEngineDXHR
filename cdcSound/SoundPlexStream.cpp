@@ -33,7 +33,7 @@ uint32_t SoundPlexStream::Init() {
 	subtitleIndex = dtpStream->stringIndex12;
 
 	// HACK
-	((MultiplexStreamImpl*)multiplexStream)->hackSample->Play();
+	multiplexStream->Play();
 
 	m_state &= ~0xD;
 	m_state |= 0x12;

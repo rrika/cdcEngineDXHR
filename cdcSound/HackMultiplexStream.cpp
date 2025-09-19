@@ -10,7 +10,7 @@ using namespace std;
 
 namespace cdc {
 
-Sample *loadAndDemultiplex(STRHEADER *header, const char *path) {
+vector<Sample*> loadAndDemultiplex(STRHEADER *header, const char *path) {
 	auto fs = archiveFileSystem_default; // HACK
 	uint32_t size = fs->getSize(path);
 	char *buffer = FSHelper_ReadFile(path);
@@ -75,11 +75,15 @@ Sample *loadAndDemultiplex(STRHEADER *header, const char *path) {
 	// printf("first bytes: %02x %02x %02x %02x\n", streams[0][0], streams[0][1], streams[0][2], streams[0][3]);
 
 	// only consider channel 0
-	Sample *s = Sample::Create(0, streams[0].size(), startLoop, endLoop, header->hertz);
-	s->Upload(0, streams[0].data(), 0);
+	vector<Sample*> samples;
+	for (uint32_t i = 0; i < header->channelCount; i++) {
+		Sample *s = Sample::Create(0, streams[i].size(), startLoop, endLoop, header->hertz);
+		s->Upload(0, streams[i].data(), 0);
+		samples.push_back(s);
+	}
 
 	delete[] buffer;
-	return s;
+	return samples;
 }
 
 }

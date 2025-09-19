@@ -1,12 +1,11 @@
 #include <cstdio>
 #include <cstring>
+#include <vector>
 #include "MultiplexStream.h"
 #include "Sample.h"
+#include "SoundStreamHandler.h"
 
 namespace cdc {
-
-// see HackMultiplexStream.h
-Sample *loadAndDemultiplex(STRHEADER*, const char *);
 
 char MultiplexStreamImpl::s_soundStreamDir[256]; // line 136
 char MultiplexStreamImpl::s_cinematicStreamDir[256]; // line 137
@@ -19,6 +18,31 @@ void MultiplexStream::SetSoundDirectory(const char *dir) { // line 323
 void MultiplexStream::SetCinematicDirectory(const char *dir) { // line 336
 	if (strlen(dir)+1 <= 256)
 		strcpy(MultiplexStreamImpl::s_cinematicStreamDir, dir);
+}
+
+
+MultiplexStreamImpl::MultiplexStreamImpl() { // line 729
+	// TODO
+	m_soundStreamHandler = SoundStreamHandler::Create(this);
+}
+
+
+MultiplexStreamImpl::~MultiplexStreamImpl() { // line 790
+	// TODO
+	delete m_soundStreamHandler;
+}
+
+void MultiplexStream::Stop() { // line 866
+	// TODO
+}
+
+void MultiplexStreamImpl::PlayRequest() { // line 1516
+	// TODO
+	if (!m_soundStreamHandler)
+		return Stop();
+	m_soundStreamHandler->Start();
+	if (m_soundStreamHandler->GetVoice(m_soundStreamHandler->ChannelCount()-1) == nullptr)
+		return Stop();
 }
 
 bool MultiplexStreamImpl::Init(StreamType streamType, uint8_t priority, const char *name) { // line 2279 or 2284
@@ -41,7 +65,7 @@ bool MultiplexStreamImpl::Init(StreamType streamType, uint8_t priority, const ch
 		// TODO
 	}
 
-	hackSample = loadAndDemultiplex(&m_streamHeader, mulname);
+	m_soundStreamHandler->hackLoad(&m_streamHeader, mulname);
 
 	return true;
 }

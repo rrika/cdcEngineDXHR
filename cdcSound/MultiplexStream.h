@@ -1,9 +1,11 @@
 #pragma once
 #include <cstdint>
+#include "MediaStream.h"
 
 namespace cdc {
 
 class Sample;
+class SoundStreamHandler;
 
 typedef struct { // line 69
 	uint32_t hertz;             // 0
@@ -33,12 +35,15 @@ enum StreamType { // line 204
 	kMusicStream = 2
 };
 
-class MultiplexStream /* : public MediaStream */ { // line 71
+class MultiplexStream : public MediaStream { // line 71
 public:
 	static void SetSoundDirectory(const char *dir);
 	static void SetCinematicDirectory(const char *dir);
 	static MultiplexStream *CreateSoundStream(const char *name, uint8_t priority);
 	static MultiplexStream *CreateMusicStream(const char *name);
+
+	inline void Play() override;
+	void Stop() override;
 };
 
 class MultiplexStreamImpl : public MultiplexStream { // line 239
@@ -48,10 +53,18 @@ class MultiplexStreamImpl : public MultiplexStream { // line 239
 
 	STRHEADER m_streamHeader; // B0
 
-public:
-	bool Init(StreamType streamType, uint8_t priority, const char *name); // line 2284
+	SoundStreamHandler *m_soundStreamHandler; // 41C
 
-	Sample *hackSample;
+public:
+	MultiplexStreamImpl(); // line 729
+	~MultiplexStreamImpl(); // line 790
+	void PlayRequest(); // line 1516
+	bool Init(StreamType streamType, uint8_t priority, const char *name); // line 2284
 };
+
+void MultiplexStream::Play() { // line 434
+	auto *impl = static_cast<MultiplexStreamImpl*>(this);
+	impl->PlayRequest();
+}
 
 }

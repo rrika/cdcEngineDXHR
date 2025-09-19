@@ -143,7 +143,7 @@ void howDoYouHandleAllOfThis() {
 	if (!neverAskedForThis)
 		neverAskedForThis = cdc::MultiplexStream::CreateSoundStream("vo\\eng\\det1\\adam_jensen\\sq02\\det1_sq02_dia_adam_006b", 0);
 
-	((cdc::MultiplexStreamImpl*)neverAskedForThis)->hackSample->Play();
+	neverAskedForThis->Play();
 	subtitleIndex = 7497;
 }
 
@@ -151,7 +151,7 @@ void penthouse_music() {
 	if (!sha_tym_penthouse_music)
 		sha_tym_penthouse_music = cdc::MultiplexStream::CreateMusicStream("sha_tym_penthouse_music");
 
-	((cdc::MultiplexStreamImpl*)sha_tym_penthouse_music)->hackSample->Play();
+	sha_tym_penthouse_music->Play();
 }
 
 cdc::Vector halton[512];

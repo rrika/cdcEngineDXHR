@@ -12,6 +12,7 @@ target_sources(dxhr PRIVATE
 	SoundPlexChoiceList.cpp
 	SoundPlexStream.cpp
 	SoundPlexWave.cpp
+	SoundStreamHandler.cpp
 	Voice.cpp
 	sfxmarker.cpp
 	snd.cpp)
