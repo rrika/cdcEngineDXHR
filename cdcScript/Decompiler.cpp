@@ -9,6 +9,7 @@
 #include "cdcScript/ScriptDataCursor.h"
 #include "cdcScript/ScriptType.h"
 #include "cdcSound/SoundPlex.h"
+#include "cdcSound/srmusic.h"
 #include "cdcWorld/InstanceManager.h"
 #include "cdcWorld/stream.h"
 #include "game/DX3Player.h"
@@ -94,6 +95,8 @@ static void InitNative(UIActions& uiact, ScriptType *ty, void *init_) {
 		ImGui::Text("[ERROR: not a native type]");
 		return;
 	}
+
+	ImGui::PushID(init_);
 
 	const char *ntyname = ty->blob->m_nativeScriptName;
 
@@ -191,11 +194,16 @@ static void InitNative(UIActions& uiact, ScriptType *ty, void *init_) {
 		struct MusicInit { const char *name; uint32_t slotIndex; };
 		auto *init = *(MusicInit**)init_;
 		ImGui::Text("%s in slot %d", init->name, init->slotIndex);
+		ImGui::SameLine();
+		if (ImGui::SmallButton("play"))
+			SRMUSIC_LoadMusic(init->slotIndex, init->name, 0, 0);
 
 	} else {
 		ImGui::Text("todo(%s)", ntyname);
 		uiact.origin(init_);
 	}
+
+	ImGui::PopID();
 }
 
 static void Init(UIActions& uiact, DataMember *member) {
