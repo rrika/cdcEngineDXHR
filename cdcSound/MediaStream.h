@@ -20,7 +20,7 @@ public:
 class MediaStreamHandler {
 public:
 	virtual void Start() = 0;            // 0
-	// virtual bool OnStreamStop() = 0;     // 4
+	virtual bool OnStreamStop() = 0;     // 4
 	// virtual bool ReadyToPlay() = 0;      // 8
 	// virtual bool AllDataProcessed() = 0; // C
 

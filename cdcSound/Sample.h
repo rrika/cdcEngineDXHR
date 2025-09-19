@@ -37,6 +37,7 @@ public:
 		uint32_t offset,
 		void *src,
 		uint32_t bytes);
+	bool canReleaseImmediately() const;
 	void Release();
 
 	void AddRef() { m_referenceCount++; }

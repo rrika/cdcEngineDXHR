@@ -65,6 +65,15 @@ uint32_t Sample::Upload(
 	return m_lengthInBytes;
 }
 
+bool Sample::canReleaseImmediately() const {
+	FMOD_OPENSTATE state;
+	return
+		m_soundHandle == nullptr ||
+		m_soundHandle->getOpenState(&state, nullptr, nullptr) != FMOD_OK ||
+		state == FMOD_OPENSTATE_ERROR ||
+		state == FMOD_OPENSTATE_READY;
+}
+
 void Sample::Release() {
 	// this bypasses the references counter, and is used by WaveSection, how upsetting
 	if (m_soundHandle)

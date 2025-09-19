@@ -52,13 +52,37 @@ SoundStreamHandler *SoundStreamHandler::Create(MediaStream *mediaStream) { // li
 	return new SoundStreamHandlerImpl(mediaStream);
 }
 
-int cdc::SoundStreamHandler::ChannelCount() const { // line 474
+int SoundStreamHandler::ChannelCount() const { // line 474
 	auto *impl = static_cast<SoundStreamHandlerImpl const*>(this);
 
 	return impl->m_channelCount;
 }
 
-Voice *cdc::SoundStreamHandler::GetVoice(int channelIndex) { // line 1077
+bool SoundStreamHandler::OnStreamStop() { // line 481
+	auto *impl = static_cast<SoundStreamHandlerImpl*>(this);
+
+	// TODO
+	if (true /*m_isRunning*/) {
+
+		for (uint32_t i=0; i<impl->m_channelCount; i++) {
+			auto& channel = impl->m_channel[i];
+			delete channel.voice;
+			channel.voice = nullptr;
+		}
+
+		// m_isRunning = true;
+
+		for (uint32_t i=0; i<impl->m_channelCount; i++) {
+			if (impl->m_channel[i].sample->canReleaseImmediately() == false)
+				return false;
+		}
+	}
+
+	return true;
+}
+
+
+Voice *SoundStreamHandler::GetVoice(int channelIndex) { // line 1077
 	auto *impl = static_cast<SoundStreamHandlerImpl*>(this);
 
 	if (channelIndex < impl->m_channelCount)

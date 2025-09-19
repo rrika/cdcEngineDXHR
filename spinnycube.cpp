@@ -148,10 +148,15 @@ void howDoYouHandleAllOfThis() {
 }
 
 void penthouse_music() {
-	if (!sha_tym_penthouse_music)
+	if (!sha_tym_penthouse_music) {
 		sha_tym_penthouse_music = cdc::MultiplexStream::CreateMusicStream("sha_tym_penthouse_music");
+		sha_tym_penthouse_music->Play();
 
-	sha_tym_penthouse_music->Play();
+	} else {
+		sha_tym_penthouse_music->Stop();
+		delete sha_tym_penthouse_music;
+		sha_tym_penthouse_music = nullptr;
+	}
 }
 
 cdc::Vector halton[512];

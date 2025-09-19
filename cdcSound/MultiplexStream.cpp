@@ -33,7 +33,11 @@ MultiplexStreamImpl::~MultiplexStreamImpl() { // line 790
 }
 
 void MultiplexStream::Stop() { // line 866
+	auto *impl = static_cast<MultiplexStreamImpl*>(this);
+
 	// TODO
+	if (impl->m_soundStreamHandler)
+		impl->m_soundStreamHandler->OnStreamStop();
 }
 
 void MultiplexStreamImpl::PlayRequest() { // line 1516

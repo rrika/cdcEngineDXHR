@@ -17,6 +17,7 @@ public:
 	void hackLoad(STRHEADER*, const char *path);
 
 	void Start() override;
+	bool OnStreamStop() override;
 };
 
 }

@@ -38,6 +38,8 @@ public:
 		kSyncStalled = 2
 	};
 
+	virtual ~Voice() = default;
+
 	static VoiceCollection s_voiceCollection;
 };
 
