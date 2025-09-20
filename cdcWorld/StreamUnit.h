@@ -32,7 +32,7 @@ struct Level { // UnitBlob
 	uint32_t dword44;
 	uint32_t dword48;
 	uint32_t dword4C;
-	CellGroupData *sub50;
+	CellGroupData *pSceneData;
 };
 
 }

@@ -13,9 +13,17 @@ Scene::Scene(CommonRenderDevice *renderDevice) : // line 199
 {
 	// TODO
 	sceneCellGroups.push_back(new SceneCellGroup(this, SceneCellGroup::kGlobal));
-	sceneCellGroups.back()->allocateCells();
+	sceneCellGroups.back()->Init();
 	sceneCellGroups.push_back(new SceneCellGroup(this, SceneCellGroup::kExterior));
-	sceneCellGroups.back()->allocateCells();
+	sceneCellGroups.back()->Init();
+}
+
+ISceneCellGroup *Scene::CreateCellGroup(CellGroupData *pData) {
+	auto *group = new SceneCellGroup(this, pData);
+	sceneCellGroups.push_back(group);
+	group->Init();
+	// TODO: BindPendingPortals(group);
+	return group;
 }
 
 ISceneCellGroup *Scene::GetCellGroup(uint32_t index) { // line 1540

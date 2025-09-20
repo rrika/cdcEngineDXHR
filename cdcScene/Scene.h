@@ -41,6 +41,7 @@ public:
 	// 43 methods
 	void Render() override;
 	void RenderWithoutCellTracing(RenderViewport& viewport) override;
+	ISceneCellGroup *CreateCellGroup(CellGroupData *data) override;
 	ISceneCellGroup *GetCellGroup(uint32_t index) override;
 	ISceneEntity *CreateEntity() override;
 };

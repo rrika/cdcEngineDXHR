@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include "cdcScene.h"
+#include "CookedBSP.h"
 
 namespace cdc {
 
@@ -8,31 +9,13 @@ class Scene;
 class SceneCell;
 class SceneCellGroup;
 
-struct SceneCellBSPNode {
-	float x, y, z, dist;
-	SceneCellBSPNode *childPos; // index, patched to pointer
-	uint32_t cellIndexPos;
-	SceneCellBSPNode *childNeg; // index, patched to pointer
-	uint32_t cellIndexNeg;
-};
-
-struct SceneCellBSP {
-	uint32_t nodeCount;
-	SceneCellBSPNode *root;
-
-	void assign(uint32_t nodeCount, SceneCellBSPNode *nodes); // substitute indices for pointers
-	uint32_t queryPoint(float *point); // look up a cell index
-};
-
 class SceneCellContainer {
-
-	friend class SceneCell;
-
-	Scene *scene0;
-	SceneCellGroup *sceneCellGroup4;
-	SceneCell **cells8 = nullptr;
-	uint32_t dwordC = 0;
-	SceneCellBSP bsp = {0, nullptr};
+public:
+	Scene *m_pSceneA; // 0, as opposed to m_pSceneB in derived classes
+	SceneCellGroup *m_pCellGroup;
+	SceneCell **m_pChildren = nullptr;
+	uint32_t m_numChildren = 0; // C
+	CookedBSP m_bsp;
 
 public:
 	class CellReceiver {
@@ -40,18 +23,18 @@ public:
 	};
 
 	SceneCellContainer(Scene *scene, SceneCellGroup *sceneCellGroup) :
-		scene0(scene), sceneCellGroup4(sceneCellGroup) {}
+		m_pSceneA(scene), m_pCellGroup(sceneCellGroup) {}
 
-	SceneCell *queryPoint(float *point, bool useThisContainer) {
-		// TODO
-		return nullptr;
+	SceneCell *GetCellFromPoint(Vector3 const& point, bool ignoreChildCellGroups);
+
+	void Init(SceneCell **cells, uint32_t numChildren, void *nodes, uint32_t nodeCount) {
+		m_pChildren = cells;
+		m_numChildren = numChildren;
+		m_bsp.Init(nodeCount, nodes);
 	}
 
-	void assignBSP(uint32_t nodeCount, SceneCellBSPNode *nodes) {
-		bsp.assign(nodeCount, nodes);
-	}
-	void resetBSP() {
-		bsp.assign(0, nullptr);
+	void Uninit() {
+		m_bsp.Init(0, nullptr);
 	}
 };
 

@@ -1,14 +1,16 @@
 #pragma once
 #include <cstdlib>
+#include <vector>
 #include "cdcScene.h"
 #include "SceneCellContainer.h"
-#include "SceneCellGroup.h"
 #include "SceneSubCell.h"
 
 namespace cdc {
 
 class CommonRenderModelInstance;
+class SceneCellGroup;
 class SceneSubCell;
+struct CellData;
 
 class SceneCell :
 	public ISceneCell,
@@ -17,14 +19,14 @@ class SceneCell :
 public:
 	SceneSubCell *subCells = nullptr;
 	uint16_t numSubCells = 0;
-	// CellBlob *blob; // A8
+	std::vector<SceneCellGroup*> m_childCellGroups; // 28
+	CellData *m_pCellData = nullptr; // A8
 	CommonRenderModelInstance *renderModelInstance = nullptr; // C8
+	const char *m_pName = nullptr; // D0
 public:
-	SceneCell(SceneCellGroup *group) : SceneCellContainer(group->scene0, group) {
-		// TODO
-		subCells = new SceneSubCell[1];
-		numSubCells = 1;
-	}
+	SceneCell(SceneCellGroup *group);
+
+	void AddCellData(CellData *pData);
 
 	// 28 methods from ISceneCell
 };

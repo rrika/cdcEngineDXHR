@@ -948,7 +948,7 @@ int spinnyCube(HWND window,
 			if (!level)
 				continue;
 
-			cdc::CellGroupData *cellGroupData = level->sub50;
+			cdc::CellGroupData *cellGroupData = level->pSceneData;
 			if (!cellGroupData)
 				continue;
 
@@ -1419,7 +1419,7 @@ int spinnyCube(HWND window,
 			if (!level)
 				continue;
 
-			cdc::CellGroupData *cellGroupData = level->sub50;
+			cdc::CellGroupData *cellGroupData = level->pSceneData;
 			if (!cellGroupData)
 				continue;
 
@@ -2123,13 +2123,16 @@ int spinnyCube(HWND window,
 
 				ImGui::PushID(unit.name);
 
-				if (cdc::CellGroupData *cellGroupData = level->sub50) {
+				if (cdc::CellGroupData *cellGroupData = level->pSceneData) {
+					auto *playerCell = static_cast<cdc::SceneCell*>(
+						unit.sceneCellGroup->GetCellFromPoint((cdc::Vector3&)cameraPos, false));
 					ImGui::PushID("cells");
 					uint32_t numCells = cellGroupData->header->numTotalCells;
 					for (uint32_t i=0; i < numCells; i++) {
 						cdc::CellData *cell = cellGroupData->cells[i];
 						ImVec4 color = {halton[i].x, halton[i].y, halton[i].z, 1.0f};
-						ImGui::TextColored(color, "cell %i: %s", i, cell->pHeader->name);
+						bool insideCell = playerCell && playerCell->m_pCellData == cell;
+						ImGui::TextColored(color, "%s %i: %s", insideCell ? "--->" : "cell", i, cell->pHeader->name);
 						// RenderTerrain at cell->pTerrainData->pTerrain
 						// RenderMesh at cell->renderMesh (for visibility)
 						ImGui::SameLine();

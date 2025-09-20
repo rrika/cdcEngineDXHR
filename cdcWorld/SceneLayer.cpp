@@ -5,6 +5,7 @@
 #include "cdcScene/SceneManager.h"
 #include "Instance.h"
 #include "InstanceDrawable.h"
+#include "StreamUnit.h"
 
 namespace cdc {
 	class CommonRenderDevice;
@@ -47,7 +48,15 @@ void SceneLayer::RemoveStreamingCallback(StreamingCallback *cb) { // line 1093
 	}
 }
 
-void SceneLayer::PreStreamIn(StreamUnit*) { // line 1282
+void SceneLayer::PreStreamIn(StreamUnit *unit) { // line 1282
+	if (unit->sceneCellGroup)
+		return;
+	// TODO
+	if (!unit->coreUnit) {
+		// TODO
+		unit->sceneCellGroup = g_scene->CreateCellGroup(unit->level->pSceneData);
+		// TODO
+	}
 	// TODO
 }
 

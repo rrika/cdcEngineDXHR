@@ -57,9 +57,9 @@ struct CellDataHeader { // line 121
 	uint32_t dword3C;
 	uint16_t word40;
 	uint16_t numBSPNodes;
-	uint16_t word44;
+	uint16_t numChildCells; // 44
 	uint16_t word46;
-	uint16_t intraSceneCellGroupIndex;
+	uint16_t firstChildIndex; // 48
 	uint16_t word4A;
 	uint16_t word4C;
 	uint16_t word4E;

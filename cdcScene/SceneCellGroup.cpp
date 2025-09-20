@@ -34,7 +34,7 @@ static CellGroupData s_exteriorGroupData = {
 
 SceneCellGroup::SceneCellGroup(Scene *scene, SpecialType type) :
 	SceneCellContainer(scene, this),
-	scene1C(scene)
+	m_pSceneB(scene)
 {
 	static const char *pNames[2] = {
 		"Global Cellgroup",
@@ -45,31 +45,53 @@ SceneCellGroup::SceneCellGroup(Scene *scene, SpecialType type) :
 		&s_exteriorGroupData
 	};
 	name = pNames[int(type)];
-	cellGroupData = pData[int(type)];
+	m_pCellGroupData = pData[int(type)];
 }
 
-// SceneCellGroup::SceneCellGroup(Scene*, CellGroupData*) {
-// 	// TODO
-// }
+SceneCellGroup::SceneCellGroup(Scene *scene, CellGroupData *pData) :
+	SceneCellContainer(scene, this),
+	m_pSceneB(scene),
+	m_pCellGroupData(pData),
+	origin{0.f, 0.f, 0.f, 0.f},
+	name("CellGroup")
+{
+	// TODO
+}
 
-void SceneCellGroup::allocateCells() {
-	cells.resize(cellGroupData->header->numTotalCells);
-	for (auto& cellPtr : cells) {
+void SceneCellGroup::Init() {
+	m_cells.resize(m_pCellGroupData->header->numTotalCells);
+	for (auto& cellPtr : m_cells) {
 		cellPtr = new SceneCell(this);
 	}
+	SceneCellContainer::Init(
+		m_cells.data(),
+		m_pCellGroupData->header->numToplevelCells,
+		m_pCellGroupData->bspNodes,
+		m_pCellGroupData->header->numBSPNodes);
+
+	auto *symbols = m_pCellGroupData->symbols;
+	if (symbols == s_ppGlobalTable || symbols == s_ppExteriorTable)
+		return;
+
+	// TODO
+
+	for (uint32_t i=0; i<m_pCellGroupData->header->numTotalCells; i++)
+		m_cells[i]->AddCellData(m_pCellGroupData->cells[i]);
+
+	// TODO
 }
 
-IScene *SceneCellGroup::getScene() { return scene1C; }
+IScene *SceneCellGroup::getScene() { return m_pSceneB; }
 
-uint32_t SceneCellGroup::getCellCount() { return cells.size(); }
+uint32_t SceneCellGroup::getCellCount() { return m_cells.size(); }
 
-ISceneCell *SceneCellGroup::cellByIndex(uint32_t index) { return cells[index]; }
+ISceneCell *SceneCellGroup::cellByIndex(uint32_t index) { return m_cells[index]; }
 
-ISceneCell *SceneCellGroup::queryPoint(float *point, bool useThisContainer) {
-	return SceneCellContainer::queryPoint(point, useThisContainer);
+SceneCell *SceneCellGroup::GetCellFromPoint(Vector3 const& point, bool ignoreChildCellContainers) {
+	return SceneCellContainer::GetCellFromPoint(point, ignoreChildCellContainers);
 }
 
-float *SceneCellGroup::getOrigin() { return origin; }
+Vector3 *SceneCellGroup::getOrigin() { return &origin; }
 
 void SceneCellGroup::setUserData(void *) {
 	// TODO

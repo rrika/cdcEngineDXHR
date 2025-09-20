@@ -75,6 +75,10 @@ inline CullingMinMax CullingBox::GetProjectedMinMax(Vector3Arg e) const { // 554
 	return {c-x, c+x};
 }
 
+inline bool InFront(CullingPlane const& a, Vector3Arg point) { // line 1179
+	return Dot3(a.m_planeEq, point) > a.m_planeEq.w;
+}
+
 inline bool InFront(CullingPlane const& a, CullingSphere const& b) { // line 1185
 	return Dot3(a.m_planeEq, b.m_sphereEq) > (a.m_planeEq.w + b.m_sphereEq.w);
 }
