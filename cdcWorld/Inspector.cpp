@@ -25,6 +25,27 @@ void buildUI(UIActions& uiact, dtp::IntroDataUberObject *extra) {
 		ImGui::Text("no extra data");
 		return;
 	}
+	ImGui::Text("%d email", extra->numEMail + extra->numConditionalEMail);
+	for (uint32_t i=0; i<extra->numEMail; i++) {
+		uint32_t emailDtp = extra->email[i];
+		if (auto *email = static_cast<dtp::EMail*>(DTPDataSection::getPointer(emailDtp))) {
+			auto *from    = localstr_get(email->stridx_from);
+			auto *to      = localstr_get(email->stridx_to);
+			auto *subject = localstr_get(email->stridx_subject);
+			auto *body    = localstr_get(email->stridx_body);
+			if (ImGui::TreeNode((void*)email, "[%x] %s", emailDtp, subject)) {
+				ImGui::Text("From: %s", from);
+				uiact.origin((void*)email);
+				ImGui::TextDisabled("To:   %s", to);
+				uiact.origin((void*)email);
+				ImGui::TextWrapped("%s", body);
+				ImGui::NewLine();
+				ImGui::TreePop();
+			}
+		}
+		else
+			ImGui::Text("missing email %d: %x", i, emailDtp);
+	}
 	ImGui::Text("%d default programs", extra->numDefaultPrograms);
 	for (uint32_t i=0; i<extra->numDefaultPrograms; i++) {
 		uint32_t programDtp = extra->defaultPrograms[i];

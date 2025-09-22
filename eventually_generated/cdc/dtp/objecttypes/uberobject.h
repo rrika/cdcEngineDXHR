@@ -55,8 +55,23 @@ struct Loot {
 	LootItem *items;
 };
 
+struct EMail {
+	uint16_t stridx_from;
+	uint16_t stridx_to;
+	uint16_t stridx_subject;
+	uint16_t stridx_body;
+	uint32_t dword8;
+	uint32_t dwordC;
+	uint32_t ptr10;
+};
+
 struct IntroDataUberObject {
-	uint8_t gap0[0x6C];
+	uint8_t gap0[0x44];
+	uint32_t numEMail; // 44
+	uint32_t *email; // 48, email_database.drm must be loaded separately to retrieve
+	uint32_t numConditionalEMail; // 4C
+	void *conditionalEMail; // 50
+	uint8_t gap54[0x6C-0x54];
 	Loot *loot; // 6C
 	uint8_t gap70[0x88-0x70];
 	uint32_t *defaultPrograms; // 88

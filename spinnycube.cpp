@@ -565,6 +565,18 @@ int spinnyCube(HWND window,
 		cdc::FileRequest::NORMAL
 	);
 
+	auto emailDatabase = cdc::ResolveObject::create(
+		"pc-w\\email_database.drm",
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		0,
+		cdc::FileRequest::NORMAL
+	);
+
 	cdc::archiveFileSystem_default->processAll();
 
 	cdc::ResolveSection *objectSection = cdc::g_resolveSections[11];
