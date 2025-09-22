@@ -359,6 +359,7 @@ void PPManager::addActiveSet(dtp::PPActiveSet *activeSet, float f) {
 static void buildUI(UIActions& uiact, dtp::PPPrePassBlob *prePassBlob, dtp::PPVarPassTexBlobs *varPassTex) {
 	ImGui::PushID(prePassBlob);
 	ImGui::Text("%p %s\n", prePassBlob, prePassBlob->name);
+	uiact.origin(prePassBlob);
 	ImGui::Indent();
 	ImGui::Text("output to %02x, clearMode %02x, clearColor/sourceTexture %08x, clearColorScale %f",
 		(int)prePassBlob->outputTextureIndex,
@@ -409,6 +410,7 @@ static void buildUI(UIActions& uiact, dtp::PPPrePassBlob *prePassBlob, dtp::PPVa
 static void buildUI(UIActions& uiact, dtp::PPPassBlob *passBlob, dtp::PPVarPassTexBlobs *varPassTex) {
 	ImGui::PushID(passBlob);
 	ImGui::Text("%s\n", passBlob->name);
+	uiact.origin(passBlob);
 	ImGui::Indent();
 	ImGui::Text("en=%02x %s xE=%02x gate=%02x blend=%02x, scaleform %02x settings dependent %02x",
 		(int)passBlob->enabled,
@@ -577,6 +579,7 @@ void PPManager::buildUI(UIActions& uiact) {
 					ImGui::PushID(prePass);
 					ImGui::TableSetColumnIndex(0);
 					ImGui::Text("pre %s", prePass->name);
+					uiact.origin(prePass);
 					if (prePass->builtinShaderType == 0) {
 						ImGui::SameLine();
 						if (ImGui::SmallButton("Material")) {
@@ -606,6 +609,7 @@ void PPManager::buildUI(UIActions& uiact) {
 				ImGui::TableSetColumnIndex(0);
 				ImGui::PushID(pass);
 				ImGui::Text("%s", pass->name);
+				uiact.origin(pass);
 				if (pass->builtinShaderType == 0) {
 					ImGui::SameLine();
 					if (ImGui::SmallButton("Material")) {
