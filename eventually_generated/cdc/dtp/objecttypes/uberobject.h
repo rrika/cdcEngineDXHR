@@ -65,13 +65,26 @@ struct EMail {
 	uint32_t ptr10;
 };
 
+struct Keycode {
+	uint32_t localized;
+	union {
+		const char *code;
+		struct {
+			uint16_t padding;
+			uint16_t stridx_code;
+		};
+	};
+};
+
 struct IntroDataUberObject {
 	uint8_t gap0[0x44];
 	uint32_t numEMail; // 44
 	uint32_t *email; // 48, email_database.drm must be loaded separately to retrieve
 	uint32_t numConditionalEMail; // 4C
 	void *conditionalEMail; // 50
-	uint8_t gap54[0x6C-0x54];
+	uint8_t gap54[0x5C-0x54];
+	uint32_t keycode; // 5C
+	uint8_t gap60[0x6C-0x60];
 	Loot *loot; // 6C
 	uint8_t gap70[0x88-0x70];
 	uint32_t *defaultPrograms; // 88

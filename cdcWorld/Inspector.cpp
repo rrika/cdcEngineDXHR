@@ -25,6 +25,15 @@ void buildUI(UIActions& uiact, dtp::IntroDataUberObject *extra) {
 		ImGui::Text("no extra data");
 		return;
 	}
+	if (extra->keycode) {
+		if (auto *keycode = static_cast<dtp::Keycode*>(DTPDataSection::getPointer(extra->keycode))) {
+			ImGui::Text("keycode: %s",
+				keycode->localized
+				? localstr_get(keycode->stridx_code)
+				: keycode->code);
+			uiact.origin(keycode);
+		}
+	}
 	ImGui::Text("%d email", extra->numEMail + extra->numConditionalEMail);
 	for (uint32_t i=0; i<extra->numEMail; i++) {
 		uint32_t emailDtp = extra->email[i];
