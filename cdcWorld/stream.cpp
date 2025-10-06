@@ -239,10 +239,11 @@ StreamUnit *STREAM_LevelLoadAndInit(const char *baseAreaName) { // 2855
 	dtp::ADMD *admd = streamUnit->level->admdData;
 	for (uint32_t i = 0; i < admd->numObjects; i++) {
 		auto *intro = &admd->objects[i];
-		if (intro->objectListIndex == 0x12) { // player.drm
+		// if (intro->objectListIndex == 0x12) { // player.drm
+		if (intro->objectListIndex == 0x10) { // player.drm
 			char *extraData = (char*)intro->extraData1;
 			if (*(uint32_t*)extraData == 0x40B) {
-				uint32_t jensenIndex = *(uint32_t*)(extraData+0x2C);
+				uint32_t jensenIndex = 0; // *(uint32_t*)(extraData+0x2C);
 				uint32_t total = globalPlayerInfo->numJensens;
 				uint16_t newIndex = globalPlayerInfo->jensens[jensenIndex];
 				if (newIndex) {

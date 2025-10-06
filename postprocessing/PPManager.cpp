@@ -165,7 +165,10 @@ static uint32_t RootPassesForActiveSet(dtp::PPActiveSet *activeSet) {
 
 bool PPManager::prepare() {
 
-	dtp::PPVarPassTexBlobs *varPassTex = fallbackVarPassTex; // activeSets[0]->varPassTex;
+	if (activeSets.empty())
+		return false;
+
+	dtp::PPVarPassTexBlobs *varPassTex = activeSets[0]->varPassTex;
 
 	// TODO
 
@@ -303,6 +306,7 @@ bool PPManager::run(
 	};
 
 	dtp::PPVarPassTexBlobs *vpt = fallbackVarPassTex; // activeSets[0]->varPassTex;
+	vpt = activeSets[0]->varPassTex;
 	dtp::PPPassBlob *passBlobs = vpt->passes.data;
 	CommonRenderTarget *currentRt = rt;
 	PPPass pass;
@@ -479,7 +483,11 @@ static void VarEdit(dtp::PPVariableBlob *variable) {
 
 void PPManager::buildUI(UIActions& uiact) {
 
+	if (activeSets.empty())
+		return;
+
 	auto *varPassTex = fallbackVarPassTex;
+	varPassTex = activeSets[0]->varPassTex;
 	if (!varPassTex)
 		return;
 

@@ -4,4 +4,5 @@ target_sources(dxhr PRIVATE
 	FileReceiver.cpp
 	FileSystemLayer.cpp
 	FileUserBufferReceiver.cpp
-	HackFileSystem.cpp)
+	HackFileSystem.cpp
+	MultiFileSystem.cpp)

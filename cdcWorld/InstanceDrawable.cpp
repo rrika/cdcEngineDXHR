@@ -36,6 +36,8 @@ void MeshComponent::SetModel(uint32_t index) {
 
 void MeshComponent::SetModel(uint32_t index, dtp::Model *baseModel) {
 	dtp::Model **models = m_instance->GetModels();
+	if (index >= m_instance->GetNumModels())
+		return;
 	dtp::Model *model = models[index];
 	auto& transform = m_instance->GetTransformComponent();
 

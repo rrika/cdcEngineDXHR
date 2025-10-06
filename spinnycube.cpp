@@ -24,7 +24,7 @@
 #include "cdc/dtp/soundplex.h"
 #include "cdc/dtp/unitdata.h"
 #include "cdcFile/ArchiveFileSystem.h"
-#include "cdcFile/FileHelpers.h" // for archiveFileSystem_default
+#include "cdcFile/FileHelpers.h" // for upperFileSystem
 #include "cdcFile/FileSystem.h" // for enum cdc::FileRequest::Priority
 #include "cdcFile/FileUserBufferReceiver.h"
 #include "game/Actor/InventoryPlayer.h"
@@ -577,31 +577,32 @@ int spinnyCube(HWND window,
 		cdc::FileRequest::NORMAL
 	);
 
-	cdc::archiveFileSystem_default->processAll();
+	cdc::upperFileSystem->processAll();
 
 	cdc::ResolveSection *objectSection = cdc::g_resolveSections[11];
-	cdc::Object *bottleObject = (cdc::Object*)objectSection->GetBasePointer(objectSection->FindResource(0x04a8));
+	//cdc::Object *bottleObject = (cdc::Object*)objectSection->GetBasePointer(objectSection->FindResource(0x04a8));
+	cdc::Object *bottleObject = cdc::getByObjectListIndex(bottleIndex)->objBlob;
 	printf("have bottle object: %p\n", bottleObject);
 
 	// unrelated: get the name of the first map in the game
 	printf("first map is: %s\n", globalDatabase->newGameMap);
 
-	auto bottleTexture = (cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0396);
+	auto bottleTexture = nullptr; // (cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);
-	bottleTexture->asyncCreate();
-	renderDevice->missingTexture = bottleTexture;
-	printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
+	// bottleTexture->asyncCreate();
+	// renderDevice->missingTexture = bottleTexture;
+	// printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
 
 	// create the other four textures
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0395))->asyncCreate();
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x005b))->asyncCreate();
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0061))->asyncCreate();
+	// ((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0395))->asyncCreate();
+	// ((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x005b))->asyncCreate();
+	// ((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0061))->asyncCreate();
 
-	auto bottleRenderModel_direct = (cdc::PCDX11RenderModel*)cdc::g_resolveSections[12]->GetBasePointer(0xA301);
+	// auto bottleRenderModel_direct = (cdc::PCDX11RenderModel*)cdc::g_resolveSections[12]->GetBasePointer(0xA301);
 	auto bottleRenderModel = (cdc::PCDX11RenderModel*)bottleObject->models[0]->renderMesh;
 
 
-	printf("have bottle cdc render model: %p (directly)\n", bottleRenderModel_direct);
+	// printf("have bottle cdc render model: %p (directly)\n", bottleRenderModel_direct);
 	printf("have bottle cdc render model: %p (via object)\n", bottleRenderModel);
 	printf("have bottle cdc mesh blob: %p\n", bottleRenderModel->getMesh());
 
@@ -660,15 +661,15 @@ int spinnyCube(HWND window,
 	auto lightRenderModel = (cdc::PCDX11RenderModel*)lightObject->models[0]->renderMesh;
 	printf("have light cdc render model: %p (via object)\n", lightRenderModel);
 
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0061))->asyncCreate();
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x014c))->asyncCreate();
+	// ((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0061))->asyncCreate();
+	// ((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x014c))->asyncCreate();
 
-	auto lightMaterial = (cdc::PCDX11Material*)cdc::g_resolveSections[10]->GetBasePointer(0x00a4);
+	auto lightMaterial = nullptr; // (cdc::PCDX11Material*)cdc::g_resolveSections[10]->GetBasePointer(0x00a4);
 	printf("have light material (from scenario drm): %p\n", lightMaterial);
 
 	// patch light material
-	for (uint32_t i = 0; i < lightRenderModel->numPrimGroups; i++)
-		lightRenderModel->tab0Ext128Byte[i].material = lightMaterial;
+	// for (uint32_t i = 0; i < lightRenderModel->numPrimGroups; i++)
+	// 	lightRenderModel->tab0Ext128Byte[i].material = lightMaterial;
 
 	cdc::RenderModelInstance *lightRenderModelInstance =
 		renderDevice->createRenderModelInstance(lightRenderModel);
@@ -783,17 +784,19 @@ int spinnyCube(HWND window,
 	ImGui_ImplWin32_Arrow = (HCURSOR)yellowCursor;
 #endif
 
-	cdc::ScriptType *mainMenuScriptType =
-		(cdc::ScriptType*)cdc::g_resolveSections[8]->GetBasePointer(0x154a7); // pc-w/globaloutershell.drm section 0xb7
-	ScaleformMovieInstance mainMenuInstance(&mainMenuMovie);
-	NsMainMenuMovieController mainMenuMovieController(mainMenuScriptType);
-	cdc::GCPtr<NsMainMenuMovieController> keepControllerAlive(&mainMenuMovieController); // garbage collected else
+	if (false) {
+		cdc::ScriptType *mainMenuScriptType =
+			(cdc::ScriptType*)cdc::g_resolveSections[8]->GetBasePointer(0x154a7); // pc-w/globaloutershell.drm section 0xb7
+		ScaleformMovieInstance mainMenuInstance(&mainMenuMovie);
+		NsMainMenuMovieController mainMenuMovieController(mainMenuScriptType);
+		cdc::GCPtr<NsMainMenuMovieController> keepControllerAlive(&mainMenuMovieController); // garbage collected else
 
-	// unsure how this link is established in the game
-	mainMenuInstance.m_controllerArray.push_back(&mainMenuMovieController);
-	mainMenuMovieController.movieInstance = &mainMenuInstance;
+		// unsure how this link is established in the game
+		mainMenuInstance.m_controllerArray.push_back(&mainMenuMovieController);
+		mainMenuMovieController.movieInstance = &mainMenuInstance;
 
-	mainMenuInstance.init();
+		mainMenuInstance.init();
+	}
 #else
 	mouseLook = true;
 	mouseKeyboard->setCursorGrab(true);
@@ -1017,7 +1020,7 @@ int spinnyCube(HWND window,
 					);
 				}
 			}
-			cdc::archiveFileSystem_default->processAll();
+			cdc::upperFileSystem->processAll();
 		}
 
 		///////////////////////////////////////////////////////////////////////////////////////////
@@ -1272,7 +1275,7 @@ int spinnyCube(HWND window,
 						nullptr,
 						0,
 						cdc::FileRequest::NORMAL);
-					cdc::archiveFileSystem_default->processAll();
+					cdc::upperFileSystem->processAll();
 				}
 				if (showIntroButtonsIMF && ref.m_imfDRMName && strrchr(ref.m_imfDRMName, '\\'))
 					fbs.push_back(FloatingButton{
@@ -1478,8 +1481,8 @@ int spinnyCube(HWND window,
 
 		renderDevice->finishScene();
 
-		PPManager::s_instance->fallbackVarPassTex = (dtp::PPVarPassTexBlobs*)
-			cdc::g_resolveSections[7]->GetBasePointer(0x5a0); // from globalloading.drm
+		PPManager::s_instance->fallbackVarPassTex = (dtp::PPVarPassTexBlobs*)nullptr;
+			// cdc::g_resolveSections[7]->GetBasePointer(0x5a0); // from globalloading.drm
 		PPManager::s_instance->resetActiveSets();
 		for (uint32_t i=0; i<std::size(pptoggles); i++)
 			if (pptoggles[i].active)

@@ -8,6 +8,7 @@
 #include "ArchiveFileSystem.h"
 #include "FileUserBufferReceiver.h"
 #include "HackFileSystem.h"
+#include "MultiFileSystem.h"
 #include "cdcSys/Assert.h"
 
 namespace cdc {
@@ -22,6 +23,8 @@ void createLowerFileSystems() {
 }
 
 ArchiveFileSystem *archiveFileSystem_default;
+ArchiveFileSystem *archiveFileSystem_lang;
+FileSystem *upperFileSystem;
 
 std::string findBigfile() {
 	if (const char *bigfileEnv = getenv("BIGFILE"))
@@ -62,6 +65,23 @@ void createHigherFileSystems() {
 		FatalError("Unable to open bigfile BIGFILE.DAT!");
 		exit(1);
 	}
+
+	std::string languagePath = bigfilePath;
+	if (char const *period = strrchr(languagePath.c_str(), '.')) {
+		languagePath.resize(period-languagePath.c_str());
+		languagePath += "_English.000";
+	}
+	archiveFileSystem_lang = new ArchiveFileSystem(lowerFileSystem);
+	indexOk = archiveFileSystem_lang->readIndex(languagePath.c_str(), 0);
+
+	if (indexOk) {
+		auto *multi = new MultiFileSystem();
+		multi->m_systems.push_back(archiveFileSystem_default);
+		multi->m_systems.push_back(archiveFileSystem_lang);
+		upperFileSystem = multi;
+	} else {
+		upperFileSystem = archiveFileSystem_default;
+	}
 }
 
 void destroyFileSystems() {
@@ -70,7 +90,7 @@ void destroyFileSystems() {
 
 FileSystem *getDefaultFileSystem() {
 	// TODO
-	return archiveFileSystem_default;
+	return upperFileSystem;
 }
 
 char *FSHelper_ReadFile(const char *path) {
@@ -81,7 +101,7 @@ char *FSHelper_ReadFile(const char *path) {
 	 	fs = lowerFileSystem;
 	 	path = "dtpdata.ids";
 	} else {
-	 	fs = archiveFileSystem_default; // HACK
+	 	fs = upperFileSystem; // HACK
 	}
 	uint32_t size = fs->getSize(path);
 

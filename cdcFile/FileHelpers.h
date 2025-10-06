@@ -6,6 +6,7 @@ namespace cdc {
 
 class FileSystem;
 extern ArchiveFileSystem *archiveFileSystem_default;
+extern FileSystem *upperFileSystem;
 
 void createLowerFileSystems();
 void createHigherFileSystems();

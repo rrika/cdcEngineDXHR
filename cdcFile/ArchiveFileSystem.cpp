@@ -90,6 +90,8 @@ bool ArchiveFileSystem::readIndex(const char *basePath, int i) {
 		chunkSize = header.chunkSize;
 	else
 		chunkSize = 0x7FF00000;
+
+	memset(prefix, 0, 64); // HACK
 	strcpy(prefix, header.prefix);
 	fileCount = header.fileCount;
 

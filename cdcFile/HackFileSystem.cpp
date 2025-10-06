@@ -61,6 +61,8 @@ FileRequest *HackFileSystem::createRequest(FileReceiver *receiver, const char *p
 
 File *HackFileSystem::createFile(const char *path) {
 	FILE *f = fopen(path, "rb");
+	if (f == nullptr)
+		return nullptr;
 	return new HackFile(this, std::make_shared<FileWrapper>(f));
 }
 

@@ -11,7 +11,7 @@ using namespace std;
 namespace cdc {
 
 vector<Sample*> loadAndDemultiplex(STRHEADER *header, const char *path) {
-	auto fs = archiveFileSystem_default; // HACK
+	auto fs = upperFileSystem; // HACK
 	uint32_t size = fs->getSize(path);
 	char *buffer = FSHelper_ReadFile(path);
 	char *end = buffer + size;
