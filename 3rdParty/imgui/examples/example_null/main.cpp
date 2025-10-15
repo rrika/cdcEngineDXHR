@@ -11,9 +11,10 @@ int main(int, char**)
     ImGuiIO& io = ImGui::GetIO();
 
     // Build atlas
-    unsigned char* tex_pixels = NULL;
-    int tex_w, tex_h;
-    io.Fonts->GetTexDataAsRGBA32(&tex_pixels, &tex_w, &tex_h);
+    //unsigned char* tex_pixels = nullptr;
+    //int tex_w, tex_h;
+    //io.Fonts->GetTexDataAsRGBA32(&tex_pixels, &tex_w, &tex_h);
+    io.BackendFlags |= ImGuiBackendFlags_RendererHasTextures;
 
     for (int n = 0; n < 20; n++)
     {
@@ -26,7 +27,7 @@ int main(int, char**)
         ImGui::Text("Hello, world!");
         ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-        ImGui::ShowDemoWindow(NULL);
+        ImGui::ShowDemoWindow(nullptr);
 
         ImGui::Render();
     }
