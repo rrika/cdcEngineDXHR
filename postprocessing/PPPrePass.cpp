@@ -63,7 +63,8 @@ void PPPrePass::run(PPRTs *rts, cdc::RenderViewport *viewport, cdc::CommonRender
 	// TODO
 	v.mask &= ~0x3000;
 
-	static_cast<cdc::PCDX11RenderTarget*>(rt)->getTextureResource(); // HACK: ensure rendertargetview is created
+	if (rt)
+		static_cast<cdc::PCDX11RenderTarget*>(rt)->getTextureResource(); // HACK: ensure rendertargetview is created
 
 	cdc::CommonRenderDevice *renderDevice = cdc::g_renderDevice;
 	auto *subscene = renderDevice->createSubScene(
