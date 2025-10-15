@@ -50,6 +50,8 @@ if (NATIVE_BUILD)
 
 	add_executable(dxhr
 		spinnycube.cpp)
+	set_target_properties(dxhr PROPERTIES
+		CXX_STANDARD 20)
 
 	ExternalProject_Add(dxvk-native
 		GIT_REPOSITORY https://github.com/doitsujin/dxvk.git
@@ -71,9 +73,11 @@ if (NATIVE_BUILD)
 	target_link_directories(dxhr PRIVATE
 		${DXVK_BINARY_DIR}/src/d3d11)
 	target_link_libraries(dxhr PRIVATE
-		dxvk_d3d11 SDL2)
-	set_target_properties(dxhr PROPERTIES
-		CXX_STANDARD 20)
+		dxvk_d3d11)
+
+	find_package(SDL2 REQUIRED)
+	target_include_directories(dxhr PRIVATE ${SDL2_INCLUDE_DIRS})
+	target_link_libraries(dxhr PRIVATE ${SDL2_LIBRARIES})
 
 	target_link_directories(dxhr PRIVATE
 		3rdParty/fmod)
@@ -130,6 +134,7 @@ else()
 		../winsdk/crt/lib/x86
 		../winsdk/sdk/lib/um/x86
 		../winsdk/sdk/lib/ucrt/x86)
+	target_compile_definitions(dxhr PRIVATE _CRT_USE_BUILTIN_OFFSETOF)
 	target_link_libraries(dxhr PRIVATE
 		-luser32 -ladvapi32 -ld3d11)
 	if (ENABLE_D3DCOMPILER)
@@ -190,7 +195,7 @@ if (ENABLE_IMGUI)
 
 	if (NATIVE_BUILD)
 		target_sources(dxhr PRIVATE
-			3rdParty/imgui/backends/imgui_impl_sdl.cpp)
+			3rdParty/imgui/backends/imgui_impl_sdl2.cpp)
 	else ()
 		target_sources(dxhr PRIVATE
 			3rdParty/imgui/backends/imgui_impl_win32.cpp)

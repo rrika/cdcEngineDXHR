@@ -123,7 +123,7 @@
 #include "imgui/backends/imgui_impl_win32.h"
 extern HCURSOR ImGui_ImplWin32_Arrow;
 #else
-#include "imgui/backends/imgui_impl_sdl.h"
+#include "imgui/backends/imgui_impl_sdl2.h"
 #endif
 #include "cdcRender/Inspector.h"
 #include "ImGuizmo.h"
@@ -876,7 +876,7 @@ int spinnyCube(HWND window,
 		{
 			// HACK to block initial tab navigation
 			auto *g = ImGui::GetCurrentContext();
-			if (g->NavMoveFlags & ImGuiNavMoveFlags_Tabbing	 && g->NavTabbingDir == 0)
+			if ((g->NavMoveFlags & ImGuiNavMoveFlags_IsTabbing) && g->NavTabbingDir == 0)
 				ImGui::NavMoveRequestCancel();
 		}
 
@@ -2041,7 +2041,7 @@ int spinnyCube(HWND window,
 				else {
 					// translation gizmo
 					cdc::Matrix delta;
-					ImGuizmo::SetID(0);
+					ImGuizmo::PushID(0);
 					ImGuizmo::Manipulate(
 						(float*)viewMatrix.m,
 						(float*)scene->projectMatrix.m,
@@ -2049,6 +2049,7 @@ int spinnyCube(HWND window,
 						ImGuizmo::WORLD,
 						(float*)matrices[-1].m,
 						(float*)delta.m);
+					ImGuizmo::PopID();
 					if (delta != cdc::identity4x4) {
 						instance->position.x += delta.m[3][0];
 						instance->position.y += delta.m[3][1];
@@ -2058,7 +2059,7 @@ int spinnyCube(HWND window,
 					// rotation gizmos
 					if (instance->enableOverridePose)
 						for (uint32_t i=0; i<numMatrices; i++) {
-							ImGuizmo::SetID(i+1);
+							ImGuizmo::PushID(i+1);
 							ImGuizmo::Manipulate(
 								(float*)viewMatrix.m,
 								(float*)scene->projectMatrix.m,
@@ -2066,6 +2067,7 @@ int spinnyCube(HWND window,
 								ImGuizmo::LOCAL,
 								(float*)matrices[i].m,
 								(float*)delta.m);
+							ImGuizmo::PopID();
 
 							if (delta != cdc::identity4x4) {
 								auto j = model->GetSegmentList()[i].parent;
@@ -2394,7 +2396,7 @@ int spinnyCube(HWND window,
 								gridScale * pickup->height - gap);
 							if (slot->transpose)
 								std::swap(size.x, size.y);
-							if (ImGui::ImageButton(tex->createShaderResourceView(), size)) {
+							if (ImGui::ImageButton("", tex->createShaderResourceView(), size)) {
 								/* could do something here */
 							}
 						}

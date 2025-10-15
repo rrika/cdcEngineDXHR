@@ -240,6 +240,8 @@ void    ImGui_ImplWin32_Shutdown()
     IM_DELETE(bd);
 }
 
+HCURSOR ImGui_ImplWin32_Arrow = (HCURSOR)0;
+
 static bool ImGui_ImplWin32_UpdateMouseCursor(ImGuiIO& io, ImGuiMouseCursor imgui_cursor)
 {
     if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)
@@ -268,7 +270,10 @@ static bool ImGui_ImplWin32_UpdateMouseCursor(ImGuiIO& io, ImGuiMouseCursor imgu
         case ImGuiMouseCursor_Progress:     win32_cursor = IDC_APPSTARTING; break;
         case ImGuiMouseCursor_NotAllowed:   win32_cursor = IDC_NO; break;
         }
-        ::SetCursor(::LoadCursor(nullptr, win32_cursor));
+        if (win32_cursor == IDC_ARROW && ImGui_ImplWin32_Arrow)
+            ::SetCursor(ImGui_ImplWin32_Arrow);
+        else
+            ::SetCursor(::LoadCursor(NULL, win32_cursor));
     }
     return true;
 }
