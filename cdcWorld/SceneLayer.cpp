@@ -48,18 +48,23 @@ void SceneLayer::RemoveStreamingCallback(StreamingCallback *cb) { // line 1093
 	}
 }
 
+// called from STREAM_FinishLoad
 void SceneLayer::PreStreamIn(StreamUnit *unit) { // line 1282
 	if (unit->sceneCellGroup)
 		return;
 	// TODO
 	if (!unit->coreUnit) {
 		// TODO
-		unit->sceneCellGroup = g_scene->CreateCellGroup(unit->level->pSceneData);
+		// HACK: units like "s_scn_tym_coverpoints_a_sha_tym_assembly_line" don't have CellGroupData.
+		//    this should be indicated by coreUnit pointing somewhere but that's not implemented yet.
+		if (unit->level->pSceneData)
+			unit->sceneCellGroup = g_scene->CreateCellGroup(unit->level->pSceneData);
 		// TODO
 	}
 	// TODO
 }
 
+// called from STREAM_FinishLoad
 void SceneLayer::PostStreamIn(StreamUnit *unit) { // line 1443
 	// TODO
 	for (uint32_t i=0; i < s_numStreamingCallbacks; i++)
