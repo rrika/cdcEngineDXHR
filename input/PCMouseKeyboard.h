@@ -1,6 +1,6 @@
 #pragma once
 #include <windows.h>
-#include "InputProducer.h"
+#include "Input.h"
 
 #ifdef __linux__
 union SDL_Event;

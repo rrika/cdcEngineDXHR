@@ -1,3 +1,3 @@
 target_sources(dxhr PRIVATE
-	InputProducer.cpp
+	Input.cpp
 	PCMouseKeyboard.cpp)
