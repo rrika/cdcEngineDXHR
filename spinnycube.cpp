@@ -848,6 +848,9 @@ int spinnyCube(HWND window,
 		}
 #endif
 
+		bool requestedInventoryWhileCursorGrab =
+			mouseKeyboard->isPressedWhileCursorGrab(cdc::Keyboard_Inventory);
+			// this function only works between processWndProc and MouseKeyboard::update()
 		mouseKeyboard->update();
 
 		float forward = 0;
@@ -891,14 +894,29 @@ int spinnyCube(HWND window,
 				mouseLook = !mouseLook;
 				mouseKeyboard->setCursorGrab(mouseLook);
 			}
-			if (ImGui::IsKeyDown(ImGuiKey_W))
-				forward += 1.0f;
-			if (ImGui::IsKeyDown(ImGuiKey_S))
-				forward -= 1.0f;
-			if (ImGui::IsKeyDown(ImGuiKey_A))
-				sideways -= 1.0f;
-			if (ImGui::IsKeyDown(ImGuiKey_D))
-				sideways += 1.0f;
+			if (false) {
+				if (ImGui::IsKeyDown(ImGuiKey_W))
+					forward += 1.0f;
+				if (ImGui::IsKeyDown(ImGuiKey_S))
+					forward -= 1.0f;
+				if (ImGui::IsKeyDown(ImGuiKey_A))
+					sideways -= 1.0f;
+				if (ImGui::IsKeyDown(ImGuiKey_D))
+					sideways += 1.0f;
+				if (mouseLook && ImGui::IsKeyPressed(ImGuiKey_I)) {
+					showInventory = !showInventory;
+					mouseLook = false;
+					mouseKeyboard->setCursorGrab(false);
+				}
+			} else {
+				forward -= mouseKeyboard->state.keys[cdc::Input_MovementWS] / 127.f;
+				sideways += mouseKeyboard->state.keys[cdc::Input_MovementAD] / 127.f;
+				if (requestedInventoryWhileCursorGrab) {
+					showInventory = !showInventory;
+					mouseLook = false;
+					mouseKeyboard->setCursorGrab(false);
+				}
+			}
 			if (ImGui::IsKeyDown(ImGuiKey_ModShift))
 				speedModifier *= 4.0f;
 		}

@@ -18,8 +18,24 @@ float g_mouseYSensitivity2 = 0.00135f;
 
 namespace cdc {
 
+bool Keybinds::IsDown(uint32_t index, char *keys) {
+	uint32_t *codes = keybinds[index].keycode;
+	if (codes[0] && keys[codes[0]])
+		return true;
+	if (codes[1] && keys[codes[1]])
+		return true;
+	return false;
+}
+
+bool Keybinds::IsPressed(uint32_t index, char *keys, char *keysPrev) {
+	return IsDown(index, keys) && !IsDown(index, keysPrev);
+}
+
 PCMouseKeyboard::PCMouseKeyboard() {
-	assignDefaultKeybinds(keybinds);
+	keybinds.assignDefaultKeybinds();
+#ifdef _WIN32
+	memset(vkeys, 0, 257);
+#endif
 }
 
 #ifdef _WIN32
@@ -44,7 +60,41 @@ void PCMouseKeyboard::processWndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 	// printf("WM_INPUT with type %lu\n", input.header.dwType);
 
+	if (input.header.dwType == RIM_TYPEKEYBOARD) {
+		// HACK
+		auto flags = input.data.keyboard.Flags;
+		bool isPressed = !(flags & RI_KEY_BREAK);
+		bool e0 = !!(flags & RI_KEY_E0);
+		auto vkey = input.data.keyboard.VKey;
+		switch (vkey) {
+		case /*0D*/ VK_RETURN:  vkey = e0 ? VK_RETURN : 0x100; break;
+		case /*11*/ VK_CONTROL: vkey = e0 ? VK_RCONTROL : VK_LCONTROL; break;
+		case /*12*/ VK_MENU:    vkey = e0 ? VK_RMENU : VK_LMENU; break;
+		case /*10*/ VK_SHIFT: {
+			auto vscRShift = MapVirtualKeyExW(/*A1*/ VK_RSHIFT, MAPVK_VK_TO_VSC, 0);
+			if (input.data.keyboard.MakeCode == vscRShift)
+				vkey = /*A1*/ VK_RSHIFT;
+			else
+				vkey = /*A0*/ VK_LSHIFT;
+			break;
+		}
+		default: break;
+		}
+		vkeys[vkey] = isPressed;
+		return;
+	}
+
 	if (input.header.dwType == RIM_TYPEMOUSE) {
+		static const uint16_t index[] = {1, 2, 4, 5, 6};
+		static const uint16_t press[] = {0x1, 0x4, 0x10, 0x40, 0x100};
+		static const uint16_t release[] = {0x2, 0x8, 0x20, 0x80, 0x200};
+		for (int i=0; i<5; i++) {
+			if (input.data.mouse.ulButtons & press[i])
+				vkeys[index[i]] = true;
+			if (input.data.mouse.ulButtons & release[i])
+				vkeys[index[i]] = false;
+		}
+
 		deltaX += input.data.mouse.lLastX;
 		deltaY += input.data.mouse.lLastY;
 	}
@@ -108,6 +158,16 @@ void PCMouseKeyboard::centerCursor(bool unknown) {
 	setupClip();
 }
 
+bool PCMouseKeyboard::isPressedWhileCursorGrab(EKeyboard key) {
+	// TODO
+#ifdef __linux__
+	char *vkeys = (char*)SDL_GetKeyboardState(nullptr);
+	char *vkeysPrev = this->vkeysPrev.data();
+#endif
+	return cursorGrab && keybinds.IsPressed(key, vkeys, vkeysPrev);
+}
+
+
 // signature is bool create() in original binary
 PCMouseKeyboard *PCMouseKeyboard::create(HWND hwnd) {
 #ifdef _WIN32
@@ -128,7 +188,7 @@ PCMouseKeyboard *PCMouseKeyboard::create(HWND hwnd) {
 	return new PCMouseKeyboard();
 }
 
-void PCMouseKeyboard::assignDefaultKeybinds(Keybind *keybinds) {
+void Keybinds::assignDefaultKeybinds() {
 #ifdef _WIN32
 	// Q   W   E   R   T   Y   U   I   O   P
 	//  10  11  12  13  14  15  16  17  18  19
@@ -171,6 +231,41 @@ void PCMouseKeyboard::assignDefaultKeybinds(Keybind *keybinds) {
 	keybinds[/*30*/ Keyboard_MarkAndTrack]      = { MapVirtualKeyW(0x14, V), 0 };       // T
 	keybinds[/*31*/ Keyboard_TriggerCommentary] = { MapVirtualKeyW(0x21, V), 0 };       // F
 #endif
+
+#ifdef __linux__
+	keybinds[/* 0*/ Keyboard_MovementLeft]      = {SDL_SCANCODE_A};
+	keybinds[/* 1*/ Keyboard_MovementRight]     = {SDL_SCANCODE_D};
+	keybinds[/* 2*/ Keyboard_MovementForward]   = {SDL_SCANCODE_W};
+	keybinds[/* 3*/ Keyboard_MovementBackward]  = {SDL_SCANCODE_S};
+	keybinds[/* 4*/ Keyboard_MovementRunToggle] = {SDL_SCANCODE_CAPSLOCK};
+	keybinds[/* 5*/ Keyboard_MovementWalk]      = {SDL_SCANCODE_LCTRL};
+	keybinds[/* 6*/ Keyboard_Action]            = {SDL_SCANCODE_E};
+	keybinds[/* 7*/ Keyboard_Jump]              = {SDL_SCANCODE_SPACE};
+	keybinds[/* 8*/ Keyboard_Sprint]            = {SDL_SCANCODE_LSHIFT};
+	keybinds[/* 9*/ Keyboard_Crouch]            = {SDL_SCANCODE_C};
+	keybinds[/*10*/ Keyboard_Cover]             = {};
+	keybinds[/*11*/ Keyboard_WeaponFire]        = {};
+	keybinds[/*12*/ Keyboard_WeaponReload]      = {SDL_SCANCODE_R};
+	keybinds[/*13*/ Keyboard_WeaponHolster]     = {SDL_SCANCODE_H};
+	keybinds[/*14*/ Keyboard_WeaponIronSight]   = {SDL_SCANCODE_RSHIFT};
+	keybinds[/*15*/ Keyboard_ThrowDetonate]     = {SDL_SCANCODE_G};
+	keybinds[/*16*/ Keyboard_Takedown]          = {SDL_SCANCODE_Q};
+	keybinds[/*17*/ Keyboard_Cloak]             = {SDL_SCANCODE_F1};
+	keybinds[/*18*/ Keyboard_Claymore]          = {SDL_SCANCODE_F2};
+	keybinds[/*19*/ Keyboard_MoveSilently]      = {SDL_SCANCODE_F3};
+	keybinds[/*20*/ Keyboard_VisionEnhancer]    = {SDL_SCANCODE_F4};
+	keybinds[/*21*/ Keyboard_SpecialUpgrade]    = {};
+	keybinds[/*22*/ Keyboard_TechTree]          = {SDL_SCANCODE_O};
+	keybinds[/*23*/ Keyboard_Inventory]         = {SDL_SCANCODE_I};
+	keybinds[/*24*/ Keyboard_Objectives]        = {SDL_SCANCODE_U};
+	keybinds[/*25*/ Keyboard_Logs]              = {SDL_SCANCODE_LEFTBRACKET};
+	keybinds[/*26*/ Keyboard_Map]               = {SDL_SCANCODE_P};
+	keybinds[/*27*/ Keyboard_QuickBarShow]      = {SDL_SCANCODE_RIGHTBRACKET};
+	keybinds[/*28*/ Keyboard_QuickBarNext]      = {SDL_SCANCODE_EQUALS};
+	keybinds[/*29*/ Keyboard_QuickBarPrev]      = {SDL_SCANCODE_MINUS};
+	keybinds[/*30*/ Keyboard_MarkAndTrack]      = {SDL_SCANCODE_T};
+	keybinds[/*31*/ Keyboard_TriggerCommentary] = {SDL_SCANCODE_F};
+#endif
 }
 
 void PCMouseKeyboard::setCursorGrab(bool active) {
@@ -188,8 +283,54 @@ void PCMouseKeyboard::update() {
 
 	// TODO
 
+#ifdef _WIN32
+	char vkeysLocal[257];
+	char vkeysPrevLocal[257];
+	memcpy(vkeysLocal, vkeys, 257);
+	memcpy(vkeysPrevLocal, vkeysPrev, 257);
+#endif
+#ifdef __linux__
+	int numKeys;
+	char *vkeysLocal = (char*)SDL_GetKeyboardState(&numKeys);
+#endif
+
+	// TODO
+
+	float ad = 0.0, ws = 0.0;
+	if (keybinds.IsDown(0, vkeysLocal)) // A
+		ad -= 1.0;
+	if (keybinds.IsDown(1, vkeysLocal)) // D
+		ad += 1.0;
+	if (keybinds.IsDown(2, vkeysLocal)) // W
+		ws -= 1.0;
+	if (keybinds.IsDown(3, vkeysLocal)) // S
+		ws += 1.0;
+
+	float length = sqrt(ad*ad + ws*ws);
+	if (length > 0.0) {
+		ad /= length;
+		ws /= length;
+	}
+
+	state.keys[Input_MovementAD] = (char)(127 * ad);
+	state.keys[Input_MovementWS] = (char)(127 * ws);
+
+	for (uint32_t i=6; i<32; i++) {
+		state.keys[Input_KeyboardOffset + i] = keybinds.IsDown(i, vkeysLocal) ? 127 : 0;
+	}
+
+	// TODO
+
+#ifdef _WIN32
+	memcpy(vkeysPrev, vkeys, 257);
+#endif
+#ifdef __linux__
+	vkeysPrev.resize(numKeys);
+	memcpy((void*)vkeysPrev.data(), (void*)vkeysLocal, numKeys);
+#endif
 	deltaX = 0;
 	deltaY = 0;
+	deltaWheel = 0;
 }
 
 void PCMouseKeyboard::method_18() { /*TODO*/ }
