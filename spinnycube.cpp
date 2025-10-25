@@ -2381,6 +2381,8 @@ int spinnyCube(HWND window,
 				uint32_t gridScale = 40;
 				uint32_t gap = 2;
 
+				ImGui::Dummy(ImVec2 { 6.f*gridScale, 6.f*gridScale });
+
 				for (InventorySlot *slot : inventoryContainer.collectAllSlots()) {
 					uint32_t dtpId = slot->dtpId;
 					auto *pickup = (dtp::Pickup*)cdc::g_resolveSections[7]->GetBasePointer(dtpId);
@@ -2388,6 +2390,7 @@ int spinnyCube(HWND window,
 					if (pickup->width && pickup->height && textureId) {
 						auto *resource = (cdc::RenderResource*)cdc::g_resolveSections[5]->GetBasePointer(textureId);
 						if (auto tex = dynamic_cast<cdc::PCDX11Texture*>(resource)) {
+							ImGui::PushID(1000 * gridScale*slot->x + gridScale*slot->y);
 							ImGui::SetCursorPos(ImVec2 {
 								topLeft.x + gridScale*slot->x,
 								topLeft.y + gridScale*slot->y});
@@ -2399,6 +2402,7 @@ int spinnyCube(HWND window,
 							if (ImGui::ImageButton("", tex->createShaderResourceView(), size)) {
 								/* could do something here */
 							}
+							ImGui::PopID();
 						}
 					}
 				}
