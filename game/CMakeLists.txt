@@ -7,6 +7,7 @@ target_sources(dxhr PRIVATE
 	GlobalParamManager.cpp
 	Impulse.cpp
 	LensFlareAndCoronaID.cpp
+	LogicInput.cpp
 	Main.cpp
 	ObjectiveManager.cpp
 	PackedVector.cpp

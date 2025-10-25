@@ -37,6 +37,7 @@
 #include "game/Gameloop.h"
 #include "game/GlobalParamManager.h"
 #include "game/LensFlareAndCoronaID.h"
+#include "game/LogicInput.h"
 #include "game/ObjectiveManager.h"
 #include "game/script/game/NsMainMenuMovieController.h"
 #include "game/ui/FakeScaleform/fakescaleform.h"
@@ -223,6 +224,10 @@ const char * const sectionTypeNames[] = {
 };
 
 static void PathText(const char *path) {
+	if (!path) {
+		ImGui::Text("(null)");
+		return;
+	}
 	const char *sep1 = strrchr(path, '/');
 	const char *sep2 = strrchr(path, '\\');
 	const char *sep = sep1 > sep2 ? sep1 : sep2;
@@ -436,6 +441,7 @@ int spinnyCube(HWND window,
 	std::unique_ptr<cdc::PCMouseKeyboard> mouseKeyboard(cdc::PCMouseKeyboard::create(window));
 	cdc::InputSystem inputSystem(0);
 	inputSystem.AddProducer(mouseKeyboard.get());
+	cdc::g_inputSystems[0] = &inputSystem;
 
 	auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
 	uint32_t coronasIndex = renderDevice->addPass(cdc::kRegularPass, 0x6500, 2, /*5*/ cdc::kRenderFunctionTranslucent);
@@ -752,6 +758,7 @@ int spinnyCube(HWND window,
 	bool showUnitsWindow = false;
 	bool showLoadedUnitsWindow = false;
 	bool showStringsWindow = false;
+	bool showLogicInputs = false;
 	bool showScaleformStringsWindow = false;
 	bool showAnimationsWindow = false;
 	bool showObjectivesWindow = false;
@@ -1585,6 +1592,7 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Show units")) { showUnitsWindow = true; }
 				if (ImGui::MenuItem("Show loaded units")) { showLoadedUnitsWindow = true; }
 				if (ImGui::MenuItem("Show strings")) { showStringsWindow = true; }
+				if (ImGui::MenuItem("Show logic inputs")) { showLogicInputs = true; }
 				if (ImGui::MenuItem("Show scaleform strings")) { showScaleformStringsWindow = true; }
 				if (ImGui::MenuItem("Show animations")) { showAnimationsWindow = true; }
 				if (ImGui::MenuItem("Show objectives")) { showObjectivesWindow = true; }
@@ -2325,6 +2333,11 @@ int spinnyCube(HWND window,
 					for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
 						ImGui::Text("%5d %s", i, localstr_get(i));
 			}
+			ImGui::End();
+		}
+		if (showLogicInputs) {
+			ImGui::Begin("Logic Inputs", &showLogicInputs);
+			logicinput_build_ui(uiact);
 			ImGui::End();
 		}
 		if (showScaleformStringsWindow) {

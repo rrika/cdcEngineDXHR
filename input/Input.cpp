@@ -1,6 +1,9 @@
 #include "Input.h"
+#include <cmath>
 
 namespace cdc {
+
+InputSystem *g_inputSystems[4] = {0};
 
 InputState& InputState::operator+=(InputState const& other) {
 	for (uint32_t i=0; i<85; i++) {
@@ -105,6 +108,47 @@ float InputSystem::GetValue(EInput i) {
 	case /*83*/ Input_MouseY:     return currentState->deltaY;
 	case /*84*/ Input_MouseWheel: return currentState->deltaWheel;
 	}
+}
+
+float InputSystem::GetNormalizedValue(EInput i, Deadzone *deadzone) {
+	if (i == /*32*/ Input_MovementAD ||
+	    i == /*33*/ Input_MovementWS ||
+	    i == /*82*/ Input_MouseX ||
+	    i == /*83*/ Input_MouseY)
+		return GetValue(i);
+
+	EInput j = (EInput)85 /*invalid*/;
+	switch (i) {
+	case Input_16: j = Input_17; break;
+	case Input_17: j = Input_16; break;
+	case Input_18: j = Input_19; break;
+	case Input_19: j = Input_18; break;
+	default: break;
+	}
+
+	float values[2] = { GetValue(i), GetValue(j) };
+	return normalize(values, deadzone, /*clamp=*/ true);
+}
+
+float normalize(float input[2], Deadzone *deadzone, bool clamp) {
+	float x = input[0];
+	float y = input[1];
+	float dist = sqrtf(x*x+y*y);
+	if (dist > 1.0) { // constrain to unit disk
+		dist = 1.0;
+		x /= dist;
+		y /= dist;
+	}
+
+	// TODO
+
+	if (clamp) {
+		if (x >= 1.0)
+			return 1.0;
+		if (x <= -1.0)
+			return -1.0;
+	}
+	return x;
 }
 
 }

@@ -4,6 +4,7 @@
 #include "cdcFile/FileHelpers.h"
 #include "game/Gameloop.h"
 #include "game/dtp/objecttypes/globalplayerinfo.h"
+#include "game/LogicInput.h"
 #include "game/ObjectiveManager.h"
 #include "game/objects/objects.h"
 #include "game/ui/ui.h"
@@ -175,6 +176,10 @@ void MAIN_DoMainInit() {
 	requestObjectNormal(globalAnimInfoId);
 
 	getDefaultFileSystem()->processAll();
+
+	// TODO
+
+	logicinput_load_database();
 
 	// TODO
 

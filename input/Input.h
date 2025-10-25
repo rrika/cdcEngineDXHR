@@ -40,6 +40,11 @@ enum EKeyboard {
 };
 
 enum EInput {
+	Input_16 = 16,
+	Input_17 = 17,
+	Input_18 = 18,
+	Input_19 = 19,
+
 	Input_MovementAD = 32,
 	Input_MovementWS = 33,
 
@@ -133,6 +138,10 @@ public:
 	virtual void method_3C();
 };
 
+struct Deadzone { /* TODO */ };
+
+float normalize(float input[2], Deadzone *deadzone, bool clamp);
+
 class InputSystem {
 	std::vector<InputProducer*> producers; // 4
 	InputState *currentState; // 10
@@ -159,6 +168,9 @@ public:
 	bool IsKeyReleased(EInput i);
 	uint32_t GetDUPR(EInput i);
 	float GetValue(EInput i);
+	float GetNormalizedValue(EInput i, Deadzone *deadzone);
 };
+
+extern InputSystem *g_inputSystems[4];
 
 }
