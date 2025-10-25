@@ -3,8 +3,76 @@
 
 namespace cdc {
 
+enum EKeyboard {
+	Keyboard_MovementLeft,
+	Keyboard_MovementRight,
+	Keyboard_MovementForward,
+	Keyboard_MovementBackward,
+	Keyboard_MovementRunToggle,
+	Keyboard_MovementWalk,
+	Keyboard_Action,
+	Keyboard_Jump,
+	Keyboard_Sprint,
+	Keyboard_Crouch,
+	Keyboard_Cover,
+	Keyboard_WeaponFire,
+	Keyboard_WeaponReload,
+	Keyboard_WeaponHolster,
+	Keyboard_WeaponIronSight,
+	Keyboard_ThrowDetonate,
+	Keyboard_Takedown,
+	Keyboard_Cloak,
+	Keyboard_Claymore,
+	Keyboard_MoveSilently,
+	Keyboard_VisionEnhancer,
+	Keyboard_SpecialUpgrade,
+	Keyboard_TechTree,
+	Keyboard_Inventory,
+	Keyboard_Objectives,
+	Keyboard_Logs,
+	Keyboard_Map,
+	Keyboard_QuickBarShow,
+	Keyboard_QuickBarNext,
+	Keyboard_QuickBarPrev,
+	Keyboard_MarkAndTrack,
+	Keyboard_TriggerCommentary
+};
+
+enum EInput {
+	Input_MovementAD = 32,
+	Input_MovementWS = 33,
+
+	Input_KeyboardOffset = 30,
+	Input_Action = Input_KeyboardOffset + Keyboard_Action,
+	Input_Jump = Input_KeyboardOffset + Keyboard_Jump,
+	Input_Sprint = Input_KeyboardOffset + Keyboard_Sprint,
+	Input_Crouch = Input_KeyboardOffset + Keyboard_Crouch,
+	Input_Cover = Input_KeyboardOffset + Keyboard_Cover,
+	Input_WeaponFire = Input_KeyboardOffset + Keyboard_WeaponFire,
+	Input_WeaponReload = Input_KeyboardOffset + Keyboard_WeaponReload,
+	Input_WeaponHolster = Input_KeyboardOffset + Keyboard_WeaponHolster,
+	Input_WeaponIronSight = Input_KeyboardOffset + Keyboard_WeaponIronSight,
+	Input_ThrowDetonate = Input_KeyboardOffset + Keyboard_ThrowDetonate,
+	Input_Takedown = Input_KeyboardOffset + Keyboard_Takedown,
+	Input_Cloak = Input_KeyboardOffset + Keyboard_Cloak,
+	Input_Claymore = Input_KeyboardOffset + Keyboard_Claymore,
+	Input_MoveSilently = Input_KeyboardOffset + Keyboard_MoveSilently,
+	Input_VisionEnhancer = Input_KeyboardOffset + Keyboard_VisionEnhancer,
+	Input_SpecialUpgrade = Input_KeyboardOffset + Keyboard_SpecialUpgrade,
+	Input_TechTree = Input_KeyboardOffset + Keyboard_TechTree,
+	Input_Inventory = Input_KeyboardOffset + Keyboard_Inventory,
+	Input_Objectives = Input_KeyboardOffset + Keyboard_Objectives,
+	Input_Logs = Input_KeyboardOffset + Keyboard_Logs,
+	Input_Map = Input_KeyboardOffset + Keyboard_Map,
+	Input_QuickBarShow = Input_KeyboardOffset + Keyboard_QuickBarShow,
+	Input_QuickBarNext = Input_KeyboardOffset + Keyboard_QuickBarNext,
+	Input_QuickBarPrev = Input_KeyboardOffset + Keyboard_QuickBarPrev,
+	Input_MarkAndTrack = Input_KeyboardOffset + Keyboard_MarkAndTrack,
+	Input_TriggerCommentary = Input_KeyboardOffset + Keyboard_TriggerCommentary
+};
+
 struct InputState {
-	uint8_t keys[85];
+	char keys[85];
 	float deltaX; // 58
 	float deltaY; // 5C
 	float float60;

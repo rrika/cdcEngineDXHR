@@ -137,39 +137,39 @@ void PCMouseKeyboard::assignDefaultKeybinds(Keybind *keybinds) {
 	// Z   X   C   V   B   N   M
 	//  
 	auto V = MAPVK_VSC_TO_VK;
-	keybinds[0] = { MapVirtualKeyW(0x1E, V), VK_LEFT };  // A
-	keybinds[1] = { MapVirtualKeyW(0x20, V), VK_RIGHT }; // D
-	keybinds[2] = { MapVirtualKeyW(0x11, V), VK_UP };    // W
-	keybinds[3] = { MapVirtualKeyW(0x1F, V), VK_DOWN };  // S
-	keybinds[4] = { VK_CAPITAL, 0 };
-	keybinds[5] = { VK_LCONTROL, 0 };
-	keybinds[6] = { MapVirtualKeyW(0x12, V), 0 };        // E (use)
-	keybinds[7] = { VK_SPACE, 0 };
-	keybinds[8] = { VK_LSHIFT, 0 };
-	keybinds[9] = { MapVirtualKeyW(0x2E, V), 0 };        // C (crouch)
-	keybinds[10] = { VK_RBUTTON, 0 };
-	keybinds[11] = { VK_LBUTTON, 0 };
-	keybinds[12] = { MapVirtualKeyW(0x13, V), 0 };       // R (reload)
-	keybinds[13] = { MapVirtualKeyW(0x23, V), 0 };       // H (holster)
-	keybinds[14] = { VK_MBUTTON, VK_RSHIFT };
-	keybinds[15] = { MapVirtualKeyW(0x22, V), 0 };       // G (grenade)
-	keybinds[16] = { MapVirtualKeyW(0x10, V), 0 };       // Q (take-down)
-	keybinds[17] = { VK_F1, 0 };
-	keybinds[18] = { VK_F2, 0 };
-	keybinds[19] = { VK_F4, 0 };
-	keybinds[20] = { VK_F3, 0 };
-	keybinds[21] = { MapVirtualKeyW(0x2C, V), 0 };       // 
-	keybinds[22] = { MapVirtualKeyW(0x18, V), 0 };       // O
-	keybinds[23] = { MapVirtualKeyW(0x17, V), 0 };       // I
-	keybinds[24] = { MapVirtualKeyW(0x16, V), 0 };       // U
-	keybinds[25] = { MapVirtualKeyW(0x1A, V), 0 };       // 
-	keybinds[26] = { MapVirtualKeyW(0x19, V),            // P
-	                 MapVirtualKeyW(0x32, V) };          // 
-	keybinds[27] = { MapVirtualKeyW(0x29, V), 0 };       // 
-	keybinds[28] = { MapVirtualKeyW(0x0D, V), 0 };       // 
-	keybinds[29] = { MapVirtualKeyW(0x0C, V), 0 };       // 
-	keybinds[30] = { MapVirtualKeyW(0x14, V), 0 };       // T
-	keybinds[31] = { MapVirtualKeyW(0x21, V), 0 };       // F
+	keybinds[/* 0*/ Keyboard_MovementLeft]      = { MapVirtualKeyW(0x1E, V), VK_LEFT };  // A
+	keybinds[/* 1*/ Keyboard_MovementRight]     = { MapVirtualKeyW(0x20, V), VK_RIGHT }; // D
+	keybinds[/* 2*/ Keyboard_MovementForward]   = { MapVirtualKeyW(0x11, V), VK_UP };    // W
+	keybinds[/* 3*/ Keyboard_MovementBackward]  = { MapVirtualKeyW(0x1F, V), VK_DOWN };  // S
+	keybinds[/* 4*/ Keyboard_MovementRunToggle] = { VK_CAPITAL, 0 };
+	keybinds[/* 5*/ Keyboard_MovementWalk]      = { VK_LCONTROL, 0 };
+	keybinds[/* 6*/ Keyboard_Action]            = { MapVirtualKeyW(0x12, V), 0 };        // E (use)
+	keybinds[/* 7*/ Keyboard_Jump]              = { VK_SPACE, 0 };
+	keybinds[/* 8*/ Keyboard_Sprint]            = { VK_LSHIFT, 0 };
+	keybinds[/* 9*/ Keyboard_Crouch]            = { MapVirtualKeyW(0x2E, V), 0 };        // C (crouch)
+	keybinds[/*10*/ Keyboard_Cover]             = { VK_RBUTTON, 0 };
+	keybinds[/*11*/ Keyboard_WeaponFire]        = { VK_LBUTTON, 0 };
+	keybinds[/*12*/ Keyboard_WeaponReload]      = { MapVirtualKeyW(0x13, V), 0 };       // R (reload)
+	keybinds[/*13*/ Keyboard_WeaponHolster]     = { MapVirtualKeyW(0x23, V), 0 };       // H (holster)
+	keybinds[/*14*/ Keyboard_WeaponIronSight]   = { VK_MBUTTON, VK_RSHIFT };
+	keybinds[/*15*/ Keyboard_ThrowDetonate]     = { MapVirtualKeyW(0x22, V), 0 };       // G (grenade)
+	keybinds[/*16*/ Keyboard_Takedown]          = { MapVirtualKeyW(0x10, V), 0 };       // Q (take-down)
+	keybinds[/*17*/ Keyboard_Cloak]             = { VK_F1, 0 };
+	keybinds[/*18*/ Keyboard_Claymore]          = { VK_F2, 0 };
+	keybinds[/*19*/ Keyboard_MoveSilently]      = { VK_F4, 0 };
+	keybinds[/*20*/ Keyboard_VisionEnhancer]    = { VK_F3, 0 };
+	keybinds[/*21*/ Keyboard_SpecialUpgrade]    = { MapVirtualKeyW(0x2C, V), 0 };       // 
+	keybinds[/*22*/ Keyboard_TechTree]          = { MapVirtualKeyW(0x18, V), 0 };       // O
+	keybinds[/*23*/ Keyboard_Inventory]         = { MapVirtualKeyW(0x17, V), 0 };       // I
+	keybinds[/*24*/ Keyboard_Objectives]        = { MapVirtualKeyW(0x16, V), 0 };       // U
+	keybinds[/*25*/ Keyboard_Logs]              = { MapVirtualKeyW(0x1A, V), 0 };       // 
+	keybinds[/*26*/ Keyboard_Map]               = { MapVirtualKeyW(0x19, V),            // P
+	                                                MapVirtualKeyW(0x32, V) };          // 
+	keybinds[/*27*/ Keyboard_QuickBarShow]      = { MapVirtualKeyW(0x29, V), 0 };       // 
+	keybinds[/*28*/ Keyboard_QuickBarNext]      = { MapVirtualKeyW(0x0D, V), 0 };       // 
+	keybinds[/*29*/ Keyboard_QuickBarPrev]      = { MapVirtualKeyW(0x0C, V), 0 };       // 
+	keybinds[/*30*/ Keyboard_MarkAndTrack]      = { MapVirtualKeyW(0x14, V), 0 };       // T
+	keybinds[/*31*/ Keyboard_TriggerCommentary] = { MapVirtualKeyW(0x21, V), 0 };       // F
 #endif
 }
 
