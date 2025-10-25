@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <vector>
 
 namespace cdc {
 
@@ -42,8 +43,8 @@ enum EInput {
 	Input_MovementAD = 32,
 	Input_MovementWS = 33,
 
-	Input_KeyboardOffset = 30,
-	Input_Action = Input_KeyboardOffset + Keyboard_Action,
+	Input_Action = 36,
+		Input_KeyboardOffset = Input_Action - Keyboard_Action,
 	Input_Jump = Input_KeyboardOffset + Keyboard_Jump,
 	Input_Sprint = Input_KeyboardOffset + Keyboard_Sprint,
 	Input_Crouch = Input_KeyboardOffset + Keyboard_Crouch,
@@ -68,14 +69,27 @@ enum EInput {
 	Input_QuickBarNext = Input_KeyboardOffset + Keyboard_QuickBarNext,
 	Input_QuickBarPrev = Input_KeyboardOffset + Keyboard_QuickBarPrev,
 	Input_MarkAndTrack = Input_KeyboardOffset + Keyboard_MarkAndTrack,
-	Input_TriggerCommentary = Input_KeyboardOffset + Keyboard_TriggerCommentary
+	Input_TriggerCommentary = Input_KeyboardOffset + Keyboard_TriggerCommentary,
+
+	Input_MouseX = 82,
+	Input_MouseY = 83,
+	Input_MouseWheel = 84
 };
 
 struct InputState {
 	char keys[85];
 	float deltaX; // 58
 	float deltaY; // 5C
-	float float60;
+	float deltaWheel; // 60
+
+	InputState& operator+=(InputState const& other);
+};
+
+struct InputStateExt {
+	InputState state;
+	uint32_t dword64;
+	uint32_t index68;
+	float dword6C;
 };
 
 struct InputProducerSub70 { // probably just std::string
@@ -117,6 +131,34 @@ public:
 	virtual void method_34();
 	virtual void method_38();
 	virtual void method_3C();
+};
+
+class InputSystem {
+	std::vector<InputProducer*> producers; // 4
+	InputState *currentState; // 10
+	InputState *previousState; // 14
+	// uint8_t byte18;
+	uint32_t index; // 1C
+	// uint32_t dword20;
+	InputStateExt inputStates[16]; // 24
+	// uint32_t dword724;
+	// uint8_t byte728;
+	// uint8_t byte729;
+
+public:
+	InputSystem(uint32_t i);
+	virtual ~InputSystem() = default;
+
+	void AddProducer(InputProducer*);
+	void RemoveProducer(InputProducer*);
+	bool CombineInputs(uint32_t inputFrame);
+
+	bool IsKeyDown(EInput i);
+	bool IsKeyUp(EInput i);
+	bool IsKeyPressed(EInput i);
+	bool IsKeyReleased(EInput i);
+	uint32_t GetDUPR(EInput i);
+	float GetValue(EInput i);
 };
 
 }

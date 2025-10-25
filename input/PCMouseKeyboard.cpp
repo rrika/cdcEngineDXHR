@@ -15,6 +15,7 @@ extern HWND hwnd2;
 
 float g_mouseXSensitivity2 = 0.00135f;
 float g_mouseYSensitivity2 = 0.00135f;
+float g_mouseWheelDivider = 120.f;
 
 namespace cdc {
 
@@ -67,15 +68,15 @@ void PCMouseKeyboard::processWndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		bool e0 = !!(flags & RI_KEY_E0);
 		auto vkey = input.data.keyboard.VKey;
 		switch (vkey) {
-		case /*0D*/ VK_RETURN:  vkey = e0 ? VK_RETURN : 0x100; break;
-		case /*11*/ VK_CONTROL: vkey = e0 ? VK_RCONTROL : VK_LCONTROL; break;
-		case /*12*/ VK_MENU:    vkey = e0 ? VK_RMENU : VK_LMENU; break;
-		case /*10*/ VK_SHIFT: {
-			auto vscRShift = MapVirtualKeyExW(/*A1*/ VK_RSHIFT, MAPVK_VK_TO_VSC, 0);
+		case /*0x0D*/ VK_RETURN:  vkey = e0 ? VK_RETURN : 0x100; break;
+		case /*0x11*/ VK_CONTROL: vkey = e0 ? VK_RCONTROL : VK_LCONTROL; break;
+		case /*0x12*/ VK_MENU:    vkey = e0 ? VK_RMENU : VK_LMENU; break;
+		case /*0x10*/ VK_SHIFT: {
+			auto vscRShift = MapVirtualKeyExW(/*0xA1*/ VK_RSHIFT, MAPVK_VK_TO_VSC, 0);
 			if (input.data.keyboard.MakeCode == vscRShift)
-				vkey = /*A1*/ VK_RSHIFT;
+				vkey = /*0xA1*/ VK_RSHIFT;
 			else
-				vkey = /*A0*/ VK_LSHIFT;
+				vkey = /*0xA0*/ VK_LSHIFT;
 			break;
 		}
 		default: break;
@@ -280,6 +281,7 @@ void PCMouseKeyboard::update() {
 
 	state.deltaX = deltaX *	g_mouseXSensitivity2;
 	state.deltaY = deltaY * g_mouseYSensitivity2;
+	state.deltaWheel = deltaWheel / g_mouseWheelDivider;
 
 	// TODO
 

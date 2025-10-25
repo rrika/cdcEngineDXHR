@@ -434,6 +434,9 @@ int spinnyCube(HWND window,
 		printf("halton[%d] = %f %f %f\n", i, halton[i].x, halton[i].y, halton[i].z);
 
 	std::unique_ptr<cdc::PCMouseKeyboard> mouseKeyboard(cdc::PCMouseKeyboard::create(window));
+	cdc::InputSystem inputSystem(0);
+	inputSystem.AddProducer(mouseKeyboard.get());
+
 	auto renderDevice = static_cast<cdc::PCDX11RenderDevice*>(cdc::g_renderDevice);
 	uint32_t coronasIndex = renderDevice->addPass(cdc::kRegularPass, 0x6500, 2, /*5*/ cdc::kRenderFunctionTranslucent);
 	coronasPass = 1 << coronasIndex;
@@ -852,6 +855,7 @@ int spinnyCube(HWND window,
 			mouseKeyboard->isPressedWhileCursorGrab(cdc::Keyboard_Inventory);
 			// this function only works between processWndProc and MouseKeyboard::update()
 		mouseKeyboard->update();
+		inputSystem.CombineInputs(0);
 
 		float forward = 0;
 		float sideways = 0;
@@ -894,6 +898,8 @@ int spinnyCube(HWND window,
 				mouseLook = !mouseLook;
 				mouseKeyboard->setCursorGrab(mouseLook);
 			}
+
+			bool openInventory = false;
 			if (false) {
 				if (ImGui::IsKeyDown(ImGuiKey_W))
 					forward += 1.0f;
@@ -903,20 +909,28 @@ int spinnyCube(HWND window,
 					sideways -= 1.0f;
 				if (ImGui::IsKeyDown(ImGuiKey_D))
 					sideways += 1.0f;
-				if (mouseLook && ImGui::IsKeyPressed(ImGuiKey_I)) {
-					showInventory = !showInventory;
-					mouseLook = false;
-					mouseKeyboard->setCursorGrab(false);
-				}
-			} else {
+				if (mouseLook && ImGui::IsKeyPressed(ImGuiKey_I))
+					openInventory = true;
+
+			} else if (false) {
 				forward -= mouseKeyboard->state.keys[cdc::Input_MovementWS] / 127.f;
 				sideways += mouseKeyboard->state.keys[cdc::Input_MovementAD] / 127.f;
-				if (requestedInventoryWhileCursorGrab) {
-					showInventory = !showInventory;
-					mouseLook = false;
-					mouseKeyboard->setCursorGrab(false);
-				}
+				if (requestedInventoryWhileCursorGrab)
+					openInventory = true;
+
+			} else {
+				forward -= inputSystem.GetValue(cdc::Input_MovementWS);
+				sideways += inputSystem.GetValue(cdc::Input_MovementAD);
+				if (mouseLook && inputSystem.IsKeyPressed(cdc::Input_Inventory))
+					openInventory = true;
 			}
+
+			if (openInventory) {
+				showInventory = !showInventory;
+				mouseLook = false;
+				mouseKeyboard->setCursorGrab(false);
+			}
+
 			if (ImGui::IsKeyDown(ImGuiKey_ModShift))
 				speedModifier *= 4.0f;
 		}
@@ -953,8 +967,13 @@ int spinnyCube(HWND window,
 		cdc::Matrix zUpWorld = {0, 0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1};
 
 		if (mouseLook) {
-			modelRotation.x += mouseKeyboard->state.deltaY;
-			modelRotation.y += mouseKeyboard->state.deltaX;
+			if (false) {
+				modelRotation.x += mouseKeyboard->state.deltaY;
+				modelRotation.y += mouseKeyboard->state.deltaX;
+			} else {
+				modelRotation.x += inputSystem.GetValue(cdc::Input_MouseY);
+				modelRotation.y += inputSystem.GetValue(cdc::Input_MouseX);
+			}
 		}
 
 		cdc::Matrix cameraRotate = rotateX * rotateY * zUpWorld;
