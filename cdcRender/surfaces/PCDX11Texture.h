@@ -55,7 +55,6 @@ public:
 	uint8_t byte168 = 0;
 
 	D3D11_TEXTURE2D_DESC hackTextureDesc;
-	D3D11_SUBRESOURCE_DATA hackTextureData;
 
 public:
 	PCDX11Texture(PCDX11RenderDevice *renderDevice) :

@@ -134,6 +134,10 @@ void PCDX11Texture::resFill(void* src, uint32_t size, uint32_t offset) {
 	textureBlob = (TextureBlob*)malloc(size);
 	memcpy(textureBlob, src, size);
 
+	PCDX11BaseTexture::width     = textureBlob->width;
+	PCDX11BaseTexture::height    = textureBlob->height;
+	PCDX11BaseTexture::mipLevels = textureBlob->mipLevels + 1;
+
 	if (offset + size + 4 >= textureBlob->size) {
 		request(0);
 		awaitResource();
@@ -183,25 +187,39 @@ void PCDX11Texture::asyncCreate(/* TODO: one argument */) {
 	// D3D11_TEXTURE2D_DESC textureDesc = {};
 	D3D11_TEXTURE2D_DESC& textureDesc = hackTextureDesc;
 	textureDesc = D3D11_TEXTURE2D_DESC {};
-	textureDesc.Width              = textureBlob->width;
-	textureDesc.Height             = textureBlob->height;
-	textureDesc.MipLevels          = 1;
+	textureDesc.Width              = PCDX11BaseTexture::width;
+	textureDesc.Height             = PCDX11BaseTexture::height;
+	textureDesc.MipLevels          = PCDX11BaseTexture::mipLevels;
 	textureDesc.ArraySize          = 1;
 	textureDesc.Format             = (DXGI_FORMAT)format;
 	textureDesc.SampleDesc.Count   = 1;
 	textureDesc.Usage              = D3D11_USAGE_IMMUTABLE;
 	textureDesc.BindFlags          = D3D11_BIND_SHADER_RESOURCE;
 
-	// D3D11_SUBRESOURCE_DATA textureData = {};
-	D3D11_SUBRESOURCE_DATA& textureData = hackTextureData;
-	textureData = D3D11_SUBRESOURCE_DATA{};
-	textureData.pSysMem            = (void*)(((char*)textureBlob)+0x1C);
-	textureData.SysMemPitch        = pitchForFormatAndWidth(textureDesc.Format, textureBlob->width);
+	D3D11_SUBRESOURCE_DATA *textureData = new D3D11_SUBRESOURCE_DATA[
+		textureDesc.ArraySize *
+		textureDesc.MipLevels];
+
+	D3D11_SUBRESOURCE_DATA *k = textureData;
+	char *l = 0x1C + (char*)textureBlob;
+	for (auto i=0; i < textureDesc.ArraySize; i++)
+		for (auto j=0; j < textureDesc.MipLevels; j++) {
+			uint32_t w = textureBlob->width >> j;
+			uint32_t h = textureBlob->height >> j;
+			uint32_t size = bytesForTextureDim((TextureFormat)textureDesc.Format, w, h);
+			*k++ = {
+				.pSysMem = l,
+				.SysMemPitch = pitchForFormatAndWidth(textureDesc.Format, w),
+				.SysMemSlicePitch = size
+			};
+			l += size;
+		}
 
 	auto device = deviceManager->getD3DDevice();
-	HRESULT hr = device->CreateTexture2D(&hackTextureDesc, &hackTextureData, &d3dTexture128);
+	HRESULT hr = device->CreateTexture2D(&hackTextureDesc, textureData, &d3dTexture128);
 	printf(" texture %p\n", d3dTexture128);
 	printf(" hr = %08x\n", (unsigned)hr);
+	delete[] textureData;
 }
 
 }
