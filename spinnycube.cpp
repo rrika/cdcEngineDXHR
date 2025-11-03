@@ -1815,6 +1815,8 @@ int spinnyCube(HWND window,
 				ImGui::Text("# prim groups = %d", model->numPrimGroups);
 				ImGui::Text("# bones = %d", model->getBoneCount());
 				uint32_t pg = 0;
+				uint32_t anyVis = 0;
+				uint32_t anyHid = 0;
 				for (uint32_t i = 0; i < model->numModelBatches; i++) {
 					cdc::ModelBatch *batch = &model->modelBatches[i];
 					ImGui::Text("batch %d", i);
@@ -1836,9 +1838,32 @@ int spinnyCube(HWND window,
 						bool& hidden = ppg[pg].hide;
 						ImGui::SameLine();
 						if (ImGui::SmallButton(hidden ? "show" : "hide")) { hidden = !hidden; }
+						if (group->dword20 < 32) {
+							if (hidden)
+								anyHid |= 1 << group->dword20;
+							else
+								anyVis |= 1 << group->dword20;
+						}
 						ImGui::PopID();
 					}
 				}
+				ImGui::PushID("bydword20");
+				for (uint32_t i=0; i<32; i++) {
+					uint32_t b = (1<<i);
+					if ((anyVis | anyHid) & b) {
+						ImGui::PushID(i);
+						ImGui::Text("groups with dword20=%x", i);
+						bool action = (anyHid & b) == 0;
+						ImGui::SameLine();
+						if (ImGui::SmallButton(action ? "hide all" : "show all")) {
+							for (uint32_t pg=0; pg<model->numPrimGroups; pg++)
+								if (model->primGroups[pg].dword20 == i)
+									ppg[pg].hide = action;
+						}
+						ImGui::PopID();
+					}
+				}
+				ImGui::PopID();
 			} else if (uiact.selectedRenderTerrain) {
 				auto *terrain = static_cast<cdc::PCDX11RenderTerrain*>(uiact.selectedRenderTerrain);
 				ImGui::PushID("vb");
