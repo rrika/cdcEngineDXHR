@@ -18,6 +18,7 @@
 #include "PCDX11RenderTerrain.h"
 #include "CommonRenderTerrainInstance.h"
 #include "PCDX11Scene.h"
+#include "PCDX11Shared.h"
 #include "PCDX11StateManager.h"
 #include "PCDX11StaticPool.h"
 #include "PCDX11TerrainDrawable.h"
@@ -1074,11 +1075,11 @@ IRenderTarget *PCDX11RenderDevice::createRenderTarget(
 	uint32_t width,
 	uint32_t height,
 	uint32_t flags,
-	uint32_t cdcFormat,
+	uint32_t d3dFormat,
 	uint32_t ignored6,
 	TextureClass textureClass
 ) {
-	uint32_t dxgiFormat = decodeFormat(cdcFormat);
+	uint32_t dxgiFormat = ConvertFormatD3D9ToDXGI(d3dFormat);
 	if (dxgiFormat == 0)
 		dxgiFormat = 0x1C; // DXGI_FORMAT_R8G8B8A8_UNORM
 	return dx11_createRenderTarget(width, height, dxgiFormat, flags, textureClass);

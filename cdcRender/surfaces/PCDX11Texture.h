@@ -8,8 +8,6 @@ namespace cdc {
 
 class PCDX11RenderDevice;
 
-uint32_t decodeFormat(uint32_t format);
-
 struct TextureBlob {
 	uint32_t magic;
 	uint32_t format;

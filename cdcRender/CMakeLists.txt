@@ -48,6 +48,7 @@ target_sources(dxhr PRIVATE
 	PCDX11RenderPassCallbacks.cpp
 	PCDX11RenderTerrain.cpp
 	PCDX11Scene.cpp
+	PCDX11Shared.cpp
 	PCDX11StateManager.cpp
 	PCDX11StaticPool.cpp
 	PCDX11StreamDecl.cpp
