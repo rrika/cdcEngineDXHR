@@ -257,7 +257,13 @@ void PCDX11NGAPrimitive::DrawPrimitive(PCDX11StreamDecl *pStreamDecl, bool isBac
 			startIndex = pIndexBuffer->getStartIndex() + m_startIndex;
 			maxBatchSize = m_numPrims;
 		} else {
-			// TODO
+			auto *pIndexBuffer = m_pRenderDevice->GetQuadsIndexBuffer();
+			stateManager->setIndexBuffer(pIndexBuffer);
+			startIndex = pIndexBuffer->getStartIndex();
+			if (m_pState->m_flags & 0x800000)
+				startIndex += 6000;
+			maxBatchSize = 1000;
+			// TODO: m_startIndex
 		}
 
 		uint32_t numPrimsLeft = m_numPrims;
