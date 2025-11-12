@@ -2,6 +2,7 @@
 #include <cstdint>
 #include "cdcMath/Math.h"
 #include "cdcWorld/InstanceDrawable.h"
+#include "Billboard.h"
 #include "PackedVector.h"
 
 namespace cdc { class CommonMaterial; class TextureMap; }
@@ -44,8 +45,8 @@ struct DeferredRenderingExtraData {
 	uint8_t scaleModeE1;
 	uint8_t byteE2;
 	uint8_t gapE3[49];
-	uint32_t dword114;
-	uint32_t dword118;
+	uint32_t numBillboards; // 114
+	Billboard *billboards; // 118
 
 	float fadeByDistance(float dist);
 };

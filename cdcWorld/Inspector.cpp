@@ -95,6 +95,27 @@ void buildUI(UIActions& uiact, dtp::IntroDataUberObject *extra) {
 	}
 }
 
+
+void buildUI(UIActions& uiact, Billboard& bb) {
+	ImGui::PushID((void*)&bb);
+	if (bb.material) {
+		ImGui::SameLine();
+		if (ImGui::SmallButton("show material"))
+			uiact.select(bb.material);
+	}
+	ImGui::Indent();
+	ImGui::Text("uv0: %f %f  uv1: %f %f",
+		bb.u0, bb.v0, bb.u1, bb.v1);
+	ImGui::Text("color: %08x  mode: %d",
+		bb.color, bb.mode);
+	if (bb.mode == 0) {
+		ImGui::SliderFloat("Oppositeness", &bb.mode0.oppositeness, 0, 1.f);
+	}
+	ImGui::Checkbox("Depth func less-or-equal", &bb.depthFuncLE);
+	ImGui::Unindent();
+	ImGui::PopID();
+}
+
 void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
 	// material
 	if (extra->material)
@@ -243,18 +264,25 @@ void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
 		draw_list->AddPolyline(points, 6, IM_COL32(255,255,0,255), false, 2.0f);
 		ImGui::Dummy(ImVec2(plotWidth, plotHeight));
 	}
+
+	for (uint32_t i=0; i<extra->numBillboards; i++) {
+		ImGui::Text("Billboard %d", i);
+		buildUI(uiact, extra->billboards[i]);
+	}
 }
 
 void buildUI(UIActions& uiact, LensFlareAndCoronaExtraData *extra) {
 	if (extra->material)
 		if (ImGui::SmallButton("show override material"))
 			uiact.select(extra->material);
-	ImGui::Text("matrix mode %d",
-		extra->matrixMode);
+	ImGui::Text("model mode %d",
+		extra->modelMode);
+	ImGui::BeginDisabled(extra->modelMode == 0);
 	for (uint32_t i=0; i<8; i++) {
 		ImGui::Text("param %d mode %d",
 			i, extra->mode[i]);
 	}
+	ImGui::EndDisabled();
 
 	// texture
 	for (uint32_t i=0; i<4; i++) {
@@ -263,6 +291,11 @@ void buildUI(UIActions& uiact, LensFlareAndCoronaExtraData *extra) {
 			ImGui::Image(srv, ImVec2(64, 64));
 			ImGui::SameLine();
 		}
+	}
+
+	for (uint32_t i=0; i<extra->numBillboards; i++) {
+		ImGui::Text("Billboard %d", i);
+		buildUI(uiact, extra->billboards[i]);
 	}
 }
 

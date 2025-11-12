@@ -2,18 +2,19 @@
 #include <cstdint>
 #include "cdcMath/Math.h"
 #include "cdcWorld/InstanceDrawable.h"
+#include "Billboard.h"
 #include "PackedVector.h"
 
 namespace cdc { class TextureMap; class CommonMaterial; };
 
 struct LensFlareAndCoronaExtraData {
 	float float0;
-	uint32_t dword4;
-	uint32_t dword8;
+	uint32_t numBillboards; // 4
+	Billboard *billboards; // 8
 	float floatC;
 	PackedBytesAndScale packedVector; // 10
 	float float18[3];
-	uint32_t matrixMode; // 24
+	uint32_t modelMode; // 24, 0 = billboards only
 	uint32_t dword28;
 	uint32_t dword2C;
 	uint32_t dword30;
