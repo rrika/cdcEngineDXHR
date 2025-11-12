@@ -13,6 +13,7 @@ namespace cdc {
 
 class IRenderDrawable;
 class PCDX11BaseTexture;
+class PCDX11IndexBuffer;
 class PCDX11LightManager;
 class PCDX11Material;
 class PCDX11Pool;
@@ -114,6 +115,8 @@ public:
 
 	PCDX11StreamDeclCache streamDeclCache; // 1112D4
 	PCDX11Texture *missingTexture = nullptr; // 1112F0
+	uint16_t *m_pQuadsIndexData = nullptr; // 111308
+	PCDX11IndexBuffer *m_pQuadsIndexBuffer = nullptr; // 11130C
 
 	PCDX11SimpleStaticVertexBuffer *fullScreenQuadVB; // 11156C
 	PCDX11SimpleDynamicVertexBuffer *quadVB; // 111570
@@ -124,6 +127,7 @@ public:
 	PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t height);
 	void createDefaultResources();
 	void createDefaultVertexAttribLayouts();
+	void CreateQuadsIndexBuffer();
 	void setupPassCallbacks();
 	void registerComparatorsAndDrawersModel();
 	void registerComparatorsAndDrawersTerrain();
@@ -231,6 +235,7 @@ public:
 	PCDX11LightManager *getLightManager();
 	PCDX11RenderTarget *GetDefaultRenderTarget(bool isFlush);
 	PCDX11DepthBuffer *GetDefaultDepthBuffer(bool isFlush);
+	PCDX11IndexBuffer *GetQuadsIndexBuffer() { return m_pQuadsIndexBuffer; }
 	void recordDrawable(IRenderDrawable *drawable, uint32_t mask, bool addToNextScene);
 	void clearRenderTargetNow(char mode, float *color, float depth, uint32_t stencil);
 	void setTexture(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown);

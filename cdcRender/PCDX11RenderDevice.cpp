@@ -27,6 +27,7 @@
 #include "buffers/PCDX11DynamicIndexBuffer.h"
 #include "buffers/PCDX11DynamicVertexBuffer.h"
 #include "buffers/PCDX11SimpleDynamicVertexBuffer.h"
+#include "buffers/PCDX11SimpleStaticIndexBuffer.h"
 #include "buffers/PCDX11SimpleStaticVertexBuffer.h"
 #include "shaders/PCDX11ShaderLib.h"
 #include "surfaces/PCDX11DefaultRenderTarget.h"
@@ -146,6 +147,8 @@ PCDX11RenderDevice::PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t heigh
 
 	createDefaultResources();
 	createDefaultVertexAttribLayouts();
+
+	CreateQuadsIndexBuffer();
 
 	renderPasses.addRenderPass(kRegularPass, 0x1000, 1, /* 1*/ kRenderFunctionDepth,         /* 0*/ kPassIndexDepth);
 	renderPasses.addRenderPass(kRegularPass, 0x2000, 1, /* 4*/ kRenderFunctionComposite,     /* 1*/ kPassIndexComposite);
@@ -436,6 +439,26 @@ void PCDX11RenderDevice::createDefaultVertexAttribLayouts() {
 
 	vs = static_cast<PCDX11VertexShaderTable*>(shlib_18->table)->vertexShaders[0];
 	position3DStreamDecl = streamDeclCache.buildStreamDecl(drawVertexDecls[6], &vs->m_sub);
+}
+
+void PCDX11RenderDevice::CreateQuadsIndexBuffer() { // line 2298
+	m_pQuadsIndexData = new uint16_t[12000];
+	for (uint32_t i=0, j=0; i<6000; i+=6, j+=4) {
+		m_pQuadsIndexData[i + 0] = j + 0;
+		m_pQuadsIndexData[i + 1] = j + 1;
+		m_pQuadsIndexData[i + 2] = j + 2;
+		m_pQuadsIndexData[i + 3] = j + 0;
+		m_pQuadsIndexData[i + 4] = j + 2;
+		m_pQuadsIndexData[i + 5] = j + 3;
+
+		m_pQuadsIndexData[i + 6000] = j + 0;
+		m_pQuadsIndexData[i + 6001] = j + 3;
+		m_pQuadsIndexData[i + 6002] = j + 1;
+		m_pQuadsIndexData[i + 6003] = j + 0;
+		m_pQuadsIndexData[i + 6004] = j + 2;
+		m_pQuadsIndexData[i + 6005] = j + 3;
+	}
+	m_pQuadsIndexBuffer = new PCDX11SimpleStaticIndexBuffer(12000, m_pQuadsIndexData);
 }
 
 void PCDX11RenderDevice::setupPassCallbacks() {

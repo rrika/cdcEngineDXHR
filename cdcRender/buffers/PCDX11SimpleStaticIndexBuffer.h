@@ -27,7 +27,7 @@ public:
 	uint32_t count;
 	ID3D11Buffer *buffer;
 
-	uint getStartIndex() override { return 0; };
+	uint32_t getStartIndex() override { return 0; };
 	ID3D11Buffer *getD3DBuffer() override { return buffer; }; // getDword8
 	uint32_t getCount() override { return count; }; // getDword4
 	void method_10() override {};
