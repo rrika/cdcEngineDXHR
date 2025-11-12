@@ -1,5 +1,6 @@
 #include "objects.h"
 #include "game/DeferredRenderingObject.h"
+#include "game/LensFlareAndCoronaID.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcWorld/Instance.h"
 
@@ -23,7 +24,11 @@ void GameAdditionalPostInit(Instance *instance, GameTracker*) {
 	case 0x54: /*Instance_CreatePlanarSmokeDrawable((int)go);*/ break;
 	case 0x57: /*DeferredOccluderObject::Drawable::Drawable(instance);*/ break;
 	case 0x5A: /*Instance_CreateAnimatedInstanceDrawable(instance);*/ break;
-	case 0x5B: /*Instance_CreateLensFlatAndCoronaDrawable(instance);*/ break;
+	case 0x5B: { // Instance_CreateLensFlatAndCoronaDrawable
+		delete instance->instanceDrawable;
+		instance->instanceDrawable = new LensFlareAndCoronaID(instance);
+		break;
+	}
 	default: break;
 	}
 	// TODO

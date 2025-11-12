@@ -1,3 +1,8 @@
+#include "cdcRender/CommonScene.h"
+#include "cdcRender/CommonMaterial.h"
+#include "cdcRender/CommonRenderDevice.h"
+#include "cdcRender/PCDX11RenderModelInstance.h"
+#include "cdcWorld/Instance.h"
 #include "LensFlareAndCoronaID.h"
 
 using namespace cdc;
@@ -124,4 +129,41 @@ void hackCalcInstanceParams(LensFlareAndCoronaExtraData *extra, Matrix *m, Matri
 			)};
 		}
 	}
+}
+
+LensFlareAndCoronaID::LensFlareAndCoronaID(Instance *instance) :
+	cdc::InstanceDrawable(instance)
+{
+	// TODO
+}
+
+void LensFlareAndCoronaID::GetBoundingVolume(cdc::BasicCullingVolume *volume) {
+
+	// TODO
+	// auto *extra = (LensFlareAndCoronaExtraData*)m_instance->introData;
+	
+
+	InstanceDrawable::GetBoundingVolume(volume);
+}
+
+void LensFlareAndCoronaID::draw(cdc::Matrix *matrix, float arg) {
+	// HACK
+	auto matrixCopy = *matrix;
+	auto *flareExtraData = (LensFlareAndCoronaExtraData*)m_instance->introData;
+	auto modelIndex = m_instance->GetMeshComponent().GetCurrentRenderModelIndex();
+	auto *rmi = static_cast<cdc::PCDX11RenderModelInstance*>(m_renderModelInstances[modelIndex]);
+
+	if (flareExtraData->material)
+		rmi->SetMaterial(~0u, static_cast<cdc::CommonMaterial*>(flareExtraData->material));
+
+	RenderViewport *viewport = g_renderDevice->getCurViewport();
+	hackCalcInstanceParams(flareExtraData, &matrixCopy, &viewport->viewMatrix, rmi->accessInstanceData()->instanceParams);
+
+	// patch textures
+	if (flareExtraData->texture[0]) rmi->SetInstanceTexture(0, 0, flareExtraData->texture[0]);
+	if (flareExtraData->texture[1]) rmi->SetInstanceTexture(0, 1, flareExtraData->texture[1]);
+	if (flareExtraData->texture[2]) rmi->SetInstanceTexture(0, 2, flareExtraData->texture[2]);
+	if (flareExtraData->texture[3]) rmi->SetInstanceTexture(0, 3, flareExtraData->texture[3]);
+
+	InstanceDrawable::draw(&matrixCopy, arg);
 }

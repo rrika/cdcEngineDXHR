@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include "cdcMath/Math.h"
+#include "cdcWorld/InstanceDrawable.h"
 #include "PackedVector.h"
 
 namespace cdc { class TextureMap; class CommonMaterial; };
@@ -50,8 +51,12 @@ struct LensFlareAndCoronaExtraData {
 
 static_assert(sizeof(LensFlareAndCoronaExtraData) == 0x16C);
 
-class LensFlareAndCoronaID /* : cdc::InstanceDrawable */ {
+class LensFlareAndCoronaID : public cdc::InstanceDrawable {
 public:
+	LensFlareAndCoronaID(Instance*);
+	void GetBoundingVolume(cdc::BasicCullingVolume*) override;
+	void draw(cdc::Matrix *, float) override;
+
 	static cdc::Vector calcInstanceParamRow(
 		uint32_t mode,
 		cdc::Vector *vec0,
