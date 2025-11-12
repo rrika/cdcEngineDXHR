@@ -731,13 +731,16 @@ int spinnyCube(HWND window,
 	renderViewport.farz = f;
 	renderViewport.fov = 0.925f;
 	renderViewport.aspect = w;
-	renderViewport.mask = 0x710A | coronasPass; // pass 14, 12. 13, 1, 8 and coronas
+	renderViewport.mask = 0x718A | coronasPass; // pass 14, 12. 13, 1, 8, 7 and coronas
 	// pass 14 non-normal depth (for lines)
 	// pass 12 normals
 	// pass 13 deferred shading
 	// pass 1 composite
 	// pass 3 translucent
-	// pass 8 runs last and is where I put imgui since it messes with the render state
+	// pass 8 runs last and is where I put imgui since it messes with the render state*
+	// pass 7 predator (lensflares)
+	//
+	// *since imgui runs after post-processing now it doesn't have to worry about pass ordering
 
 	ImGuiDrawable imGuiDrawable;
 

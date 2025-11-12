@@ -282,6 +282,10 @@ bool PCDX11PredatorPassCallbacks::pre(
 	uint32_t priorPassesBitfield)
 {
 	// TODO
+	if (drawableCount == 0)
+		return false;
+	CommonScene *commonScene = renderDevice->scene78;
+	commonScene->m_isUseAlphaForBloom = 1; // TODO
 	return true;
 }
 
@@ -290,6 +294,8 @@ void PCDX11PredatorPassCallbacks::post(
 	uint32_t passId)
 {
 	// TODO
+	CommonScene *commonScene = renderDevice->scene78;
+	commonScene->m_isUseAlphaForBloom = 0;
 }
 
 

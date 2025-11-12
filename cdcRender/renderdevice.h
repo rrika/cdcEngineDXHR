@@ -28,10 +28,10 @@ enum PCRendererType { // line 1755
 
 // not to be confused with MaterialInstanceData
 struct MaterialInstanceParams { // line 491
-	cdc::TextureMap *m_pTextures[4]; // 0
-	float m_depthBoundsMin; // 10
-	float m_depthBoundsMax; // 14
-	StencilSettings *m_pStencilParams; // 18
+	cdc::TextureMap *m_pTextures[4] = {0, 0, 0, 0}; // 0
+	float m_depthBoundsMin = 0.0f; // 10
+	float m_depthBoundsMax = 1.0f; // 14
+	StencilSettings *m_pStencilParams = nullptr; // 18
 	cdc::Vector4 m_shaderConstants[8]; // 20
 };
 

@@ -47,3 +47,11 @@ struct Billboard {
 };
 
 static_assert(sizeof(Billboard) == 0x48);
+
+void DrawBillboards(
+	cdc::Matrix& matrix,
+	uint32_t numBillboards,
+	Billboard *billboards,
+	cdc::Vector vecIn,
+	cdc::Vector& param0,
+	float zoffset);

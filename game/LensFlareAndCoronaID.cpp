@@ -3,6 +3,7 @@
 #include "cdcRender/CommonRenderDevice.h"
 #include "cdcRender/PCDX11RenderModelInstance.h"
 #include "cdcWorld/Instance.h"
+#include "Billboard.h"
 #include "LensFlareAndCoronaID.h"
 
 using namespace cdc;
@@ -165,5 +166,15 @@ void LensFlareAndCoronaID::draw(cdc::Matrix *matrix, float arg) {
 	if (flareExtraData->texture[2]) rmi->SetInstanceTexture(0, 2, flareExtraData->texture[2]);
 	if (flareExtraData->texture[3]) rmi->SetInstanceTexture(0, 3, flareExtraData->texture[3]);
 
-	InstanceDrawable::draw(&matrixCopy, arg);
+	if (flareExtraData->modelMode != 0)
+		InstanceDrawable::draw(&matrixCopy, arg);
+
+	Vector param0;
+	DrawBillboards(
+		matrixCopy,
+		flareExtraData->numBillboards,
+		flareExtraData->billboards,
+		Vector{},
+		param0,
+		flareExtraData->zoffset / 0x1000000);
 }

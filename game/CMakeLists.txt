@@ -1,6 +1,7 @@
 target_sources(dxhr PRIVATE
 	Actor/InventoryPlayer.cpp
 
+	Billboard.cpp
 	DeferredRenderingObject.cpp
 	DX3Player.cpp
 	Gameloop.cpp

@@ -11,7 +11,7 @@ struct LensFlareAndCoronaExtraData {
 	float float0;
 	uint32_t numBillboards; // 4
 	Billboard *billboards; // 8
-	float floatC;
+	float zoffset; // C, normalized to 0x1000000 = one depth buffer extent
 	PackedBytesAndScale packedVector; // 10
 	float float18[3];
 	uint32_t modelMode; // 24, 0 = billboards only
