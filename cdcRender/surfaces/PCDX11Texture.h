@@ -17,8 +17,8 @@ struct TextureBlob {
 	uint32_t unknownC;
 	uint16_t width;
 	uint16_t height;
-	uint16_t bpp;
-	uint8_t unknown16;
+	uint16_t volumeDepth;
+	uint8_t depth;
 	uint8_t mipLevels;
 	uint16_t flags; // 18, wrap mode, etc.
 	uint8_t textureClass; // 1A
@@ -36,9 +36,9 @@ public:
 	TextureBlob *textureBlob = nullptr;
 	uint32_t dword14C = 0;
 	uint8_t numSlices = 0; // 6 for cubemap, 1 for normal texture
-	void **imageData = nullptr;
-	uint32_t *perMipSize = nullptr;
-	uint32_t mipChainSize = 0;
+	char **m_pTextureData = nullptr;
+	uint32_t *m_pLevelSizes = nullptr; // 158
+	uint32_t m_textureSize = 0; // 15C, sum of m_pLevelSizes
 	uint32_t dword160 = 0;
 	uint32_t dword164 = 0;
 	uint8_t byte168 = 0;

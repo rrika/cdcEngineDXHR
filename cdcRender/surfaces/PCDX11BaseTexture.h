@@ -19,7 +19,7 @@ public:
 	uint32_t width; // 14
 	uint32_t height; // 18
 protected:
-	uint32_t bpp; // 1C
+	uint32_t depth; // 1C
 	PCDX11RenderDevice *renderDevice; // 20
 	uint16_t mipLevels; // 24
 public:

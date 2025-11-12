@@ -32,8 +32,8 @@ public:
 
 	uint8_t byte3C[4];
 	uint8_t byte40[220];
-	void  *imageData;
-	uint32_t dword120;
+	void *textureMemory; // 11C
+	uint32_t arraySize; // 120
 	uint8_t byte124;
 	ID3D11Texture2D *d3dTexture128 = nullptr;
 	ID3D11ShaderResourceView *d3dResourceView12C = nullptr;
