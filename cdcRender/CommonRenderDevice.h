@@ -124,7 +124,7 @@ public:
 	virtual void DrawIndexedPrimitive(PrimitiveContext*, void*, VertexDecl*, uint32_t, uint16_t*, uint32_t, float) = 0;
 	virtual void method_CC() = 0;
 	virtual void method_D0() = 0;
-	virtual void method_D4() = 0;
+	virtual void DrawPrimitiveShadedDiffuse(Matrix*, IMaterial*, RenderVertexShadedDiffuse*, uint32_t, uint32_t, float, MaterialInstanceParams*, uint32_t) = 0;
 	virtual void method_D8() = 0;
 	virtual void DrawLineList(Matrix*, LineVertex*, uint32_t, uint32_t) = 0;
 	virtual void method_E0();

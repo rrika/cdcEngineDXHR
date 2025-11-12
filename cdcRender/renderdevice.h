@@ -10,6 +10,12 @@ struct RenderVertex { // line 294
 	float vU, vV;     uint32_t pad[2];
 };
 
+struct RenderVertexShadedDiffuse { // line 323
+	float vX, vY, vZ; uint32_t diffuse;
+	float vU, vV;     float nNX, nNY;
+	float nNZ;        uint32_t pad[3];
+};
+
 struct LineVertex { // line 336
 	float vX, vY, vZ;
 	uint32_t nDiffuse;

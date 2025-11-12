@@ -171,7 +171,7 @@ public:
 	void DrawIndexedPrimitive(PrimitiveContext*, void*, VertexDecl*, uint32_t, uint16_t*, uint32_t, float) override;
 	void method_CC() override;
 	void method_D0() override;
-	void method_D4() override;
+	void DrawPrimitiveShadedDiffuse(Matrix*, IMaterial*, RenderVertexShadedDiffuse*, uint32_t, uint32_t, float, MaterialInstanceParams*, uint32_t) override;
 	void method_D8() override;
 	void DrawLineList(Matrix*, LineVertex*, uint32_t, uint32_t) override;
 	void method_EC() override;

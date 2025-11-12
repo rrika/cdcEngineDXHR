@@ -439,6 +439,13 @@ void PCDX11RenderDevice::createDefaultVertexAttribLayouts() {
 
 	vs = static_cast<PCDX11VertexShaderTable*>(shlib_18->table)->vertexShaders[0];
 	position3DStreamDecl = streamDeclCache.buildStreamDecl(drawVertexDecls[6], &vs->m_sub);
+
+	attrs.clear();
+	attrs.push_back({VertexElem::kPosition,  0xffff, 2, 0});
+	attrs.push_back({VertexElem::kColor1,    0xffff, 4, 0});
+	attrs.push_back({VertexElem::kTexcoord1, 0xffff, 1, 0});
+	attrs.push_back({VertexElem::kNormal,    0xffff, 2, 0});
+	drawVertexDecls[4] = VertexDecl::Create(attrs.data(), attrs.size(), /*stride=*/ 0x30);
 }
 
 void PCDX11RenderDevice::CreateQuadsIndexBuffer() { // line 2298
@@ -964,8 +971,29 @@ void PCDX11RenderDevice::method_D0() {
 	// TODO
 }
 
-void PCDX11RenderDevice::method_D4() {
-	// TODO
+void PCDX11RenderDevice::DrawPrimitiveShadedDiffuse(
+	Matrix *matrix,
+	IMaterial *material,
+	RenderVertexShadedDiffuse *vertices,
+	uint32_t numPrims,
+	uint32_t primFlags,
+	float sortZ,
+	MaterialInstanceParams *mip,
+	uint32_t passMask)
+{
+	CommonRenderDevice::DrawIndexedPrimitive(
+		matrix,
+		vertices,
+		drawVertexDecls[4],
+		0,
+		nullptr,
+		numPrims,
+		primFlags,
+		material,
+		mip,
+		sortZ,
+		passMask,
+		0);
 }
 
 void PCDX11RenderDevice::method_D8() {
