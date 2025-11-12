@@ -8,17 +8,6 @@ namespace cdc {
 
 class PCDX11RenderDevice;
 
-enum class TextureFormat { // DXGI_FORMAT ?
-	DXT1 = 0x47, // 71
-	DXT2 = 0x47, // 71
-	DXT3 = 0x48, // 72
-	DXT4 = 0x4A, // 74
-	DXT5 = 0x4D, // 77
-	Raw1Maybe = 0x1C,
-	Raw2Maybe = 0x57,
-	GrayScaleMaybe = 0x41,
-};
-
 uint32_t decodeFormat(uint32_t format);
 
 struct TextureBlob {

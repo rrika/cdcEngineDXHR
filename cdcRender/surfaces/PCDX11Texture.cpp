@@ -6,36 +6,6 @@
 
 namespace cdc {
 
-static uint32_t bytesForTextureDim(TextureFormat fmt, uint32_t width, uint32_t height) {
-	switch (fmt) {
-		case TextureFormat::DXT1:
-			return 8 * ((width + 3) >> 2) * ((height + 3) >> 2);
-		case TextureFormat::DXT4:
-		case TextureFormat::DXT5:
-			return 16 * ((width + 3) >> 2) * ((height + 3) >> 2);
-		case TextureFormat::Raw1Maybe:
-		case TextureFormat::Raw2Maybe:
-			return 4 * width * height;
-		case TextureFormat::GrayScaleMaybe:
-			return width * height;
-		default:
-			//__builtin_unreachable();
-			return 0;
-	}
-}
-
-static uint32_t bytesForTextureDimMips(int width, int height, int depthMinusOne, int mipLevels, TextureFormat textureFormat) {
-	uint32_t total = 0;
-	uint32_t depth = depthMinusOne + 1;
-	while (mipLevels--) {
-		total += bytesForTextureDim(textureFormat, width, height) * depth;
-		if (width > 1) width >>= 1;
-		if (height > 1) height >>= 1;
-		if (depth > 1) depth >>= 1;
-	}
-	return total;
-}
-
 // cdc format to dxgi format
 uint32_t decodeFormat(uint32_t format) {
 	switch (format) {
@@ -88,24 +58,6 @@ uint32_t decodeFormat(uint32_t format) {
 			return 2; // DXGI_FORMAT_R32G32B32A32_FLOAT
 		default:
 			return 0; // DXGI_FORMAT_UNKNOWN
-	}
-}
-
-uint32_t pitchForFormatAndWidth(uint32_t format, uint32_t width) {
-	switch (format) {
-		case 71:
-			return 8 * ((width + 3) >> 2);
-		case 74:
-		case 77:
-			return 16 * ((width + 3) >> 2);
-		case 28:
-		case 87:
-			return 4 * width;
-		case 65:
-			return width;
-		default:
-			printf("pitchForWidthAndFormat: unknown format %x\n", format);
-			return format; // undefined behavior in the original game probably
 	}
 }
 
@@ -204,10 +156,10 @@ void PCDX11Texture::asyncCreate(/* TODO: one argument */) {
 		for (auto j=0; j < textureDesc.MipLevels; j++) {
 			uint32_t w = textureBlob->width >> j;
 			uint32_t h = textureBlob->height >> j;
-			uint32_t size = bytesForTextureDim((TextureFormat)textureDesc.Format, w, h);
+			uint32_t size = PCDX11BaseTexture::StaticGetLevelSize(textureDesc.Format, w, h);
 			*k++ = {
 				.pSysMem = l,
-				.SysMemPitch = pitchForFormatAndWidth(textureDesc.Format, w),
+				.SysMemPitch = PCDX11BaseTexture::StaticGetMemPitch(textureDesc.Format, w),
 				.SysMemSlicePitch = size
 			};
 			l += size;
