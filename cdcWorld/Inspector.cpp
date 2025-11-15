@@ -300,6 +300,8 @@ void buildUI(UIActions& uiact, LensFlareAndCoronaExtraData *extra) {
 		ImGui::Text("Billboard %d", i);
 		buildUI(uiact, extra->billboards[i]);
 	}
+
+	buildUI(extra->fade);
 }
 
 void buildUI(UIActions& uiact, dtp::Intro *intro) {

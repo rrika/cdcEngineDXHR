@@ -52,6 +52,6 @@ void DrawBillboards(
 	cdc::Matrix& matrix,
 	uint32_t numBillboards,
 	Billboard *billboards,
-	cdc::Vector vecIn,
+	cdc::Vector tint,
 	cdc::Vector& param0,
 	float zoffset);

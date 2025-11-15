@@ -1,6 +1,8 @@
-#include "cdcRender/CommonScene.h"
+#include <cmath>
+#include "cdcMath/VectorInlines.h"
 #include "cdcRender/CommonMaterial.h"
 #include "cdcRender/CommonRenderDevice.h"
+#include "cdcRender/CommonScene.h"
 #include "cdcRender/PCDX11RenderModelInstance.h"
 #include "cdcWorld/Instance.h"
 #include "Billboard.h"
@@ -49,7 +51,7 @@ Vector LensFlareAndCoronaID::calcInstanceParamRow(
 	}
 }
 
-void hackCalcInstanceParams(LensFlareAndCoronaExtraData *extra, Matrix *m, Matrix *invView, Vector4 *instanceParams) {
+float hackCalcInstanceParams(LensFlareAndCoronaExtraData *extra, Matrix *m, Matrix *invView, Vector4 *instanceParams) {
 	Vector unpacked0 = extra->packedVectors[0].unpack();
 	Vector unpacked1 = extra->packedVectors[1].unpack();
 	Vector unpacked2 = extra->packedVectors[2].unpack();
@@ -109,6 +111,20 @@ void hackCalcInstanceParams(LensFlareAndCoronaExtraData *extra, Matrix *m, Matri
 	Vector vec10 = pos2 + (invView0 + invView1) * (extra->float154 * -0.5);
 	Vector vec11 = pos2 + (invView0 + invView1) * (extra->float154 *  0.5);
 
+	Vector3 distVec = Vector3{
+		invView->m[3][0] - m->m[3][0],
+		invView->m[3][1] - m->m[3][1],
+		invView->m[3][2] - m->m[3][2],
+	};
+	float dist = sqrtf(Dot3(distVec, distVec));
+	float fade = extra->fade.eval(dist);
+	if (fade < 1.f) {
+		unpacked0 = unpacked0 * fade;
+		unpacked1 = unpacked1 * fade;
+		unpacked2 = unpacked2 * fade;
+		unpacked3 = unpacked3 * fade;
+	}
+
 	for (uint32_t i=0; i<8; i++) {
 		uint32_t mode = extra->mode[i];
 		if (mode != 14) {
@@ -130,6 +146,8 @@ void hackCalcInstanceParams(LensFlareAndCoronaExtraData *extra, Matrix *m, Matri
 			)};
 		}
 	}
+
+	return fade;
 }
 
 LensFlareAndCoronaID::LensFlareAndCoronaID(Instance *instance) :
@@ -158,7 +176,10 @@ void LensFlareAndCoronaID::draw(cdc::Matrix *matrix, float arg) {
 		rmi->SetMaterial(~0u, static_cast<cdc::CommonMaterial*>(flareExtraData->material));
 
 	RenderViewport *viewport = g_renderDevice->getCurViewport();
-	hackCalcInstanceParams(flareExtraData, &matrixCopy, &viewport->viewMatrix, rmi->accessInstanceData()->instanceParams);
+	float fade = hackCalcInstanceParams(flareExtraData, &matrixCopy, &viewport->viewMatrix, rmi->accessInstanceData()->instanceParams);
+
+	if (fade == 0.f)
+		return;
 
 	// patch textures
 	if (flareExtraData->texture[0]) rmi->SetInstanceTexture(0, 0, flareExtraData->texture[0]);
@@ -169,12 +190,18 @@ void LensFlareAndCoronaID::draw(cdc::Matrix *matrix, float arg) {
 	if (flareExtraData->modelMode != 0)
 		InstanceDrawable::draw(&matrixCopy, arg);
 
+	Vector tint{1.f, 1.f, 1.f, 1.f};
+	if (flareExtraData->fadeAlphaOnly)
+		tint.w *= fade;
+	else
+		tint = tint * fade;
+
 	Vector param0;
 	DrawBillboards(
 		matrixCopy,
 		flareExtraData->numBillboards,
 		flareExtraData->billboards,
-		Vector{},
+		tint,
 		param0,
 		flareExtraData->zoffset / 0x1000000);
 }

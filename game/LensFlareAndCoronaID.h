@@ -3,6 +3,7 @@
 #include "cdcMath/Math.h"
 #include "cdcWorld/InstanceDrawable.h"
 #include "Billboard.h"
+#include "DistanceFade.h"
 #include "PackedVector.h"
 
 namespace cdc { class TextureMap; class CommonMaterial; };
@@ -29,20 +30,12 @@ struct LensFlareAndCoronaExtraData {
 	cdc::TextureMap *texture[4]; // E0
 	cdc::CommonMaterial *material; // F0
 	uint8_t gapF4[0x30];
-	uint8_t byte124;
+	bool fadeAlphaOnly;
 	uint8_t gap125[3];
 	uint32_t dword128;
 	uint32_t dword12C;
 	uint32_t dword130;
-	uint8_t byte134;
-	uint8_t gap135[3];
-	float float138;
-	float float13C;
-	uint8_t byte140;
-	uint8_t gap141[3];
-	float float144;
-	float float148;
-	float float14C;
+	DistanceFade fade; // 134
 	uint8_t byte150;
 	float float154;
 	uint32_t dword158;
@@ -76,5 +69,5 @@ public:
 	);
 };
 
-void hackCalcInstanceParams(LensFlareAndCoronaExtraData *extra, cdc::Matrix *matrix, cdc::Matrix *invView, cdc::Vector4 *instanceParams);
+float hackCalcInstanceParams(LensFlareAndCoronaExtraData *extra, cdc::Matrix *matrix, cdc::Matrix *invView, cdc::Vector4 *instanceParams);
 

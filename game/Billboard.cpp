@@ -12,7 +12,7 @@ void DrawBillboards(
 	Matrix& matrix,
 	uint32_t numBillboards,
 	Billboard *billboards,
-	Vector vecIn,
+	Vector tint,
 	Vector& param0,
 	float zoffset)
 {
@@ -52,6 +52,12 @@ void DrawBillboards(
 		{
 			uint8_t color[4];
 			memcpy((void*)color, (void*)&b.color, 4);
+
+			color[0] = (255.f * color[0] * tint.x) / 255.f;
+			color[1] = (255.f * color[1] * tint.y) / 255.f;
+			color[2] = (255.f * color[2] * tint.z) / 255.f;
+			color[3] = (255.f * color[3] * tint.w) / 255.f;
+
 			std::swap(color[0], color[2]);
 			memcpy((void*)&diffuse, (void*)color, 4);
 		}
