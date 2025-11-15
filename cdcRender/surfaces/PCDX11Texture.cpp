@@ -32,12 +32,54 @@ void PCDX11Texture::resFill(void* src, uint32_t size, uint32_t offset) {
 	textureBlob = (TextureBlob*)malloc(size);
 	memcpy(textureBlob, src, size);
 
-	PCDX11BaseTexture::width     = textureBlob->width;
-	PCDX11BaseTexture::height    = textureBlob->height;
-	PCDX11BaseTexture::mipLevels = textureBlob->mipLevels + 1;
 
 	if (offset + size + 4 >= textureBlob->size) {
-		request(0);
+
+		PCDX11BaseTexture::shape = (TextureClass)textureBlob->textureClass;
+		uint32_t format = ConvertFormatD3D9ToDXGI(textureBlob->format);
+
+		// ignore request for RGBA, always do BGRA
+		if (format == 28) // DXGI_FORMAT_R8G8B8A8_UNORM
+			format = 87; // DXGI_FORMAT_B8G8R8A8_UNORM
+		PCDX11BaseTexture::textureFormat = (DXGI_FORMAT)format;
+
+		if (!(textureBlob->flags & 0x4000)) // not volume
+			textureBlob->volumeDepth = 0;
+
+		textureBlob->mipLevels++;
+
+		if (textureBlob->flags & 0x8000) // cubemap
+			numSlices = 6;
+		else
+			numSlices = 1;
+
+		char **slice = m_pTextureData = new char*[
+			numSlices *
+			textureBlob->mipLevels];
+
+		char *l = 0x1C + (char*)textureBlob;
+		for (auto i=0; i < numSlices; i++)
+			for (auto j=0; j < textureBlob->mipLevels; j++) {
+				uint32_t w = textureBlob->width >> j;
+				uint32_t h = textureBlob->height >> j;
+				uint32_t d = (textureBlob->volumeDepth >> j) + 1;
+				uint32_t size = d * PCDX11BaseTexture::StaticGetLevelSize((DXGI_FORMAT)format, w, h);
+				*slice++ = l;
+				l += size;
+			}
+
+		// TODO
+
+		CreateD3DTexture(
+			(DXGI_FORMAT)format,
+			textureBlob->width,
+			textureBlob->height,
+			textureBlob->volumeDepth,
+			numSlices,
+			textureBlob->mipLevels,
+			(uint8_t**)m_pTextureData,
+			textureBlob->flags & 7,
+			nullptr);
 	}
 }
 
@@ -53,7 +95,7 @@ PCDX11Texture::~PCDX11Texture() {
 	// TODO
 }
 
-void PCDX11Texture::asyncCreate(/* TODO: one argument */) {
+void PCDX11Texture::asyncCreate() {
 	/*
 		0000: cdc::PCDX11Texture
 		0000:     cdc::TextureMap
@@ -66,56 +108,8 @@ void PCDX11Texture::asyncCreate(/* TODO: one argument */) {
 		0138:         cdc::RenderExternalResource
 	*/
 
-	// hack implementation
-
-	uint32_t format = ConvertFormatD3D9ToDXGI(textureBlob->format);
-
-	// ignore request for RGBA, always do BGRA
-	if (format == 28) // DXGI_FORMAT_R8G8B8A8_UNORM
-		format = 87; // DXGI_FORMAT_B8G8R8A8_UNORM
-
-	printf("async create texture %d x %d fmt=%08x (%d)\n", textureBlob->width, textureBlob->height,
-		textureBlob->format, format);
-
-	this->wrapMode = textureBlob->flags & 7;
-	this->shape = (TextureClass)textureBlob->textureClass;
-
-	// D3D11_TEXTURE2D_DESC textureDesc = {};
-	D3D11_TEXTURE2D_DESC& textureDesc = hackTextureDesc;
-	textureDesc = D3D11_TEXTURE2D_DESC {};
-	textureDesc.Width              = PCDX11BaseTexture::width;
-	textureDesc.Height             = PCDX11BaseTexture::height;
-	textureDesc.MipLevels          = PCDX11BaseTexture::mipLevels;
-	textureDesc.ArraySize          = 1;
-	textureDesc.Format             = (DXGI_FORMAT)format;
-	textureDesc.SampleDesc.Count   = 1;
-	textureDesc.Usage              = D3D11_USAGE_IMMUTABLE;
-	textureDesc.BindFlags          = D3D11_BIND_SHADER_RESOURCE;
-
-	D3D11_SUBRESOURCE_DATA *textureData = new D3D11_SUBRESOURCE_DATA[
-		textureDesc.ArraySize *
-		textureDesc.MipLevels];
-
-	D3D11_SUBRESOURCE_DATA *k = textureData;
-	char *l = 0x1C + (char*)textureBlob;
-	for (auto i=0; i < textureDesc.ArraySize; i++)
-		for (auto j=0; j < textureDesc.MipLevels; j++) {
-			uint32_t w = textureBlob->width >> j;
-			uint32_t h = textureBlob->height >> j;
-			uint32_t size = PCDX11BaseTexture::StaticGetLevelSize(textureDesc.Format, w, h);
-			*k++ = {
-				.pSysMem = l,
-				.SysMemPitch = PCDX11BaseTexture::StaticGetMemPitch(textureDesc.Format, w),
-				.SysMemSlicePitch = size
-			};
-			l += size;
-		}
-
-	auto device = deviceManager->getD3DDevice();
-	HRESULT hr = device->CreateTexture2D(&hackTextureDesc, textureData, &d3dTexture128);
-	printf(" texture %p\n", d3dTexture128);
-	printf(" hr = %08x\n", (unsigned)hr);
-	delete[] textureData;
+	PCDX11BitmapTexture::asyncCreate();
+	delete[] m_pTextureData;
 	free(textureBlob);
 }
 

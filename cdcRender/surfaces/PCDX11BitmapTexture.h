@@ -23,6 +23,16 @@ public:
 	{
 	}
 	~PCDX11BitmapTexture();
+	void CreateD3DTexture(
+		DXGI_FORMAT format,
+		uint16_t width,
+		uint16_t height,
+		uint16_t depth,
+		uint16_t arraySize,
+		uint8_t mipLevels,
+		uint8_t **ppData,
+		uint16_t wrapmode,
+		const char *pName);
 
 	ID3D11Resource *getTextureResource() override;
 	ID3D11ShaderResourceView *createShaderResourceView() override;
@@ -38,6 +48,8 @@ public:
 	ID3D11Texture2D *d3dTexture128 = nullptr;
 	ID3D11ShaderResourceView *d3dResourceView12C = nullptr;
 	ID3D11UnorderedAccessView *d3dAccessView130 = nullptr;
+
+	char **asyncArgBypass = nullptr; // HACK
 };
 
 }
