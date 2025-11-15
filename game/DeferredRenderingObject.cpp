@@ -228,28 +228,6 @@ Vector DeferredRenderingObject::Drawable::calcInstanceParamRow(
 	return v;
 }
 
-float DeferredRenderingExtraData::fadeByDistance(float dist) {
-	float factor = 1.f;
-	if (farFadeEnable && farFadeStart + farFadeWidth < dist)
-		return 0.f;
-	if (nearFadeEnable && nearFadeStart - nearFadeWidth > dist && nearFadeLevel == 0.f)
-		return 0.f;
-	if (farFadeEnable && farFadeStart < dist) {
-		float f = 1.0 - (dist - farFadeStart) / farFadeWidth;
-		if (f <= 0.f) f = 0.f;
-		if (f >= 1.f) f = 1.f;
-		factor = f;
-	}
-	if (nearFadeEnable && nearFadeStart > dist) {
-		float f = (dist - (nearFadeStart - nearFadeWidth)) / nearFadeWidth;
-		if (f <= 0.f) f = 0.f;
-		if (f >= 1.f) f = 1.f;
-		f = (1.0 - nearFadeLevel) * f + nearFadeLevel;
-		factor *= f;
-	}
-	return factor;
-}
-
 void hackCalcInstanceParams(DeferredRenderingExtraData *extra, Matrix *m, Vector4 *instanceParams) {
 	Vector unpacked0 = extra->packedVectors[0].unpack();
 	Vector unpacked1 = extra->packedVectors[1].unpack();
@@ -319,7 +297,7 @@ void hackCalcInstanceParams(DeferredRenderingExtraData *extra, Matrix *m, Vector
 		cameraToWorld->m[3][2] - objectToWorld->m[3][2],
 	};
 	float dist = sqrtf(Dot3(distVec, distVec));
-	float fade = extra->fadeByDistance(dist);
+	float fade = extra->fade.eval(dist);
 	if (fade == 0.f)
 		return;
 	if (fade < 1.f) {

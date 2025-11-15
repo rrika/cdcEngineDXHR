@@ -3,6 +3,7 @@ target_sources(dxhr PRIVATE
 
 	Billboard.cpp
 	DeferredRenderingObject.cpp
+	DistanceFade.cpp
 	DX3Player.cpp
 	Gameloop.cpp
 	GlobalParamManager.cpp

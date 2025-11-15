@@ -3,6 +3,7 @@
 #include "cdcMath/Math.h"
 #include "cdcWorld/InstanceDrawable.h"
 #include "Billboard.h"
+#include "DistanceFade.h"
 #include "PackedVector.h"
 
 namespace cdc { class CommonMaterial; class TextureMap; }
@@ -23,15 +24,7 @@ struct DeferredRenderingExtraData {
 	float scale[3]; // 78
 	float float84;
 	float angle88;
-
-	bool farFadeEnable; // 8C
-	float farFadeStart; // 90
-	float farFadeWidth; // 94
-
-	bool nearFadeEnable; // 98
-	float nearFadeStart; // 9C
-	float nearFadeWidth; // A0
-	float nearFadeLevel; // A4
+	DistanceFade fade; // 8C
 	float floatA8;
 
 	uint8_t gapAC[9];
@@ -47,8 +40,6 @@ struct DeferredRenderingExtraData {
 	uint8_t gapE3[49];
 	uint32_t numBillboards; // 114
 	Billboard *billboards; // 118
-
-	float fadeByDistance(float dist);
 };
 
 struct DeferredRenderingObject {
