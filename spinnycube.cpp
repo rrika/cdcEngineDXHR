@@ -2288,8 +2288,8 @@ int spinnyCube(HWND window,
 						cameraPos.z = marker->position.z;
 					}
 					ImGui::PopID();
-					if (true)
-						if (marker->soundHandles[0].isSet()) {
+					if (true) {
+						if (marker->numSounds && marker->soundHandles[0].isSet()) {
 							ImGui::SameLine();
 							if (ImGui::SmallButton("Stop")) {
 								marker->soundHandles[0]->End((cdc::SoundTypes::EndType)0);
@@ -2322,6 +2322,7 @@ int spinnyCube(HWND window,
 							};
 							buildUI(plex, &onPlay, /*indent=*/ "    ");
 						}
+					}
 				}
 				ImGui::PopID();
 
