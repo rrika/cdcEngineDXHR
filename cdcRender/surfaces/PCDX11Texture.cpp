@@ -140,7 +140,6 @@ void PCDX11Texture::resFill(void* src, uint32_t size, uint32_t offset) {
 
 	if (offset + size + 4 >= textureBlob->size) {
 		request(0);
-		awaitResource();
 	}
 }
 

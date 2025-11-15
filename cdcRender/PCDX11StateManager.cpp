@@ -477,6 +477,9 @@ void PCDX11StateManager::setTextureAndSampler(
 
 	// TODO: logic to avoid binding a texture currently used as a rendertarget
 	if (tex != m_textures[slot]) {
+		// if a texture is not yet loaded createShaderResourceView returns nullptr
+		// then getTextureResource forces the load, but it no longer contributes
+		// to m_textureViews within this call.
 		if (auto srv = tex ? tex->createShaderResourceView() : nullptr) {
 			m_textureViews[slot] = srv;
 			if (filter > tex->maxFilter)
@@ -485,7 +488,7 @@ void PCDX11StateManager::setTextureAndSampler(
 			m_textureResources[slot] = tex->getTextureResource();
 		} else {
 			m_textureViews[slot] = nullptr;
-			m_textureResources[slot] = nullptr;
+			m_textureResources[slot] = tex ? tex->getTextureResource() : nullptr;
 		}
 		m_dirtyShaderResourcesFirst = std::min<uint8_t>(m_dirtyShaderResourcesFirst, slot);
 		m_dirtyShaderResourcesLast = std::max<uint8_t>(m_dirtyShaderResourcesLast, slot);

@@ -13,6 +13,8 @@ PCDX11BitmapTexture::~PCDX11BitmapTexture() {
 }
 
 ID3D11Resource *PCDX11BitmapTexture::getTextureResource() {
+	if (m_keepWaiting)
+		awaitResource();
 	return d3dTexture128;
 }
 
