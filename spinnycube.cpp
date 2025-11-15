@@ -598,7 +598,6 @@ int spinnyCube(HWND window,
 	auto bottleTexture = (cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);
 	bottleTexture->awaitResource();
-	renderDevice->missingTexture = bottleTexture;
 	printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
 
 	// create the other four textures

@@ -151,6 +151,12 @@ PCDX11RenderDevice::PCDX11RenderDevice(HWND hwnd, uint32_t width, uint32_t heigh
 
 	CreateQuadsIndexBuffer();
 
+	uint8_t whiteTexel[] = {255, 255, 255, 255};
+	uint8_t *whiteTexelLevels[1] = {whiteTexel};
+	whiteTexture = new PCDX11Texture(this);
+	whiteTexture->CreateD3DTexture(/*28*/ DXGI_FORMAT_R8G8B8A8_UNORM, 1, 1, 0, 1, 1, whiteTexelLevels, 0, "white texture");
+	whiteTexture->awaitResource(); // need to await now before whiteTexelLevels goes out of scope
+
 	renderPasses.addRenderPass(kRegularPass, 0x1000, 1, /* 1*/ kRenderFunctionDepth,         /* 0*/ kPassIndexDepth);
 	renderPasses.addRenderPass(kRegularPass, 0x2000, 1, /* 4*/ kRenderFunctionComposite,     /* 1*/ kPassIndexComposite);
 	renderPasses.addRenderPass(kRegularPass, 0x3000, 1, /* 3*/ kRenderFunctionOpaque,        /* 2*/ kPassIndexOpaque);
@@ -227,7 +233,7 @@ void PCDX11RenderDevice::createDefaultResources() {
 			{VertexElem::kTexcoord1, ~0u, 10, 0, 0.f, 0.f, 0.f, 0.f}
 		};
 		ShaderInputSpec *pInputSpec = cdc::ShaderInputSpec::Create(siElems, 3, 0);
-		MaterialTexRef *pTextureEntry = new MaterialTexRef { missingTexture, 0.f, 0, 0x21, 0, 1 };
+		MaterialTexRef *pTextureEntry = new MaterialTexRef { whiteTexture, 0.f, 0, 0x21, 0, 1 };
 
 		templateA = (MaterialBlob*) AllocateMemory(sizeof(MaterialBlob), 16, &MEM_RENDER_MATERIAL);
 		memset(templateA, 0, sizeof(MaterialBlob));
@@ -1300,7 +1306,7 @@ void PCDX11RenderDevice::clearRenderTargetNow(char flags, float *color, float de
 
 void PCDX11RenderDevice::setTexture(uint32_t slot, PCDX11BaseTexture *tex, uint32_t filter, float unknown) {
 	if (!tex)
-		tex = missingTexture;
+		tex = whiteTexture;
 	deviceManager->getStateManager()->setTextureAndSampler(slot, tex, filter, unknown);
 }
 

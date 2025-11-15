@@ -114,7 +114,7 @@ public:
 	PCDX11PixelShaderTable shtab_ps_errorColor; // 10DF0
 
 	PCDX11StreamDeclCache streamDeclCache; // 1112D4
-	PCDX11Texture *missingTexture = nullptr; // 1112F0
+	PCDX11Texture *whiteTexture = nullptr; // 1112F0
 	uint16_t *m_pQuadsIndexData = nullptr; // 111308
 	PCDX11IndexBuffer *m_pQuadsIndexBuffer = nullptr; // 11130C
 
