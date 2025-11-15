@@ -153,7 +153,6 @@ void PCDX11Texture::resMethod10() { /* empty */ }
 
 PCDX11Texture::~PCDX11Texture() {
 	// TODO
-	free(textureBlob);
 }
 
 void PCDX11Texture::asyncCreate(/* TODO: one argument */) {
@@ -219,6 +218,7 @@ void PCDX11Texture::asyncCreate(/* TODO: one argument */) {
 	printf(" texture %p\n", d3dTexture128);
 	printf(" hr = %08x\n", (unsigned)hr);
 	delete[] textureData;
+	free(textureBlob);
 }
 
 }

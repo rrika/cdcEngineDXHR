@@ -18,8 +18,10 @@ public:
 	}
 	void awaitResource() {
 		// hack
-		asyncCreate();
-		m_keepWaiting = false;
+		if (m_keepWaiting) {
+			asyncCreate();
+			m_keepWaiting = false;
+		}
 	}
 };
 

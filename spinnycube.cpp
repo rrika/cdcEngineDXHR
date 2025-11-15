@@ -597,14 +597,14 @@ int spinnyCube(HWND window,
 
 	auto bottleTexture = (cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0396);
 	printf("have bottle cdc texture: %p\n", bottleTexture);
-	bottleTexture->asyncCreate();
+	bottleTexture->awaitResource();
 	renderDevice->missingTexture = bottleTexture;
 	printf("have bottle d3d texture: %p\n", bottleTexture->d3dTexture128);
 
 	// create the other four textures
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0395))->asyncCreate();
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x005b))->asyncCreate();
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0061))->asyncCreate();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0395))->awaitResource();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x005b))->awaitResource();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0061))->awaitResource();
 
 	auto bottleRenderModel_direct = (cdc::PCDX11RenderModel*)cdc::g_resolveSections[12]->GetBasePointer(0xA301);
 	auto bottleRenderModel = (cdc::PCDX11RenderModel*)bottleObject->models[0]->renderMesh;
@@ -669,8 +669,8 @@ int spinnyCube(HWND window,
 	auto lightRenderModel = (cdc::PCDX11RenderModel*)lightObject->models[0]->renderMesh;
 	printf("have light cdc render model: %p (via object)\n", lightRenderModel);
 
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0061))->asyncCreate();
-	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x014c))->asyncCreate();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x0061))->awaitResource();
+	((cdc::PCDX11Texture*)cdc::g_resolveSections[5]->GetBasePointer(0x014c))->awaitResource();
 
 	auto lightMaterial = (cdc::PCDX11Material*)cdc::g_resolveSections[10]->GetBasePointer(0x00a4);
 	printf("have light material (from scenario drm): %p\n", lightMaterial);
