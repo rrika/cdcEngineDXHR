@@ -136,6 +136,7 @@ extern HCURSOR ImGui_ImplWin32_Arrow;
 
 extern uint32_t *pickupDatabase;
 cdc::MultiplexStream *neverAskedForThis = nullptr;
+cdc::MultiplexStream *wilhelmScream = nullptr;
 cdc::MultiplexStream *sha_tym_penthouse_music = nullptr;
 uint32_t subtitleIndex = 0;
 uint32_t coronasPass = 0;
@@ -146,6 +147,13 @@ void howDoYouHandleAllOfThis() {
 
 	neverAskedForThis->Play();
 	subtitleIndex = 7497;
+}
+
+void chomp() {
+	if (!wilhelmScream)
+		wilhelmScream = cdc::MultiplexStream::CreateSoundStream("living_world\\scream\\wilhelm", 0);
+
+	wilhelmScream->Play();
 }
 
 void penthouse_music() {
@@ -1601,6 +1609,7 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Show post-processing")) { showPostProcessingWindow = true; }
 				if (ImGui::MenuItem("Play penthouse music")) { penthouse_music(); }
 				if (ImGui::MenuItem("I never asked for this")) { howDoYouHandleAllOfThis(); }
+				if (ImGui::MenuItem("Man getting bit by an alligator")) { chomp(); }
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Editor")) {
