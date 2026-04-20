@@ -406,6 +406,19 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			buildUI(uiact, instance->object);
 		}
 	}
+	if (instance->objectFamilyId == 0x54) {
+		if (ImGui::CollapsingHeader("Planar Smoke", ImGuiTreeNodeFlags_DefaultOpen)) {
+			ImGui::Text("Last I checked object family 54 had no members. Report if you see this.");
+			// auto *textures = (cdc::PCDX11Texture**)instance->objectData;
+			// for (auto i=0u; i<17; i++) {
+			// 	if (i%4)
+			// 		ImGui::SameLine();
+			// 	auto *tex = textures[i];
+			// 	auto *srv = static_cast<cdc::PCDX11Texture*>(tex)->createShaderResourceView();
+			// 	ImGui::Image(srv, ImVec2(64, 64));
+			// }
+		}
+	}
 	if (ImGui::CollapsingHeader("SoundComponent", ImGuiTreeNodeFlags_DefaultOpen)) {
 		dtp::ObjectBaseData *dtpData = instance->object->dtpData;
 		const char *names[] = {
