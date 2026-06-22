@@ -27,6 +27,7 @@
 #include "cdcFile/FileHelpers.h" // for archiveFileSystem_default
 #include "cdcFile/FileSystem.h" // for enum cdc::FileRequest::Priority
 #include "cdcFile/FileUserBufferReceiver.h"
+#include "game/Actor/AugmentationSystem.h"
 #include "game/Actor/InventoryPlayer.h"
 #include "game/dtp/objecttypes/globaldatabase.h"
 #include "game/dtp/objecttypes/globalloading.h"
@@ -776,6 +777,7 @@ int spinnyCube(HWND window,
 	bool showAnimationsWindow = false;
 	bool showObjectivesWindow = false;
 	bool showPostProcessingWindow = false;
+	bool showAugmentations = false;
 	bool showInventory = false;
 	bool showIntroButtons = true;
 	bool showIntroButtonsIMF = true;
@@ -824,6 +826,7 @@ int spinnyCube(HWND window,
 
 	ObjectiveManager& objectiveManager = *PlayerPair::s_pair->getPlayer0()->objectiveManager;
 	InventoryContainer inventoryContainer(6, 6);
+	AugmentationSystem augmentationSystem; // expects globalplayerinfo to be loaded
 
 	std::unordered_map<cdc::IRenderTerrain*, cdc::CommonRenderTerrainInstance *> renderTerrainInstances;
 
@@ -1608,7 +1611,6 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Show logic inputs")) { showLogicInputs = true; }
 				if (ImGui::MenuItem("Show scaleform strings")) { showScaleformStringsWindow = true; }
 				if (ImGui::MenuItem("Show animations")) { showAnimationsWindow = true; }
-				if (ImGui::MenuItem("Show objectives")) { showObjectivesWindow = true; }
 				if (ImGui::MenuItem("Show post-processing")) { showPostProcessingWindow = true; }
 				if (ImGui::MenuItem("Play penthouse music")) { penthouse_music(); }
 				if (ImGui::MenuItem("I never asked for this")) { howDoYouHandleAllOfThis(); }
@@ -1636,8 +1638,10 @@ int spinnyCube(HWND window,
 
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("Player")) {
+			if (ImGui::BeginMenu("Game")) {
+				if (ImGui::MenuItem("Augmentations")) { showAugmentations = true; }
 				if (ImGui::MenuItem("Inventory")) { showInventory = true; }
+				if (ImGui::MenuItem("Objectives")) { showObjectivesWindow = true; }
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Rendering")) {
@@ -2459,6 +2463,26 @@ int spinnyCube(HWND window,
 		if (showPostProcessingWindow) {
 			if (ImGui::Begin("Post-processing", &showPostProcessingWindow)) {
 				PPManager::s_instance->buildUI(uiact);
+			}
+			ImGui::End();
+		}
+		if (showAugmentations) {
+			if (ImGui::Begin("Augmentations", &showAugmentations)) {
+				for (auto i=0u; i<kUpgradeCount; i++) {
+					auto *upgrade = augmentationSystem.upgrades[i];
+					if (typeid(*upgrade) == typeid(UpgradeDescriptor_uint32)) {
+						auto *upgrade_uint32 = static_cast<UpgradeDescriptor_uint32*>(upgrade);
+						ImGui::DragInt(upgrade->getName(), (int*)&upgrade_uint32->m_uint);
+					}
+					else if (typeid(*upgrade) == typeid(UpgradeDescriptor_bool8)) {
+						auto *upgrade_bool8 = static_cast<UpgradeDescriptor_bool8*>(upgrade);
+						ImGui::Checkbox(upgrade->getName(), &upgrade_bool8->m_bool);
+					}
+					else if (typeid(*upgrade) == typeid(UpgradeDescriptor_float)) {
+						auto *upgrade_float = static_cast<UpgradeDescriptor_float*>(upgrade);
+						ImGui::DragFloat(upgrade->getName(), &upgrade_float->m_float);
+					}
+				}
 			}
 			ImGui::End();
 		}

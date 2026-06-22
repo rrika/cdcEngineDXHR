@@ -1,4 +1,5 @@
 target_sources(dxhr PRIVATE
+	Actor/AugmentationSystem.cpp
 	Actor/InventoryPlayer.cpp
 
 	Billboard.cpp
