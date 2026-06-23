@@ -268,7 +268,7 @@ struct DRMExplorer {
 			auto *resource = (cdc::RenderResource*)cdc::g_resolveSections[5]->GetBasePointer(section.id);
 			if (auto tex = dynamic_cast<cdc::PCDX11Texture*>(resource)) {
 				ImGui::Image(
-					tex->createShaderResourceView(), ImVec2(256, 256));
+					tex->createShaderResourceView2(), ImVec2(256, 256));
 			}
 		}
 		if (section.type == 6) { // FMOD
@@ -1970,7 +1970,7 @@ int spinnyCube(HWND window,
 
 				// texture previews (all submaterials)
 				for (cdc::TextureMap *tex : textures) {
-					auto *srv = static_cast<cdc::PCDX11Texture*>(tex)->createShaderResourceView();
+					auto *srv = static_cast<cdc::PCDX11Texture*>(tex)->createShaderResourceView2();
 					ImGui::Image(srv, ImVec2(64, 64));
 					uiact.origin(tex);
 					ImGui::SameLine();
@@ -2021,7 +2021,7 @@ int spinnyCube(HWND window,
 
 				// texture previews (single submaterial)
 				for (uint32_t i = 0; i < submat->psRefIndexEndA; i++) {
-					auto *srv = texref[i].tex ? static_cast<cdc::PCDX11Texture*>(texref[i].tex)->createShaderResourceView() : 0;
+					auto *srv = texref[i].tex ? static_cast<cdc::PCDX11Texture*>(texref[i].tex)->createShaderResourceView2() : 0;
 					if (i)
 						ImGui::SameLine();
 					ImGui::Image(srv, ImVec2(64, 64));
@@ -2486,7 +2486,7 @@ int spinnyCube(HWND window,
 								gridScale * pickup->height - gap);
 							if (slot->transpose)
 								std::swap(size.x, size.y);
-							if (ImGui::ImageButton("", tex->createShaderResourceView(), size)) {
+							if (ImGui::ImageButton("", tex->createShaderResourceView2(), size)) {
 								/* could do something here */
 							}
 							ImGui::PopID();

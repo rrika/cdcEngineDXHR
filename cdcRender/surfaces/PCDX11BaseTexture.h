@@ -87,6 +87,12 @@ public:
 	virtual ID3D11UnorderedAccessView *createUnorderedAccessView() = 0;
 	virtual bool baseTexMethodC() { return false; };
 	virtual void baseTexMethod10() {};
+
+	// for imgui to be able to do both in one call
+	ID3D11ShaderResourceView *createShaderResourceView2() {
+		getTextureResource();
+		return createShaderResourceView();
+	}
 };
 
 }

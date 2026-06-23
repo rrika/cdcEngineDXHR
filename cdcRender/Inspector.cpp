@@ -74,7 +74,7 @@ void buildUI(CommonScene *scene) {
 		ImGui::Text("global texture %d: %p %s", i, t,
 			scene->drawableListsAndMasks->renderPasses->bufferNames[i]);
 		if (auto renderTexture = dynamic_cast<PCDX11RenderTexture*>(t)) {
-			auto s = renderTexture->createShaderResourceView();
+			auto s = renderTexture->createShaderResourceView2();
 			if (s)
 				ImGui::Image(s, ImVec2(256, 256));
 			else

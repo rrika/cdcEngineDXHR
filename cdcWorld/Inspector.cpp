@@ -160,7 +160,7 @@ void buildUI(UIActions& uiact, DeferredRenderingExtraData *extra) {
 	// texture
 	for (uint32_t i=0; i<4; i++) {
 		if (auto *tex = extra->texture[i]) {
-			auto *srv = static_cast<cdc::PCDX11Texture*>(tex)->createShaderResourceView();
+			auto *srv = static_cast<cdc::PCDX11Texture*>(tex)->createShaderResourceView2();
 			ImGui::Image(srv, ImVec2(64, 64));
 			ImGui::SameLine();
 		}
@@ -290,7 +290,7 @@ void buildUI(UIActions& uiact, LensFlareAndCoronaExtraData *extra) {
 	// texture
 	for (uint32_t i=0; i<4; i++) {
 		if (auto *tex = extra->texture[i]) {
-			auto *srv = static_cast<cdc::PCDX11Texture*>(tex)->createShaderResourceView();
+			auto *srv = static_cast<cdc::PCDX11Texture*>(tex)->createShaderResourceView2();
 			ImGui::Image(srv, ImVec2(64, 64));
 			ImGui::SameLine();
 		}
@@ -414,7 +414,7 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			// 	if (i%4)
 			// 		ImGui::SameLine();
 			// 	auto *tex = textures[i];
-			// 	auto *srv = static_cast<cdc::PCDX11Texture*>(tex)->createShaderResourceView();
+			// 	auto *srv = static_cast<cdc::PCDX11Texture*>(tex)->createShaderResourceView2();
 			// 	ImGui::Image(srv, ImVec2(64, 64));
 			// }
 		}
