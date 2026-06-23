@@ -326,7 +326,10 @@ struct DRMExplorer {
 		if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 
 			if (ImGui::BeginTabItem("Loaded DRMs")) {
+				static ImGuiTextFilter filter;
+				filter.Draw();
 				for (auto& entry : drmIndex.sectionHeaders) {
+					if (filter.PassFilter(entry.first.c_str()))
 					if (ImGui::TreeNode(entry.first.c_str())) {
 						uint32_t i=0;
 						for (auto& section : entry.second)
