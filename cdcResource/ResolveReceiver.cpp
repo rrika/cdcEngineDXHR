@@ -384,8 +384,9 @@ void ResolveReceiver::requestComplete(FileRequest *req) {
 			auto *wrapped = resolveSection->GetBasePointer(domainID);
 			auto *blob = resolveSection->GetResolveBasePointer(domainID);
 
-			drmIndex.loadedSections[uintptr_t(blob)] = {name, i, sectionHeaders[i].payloadSize};
-			if (blob != wrapped)
+			if (blob)
+				drmIndex.loadedSections[uintptr_t(blob)] = {name, i, sectionHeaders[i].payloadSize};
+			if (blob != wrapped && wrapped)
 				drmIndex.loadedSections[uintptr_t(wrapped)] = {name, i, 0xffffffff};
 		}
 	}

@@ -291,7 +291,7 @@ struct DRMExplorer {
 		tabs.push_back(newTab);
 	}
 
-	void hexdump(uint32_t *data, uint32_t size, uint32_t firstOffset, uint32_t lines, uint32_t sectionIndex, std::string fname) {
+	void hexdump(UIActions& uiact, uint32_t *data, uint32_t size, uint32_t firstOffset, uint32_t lines, uint32_t sectionIndex, std::string fname) {
 		if (!data) {
 			ImGui::Text("data = nullptr");
 			return;
@@ -307,6 +307,7 @@ struct DRMExplorer {
 					printables[j] = '.';
 			printables[4] = 0;
 			ImGui::Text("%04x: %08x %s", offset, data[offset / 4], printables);
+			uiact.origin((void*)data[offset/4]);
 		}
 	}
 
@@ -477,7 +478,7 @@ struct DRMExplorer {
 							uint32_t domainId = resolveSection->FindResource(sh.id);
 							void *data = resolveSection->GetResolveBasePointer(domainId);
 							ImGui::Text("loaded @ %p", data);
-							hexdump((uint32_t*)data, sh.payloadSize, 0, 0xffffffff,
+							hexdump(uiact, (uint32_t*)data, sh.payloadSize, 0, 0xffffffff,
 								tab.sectionIndex, tab.drmName);
 						}
 					} else {
