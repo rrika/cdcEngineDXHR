@@ -23,4 +23,4 @@ public:
 
 extern DRMIndex drmIndex;
 
-bool locate(void *ptr, cdc::DRMSectionHeader *&header, ptrdiff_t &offset);
+bool locate(void *ptr, cdc::DRMSectionHeader *&header, ptrdiff_t &offset, LoadedSection **loadedSection=nullptr);

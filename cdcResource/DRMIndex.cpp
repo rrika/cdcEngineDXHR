@@ -2,7 +2,7 @@
 
 DRMIndex drmIndex;
 
-bool locate(void *ptr, cdc::DRMSectionHeader *&header, ptrdiff_t &offset) {
+bool locate(void *ptr, cdc::DRMSectionHeader *&header, ptrdiff_t &offset, LoadedSection **loadedSection) {
 	auto addr = uintptr_t(ptr);
 	auto it = drmIndex.loadedSections.upper_bound(addr);
 	if (it == drmIndex.loadedSections.begin())
@@ -16,5 +16,7 @@ bool locate(void *ptr, cdc::DRMSectionHeader *&header, ptrdiff_t &offset) {
 
 	header = &drmIndex.sectionHeaders[*loaded.drmPath.get()][loaded.sectionIndex];
 	offset = (addr-begin);
+	if (loadedSection)
+		*loadedSection = &loaded;
 	return true;
 }

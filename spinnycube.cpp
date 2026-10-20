@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <cstdio>
 #include <functional>
@@ -232,27 +233,82 @@ const char * const sectionTypeNames[] = {
 	"AnyType",
 };
 
-static void PathText(const char *path) {
-	if (!path) {
-		ImGui::Text("(null)");
-		return;
-	}
+static const char *Basename(const char *path, const char *otherwise=nullptr) {
+	if (!path)
+		return nullptr;
 	const char *sep1 = strrchr(path, '/');
 	const char *sep2 = strrchr(path, '\\');
 	const char *sep = sep1 > sep2 ? sep1 : sep2;
-	if (sep) {
-		std::string basename(path, sep+1);
-		ImGui::TextDisabled("%s", basename.c_str());
+	if (sep)
+		return sep+1;
+	return otherwise;
+}
+
+static const char *PathText(const char *path) {
+	if (!path) {
+		ImGui::Text("(null)");
+		return nullptr;
+	}
+	if (auto *basename = Basename(path)) {
+		std::string upto(path, basename);
+		ImGui::TextDisabled("%s", upto.c_str());
 		ImGui::SameLine(0.f, 0.f);
-		ImGui::Text("%s", sep+1);
+		ImGui::Text("%s", basename);
+		return basename;
 	} else {
 		ImGui::Text("%s", path);
+		return path;
 	}
 }
 
 struct DRMExplorer {
 
-	void sectionLine(UIActions& uiact, cdc::DRMSectionHeader& section, uint32_t i) {
+	struct Tab {
+		std::string tabName;
+		std::string drmName;
+		uint32_t sectionIndex;
+		bool causeSelect = true;
+		bool open = true;
+	};
+
+	std::vector<Tab> tabs;
+
+	void open(Tab newTab) {
+		if (newTab.tabName.empty()) {
+			char suffix[20];
+			sprintf(suffix, ":%d", newTab.sectionIndex);
+			newTab.tabName = newTab.drmName + std::string(suffix);
+		}
+		for (auto& tab : tabs)
+			if (tab.drmName == newTab.drmName &&
+				tab.sectionIndex == newTab.sectionIndex)
+			{
+				tab.causeSelect |= newTab.causeSelect;
+				return;
+			}
+		tabs.push_back(newTab);
+	}
+
+	void hexdump(uint32_t *data, uint32_t size, uint32_t firstOffset, uint32_t lines, uint32_t sectionIndex, std::string fname) {
+		if (!data) {
+			ImGui::Text("data = nullptr");
+			return;
+		}
+		for (uint32_t i = 0; i < lines; i++) {
+			uint32_t offset = firstOffset + 4*i;
+			if (offset+3 >= size)
+				break;
+			char printables[5];
+			memcpy(printables, &data[offset / 4], 4);
+			for (auto j = 0; j < 4; j++)
+				if (!isprint(printables[j]))
+					printables[j] = '.';
+			printables[4] = 0;
+			ImGui::Text("%04x: %08x %s", offset, data[offset / 4], printables);
+		}
+	}
+
+	void sectionLine(UIActions& uiact, std::string const& fname, cdc::DRMSectionHeader& section, uint32_t i) {
 		ImGui::Text("%3d: %04x %s allocFlags:%d unk6:%x (%d bytes)",
 			i, section.id, sectionTypeNames[section.type], section.allocFlags, section.unknown06, section.payloadSize);
 
@@ -262,6 +318,17 @@ struct DRMExplorer {
 			section.type == (uint8_t)cdc::ContentType::Script
 		)
 			path = DTPDataSection::GetName(section.id);
+
+		if (section.type == (uint8_t)cdc::ContentType::DTPData ||
+			section.type == (uint8_t)cdc::ContentType::Object ||
+			section.type == (uint8_t)cdc::ContentType::Script)
+		{
+			ImGui::PushID(section.id);
+			ImGui::SameLine();
+			if (ImGui::SmallButton("Hex"))
+				open({path ? Basename(path, path) : "", fname, i});
+			ImGui::PopID();
+		}
 
 		if (section.type == 5) { // RenderResource
 			ImGui::Text("    ");
@@ -321,26 +388,80 @@ struct DRMExplorer {
 	}
 
 	void draw(UIActions& uiact, bool *showWindow) {
+		for (auto& tab : tabs)
+			if (tab.causeSelect) {
+				ImGui::SetNextWindowFocus();
+				*showWindow = true;
+				break;
+			}
+		if (*showWindow == false)
+			return;
 		ImGui::Begin("DRM Explorer", showWindow);
 
-		ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+		ImGuiTabBarFlags tab_bar_flags =
+			ImGuiTabBarFlags_TabListPopupButton |
+			ImGuiTabBarFlags_Reorderable |
+			ImGuiTabBarFlags_AutoSelectNewTabs;
 		if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 
 			if (ImGui::BeginTabItem("Loaded DRMs")) {
 				static ImGuiTextFilter filter;
+				ImGui::BeginChild("scrollarea", ImGui::GetContentRegionAvail(), /*border=*/false, ImGuiWindowFlags_HorizontalScrollbar);
 				filter.Draw();
 				for (auto& entry : drmIndex.sectionHeaders) {
 					if (filter.PassFilter(entry.first.c_str()))
 					if (ImGui::TreeNode(entry.first.c_str())) {
 						uint32_t i=0;
 						for (auto& section : entry.second)
-							sectionLine(uiact, section, i++);
+							sectionLine(uiact, entry.first, section, i++);
 						ImGui::TreePop();
 					}
 				}
+				ImGui::EndChild();
 				ImGui::EndTabItem();
 			}
+
+			for (uint32_t i=0; i<tabs.size(); i++) { // might be modified during iteration
+				auto& tab = tabs[i];
+
+				ImGui::PushID(tab.sectionIndex);
+				ImGuiTabItemFlags flags = ImGuiTabItemFlags_NoPushId;
+				if (tab.causeSelect) {
+					flags |= ImGuiTabItemFlags_SetSelected;
+					tab.causeSelect = false;
+				}
+				if (ImGui::BeginTabItem(tab.tabName.c_str(), &tab.open, flags)) {
+					ImGui::BeginChild("scrollarea", ImGui::GetContentRegionAvail(), /*border=*/false, ImGuiWindowFlags_HorizontalScrollbar);
+					if (auto it = drmIndex.sectionHeaders.find(tab.drmName); it != drmIndex.sectionHeaders.end()) {
+						cdc::DRMSectionHeader& sh = it->second[tab.sectionIndex];
+						ImGui::Text("%s/%d (%x bytes)", tab.drmName.c_str(), tab.sectionIndex, sh.payloadSize);
+						if (sh.type == (uint8_t)cdc::ContentType::DTPData ||
+						    sh.type == (uint8_t)cdc::ContentType::Material ||
+						    sh.type == (uint8_t)cdc::ContentType::Script)
+							if (const char *path = DTPDataSection::GetName(sh.id))
+								PathText(path);
+						if (sh.type >= 16)
+							ImGui::Text("Invalid type %d (TODO: grab from DRM directly rather than resolve section)", sh.type);
+						else if (cdc::g_resolveSections[sh.type] == nullptr)
+							ImGui::Text("No resolve receiver for type %d (TODO: grab from DRM directly)", sh.type);
+						else {
+							cdc::ResolveSection *resolveSection = cdc::g_resolveSections[sh.type];
+							uint32_t domainId = resolveSection->FindResource(sh.id);
+							void *data = resolveSection->GetResolveBasePointer(domainId);
+							ImGui::Text("loaded @ %p", data);
+							hexdump((uint32_t*)data, sh.payloadSize, 0, 0xffffffff,
+								tab.sectionIndex, tab.drmName);
+						}
+					} else {
+						ImGui::Text("DRM is not in index");
+					}
+					ImGui::EndChild();
+					ImGui::EndTabItem();
+				}
+				ImGui::PopID();
+			}
 			ImGui::EndTabBar();
+			std::erase_if(tabs, [&](Tab& tab) { return tab.open == false; }); // begone, useless tabs
 		}
 
 		ImGui::End();
@@ -348,6 +469,7 @@ struct DRMExplorer {
 } drmexplorer;
 
 struct SpinnyUIActions : public UIActions {
+	DRMExplorer *drmexplorer = nullptr;
 	cdc::IRenderTerrain *selectedRenderTerrain = 0;
 	cdc::RenderMesh *selectedModel = nullptr;
 	cdc::ModelBatch *selectedBatch = nullptr;
@@ -362,6 +484,7 @@ struct SpinnyUIActions : public UIActions {
 	void *selectedMovable = nullptr;
 
 	cdc::Vector toolPosition;
+	bool ctrlClickHint = true;
 
 	void select(cdc::IRenderTerrain *renderTerrain) override {
 		selectedModel = nullptr;
@@ -404,11 +527,12 @@ struct SpinnyUIActions : public UIActions {
 
 	void origin(void *ptr) override {
 		cdc::DRMSectionHeader *header = nullptr;
+		LoadedSection *loaded;
 		ptrdiff_t offset = 0;
 
 		if (!ImGui::IsItemHovered())
 			return;
-		if (!locate(ptr, header, offset))
+		if (!locate(ptr, header, offset, &loaded))
 			return;
 
 		ImGui::BeginTooltip();
@@ -416,13 +540,14 @@ struct SpinnyUIActions : public UIActions {
 		const char *tyname = header->type < 16 ? sectionTypeNames[header->type] : "";
 		ImGui::Text("%p: %s %05x", ptr, tyname, header->id);
 
+		const char *basename = nullptr;
 		if (header->type == (uint8_t)cdc::ContentType::DTPData ||
 			header->type == (uint8_t)cdc::ContentType::Material ||
 			header->type == (uint8_t)cdc::ContentType::Script)
 		{
 			const char *dtpPath = DTPDataSection::GetName(header->id);
 			ImGui::SameLine();
-			PathText(dtpPath);
+			basename = PathText(dtpPath);
 		}
 
 		if (offset > 0) {
@@ -430,7 +555,21 @@ struct SpinnyUIActions : public UIActions {
 			ImGui::Text("+ 0x%x", offset);
 		}
 
+		if (ctrlClickHint)
+			ImGui::TextDisabled("(Ctrl-Click to open hexdump)");
+
 		ImGui::EndTooltip();
+
+		if (ImGui::IsKeyPressed(ImGuiKey_MouseLeft) &&
+			ImGui::IsKeyDown(ImGuiKey_ModCtrl))
+		{
+			DRMExplorer::Tab newTab{
+				basename ? basename : std::string(),
+				*loaded->drmPath,
+				loaded->sectionIndex};
+			drmexplorer->open(newTab);
+			ctrlClickHint = false;
+		}
 	}
 };
 
@@ -767,7 +906,7 @@ int spinnyCube(HWND window,
 	bool showDrawablesWindow = false;
 	bool showFilesystemWindow = false;
 	bool showObjectsWindow = false;
-	SpinnyUIActions uiact;
+	SpinnyUIActions uiact; uiact.drmexplorer = &drmexplorer;
 	bool showDRMWindow = false;
 	bool showUnitsWindow = false;
 	bool showLoadedUnitsWindow = false;
@@ -2184,9 +2323,7 @@ int spinnyCube(HWND window,
 			if (!showWindow)
 				uiact.select((cdc::ScriptType*)nullptr);
 		}
-		if (showDRMWindow) {
-			drmexplorer.draw(uiact, &showDRMWindow);
-		}
+		drmexplorer.draw(uiact, &showDRMWindow);
 		if (showUnitsWindow) {
 			ImGui::Begin("Units", &showUnitsWindow);
 			buildUnitsUI();
