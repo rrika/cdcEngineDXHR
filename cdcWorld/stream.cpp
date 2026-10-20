@@ -47,6 +47,8 @@ const char *unitNameById(uint32_t id) {
 }
 
 #if ENABLE_IMGUI
+static ImGuiTextFilter unitFilter("-preorder,-global_light");
+
 static void buildUnitsUI(bool main, bool scn) {
 	for (uint32_t i = 0; i < objList->count; i++) {
 		char *name = objList->entries[i].name;
@@ -54,6 +56,8 @@ static void buildUnitsUI(bool main, bool scn) {
 			continue;
 		bool isScn = name[0] == 's' && name[1] == '_';
 		if ((isScn ? scn : main) == false)
+			continue;
+		if (!unitFilter.PassFilter(name))
 			continue;
 		// ImGui::Text("%s", name);
 		char filename[256];
@@ -69,6 +73,7 @@ static void buildUnitsUI(bool main, bool scn) {
 void buildUnitsUI() {
 	static bool splitScenarios = true;
 	ImGui::Checkbox("Show scenarios separately", &splitScenarios);
+	unitFilter.Draw();
 	if (splitScenarios) {
 		buildUnitsUI(true, false);
 		ImGui::Separator();
