@@ -272,6 +272,8 @@ struct DRMExplorer {
 	};
 
 	std::vector<Tab> tabs;
+	std::string navigateToDrm;
+	uint32_t navigateToSectionIndex = 0; // only valid when navigateToDrm is set
 
 	void open(Tab newTab) {
 		if (newTab.tabName.empty()) {
@@ -404,21 +406,42 @@ struct DRMExplorer {
 			ImGuiTabBarFlags_AutoSelectNewTabs;
 		if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 
-			if (ImGui::BeginTabItem("Loaded DRMs")) {
+			ImGuiTabItemFlags flags = ImGuiTabItemFlags_NoPushId;
+			if (!navigateToDrm.empty())
+				flags |= ImGuiTabItemFlags_SetSelected;
+			if (ImGui::BeginTabItem("Loaded DRMs", nullptr, flags)) {
 				static ImGuiTextFilter filter;
+				bool resetNavigateToDrm = true;
 				ImGui::BeginChild("scrollarea", ImGui::GetContentRegionAvail(), /*border=*/false, ImGuiWindowFlags_HorizontalScrollbar);
 				filter.Draw();
 				for (auto& entry : drmIndex.sectionHeaders) {
-					if (filter.PassFilter(entry.first.c_str()))
+					bool navigatingToHere = !navigateToDrm.empty() && navigateToDrm == entry.first;
+					if (!filter.PassFilter(entry.first.c_str())) {
+						if (navigatingToHere) {
+							filter.Clear();
+							resetNavigateToDrm = false;
+							// next frame we'll get it
+						}
+						continue;
+					}
+					if (navigatingToHere)
+						ImGui::SetNextItemOpen(true);
 					if (ImGui::TreeNode(entry.first.c_str())) {
 						uint32_t i=0;
-						for (auto& section : entry.second)
+						for (auto& section : entry.second) {
+							if (navigatingToHere && navigateToSectionIndex == i)
+								ImGui::SetScrollHereY(0.1f);
 							sectionLine(uiact, entry.first, section, i++);
+						}
 						ImGui::TreePop();
 					}
 				}
 				ImGui::EndChild();
 				ImGui::EndTabItem();
+				if (resetNavigateToDrm) {
+					navigateToDrm = {};
+					navigateToSectionIndex = 0;
+				}
 			}
 
 			for (uint32_t i=0; i<tabs.size(); i++) { // might be modified during iteration
@@ -435,6 +458,11 @@ struct DRMExplorer {
 					if (auto it = drmIndex.sectionHeaders.find(tab.drmName); it != drmIndex.sectionHeaders.end()) {
 						cdc::DRMSectionHeader& sh = it->second[tab.sectionIndex];
 						ImGui::Text("%s/%d (%x bytes)", tab.drmName.c_str(), tab.sectionIndex, sh.payloadSize);
+						ImGui::SameLine();
+						if (ImGui::SmallButton("show in list")) {
+							navigateToDrm = tab.drmName;
+							navigateToSectionIndex = tab.sectionIndex;
+						}
 						if (sh.type == (uint8_t)cdc::ContentType::DTPData ||
 						    sh.type == (uint8_t)cdc::ContentType::Material ||
 						    sh.type == (uint8_t)cdc::ContentType::Script)
