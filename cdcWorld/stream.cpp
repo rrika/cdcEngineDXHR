@@ -47,7 +47,7 @@ const char *unitNameById(uint32_t id) {
 }
 
 #if ENABLE_IMGUI
-static ImGuiTextFilter unitFilter("-preorder,-global_light");
+static ImGuiTextFilter unitFilter("-preorder,-global_light,");
 
 static void buildUnitsUI(bool main, bool scn) {
 	for (uint32_t i = 0; i < objList->count; i++) {
@@ -74,6 +74,9 @@ void buildUnitsUI() {
 	static bool splitScenarios = true;
 	ImGui::Checkbox("Show scenarios separately", &splitScenarios);
 	unitFilter.Draw();
+	ImGui::SetItemDefaultFocus();
+	if (ImGui::IsWindowAppearing())
+		ImGui::SetKeyboardFocusHere(-1);
 	if (splitScenarios) {
 		buildUnitsUI(true, false);
 		ImGui::Separator();

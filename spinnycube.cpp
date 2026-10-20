@@ -400,6 +400,7 @@ struct DRMExplorer {
 		if (*showWindow == false)
 			return;
 		ImGui::Begin("DRM Explorer", showWindow);
+		auto explorerAppearing = ImGui::IsWindowAppearing();
 
 		ImGuiTabBarFlags tab_bar_flags =
 			ImGuiTabBarFlags_TabListPopupButton |
@@ -411,10 +412,14 @@ struct DRMExplorer {
 			if (!navigateToDrm.empty())
 				flags |= ImGuiTabItemFlags_SetSelected;
 			if (ImGui::BeginTabItem("Loaded DRMs", nullptr, flags)) {
-				static ImGuiTextFilter filter;
+				static ImGuiTextFilter filter("-shaderlibs,");
 				bool resetNavigateToDrm = true;
 				ImGui::BeginChild("scrollarea", ImGui::GetContentRegionAvail(), /*border=*/false, ImGuiWindowFlags_HorizontalScrollbar);
 				filter.Draw();
+				ImGui::SetItemDefaultFocus(); // focus the filter
+				if (explorerAppearing)
+					ImGui::SetKeyboardFocusHere(-1);
+
 				for (auto& entry : drmIndex.sectionHeaders) {
 					bool navigatingToHere = !navigateToDrm.empty() && navigateToDrm == entry.first;
 					if (!filter.PassFilter(entry.first.c_str())) {
