@@ -457,6 +457,18 @@ static const char *opcodeNames[SCMD_NUM_BYTECODE] = {
 	/* [SCMD_MOVEP] = */ "MOVEP" // 0x85
 };
 
+static uint32_t scanFunctionIndex(Function *fn) { // FIXME: no linear scan?
+	Prototype *prototype = fn->prototype;
+	ScriptType *ty = prototype->scriptType;
+	uint32_t numFunctions = ty->blob->m_functions.size();
+	for (uint32_t i=0; i<numFunctions; i++) {
+		Function *fn2 = &ty->blob->m_functions[i];
+		if (fn == fn2)
+			return i;
+	}
+	return 9999;
+}
+
 void Signature(UIActions& uiact, uint32_t i, Function *fn, ScriptType *impliedThisType);
 
 static void ByteCode(UIActions& uiact, uint32_t *begin, uint32_t *end) {
@@ -500,7 +512,7 @@ static void ByteCode(UIActions& uiact, uint32_t *begin, uint32_t *end) {
 		{
 			auto *func = (Function*)*cursor++;
 			ImGui::SameLine();
-			Signature(uiact, 9999, func, /*TODO*/ nullptr);
+			Signature(uiact, scanFunctionIndex(func), func, /*TODO*/ nullptr);
 			break;
 		}
 
