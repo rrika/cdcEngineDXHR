@@ -428,7 +428,7 @@ static const char *opcodeNames[SCMD_NUM_BYTECODE] = {
 	/* [SCMD_MOVEP] = */ "MOVEP" // 0x85
 };
 
-void Signature(UIActions& uiact, uint32_t i, Function *fn);
+void Signature(UIActions& uiact, uint32_t i, Function *fn, ScriptType *impliedThisType);
 
 static void ByteCode(UIActions& uiact, uint32_t *begin, uint32_t *end) {
 	uint32_t *cursor = begin;
@@ -471,7 +471,7 @@ static void ByteCode(UIActions& uiact, uint32_t *begin, uint32_t *end) {
 		{
 			auto *func = (Function*)*cursor++;
 			ImGui::SameLine();
-			Signature(uiact, 9999, func);
+			Signature(uiact, 9999, func, /*TODO*/ nullptr);
 			break;
 		}
 
@@ -501,11 +501,16 @@ static void ByteCode(UIActions& uiact, uint32_t *begin, uint32_t *end) {
 	}
 }
 
-void Signature(UIActions& uiact, uint32_t i, Function *fn) {
+void Signature(UIActions& uiact, uint32_t i, Function *fn, ScriptType *impliedThisType) {
 	Prototype *pt = fn->prototype;
 	Type(uiact, &pt->returnType);
 	ImGui::SameLine();
-	ImGui::Text("method_%d(", i);
+	if (pt->scriptType != impliedThisType) {
+		ImGui::Text("%s::method_%d(", nameof(pt->scriptType), i);
+	} else {
+		ImGui::Text("method_%d(", i);
+	}
+	uiact.origin(fn);
 	uint32_t numArgs = pt->GetNumArgs();
 	for (uint32_t j=0; j<numArgs; j++) {
 		if (j) {
@@ -576,7 +581,7 @@ void Decompile(UIActions& uiact, ScriptType& ty) {
 		uint32_t numFunctions = ty.blob->m_functions.size();
 		for (uint32_t i=0; i<numFunctions; i++) {
 			Function *fn = &ty.blob->m_functions[i];
-			Signature(uiact, i, fn);
+			Signature(uiact, i, fn, &ty);
 			ImGui::SameLine(0.f, 0.f);
 			if (!fn->m_scriptFunc.m_ptr)
 				ImGui::Text(";");
