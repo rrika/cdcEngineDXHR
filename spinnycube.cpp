@@ -267,6 +267,7 @@ struct DRMExplorer {
 		std::string tabName;
 		std::string drmName;
 		uint32_t sectionIndex;
+		uint32_t navigateToOffset = ~0;
 		bool causeSelect = true;
 		bool open = true;
 	};
@@ -286,10 +287,13 @@ struct DRMExplorer {
 				tab.sectionIndex == newTab.sectionIndex)
 			{
 				tab.causeSelect |= newTab.causeSelect;
+				tab.navigateToOffset = newTab.navigateToOffset;
 				return;
 			}
 		tabs.push_back(newTab);
 	}
+
+	uint32_t *pNavigateToOffset = nullptr;
 
 	void hexdump(UIActions& uiact, uint32_t *data, uint32_t size, uint32_t firstOffset, uint32_t lines, uint32_t sectionIndex, std::string fname) {
 		if (!data) {
@@ -299,11 +303,20 @@ struct DRMExplorer {
 		uint32_t realLines = std::min(lines, (size-firstOffset)/4);
 		ImGuiListClipper clipper;
 		clipper.Begin(realLines);
+		uint32_t targetOffset = ~0u;
+		if (pNavigateToOffset) {
+			targetOffset = (*pNavigateToOffset);
+			uint32_t targetLine = (targetOffset-firstOffset) / 4;
+			clipper.IncludeItemByIndex(targetLine);
+			*pNavigateToOffset = ~0u; // request handled
+		}
 		while (clipper.Step()) {
 			for (uint32_t i = clipper.DisplayStart; i < clipper.DisplayEnd; i++) {
 				uint32_t offset = firstOffset + 4*i;
 				if (offset+3 >= size)
 					break;
+				if ((targetOffset-offset & -4) == 0)
+					ImGui::SetScrollHereY(0.1f);
 				char printables[5];
 				memcpy(printables, &data[offset / 4], 4);
 				for (auto j = 0; j < 4; j++)
@@ -488,8 +501,10 @@ struct DRMExplorer {
 							uint32_t domainId = resolveSection->FindResource(sh.id);
 							void *data = resolveSection->GetResolveBasePointer(domainId);
 							ImGui::Text("loaded @ %p", data);
+							pNavigateToOffset = &tab.navigateToOffset;
 							hexdump(uiact, (uint32_t*)data, sh.payloadSize, 0, 0xffffffff,
 								tab.sectionIndex, tab.drmName);
+							pNavigateToOffset = nullptr;
 						}
 					} else {
 						ImGui::Text("DRM is not in index");
@@ -602,10 +617,12 @@ struct SpinnyUIActions : public UIActions {
 		if (ImGui::IsKeyPressed(ImGuiKey_MouseLeft) &&
 			ImGui::IsKeyDown(ImGuiKey_ModCtrl))
 		{
-			DRMExplorer::Tab newTab{
+			DRMExplorer::Tab newTab {
 				basename ? basename : std::string(),
 				*loaded->drmPath,
-				loaded->sectionIndex};
+				loaded->sectionIndex,
+				uint32_t(offset)
+			};
 			drmexplorer->open(newTab);
 			ctrlClickHint = false;
 		}
