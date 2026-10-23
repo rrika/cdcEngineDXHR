@@ -18,6 +18,8 @@
 #include "game/dtp/objecttypes/globalplayerinfo.h"
 
 #if ENABLE_IMGUI
+#include "cdcMath/VectorInlines.h"
+#include "cdcScene/SceneCell.h"
 #include "../game/Gameloop.h"
 #include "../imgui/imgui.h"
 #include "../UIActions.h"
@@ -50,6 +52,82 @@ const char *unitNameById(uint32_t id) {
 }
 
 #if ENABLE_IMGUI
+
+static bool isPlayer(uint16_t objectListIndex) {
+	if (objectListIndex == 0x12) // player.drm
+		return true;
+	uint32_t numJensens = globalPlayerInfo->numJensens;
+	for (auto i=0u; i<numJensens; i++)
+		if (globalPlayerInfo->jensens[i] == objectListIndex)
+			return true;
+	return false;
+}
+
+static void recommendedPostLoadActions(UIActions& uiact, ObjListEntry& entry) {
+	StreamUnit *pUnit = nullptr;
+	for (auto &unit : StreamTracker)
+		if (unit.used != 0 && strcmp((char*)unit.name, entry.name) == 0) {
+			pUnit = &unit;
+			break;
+		}
+	if (!pUnit) {
+		ImGui::Text("strange, unit not found");
+		return;
+	}
+	StreamUnit& unit = *pUnit;
+
+	dtp::ADMD *admd = unit.level->admdData;
+	Vector3 cameraPos {uiact.getCameraPosition()};
+
+	// [Load static objects (IMF)]
+	uint32_t numIMFRefs = admd->numIMFRefs;
+	ImGui::BeginDisabled(unit.imfShowRange[1] == numIMFRefs);
+	if (ImGui::SmallButton("Load static objects (IMF)"))
+		unit.imfShowRange[1] = numIMFRefs;
+	ImGui::EndDisabled();
+
+	// Spawnpoint N
+	ImGui::SeparatorText("Spawn points");
+	for (uint32_t i = 0; i < admd->numObjects; i++) {
+		auto *intro = &admd->objects[i];
+		if (isPlayer(intro->objectListIndex)) {
+			char label[100]; sprintf(label, "%s %i", cdc::objectName(intro->objectListIndex), i);
+			Vector spawnPos {
+				intro->position[0],
+				intro->position[1],
+				intro->position[2] + 580.f // approx. eye height
+			};
+			bool match = // someone should make an operator== overload
+				cameraPos.x == spawnPos.x &&
+				cameraPos.y == spawnPos.y &&
+				cameraPos.z == spawnPos.z;
+			if (ImGui::MenuItem(label, nullptr, match)) {
+				uiact.camTeleport(spawnPos, intro->rotation[2]);
+			}
+		}
+	}
+
+	// Cell X
+	ImGui::SeparatorText("Cells");
+	uint32_t limit = 30;
+	if (cdc::CellGroupData *cellGroupData = unit.level->pSceneData) {
+		auto *playerCell = static_cast<cdc::SceneCell*>(
+			unit.sceneCellGroup->GetCellFromPoint(cameraPos, false));
+		uint32_t numCells = cellGroupData->header->numTotalCells;
+		for (uint32_t i=0; i < numCells; i++) {
+			cdc::CellData *cell = cellGroupData->cells[i];
+			bool insideCell = playerCell && playerCell->m_pCellData == cell;
+			if (ImGui::MenuItem(cell->pHeader->name, nullptr, insideCell)) {
+				float *center = cell->pHeader->vec10;
+				Vector p { center[0], center[1], center[2] };
+				uiact.camTeleport(p);
+			}
+			if (limit-- == 0)
+				break;
+		}
+	}
+}
+
 static ImGuiTextFilter unitFilter("-preorder,-global_light,");
 
 static void buildUnitsUI(UIActions& uiact, bool main, bool scn) {
@@ -68,6 +146,11 @@ static void buildUnitsUI(UIActions& uiact, bool main, bool scn) {
 		ImGui::BeginDisabled(getDefaultFileSystem()->FileExists(filename) == false);
 		if (ImGui::SmallButton(name)) {
 			Gameloop::InitiateLevelLoad(name, nullptr);
+			ImGui::OpenPopup(name);
+		}
+		if (ImGui::BeginPopup(name)) {
+			recommendedPostLoadActions(uiact, objList->entries[i]);
+			ImGui::EndPopup();
 		}
 		ImGui::EndDisabled();
 	}

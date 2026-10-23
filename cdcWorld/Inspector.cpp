@@ -328,6 +328,17 @@ void buildUI(UIActions& uiact, dtp::Intro *intro) {
 		}
 
 		if (objFamily == 2) {
+			if (intro->objectListIndex == 0x12) { // player.drm
+				// careful, player.drm expects to be replaced by a different
+				// object type, so its extraData is designed for its substitute
+				// eg. jensen_trenchcoat.drm in object family 3.
+				// parsing it as an IntroDataUberObject just leads to suffering
+				// (segfault when trying to read extra->defaultPrograms[...])
+				ImGui::Text("(extra data available)");
+				uiact.origin(intro->extraData1);
+				return;
+			}
+
 			auto *extraData = (dtp::IntroDataUberObject*) intro->extraData1;
 			buildUI(uiact, extraData);
 
