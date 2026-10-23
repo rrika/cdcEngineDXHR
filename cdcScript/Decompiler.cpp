@@ -1,5 +1,6 @@
 #include "config.h"
 #include "cdc/dtp/script/scriptsound.h"
+#include "cdcLocale/localstr.h"
 #include "cdcObjects/ObjectManager.h"
 #include "cdcResource/DRMIndex.h"
 #include "cdcResource/DTPDataSection.h"
@@ -15,6 +16,7 @@
 #include "game/DX3Player.h"
 #include "game/ObjectiveManager.h"
 #include "game/dtp/objecttypes/globaldatabase.h"
+#include "game/dtp/pickup.h"
 #include "UIActions.h"
 
 #if ENABLE_IMGUI
@@ -199,8 +201,20 @@ static void InitNative(UIActions& uiact, ScriptType *ty, void *init_) {
 			SRMUSIC_LoadMusic(init->slotIndex, init->name, 0, 0);
 
 	} else if (strcmp(ntyname, "inventoryitem") == 0 ||
-	           strcmp(ntyname, "pickup") == 0 ||
-	           strcmp(ntyname, "occupation") == 0 ||
+	           strcmp(ntyname, "pickup") == 0)
+	{
+		struct InventoryItemInit { uint32_t pickupId; };
+		auto *init = *(InventoryItemInit**)init_;
+		ImGui::Text("pickup %x", init->pickupId);
+		uiact.origin(init);
+		if (auto *pickup = (dtp::Pickup*)DTPDataSection::getPointer(init->pickupId))
+		{
+			ImGui::SameLine();
+			ImGui::TextDisabled("/* %s */", localstr_get(pickup->nameStringIndex));
+			uiact.origin(pickup);
+		}
+
+	} else if (strcmp(ntyname, "occupation") == 0 ||
 	           strcmp(ntyname, "sequencergraph") == 0)
 	{
 		struct GenericDTPBasedInit { uint32_t dtpId; };
