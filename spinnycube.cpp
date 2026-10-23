@@ -433,6 +433,7 @@ struct DRMExplorer {
 				static ImGuiTextFilter filter("-shaderlibs,");
 				bool resetNavigateToDrm = true;
 				ImGui::BeginChild("scrollarea", ImGui::GetContentRegionAvail(), /*border=*/false, ImGuiWindowFlags_HorizontalScrollbar);
+				ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_L);
 				filter.Draw();
 				ImGui::SetItemDefaultFocus(); // focus the filter
 				if (explorerAppearing)
@@ -1790,6 +1791,7 @@ int spinnyCube(HWND window,
 #if ENABLE_IMGUI
 		if (ImGui::BeginMainMenuBar())
 		{
+			ImGui::SetNextItemShortcut(ImGuiMod_Alt | ImGuiKey_W, ImGuiInputFlags_RouteGlobal);
 			if (ImGui::BeginMenu("Windows")) {
 				if (!loadedSarifHQ && ImGui::MenuItem("Load det_sarifhq_rail_tutorial")) {
 					loadedSarifHQ = true;
@@ -1799,9 +1801,12 @@ int spinnyCube(HWND window,
 				if (ImGui::MenuItem("Show drawables")) { showDrawablesWindow = true; }
 				// if (ImGui::MenuItem("Show filesystem")) { showFilesystemWindow = true; }
 				if (ImGui::MenuItem("Show objects")) { showObjectsWindow = true; }
-				if (ImGui::MenuItem("Show DRMs")) { showDRMWindow = true; }
-				if (ImGui::MenuItem("Show units")) { showUnitsWindow = true; }
-				if (ImGui::MenuItem("Show loaded units")) { showLoadedUnitsWindow = true; }
+				ImGui::SetNextItemShortcut(ImGuiKey_D);
+				if (ImGui::MenuItem("Show DRMs", "D")) { showDRMWindow = true; }
+				ImGui::SetNextItemShortcut(ImGuiKey_U);
+				if (ImGui::MenuItem("Show units", "U")) { showUnitsWindow = true; }
+				ImGui::SetNextItemShortcut(ImGuiKey_L);
+				if (ImGui::MenuItem("Show loaded units", "L")) { showLoadedUnitsWindow = true; }
 				if (ImGui::MenuItem("Show strings")) { showStringsWindow = true; }
 				if (ImGui::MenuItem("Show logic inputs")) { showLogicInputs = true; }
 				if (ImGui::MenuItem("Show scaleform strings")) { showScaleformStringsWindow = true; }
@@ -2382,6 +2387,8 @@ int spinnyCube(HWND window,
 		drmexplorer.draw(uiact, &showDRMWindow);
 		if (showUnitsWindow) {
 			ImGui::Begin("Units", &showUnitsWindow);
+			if (ImGui::Shortcut(ImGuiKey_Escape))
+				showUnitsWindow = false;
 			buildUnitsUI();
 			ImGui::End();
 		}

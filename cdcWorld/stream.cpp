@@ -73,6 +73,7 @@ static void buildUnitsUI(bool main, bool scn) {
 void buildUnitsUI() {
 	static bool splitScenarios = true;
 	ImGui::Checkbox("Show scenarios separately", &splitScenarios);
+	ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_L);
 	unitFilter.Draw();
 	ImGui::SetItemDefaultFocus();
 	if (ImGui::IsWindowAppearing())
