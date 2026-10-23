@@ -296,18 +296,23 @@ struct DRMExplorer {
 			ImGui::Text("data = nullptr");
 			return;
 		}
-		for (uint32_t i = 0; i < lines; i++) {
-			uint32_t offset = firstOffset + 4*i;
-			if (offset+3 >= size)
-				break;
-			char printables[5];
-			memcpy(printables, &data[offset / 4], 4);
-			for (auto j = 0; j < 4; j++)
-				if (!isprint(printables[j]))
-					printables[j] = '.';
-			printables[4] = 0;
-			ImGui::Text("%04x: %08x %s", offset, data[offset / 4], printables);
-			uiact.origin((void*)data[offset/4]);
+		uint32_t realLines = std::min(lines, (size-firstOffset)/4);
+		ImGuiListClipper clipper;
+		clipper.Begin(realLines);
+		while (clipper.Step()) {
+			for (uint32_t i = clipper.DisplayStart; i < clipper.DisplayEnd; i++) {
+				uint32_t offset = firstOffset + 4*i;
+				if (offset+3 >= size)
+					break;
+				char printables[5];
+				memcpy(printables, &data[offset / 4], 4);
+				for (auto j = 0; j < 4; j++)
+					if (!isprint(printables[j]))
+						printables[j] = '.';
+				printables[4] = 0;
+				ImGui::Text("%04x: %08x %s", offset, data[offset / 4], printables);
+				uiact.origin((void*)data[offset/4]);
+			}
 		}
 	}
 
