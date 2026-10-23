@@ -198,6 +198,21 @@ static void InitNative(UIActions& uiact, ScriptType *ty, void *init_) {
 		if (ImGui::SmallButton("play"))
 			SRMUSIC_LoadMusic(init->slotIndex, init->name, 0, 0);
 
+	} else if (strcmp(ntyname, "inventoryitem") == 0 ||
+	           strcmp(ntyname, "pickup") == 0 ||
+	           strcmp(ntyname, "occupation") == 0 ||
+	           strcmp(ntyname, "sequencergraph") == 0)
+	{
+		struct GenericDTPBasedInit { uint32_t dtpId; };
+		auto *init = *(GenericDTPBasedInit**)init_;
+		ImGui::Text("todo(%s,", ntyname);
+		uiact.origin(init_);
+		ImGui::SameLine();
+		ImGui::Text("dtp %x", init->dtpId);
+		uiact.origin(DTPDataSection::getPointer(init->dtpId));
+		ImGui::SameLine(0.f, 0.f);
+		ImGui::Text(")");
+
 	} else {
 		ImGui::Text("todo(%s)", ntyname);
 		uiact.origin(init_);
