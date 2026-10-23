@@ -2788,6 +2788,8 @@ end:
 #endif
 
 	// maybe it's bad to bypass ObjectManager
+	globalLoadingResolveObject->Release();
+	emailDatabase->Release();
 	obj5->Release();
 	obj4->Release();
 	obj3->Release();

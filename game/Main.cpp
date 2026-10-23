@@ -41,6 +41,7 @@ void *logicActionResourceDatabase;
 void *tutorialDatabase;
 GlobalPlayerInfo *globalPlayerInfo;
 uint32_t *pickupDatabase;
+ResolveObject *pickupDatabaseResolveObject;
 
 void SetupBuildDir(const char *prefix) {
 	char streamdir[256];
@@ -154,7 +155,7 @@ void MAIN_DoMainInit() {
 
 	// TODO
 
-	cdc::ResolveObject::create(
+	pickupDatabaseResolveObject = cdc::ResolveObject::create(
 		"pc-w\\pickup_database.drm",
 		nullptr,
 		nullptr,
@@ -211,6 +212,8 @@ void MAIN_DoMainUninit() { // ?
 	releaseObject(objectIdByName("generalbank"));
 
 	// TODO
+
+	Resolve::Release(pickupDatabaseResolveObject);
 }
 
 void MAIN_Init() { // 2312
