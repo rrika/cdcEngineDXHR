@@ -20,6 +20,10 @@ public:
 		vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		deviceManager->getD3DDevice()->CreateBuffer(&vertexBufferDesc, nullptr, &buffer);
 	}
+	~PCDX11SimpleDynamicVertexBuffer() {
+		buffer->Release();
+		buffer = nullptr;
+	}
 
 	uint32_t stride; // 4
 	uint32_t numVertices; // 8

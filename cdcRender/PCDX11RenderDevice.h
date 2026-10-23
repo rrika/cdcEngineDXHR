@@ -203,14 +203,11 @@ public:
 	void freeRenderLists(void*) override;
 
 	bool internalCreate() override;
-	void internalRelease() override;
+	void internalRelease() override; // OnDestroyDevice
+	// inherit internalResource0C, calls internalCreate
+	void internalResource10() override; // OnPreResetDevice
+	void internalOnSettingsChanged() override;
 
-	virtual void dx11_method_0();
-	virtual void dx11_method_4();
-	virtual void dx11_method_8();
-	virtual void dx11_method_C();
-	virtual void dx11_method_10();
-	virtual void dx11_method_14();
 	virtual void dx11_method_18();
 	virtual void dx11_method_1C();
 	virtual PCDX11RenderContext *getRenderContextAny();

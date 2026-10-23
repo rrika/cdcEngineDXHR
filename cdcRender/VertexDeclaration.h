@@ -81,6 +81,7 @@ struct ShaderInputSpec {
 	uint32_t dwordC;
 	ShaderInputElem attr[];
 
+	// free with delete[](char*)
 	static ShaderInputSpec *Create(uint32_t numElems, uint32_t modelType);
 	static ShaderInputSpec *Create(ShaderInputElem *elems, uint32_t numElems, uint32_t modelType);
 };

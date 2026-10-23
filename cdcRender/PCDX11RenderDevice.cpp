@@ -556,6 +556,33 @@ void PCDX11RenderDevice::registerComparatorsAndDrawersNGAPrim() {
 
 PCDX11RenderDevice::~PCDX11RenderDevice() {
 	// HACK
+
+	delete whiteTexture;
+	delete m_pDynamicVertexPool;
+	delete m_pDynamicIndexPool;
+	delete m_pStaticVertexPool;
+	delete m_pStaticIndexPool;
+	delete m_pQuadsIndexBuffer;
+	delete[] m_pQuadsIndexData;
+
+	// DestroyDrawVertexDecls
+	for (uint32_t i=0; i<std::size(drawVertexDecls); i++)
+		VertexDecl::Destroy(drawVertexDecls[i]);
+
+	// DestroySimplePrimMaterials
+	MaterialBlobSub *passA_0138 = m_pSimplePrimMaterials[0][0]->materialBlob->subMat4C[3];
+	ShaderInputSpec *pInputSpec = passA_0138->vsLayout[0];
+	MaterialTexRef *pTextureEntry = passA_0138->psTextureRef;
+	FreeMemory(passA_0138);
+	MaterialBlobSub *passA_5    = m_pSimplePrimMaterials[0][0]->materialBlob->subMat4C[5]; FreeMemory(passA_5);
+	MaterialBlobSub *passB_0138 = m_pSimplePrimMaterials[0][1]->materialBlob->subMat4C[3]; FreeMemory(passB_0138);
+	MaterialBlobSub *passB_5    = m_pSimplePrimMaterials[0][1]->materialBlob->subMat4C[5]; FreeMemory(passB_5);
+	for (uint32_t i=0; i<7; i++) {
+		delete m_pSimplePrimMaterials[i][0];
+		delete m_pSimplePrimMaterials[i][1];
+	}
+	delete[] (char*)pInputSpec;
+	delete pTextureEntry;
 	delete shlib_22;
 	delete shlib_21;
 	delete shlib_20;
@@ -563,25 +590,25 @@ PCDX11RenderDevice::~PCDX11RenderDevice() {
 	delete shlib_18;
 	delete shlib_17;
 	delete shlib_16;
-	delete shlib_15;
 	delete shlib_14;
+	delete shlib_15;
 	delete shlib_13;
 	delete shlib_12;
 	delete shlib_11;
 	delete shlib_10;
+	delete shlib_4;
+	delete shlib_3;
+	delete shlib_2;
+	delete shlib_5;
 	delete shlib_9;
 	delete shlib_8;
 	delete shlib_7;
 	delete shlib_6;
-	delete shlib_5;
-	delete shlib_4;
-	delete shlib_3;
-	delete shlib_2;
 	// delete shlib_1;
 	// delete shlib_0;
+	// end DestroySimplePrimMaterials
 
-	for (uint32_t i=0; i<std::size(drawVertexDecls); i++)
-		VertexDecl::Destroy(drawVertexDecls[i]);
+	internalRelease();
 
 	delete renderContext_10CEC;
 	delete static_cast<PCDX11LightManager*>(lightManager);
@@ -1165,29 +1192,20 @@ bool PCDX11RenderDevice::internalCreate() {
 
 void PCDX11RenderDevice::internalRelease() {
 	// TODO
+	internalResource10();
 }
 
-void PCDX11RenderDevice::dx11_method_0() {
+void PCDX11RenderDevice::internalResource10() { // OnPreResetDevice
 	// TODO
+	delete fullScreenQuadVB; fullScreenQuadVB = nullptr;
+	delete quadVB; quadVB = nullptr;
+	if (deviceContext) {
+		deviceContext->Release(); // the deviceManager is just going to let us do that?
+		deviceContext = nullptr;
+	}
 }
 
-void PCDX11RenderDevice::dx11_method_4() {
-	// TODO
-}
-
-void PCDX11RenderDevice::dx11_method_8() {
-	// TODO
-}
-
-void PCDX11RenderDevice::dx11_method_C() {
-	// TODO
-}
-
-void PCDX11RenderDevice::dx11_method_10() {
-	// TODO
-}
-
-void PCDX11RenderDevice::dx11_method_14() {
+void PCDX11RenderDevice::internalOnSettingsChanged() {
 	// TODO
 }
 
