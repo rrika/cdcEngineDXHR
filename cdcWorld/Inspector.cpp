@@ -399,6 +399,7 @@ void buildUI(UIActions& uiact, Instance *instance) {
 	if (instance->intro) {
 		if (ImGui::CollapsingHeader("Intro", ImGuiTreeNodeFlags_DefaultOpen)) {
 			ImGui::Text("uniqueID %d/0x%x", instance->intro->uniqueID, instance->intro->uniqueID);
+			uiact.origin(instance->intro);
 			buildUI(uiact, instance->intro);
 		}
 	} else {
