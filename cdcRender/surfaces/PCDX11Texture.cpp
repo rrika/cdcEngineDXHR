@@ -93,6 +93,10 @@ void PCDX11Texture::resMethod10() { /* empty */ }
 
 PCDX11Texture::~PCDX11Texture() {
 	// TODO
+	if (textureBlob)
+		free(textureBlob);
+	if (m_pTextureData)
+		delete[] m_pTextureData;
 }
 
 void PCDX11Texture::asyncCreate() {
@@ -111,6 +115,8 @@ void PCDX11Texture::asyncCreate() {
 	PCDX11BitmapTexture::asyncCreate();
 	delete[] m_pTextureData;
 	free(textureBlob);
+	m_pTextureData = nullptr;
+	textureBlob = nullptr;
 }
 
 }
