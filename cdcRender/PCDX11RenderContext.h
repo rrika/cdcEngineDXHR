@@ -46,6 +46,7 @@ public:
 	{
 		fullscreen = false; // hack
 	}
+	~PCDX11RenderContext();
 
 	PCDX11RenderTarget *getRenderTarget() {
 		if (renderTarget14)

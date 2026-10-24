@@ -120,8 +120,22 @@ bool PCDX11RenderContext::internalCreate() {
 	return createRenderTargets();
 }
 
+PCDX11RenderContext::~PCDX11RenderContext() {
+	internalRelease();
+}
+
 void PCDX11RenderContext::internalRelease() {
 	/*TODO*/
+	if (fullscreen) {
+		fullscreen = false;
+		if (swapChain) {
+			swapChain->SetFullscreenState(false, nullptr);
+		}
+	}
+	if (swapChain) {
+		swapChain->Release();
+		swapChain = nullptr;
+	}
 }
 
 void PCDX11RenderContext::internalOnSettingsChanged() {
