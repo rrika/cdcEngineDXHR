@@ -9,6 +9,7 @@
 #include "cdcFile/FileSystem.h"
 #include "cdcGameShell/cdcGameShell.h" // for LOAD_UnitFileName
 #include "cdcObjects/ObjectManager.h" // for readAndParseObjectList
+#include "cdcResource/Resolve.h"
 #include "cdcResource/ResolveObject.h"
 #include "cdcSound/sfxmarker.h"
 #include "cdcWorld/Instance.h"
@@ -119,6 +120,30 @@ void STREAM_Init() { // line 582
 	// TODO
 	static StreamingCallback *cb = createObjectStreamingCallback();
 	SceneLayer::AddStreamingCallback(cb);
+}
+
+void STREAM_FreeResources() { // line 976
+	for (auto &unit : StreamTracker) {
+		if (unit.used == 4) {
+			// if (unit.sceneCellGroup)
+			//	SceneLayer::StreamUnitDataDumped(unit);
+			// StreamDeferredManager::getInstance()->fun1(unit);
+			// StreamDeferredManager::getInstance()->fun2(unit);
+
+			Resolve::Release(unit.resolveObject);
+			unit.level = nullptr;
+			unit.used = 0;
+			unit.StreamUnitID = 0;
+			// unit.dword4 = 0;
+			// unit.FrameCount_B4 = 0;
+			// unit.flagsA = 0;
+			// unit.hidden9 = 0;
+			unit.resolveObject = nullptr;
+			// unit.word9A = 0;
+			// unit.dword9C = 0;
+			// unit.coreUnit = nullptr;
+		}
+	}
 }
 
 StreamUnit *STREAM_GetStreamUnitWithID(int32_t id) { // line 1170
@@ -248,6 +273,44 @@ void STREAM_RemoveInstancesWithIDInInstanceList(StreamUnit *streamUnit, bool doS
 		// TODO
 		instance = n;
 	}
+}
+
+void STREAM_DumpUnitScript(StreamUnit *unit) { // line 2511
+	// TODO
+}
+
+void STREAM_DumpUnit(StreamUnit *unit, bool doSave) { // line 2524
+	printf("STREAM_DumpUnit %p StreamUnitID=%d\n", unit, unit->StreamUnitID);
+	// TODO
+	STREAM_RemoveInstancesWithIDInInstanceList(unit, doSave);
+	// TODO
+	uint32_t previousUseState = unit->used;
+	unit->used = 4;
+	// TODO
+	STREAM_DumpUnitScript(unit);
+	// TODO
+	if (false) {
+		// TODO
+	} else {
+		// IntroManager::RemoveIntrosInUnit()
+		// TODO
+		// SceneLayer::StreamOut(unit);
+	}
+}
+
+void STREAM_DumpAllLevels(int32_t IDNoRemove, bool DoSave) { // line 2741
+
+	for (auto &unit : StreamTracker)
+		if (unit.used != 0 && unit.used != 4 && unit.StreamUnitID != IDNoRemove && unit.coreUnit)
+			STREAM_DumpUnit(&unit, DoSave);
+
+	for (auto &unit : StreamTracker)
+		if (unit.used != 0 && unit.used != 4 && unit.StreamUnitID != IDNoRemove)
+			STREAM_DumpUnit(&unit, DoSave);
+
+	// gameTracker.unit0 = nullptr;
+	// FX_GarbageCollect();
+	// GAME_GetNotifier()->DumpLevel();
 }
 
 StreamUnit *STREAM_LevelLoadAndInit(const char *baseAreaName) { // line 2855

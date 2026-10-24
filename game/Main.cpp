@@ -253,6 +253,9 @@ void MAIN_Init() { // 2312
 
 void MAIN_Uninit() { // 2573
 
+	STREAM_DumpAllLevels(0, false);
+	// TODO
+	STREAM_FreeResources(); 
 	// TODO
 	MAIN_DoMainUninit();
 	// TODO

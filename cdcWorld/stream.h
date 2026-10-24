@@ -32,8 +32,11 @@ extern StreamUnit StreamTracker[80];
 void buildUnitsUI();
 void STREAM_Init();
 StreamUnit *STREAM_GetStreamUnitWithName(const char *name);
+void STREAM_FreeResources();
 StreamUnit *STREAM_GetStreamUnitWithID(int32_t id);
 void STREAM_RemoveInstancesWithIDInInstanceList(StreamUnit *streamUnit, bool doSave);
+void STREAM_DumpUnit(StreamUnit *unit, bool doSave);
+void STREAM_DumpAllLevels(int32_t, bool);
 StreamUnit *STREAM_LevelLoadAndInit(const char *baseAreaName);
 
 const char *unitNameById(uint32_t);
