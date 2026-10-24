@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include <algorithm>
 #include <cctype>
 #include <cmath>
