@@ -92,7 +92,7 @@ void buildUnitsUI() {}
 
 static StreamingCallback *createObjectStreamingCallback();
 
-void STREAM_Init() { // 582
+void STREAM_Init() { // line 582
 	// TODO
 
 	// read object names
@@ -120,9 +120,16 @@ void STREAM_Init() { // 582
 	SceneLayer::AddStreamingCallback(cb);
 }
 
-StreamUnit *STREAM_GetStreamUnitWithID(int32_t id) { // 1170
+StreamUnit *STREAM_GetStreamUnitWithID(int32_t id) { // line 1170
 	for (auto &unit : StreamTracker)
 		if ((unit.used == 1 || unit.used == 2) && unit.StreamUnitID == id)
+			return &unit;
+	return nullptr;
+}
+
+StreamUnit *STREAM_GetStreamUnitWithName(const char *name) { // line 1256
+	for (auto &unit : StreamTracker)
+		if (unit.used != 0 && unit.used != 4 && strcmp((char const*)unit.name, name) == 0) // HACK: stricmp, really
 			return &unit;
 	return nullptr;
 }
@@ -151,7 +158,7 @@ StreamUnit *STREAM_GetAndInitStreamUnitWithID(const char *name, int32_t id) { //
 	return unit;
 }
 
-void STREAM_FinishLoad(StreamUnit *unit) { // 1658
+void STREAM_FinishLoad(StreamUnit *unit) { // line 1658
 	printf("unit->level=%p\n", unit->level);
 	dtp::ADMD *admd = unit->level->admdData;
 	for (uint32_t i=0; i<admd->m_SfxMarkerCount; i++)
@@ -164,7 +171,7 @@ void STREAM_FinishLoad(StreamUnit *unit) { // 1658
 	// TODO
 }
 
-void STREAM_LoadLevelReturn(void *loadData, void *data, void *data2, ResolveObject *resolveObj) { // 1922
+void STREAM_LoadLevelReturn(void *loadData, void *data, void *data2, ResolveObject *resolveObj) { // line 1922
 	StreamUnit *unit = (StreamUnit*)data2;
 	unit->StreamUnitID = ((Level*)loadData)->streamUnitID;
 	// TODO
@@ -172,7 +179,7 @@ void STREAM_LoadLevelReturn(void *loadData, void *data, void *data2, ResolveObje
 	// TODO
 }
 
-void STREAM_StreamLoadLevelReturn(void *loadData, void *data, void *data2, ResolveObject *resolveObj) { // 1971
+void STREAM_StreamLoadLevelReturn(void *loadData, void *data, void *data2, ResolveObject *resolveObj) { // line 1971
 	StreamUnit *unit = (StreamUnit*)data2;
 	unit->StreamUnitID = ((Level*)loadData)->streamUnitID;
 	// TODO
@@ -180,7 +187,7 @@ void STREAM_StreamLoadLevelReturn(void *loadData, void *data, void *data2, Resol
 	// TODO
 }
 
-StreamUnit *STREAM_LoadLevel(const char *baseAreaName, StreamUnitPortal *streamPortal, bool loadObjects) { // 2085
+StreamUnit *STREAM_LoadLevel(const char *baseAreaName, StreamUnitPortal *streamPortal, bool loadObjects) { // line 2085
 	// TODO
 	if (true) {
 		// TODO
@@ -223,12 +230,17 @@ StreamUnit *STREAM_LoadLevel(const char *baseAreaName, StreamUnitPortal *streamP
 }
 
 // only called from scripting system
-void STREAM_LoadLevel(const char *baseAreaName) { // 2171
+void STREAM_LoadLevel(const char *baseAreaName) { // line 2171
 	// TODO
 }
 
-StreamUnit *STREAM_LevelLoadAndInit(const char *baseAreaName) { // 2855
+StreamUnit *STREAM_LevelLoadAndInit(const char *baseAreaName) { // line 2855
 	// TODO
+
+	if (StreamUnit *preexisting = STREAM_GetStreamUnitWithName(baseAreaName)) {
+		// HACK
+		return preexisting;
+	}
 
 	StreamUnit *streamUnit = STREAM_LoadLevel(baseAreaName, nullptr, true);
 
@@ -272,7 +284,7 @@ StreamUnit *STREAM_LevelLoadAndInit(const char *baseAreaName) { // 2855
 	return streamUnit;
 }
 
-class ObjectStreamingCallback : public StreamingCallback { // 4088
+class ObjectStreamingCallback : public StreamingCallback { // line 4088
 public:
 	void UnitLoaded(StreamUnit *unit) override {
 		// TODO
