@@ -1,6 +1,7 @@
 #include <iostream>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_vulkan.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3/SDL_vulkan.h>
 #include "../../game/Main.h"
 #include "cdcRender/BuiltinResources.h"
 #include "cdcRender/IPCDeviceManager.h"
@@ -21,7 +22,6 @@ HWND hwnd3;
 bool createWindow() {
 	SDL_Window* window = SDL_CreateWindow(
 		"Deus Ex: Human Revolution - Director's Cut",
-		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		640, 480,
 		SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
 	if (!window) {
@@ -29,18 +29,18 @@ bool createWindow() {
 		return false;
 	}
 
-	SDL_CaptureMouse(SDL_TRUE);
+	SDL_CaptureMouse(true);
 
 	hwnd1 = hwnd2 = hwnd3 = window;
 	return true;
 }
 
 int main(int argc, char** argv) {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) == false) {
 		std::cerr << "Failed to init SDL" << std::endl;
 		return 1;
 	}
-	setenv("DXVK_WSI_DRIVER", "SDL2", 1);
+	setenv("DXVK_WSI_DRIVER", "SDL3", 1);
 
 	loadBuiltinResources();
 	createLowerFileSystems();

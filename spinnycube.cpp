@@ -126,14 +126,14 @@
 #include "imgui/backends/imgui_impl_win32.h"
 extern HCURSOR ImGui_ImplWin32_Arrow;
 #else
-#include "imgui/backends/imgui_impl_sdl2.h"
+#include "imgui/backends/imgui_impl_sdl3.h"
 #endif
 #include "cdcRender/Inspector.h"
 #include "ImGuizmo.h"
 #endif
 
 #ifdef __linux__
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #endif
 
 extern uint32_t *pickupDatabase;
@@ -699,7 +699,7 @@ int spinnyCube(HWND window,
 #ifdef _WIN32
 	ImGui_ImplWin32_Init(window);
 #else
-	ImGui_ImplSDL2_InitForSDLRenderer((SDL_Window*)window, nullptr);
+	ImGui_ImplSDL3_InitForSDLRenderer((SDL_Window*)window, nullptr);
 #endif
 	ImGui_ImplDX11_Init(baseDevice, baseDeviceContext);
 #endif
@@ -1053,16 +1053,15 @@ int spinnyCube(HWND window,
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 #if ENABLE_IMGUI
-			ImGui_ImplSDL2_ProcessEvent(&event);
+			ImGui_ImplSDL3_ProcessEvent(&event);
 #endif
 			mouseKeyboard->processSDLEvent(&event);
 
 			switch (event.type) {
-				case SDL_WINDOWEVENT:
-					if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-						renderDevice->handleResize(event.window.data1, event.window.data2);
+				case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+					renderDevice->handleResize(event.window.data1, event.window.data2);
 					break;
-				case SDL_QUIT:
+				case SDL_EVENT_QUIT:
 					goto end;
 				default:
 					break;
@@ -1085,7 +1084,7 @@ int spinnyCube(HWND window,
 #ifdef _WIN32
 		ImGui_ImplWin32_NewFrame(); // this will reset our pretty cursor
 #else
-		ImGui_ImplSDL2_NewFrame();
+		ImGui_ImplSDL3_NewFrame();
 #endif
 		if (mouseLook) {
 			io.ConfigFlags &= ~ImGuiConfigFlags_NavEnableKeyboard;
@@ -2782,7 +2781,7 @@ end:
 #ifdef _WIN32
 	ImGui_ImplWin32_Shutdown();
 #else
-	ImGui_ImplSDL2_Shutdown();
+	ImGui_ImplSDL3_Shutdown();
 #endif
 	ImGui::DestroyContext();
 #endif

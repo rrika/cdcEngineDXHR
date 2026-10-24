@@ -1,5 +1,6 @@
 #define NOMINMAX
 #include "PCMouseKeyboard.h"
+#include <cmath>
 #include <cstdio>
 #include <algorithm>
 
@@ -8,7 +9,7 @@
 #endif
 
 #ifdef __linux__
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #endif
 
 extern HWND hwnd2;
@@ -105,7 +106,7 @@ void PCMouseKeyboard::processWndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 #ifdef __linux__
 void PCMouseKeyboard::processSDLEvent(SDL_Event *event) {
 	switch (event->type) {
-	case SDL_MOUSEMOTION: {
+	case SDL_EVENT_MOUSE_MOTION: {
 		deltaX += event->motion.xrel;
 		deltaY += event->motion.yrel;
 	}
@@ -144,8 +145,8 @@ void PCMouseKeyboard::setupClip() {
 	}
 
 #elif defined(__linux__)
-	SDL_SetWindowGrab((SDL_Window*) hwnd2, (SDL_bool)cursorGrab);
-	SDL_SetRelativeMouseMode((SDL_bool)cursorGrab);
+	SDL_SetWindowMouseGrab((SDL_Window*) hwnd2, (bool)cursorGrab);
+	SDL_SetWindowRelativeMouseMode((SDL_Window*) hwnd2, (bool)cursorGrab);
 #endif
 }
 

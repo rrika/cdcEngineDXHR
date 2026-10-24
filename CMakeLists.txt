@@ -75,9 +75,9 @@ if (NATIVE_BUILD)
 	target_link_libraries(dxhr PRIVATE
 		dxvk_d3d11)
 
-	find_package(SDL2 REQUIRED)
-	target_include_directories(dxhr PRIVATE ${SDL2_INCLUDE_DIRS})
-	target_link_libraries(dxhr PRIVATE ${SDL2_LIBRARIES})
+	find_package(SDL3 REQUIRED)
+	target_include_directories(dxhr PRIVATE ${SDL3_INCLUDE_DIRS})
+	target_link_libraries(dxhr PRIVATE ${SDL3_LIBRARIES})
 
 	target_link_directories(dxhr PRIVATE
 		3rdParty/fmod)
@@ -195,7 +195,7 @@ if (ENABLE_IMGUI)
 
 	if (NATIVE_BUILD)
 		target_sources(dxhr PRIVATE
-			3rdParty/imgui/backends/imgui_impl_sdl2.cpp)
+			3rdParty/imgui/backends/imgui_impl_sdl3.cpp)
 	else ()
 		target_sources(dxhr PRIVATE
 			3rdParty/imgui/backends/imgui_impl_win32.cpp)
