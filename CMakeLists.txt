@@ -55,9 +55,9 @@ if (NATIVE_BUILD)
 
 	ExternalProject_Add(dxvk-native
 		GIT_REPOSITORY https://github.com/doitsujin/dxvk.git
-		GIT_TAG v2.2
-		CONFIGURE_COMMAND meson setup <SOURCE_DIR> --cross-file ${CMAKE_CURRENT_SOURCE_DIR}/dxvk-build-linux32.txt -Dcpp_std=c++20
-		BUILD_COMMAND ninja src/d3d11/libdxvk_d3d11.so
+		GIT_TAG v3.1.1
+		CONFIGURE_COMMAND meson setup <SOURCE_DIR> --cross-file ${CMAKE_CURRENT_SOURCE_DIR}/dxvk-build-linux32.txt # -Dcpp_std=c++20
+		BUILD_COMMAND ninja # src/d3d11/libdxvk_d3d11.so
 		INSTALL_COMMAND "")
 
 	ExternalProject_Get_property(dxvk-native SOURCE_DIR BINARY_DIR)

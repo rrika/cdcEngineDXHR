@@ -40,6 +40,7 @@ int main(int argc, char** argv) {
 		std::cerr << "Failed to init SDL" << std::endl;
 		return 1;
 	}
+	setenv("DXVK_WSI_DRIVER", "SDL2", 1);
 
 	loadBuiltinResources();
 	createLowerFileSystems();

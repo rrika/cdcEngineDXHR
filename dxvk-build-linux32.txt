@@ -3,6 +3,7 @@ c = ['clang', '-target', 'i386-pc-linux-gnu']
 cpp = ['clang++', '-target', 'i386-pc-linux-gnu']
 c_ld = 'lld'
 cpp_ld = 'lld'
+pkg-config = 'i686-pc-linux-gnu-pkg-config'
 
 [target_machine]
 system = 'linux'
