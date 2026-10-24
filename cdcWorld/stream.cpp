@@ -12,6 +12,7 @@
 #include "cdcResource/ResolveObject.h"
 #include "cdcSound/sfxmarker.h"
 #include "cdcWorld/Instance.h"
+#include "cdcWorld/InstanceManager.h"
 #include "cdc/dtp/objectproperties/sfxmarker.h"
 #include "game/dtp/objecttypes/globalplayerinfo.h"
 
@@ -232,6 +233,21 @@ StreamUnit *STREAM_LoadLevel(const char *baseAreaName, StreamUnitPortal *streamP
 // only called from scripting system
 void STREAM_LoadLevel(const char *baseAreaName) { // line 2171
 	// TODO
+}
+
+void STREAM_RemoveInstancesWithIDInInstanceList(StreamUnit *streamUnit, bool doSave) { // line 2398
+	// TODO
+	for (auto instance = InstanceManager::s_chain; instance;) {
+		auto n = instance->next;
+		if (instance->m_streamComponent__m_birthStreamUnitID == streamUnit->StreamUnitID) {
+			if (doSave) {
+				// TODO
+			}
+			instance->ReallyRemoveInstance(); // HACK
+		}
+		// TODO
+		instance = n;
+	}
 }
 
 StreamUnit *STREAM_LevelLoadAndInit(const char *baseAreaName) { // line 2855

@@ -25,6 +25,10 @@ Instance *UBEROBJECT_BirthSectionInstance(Instance *parent, uint32_t modelIndex,
 
 	// TODO
 
+	instance->m_streamComponent__m_birthStreamUnitID = parent->m_streamComponent__m_birthStreamUnitID;
+
+	// TODO
+
 	instance->objectComponent.SetInstance(instance);
 
 	// TODO

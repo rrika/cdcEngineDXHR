@@ -1788,6 +1788,8 @@ int spinnyCube(HWND window,
 
 		renderDevice->endRenderList();
 
+		std::vector<StreamUnit*> removeInstancesAfterRender;
+
 #if ENABLE_IMGUI
 		if (ImGui::BeginMainMenuBar())
 		{
@@ -2407,6 +2409,9 @@ int spinnyCube(HWND window,
 				}
 				ImGui::DragInt2("visible intros", unit.introShowRange);
 				ImGui::DragInt2("visible IMFs", unit.imfShowRange);
+				if (ImGui::Button("Remove all instances")) {
+					removeInstancesAfterRender.push_back(&unit);
+				}
 				ImGui::PopID();
 			}
 			bool anyLoaded = false;
@@ -2773,6 +2778,9 @@ int spinnyCube(HWND window,
 		///////////////////////////////////////////////////////////////////////////////////////////
 
 		renderContext->present();
+
+		for (auto unit: removeInstancesAfterRender)
+			STREAM_RemoveInstancesWithIDInInstanceList(unit, /*DoSave=*/false);
 
 		cdc::GameShell::UpdateLoop(1.0f /*TODO*/);
 	}
