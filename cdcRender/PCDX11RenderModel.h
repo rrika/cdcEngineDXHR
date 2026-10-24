@@ -26,14 +26,15 @@ public:
 	// uint32_t bonesMaybe;
 	// uint32_t dword30;
 	uint32_t indices;
-	PCDX11StaticIndexBuffer *indexBuffer; // 38
+	PCDX11StaticIndexBuffer *indexBuffer = nullptr; // 38
 	NonPersistentPGData *tab0Ext16Byte = nullptr; // one per primgroup
 	PersistentPGData *tab0Ext128Byte = nullptr; // one per primgroup
 
 public:
 	PCDX11RenderModel(PCDX11RenderDevice *renderDevice, uint32_t size);
+	~PCDX11RenderModel();
 
-	void resFree() override { /*TODO*/ }
+	void resFree() override;
 	void resFill(void* src, uint32_t size, uint32_t offset) override;
 	char *resGetBuffer() override;
 	void resConstruct() override;

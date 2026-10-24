@@ -15,7 +15,27 @@ PCDX11RenderModel::PCDX11RenderModel(PCDX11RenderDevice *renderDevice, uint32_t 
 	PCDX11RenderExternalResource(renderDevice),
 	size(size)
 {
-	meshHeader = (MeshHeader*)new char[size];
+	static AllocRequester MEM_RENDER_MODEL;
+	meshHeader = (MeshHeader*)
+		PCDX11RenderExternalResource::renderDevice->AllocateMemory(size, 32, &MEM_RENDER_MODEL);
+}
+
+PCDX11RenderModel::~PCDX11RenderModel() {
+	delete indexBuffer;
+	for (uint32_t i = 0; i<numModelBatches; i++) {
+		ModelBatch *batch = &modelBatches[i];
+		delete batch->staticVertexBuffer;
+		batch->staticVertexBuffer = nullptr;
+	}
+	// TODO
+	delete[] tab0Ext128Byte;
+	delete[] tab0Ext16Byte;
+	PCDX11RenderExternalResource::renderDevice->FreeMemory(meshHeader);
+}
+
+void PCDX11RenderModel::resFree() {
+	// HACK
+	delete this;
 }
 
 void PCDX11RenderModel::resFill(void* src, uint32_t size, uint32_t offset) {
