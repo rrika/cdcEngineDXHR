@@ -2794,6 +2794,7 @@ end:
 	obj4->Release();
 	obj3->Release();
 
+	delete lightRenderModelInstance;
 	cdc::releaseObject(lightIndex);
 	cdc::releaseObject(bottleIndex);
 
