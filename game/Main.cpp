@@ -117,11 +117,21 @@ void unloadDatabases() {
 
 	// auto *primaryweaponsettings_database_ro = ResolveObject::find("primaryweaponsettings_database");
 	// Resolve::Release(primaryweaponsettings_database_ro);
-	auto *objective_database_ro = ResolveObject::find("objective_database");
+
+	char objectivePath[256];
+	char logicActionResourcePath[256];
+	char tutorialPath[256];
+
+	GameShell::LOAD_ObjectFileName(objectivePath, "objective_database");
+	auto *objective_database_ro = ResolveObject::find(objectivePath);
 	Resolve::Release(objective_database_ro);
-	auto *logicactionresource_database_ro = ResolveObject::find("logicactionresource_database");
+
+	GameShell::LOAD_ObjectFileName(logicActionResourcePath, "logicactionresource_database");
+	auto *logicactionresource_database_ro = ResolveObject::find(logicActionResourcePath);
 	Resolve::Release(logicactionresource_database_ro);
-	auto *tutorial_database_ro = ResolveObject::find("tutorial_database");
+
+	GameShell::LOAD_ObjectFileName(tutorialPath, "tutorial_database");
+	auto *tutorial_database_ro = ResolveObject::find(tutorialPath);
 	Resolve::Release(tutorial_database_ro);
 }
 
