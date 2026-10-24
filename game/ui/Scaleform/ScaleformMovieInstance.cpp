@@ -27,6 +27,7 @@ ScaleformMovieInstance::ScaleformMovieInstance(ScaleformMovie *movie /*TODO*/) :
 ScaleformMovieInstance::~ScaleformMovieInstance() {
 	// HACK: these should be ref-counted
 	delete m_externalInterface;
+	delete m_gfxMovieInstance;
 }
 
 void ScaleformMovieInstance::SetExternalInterfaceRetVal(GFxValue const& val) {

@@ -34,6 +34,8 @@ public:
 
 class GFxMovieView {
 public:
+	virtual ~GFxMovieView() = default;
+
 	// GFxMovieView method
 	virtual void SetExternalInterfaceRetVal(const GFxValue&) = 0; // C8
 
