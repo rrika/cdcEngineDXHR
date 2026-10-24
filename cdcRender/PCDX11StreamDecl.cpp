@@ -8,6 +8,7 @@
 namespace cdc {
 
 PCDX11StreamDecl::~PCDX11StreamDecl() {
+	internalRelease();
 	delete vertexBuffer;
 	delete[] secondaryData;
 	delete[] elementDesc;
