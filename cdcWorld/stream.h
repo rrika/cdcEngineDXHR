@@ -29,7 +29,8 @@ struct StreamUnitPortal {
 struct StreamUnit;
 extern StreamUnit StreamTracker[80];
 
-void buildUnitsUI();
+struct UIActions;
+void buildUnitsUI(UIActions&);
 void STREAM_Init();
 StreamUnit *STREAM_GetStreamUnitWithName(const char *name);
 void STREAM_FreeResources();

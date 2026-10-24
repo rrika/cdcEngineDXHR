@@ -2394,7 +2394,7 @@ int spinnyCube(HWND window,
 			ImGui::Begin("Units", &showUnitsWindow);
 			if (ImGui::Shortcut(ImGuiKey_Escape))
 				showUnitsWindow = false;
-			buildUnitsUI();
+			buildUnitsUI(uiact);
 			ImGui::End();
 		}
 		if (showLoadedUnitsWindow) {

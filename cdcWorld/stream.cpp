@@ -20,6 +20,7 @@
 #if ENABLE_IMGUI
 #include "../game/Gameloop.h"
 #include "../imgui/imgui.h"
+#include "../UIActions.h"
 #endif
 
 using namespace cdc;
@@ -51,7 +52,7 @@ const char *unitNameById(uint32_t id) {
 #if ENABLE_IMGUI
 static ImGuiTextFilter unitFilter("-preorder,-global_light,");
 
-static void buildUnitsUI(bool main, bool scn) {
+static void buildUnitsUI(UIActions& uiact, bool main, bool scn) {
 	for (uint32_t i = 0; i < objList->count; i++) {
 		char *name = objList->entries[i].name;
 		if (name[0] == 0)
@@ -72,7 +73,7 @@ static void buildUnitsUI(bool main, bool scn) {
 	}
 }
 
-void buildUnitsUI() {
+void buildUnitsUI(UIActions& uiact) {
 	static bool splitScenarios = true;
 	ImGui::Checkbox("Show scenarios separately", &splitScenarios);
 	ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_L);
@@ -81,11 +82,11 @@ void buildUnitsUI() {
 	if (ImGui::IsWindowAppearing())
 		ImGui::SetKeyboardFocusHere(-1);
 	if (splitScenarios) {
-		buildUnitsUI(true, false);
+		buildUnitsUI(uiact, true, false);
 		ImGui::Separator();
-		buildUnitsUI(false, true);
+		buildUnitsUI(uiact, false, true);
 	} else {
-		buildUnitsUI(true, true);
+		buildUnitsUI(uiact, true, true);
 	}
 }
 #else
