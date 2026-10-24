@@ -96,6 +96,7 @@ ResolveObject *ResolveObject::find(const char *path) {
 ResolveObject::~ResolveObject() {
 	if (m_it != cachedObjects.end())
 		cachedObjects.erase(m_it);
+	free((void*)path);
 	for (auto *dependency : dependencies) {
 		dependency->Release();
 	}
