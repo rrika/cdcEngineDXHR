@@ -294,7 +294,9 @@ void STREAM_DumpUnit(StreamUnit *unit, bool doSave) { // line 2524
 	} else {
 		// IntroManager::RemoveIntrosInUnit()
 		// TODO
-		// SceneLayer::StreamOut(unit);
+		SceneLayer::StreamOut(unit);
+		//  ObjectStreamingCallback::UnitDumped
+		//      releaseObject
 	}
 }
 
@@ -379,10 +381,21 @@ public:
 			if (intro->objectListIndex == 0) // HACK
 				continue;
 			requestObjectNormal(intro->objectListIndex);
+			intro->field3C |= 0x40;
 		}
 	}
-	void UnitDumped(StreamUnit*) override {
-		// TODO
+	void UnitDumped(StreamUnit *unit) override {
+		// called from STREAM_DumpUnit via SceneLayer::StreamOut
+		printf("ObjectStreamingCallback::UnitDumped(%p)\n", unit);
+		dtp::ADMD *admd = unit->level->admdData;
+		for (uint32_t i = 0; i < admd->numObjects; i++) {
+			dtp::Intro *intro = &admd->objects[i];
+			// TODO
+			if (intro->field3C & 0x40) {
+				releaseObject(intro->objectListIndex);
+				intro->field3C &= ~0x40;
+			}
+		}
 	}
 	void StreamGroupLoaded(cdc::CellStreamGroupData*) override {
 		// TODO

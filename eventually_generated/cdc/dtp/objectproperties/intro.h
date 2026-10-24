@@ -13,6 +13,7 @@ struct Intro {
 	uint8_t padding1[4];
 	uint32_t uniqueID;
 	uint32_t field3C;
+		// 0x40: ObjectStreamingCallback has increased the referenced object's refcount
 	uint8_t field40;
 	uint8_t field41;
 	uint8_t flags;

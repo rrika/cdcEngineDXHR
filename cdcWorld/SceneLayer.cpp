@@ -6,6 +6,7 @@
 #include "Instance.h"
 #include "InstanceDrawable.h"
 #include "StreamUnit.h"
+#include "cdc/dtp/objectproperties/imfref.h"
 
 namespace cdc {
 	class CommonRenderDevice;
@@ -69,6 +70,33 @@ void SceneLayer::PostStreamIn(StreamUnit *unit) { // line 1443
 	// TODO
 	for (uint32_t i=0; i < s_numStreamingCallbacks; i++)
 		s_streamingCallbacks[i]->UnitLoaded(unit);
+}
+
+// STREAM_DumpUnit (stream.cpp)
+//     SceneLayer::StreamOut <- you are here
+//         ObjectStreamingCallback::UnitDumped (stream.cpp)
+//             releaseObject
+void SceneLayer::StreamOut(StreamUnit *unit) { // line 1504
+	if (g_scene == nullptr || unit->level == nullptr)
+		return;
+	// TODO
+	if (unit->sceneCellGroup) {
+		// TODO
+		for (uint32_t i=0; i < s_numStreamingCallbacks; i++)
+			s_streamingCallbacks[i]->UnitDumped(unit);
+	}
+	if (unit->coreUnit)
+		if (auto *admd = unit->level->admdData) {
+			auto *begin = admd->imfrefs;
+			auto *end = admd->imfrefs + admd->numIMFRefs;
+			for (dtp::IMFRef *imfref = begin; imfref < end; imfref++) {
+				if (imfref->m_imfDRMName) {
+					// TODO: g_ImfStreamingManager->StreamOutImfRef(imfref, unit);
+				} else {
+					
+				}
+			}
+		}
 }
 
 void SceneLayer::AddInstance(Instance *instance) { // line 1998
