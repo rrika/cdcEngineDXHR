@@ -52,6 +52,10 @@ SoundStreamHandler *SoundStreamHandler::Create(MediaStream *mediaStream) { // li
 	return new SoundStreamHandlerImpl(mediaStream);
 }
 
+void SoundStreamHandler::Destroy(SoundStreamHandler *handler) { // line 462
+	delete static_cast<SoundStreamHandlerImpl*>(handler);
+}
+
 int SoundStreamHandler::ChannelCount() const { // line 474
 	auto *impl = static_cast<SoundStreamHandlerImpl const*>(this);
 

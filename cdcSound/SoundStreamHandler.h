@@ -11,6 +11,7 @@ protected:
 	SoundStreamHandler(MediaStream*);
 public:
 	static SoundStreamHandler *Create(MediaStream*);
+	static void Destroy(SoundStreamHandler*);
 	int ChannelCount() const;
 	Voice *GetVoice(int channelIndex);
 

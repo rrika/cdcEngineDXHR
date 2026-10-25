@@ -29,7 +29,7 @@ MultiplexStreamImpl::MultiplexStreamImpl() { // line 729
 
 MultiplexStreamImpl::~MultiplexStreamImpl() { // line 790
 	// TODO
-	delete m_soundStreamHandler;
+	SoundStreamHandler::Destroy(m_soundStreamHandler);
 }
 
 void MultiplexStream::Stop() { // line 866
