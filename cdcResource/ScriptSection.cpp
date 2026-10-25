@@ -28,6 +28,8 @@ uint32_t ScriptSection::StartResource(uint32_t sectionId, uint32_t unknown6, uin
 
 	ScriptType *ty = new ScriptType(size);
 
+	ty->sectionId = sectionId; // HACK, for naming in the decompiler
+
 	// call Handle::Handle
 	Handle<ScriptType> newHandle(ty);
 

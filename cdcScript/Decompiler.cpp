@@ -1,3 +1,4 @@
+#include <string>
 #include "config.h"
 #include "cdc/dtp/script/scriptsound.h"
 #include "cdcLocale/localstr.h"
@@ -27,11 +28,38 @@ using namespace cdc;
 
 extern GlobalDatabase *globalDatabase;
 
+// derive name from dtp path
+static const char *derivedName(ScriptType *ty) {
+	if (!ty->derivedName.empty())
+		return ty->derivedName.c_str();
+	if (ty->sectionId != 0) {
+		if (const char *path = ty->sectionId ? DTPDataSection::GetName(ty->sectionId) : nullptr) {
+			std::string base = path;
+			size_t slash = base.find_last_of("/\\"); // no strpbrk or strrchrs
+			if (slash != std::string::npos)
+				base = base.substr(slash + 1);
+			size_t dot = base.rfind('.');
+			if (dot != std::string::npos)
+				base = base.substr(0, dot);
+			for (char& c : base)
+				if (c == ' ' || c == '\t')
+					c = '_';
+			ty->derivedName = base;
+			if (!base.empty())
+				return ty->derivedName.c_str();
+			ty->sectionId = 0; // don't retry
+		}
+	}
+	return nullptr;
+}
+
 static const char* nameof(ScriptType *ty) {
 	if (!ty)
 		return "(null)";
 	else if (ty->blob->m_nativeScriptName)
 		return ty->blob->m_nativeScriptName;
+	else if (const char *name = derivedName(ty))
+		return name;
 	else
 		return "Unknown";
 }

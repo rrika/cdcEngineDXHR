@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include "cdcScript/cdcScript.h" // for DataValue
 #include "cdcScript/DataType.h"
 #include "cdcScript/ScriptName.h"
@@ -91,6 +92,9 @@ class ScriptType : public RCObject { // 749
 public:
 	ScriptTypeStreamData* blob;
 	NativeScriptType* nativeScriptType = nullptr;
+
+	uint32_t sectionId = 0; // HACK, set by ScriptSection to obtain derivedName
+	std::string derivedName; // HACK
 public:
 	ScriptObject *CreateObject();
 
