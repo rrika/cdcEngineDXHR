@@ -532,23 +532,28 @@ static void ByteCode(UIActions& uiact, uint32_t *begin, uint32_t *end) {
 			ImGui::Text("field_%x", zx);
 			break;
 
-		case SCMD_CALLU: // 0x65
-		case SCMD_CALL1: // 0x66
-		case SCMD_CALL4: // 0x69
+		case SCMD_CALLU: case SCMD_CALL1: case SCMD_CALL4: // 0x65, 0x66, 0x69
+		case SCMD_SSEQU: case SCMD_SSEQ1: case SCMD_SSEQ4: // 0x6B, 0x6C, 0x6F
+		case SCMD_PSEQU: case SCMD_PSEQ1: case SCMD_PSEQ4: // 0x71, 0x72, 0x75
+		case SCMD_START: // 0x77
 			FunctionOperand(uiact, *cursor++, thisType);
 			break;
 
 		case SCMD_CALL2: // 0x67
-			cursor++;
+		case SCMD_SSEQ2: // 0x6D
+		case SCMD_PSEQ2: // 0x73
+			cursor++; // call specific super class?
 			PrototypeOperand(uiact, *cursor++, thisType);
 			break;
 
-		case SCMD_CALL3: // 0x68
-		case SCMD_CALL5: // 0x6A
+		case SCMD_CALL3: case SCMD_CALL5: // 0x68, 0x6A
+		case SCMD_SSEQ3: case SCMD_SSEQ5: // 0x6E, 0x70
+		case SCMD_PSEQ3: case SCMD_PSEQ5: // 0x74, 0x76
 			PrototypeOperand(uiact, *cursor++, thisType);
 			break;
 
 		case SCMD_ISTYPE: // 0x7E
+		case SCMD_NEW: // 0x7F
 		{
 			auto *ty = (ScriptType*)*cursor++;
 			ImGui::SameLine();
