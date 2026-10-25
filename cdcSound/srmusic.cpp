@@ -72,3 +72,64 @@ void SRMUSIC_StopMusic() { // line 677
 		g_musicSlots[i].StopMusic();
 	}
 }
+
+#include "config.h"
+#if ENABLE_IMGUI
+#include <cstdio>
+#include "imgui/imgui.h"
+#include "cdcSound/SoundStreamHandler.h"
+#include "cdcSound/Voice.h"
+
+void SRMUSIC_buildMenu() {
+	for (auto i=0u; i<kNumMusicSlots; i++)
+		if (g_musicSlots[i].m_soundStream)
+			goto menu_visible;
+	return;
+menu_visible:
+	if (!ImGui::BeginMenu("Music player"))
+		return;
+	for (auto i=0u; i<kNumMusicSlots; i++) {
+		auto& slot = g_musicSlots[i];
+		if (slot.m_soundStream) {
+			Voice *v = static_cast<MultiplexStreamImpl*>(slot.m_soundStream)->GetSoundStreamHandler()->GetVoice(0);
+			auto *vi = static_cast<VoiceImpl*>(v);
+
+			FMOD::Channel *channel = vi->m_channel;
+			FMOD::Sound *currentSound = nullptr;
+			if (channel->getCurrentSound(&currentSound) == FMOD_OK) {
+
+				unsigned pos = 0;
+				vi->m_channel->getPosition(&pos, FMOD_TIMEUNIT_MS);
+				pos /= 1000;
+				auto min = pos / 60;
+				auto sec = pos % 60;
+
+				unsigned total = 0;
+				currentSound->getLength(&total, FMOD_TIMEUNIT_MS);
+				total /= 1000;
+				auto totalMin = total / 60;
+				auto totalSec = total % 60;
+
+				char time[20] = {0};
+				snprintf(time, 19, "%d:%02d / %d:%02d",
+					min, sec, totalMin, totalSec);
+
+				if (ImGui::MenuItem(slot.m_streamFullPath, time))
+					slot.StopMusic();
+
+			} else {
+				// unsure when this happens, but offer to stop it anyway
+				if (ImGui::MenuItem(slot.m_streamFullPath))
+					slot.StopMusic();
+			}
+		} else {
+			ImGui::PushID(i);
+			ImGui::MenuItem("(empty)", nullptr, nullptr, false);
+			ImGui::PopID();
+		}
+	}
+	ImGui::EndMenu();
+}
+#else
+void SRMUSIC_buildMenu() {}
+#endif

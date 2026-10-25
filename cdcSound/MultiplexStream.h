@@ -60,6 +60,8 @@ public:
 	~MultiplexStreamImpl(); // line 790
 	void PlayRequest(); // line 1516
 	bool Init(StreamType streamType, uint8_t priority, const char *name); // line 2284
+
+	SoundStreamHandler *GetSoundStreamHandler() { return m_soundStreamHandler; }
 };
 
 void MultiplexStream::Play() { // line 434

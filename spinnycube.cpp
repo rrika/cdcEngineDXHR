@@ -108,6 +108,7 @@
 #include "cdcSound/MultiplexStream.h"
 #include "cdcSound/sfxmarker.h"
 #include "cdcSound/SoundPlex.h"
+#include "cdcSound/srmusic.h"
 #include "cdcWorld/Inspector.h"
 #include "cdcWorld/Instance.h"
 #include "cdcWorld/InstncG2.h"
@@ -1884,6 +1885,7 @@ int spinnyCube(HWND window,
 				buildPopupsMenu();
 				ImGui::EndMenu();
 			}
+			SRMUSIC_buildMenu();
 			if (mouseLook)
 				ImGui::Text("Press TAB or ESC to release cursor");
 			else if (io.WantCaptureKeyboard) {
