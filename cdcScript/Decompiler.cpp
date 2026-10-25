@@ -561,6 +561,12 @@ static void ByteCode(UIActions& uiact, uint32_t *begin, uint32_t *end) {
 			ImGui::TextDisabled("%08x", *cursor++);
 			break;
 
+		case SCMD_JMP: // 0x63
+		case SCMD_JMPF: // 0x64
+			ImGui::SameLine();
+			ImGui::Text("-> %04x", uint32_t(cursor - begin + sx));
+			break;
+
 		case SCMD_CALLU: case SCMD_CALL1: case SCMD_CALL4: // 0x65, 0x66, 0x69
 		case SCMD_SSEQU: case SCMD_SSEQ1: case SCMD_SSEQ4: // 0x6B, 0x6C, 0x6F
 		case SCMD_PSEQU: case SCMD_PSEQ1: case SCMD_PSEQ4: // 0x71, 0x72, 0x75
@@ -579,6 +585,12 @@ static void ByteCode(UIActions& uiact, uint32_t *begin, uint32_t *end) {
 		case SCMD_SSEQ3: case SCMD_SSEQ5: // 0x6E, 0x70
 		case SCMD_PSEQ3: case SCMD_PSEQ5: // 0x74, 0x76
 			PrototypeOperand(uiact, *cursor++, thisType);
+			break;
+
+		case SCMD_TSSTART: // 0x78
+		case SCMD_TPSTART: // 0x79
+			ImGui::SameLine();
+			ImGui::Text("-> %04x", uint32_t(cursor - begin + zx));
 			break;
 
 		case SCMD_ISTYPE: // 0x7E
