@@ -457,7 +457,7 @@ static const char *opcodeNames[SCMD_NUM_BYTECODE] = {
 	/* [SCMD_MOVEP] = */ "MOVEP" // 0x85
 };
 
-static uint32_t scanFunctionIndex(Function *fn) { // FIXME: no linear scan?
+static uint32_t scanFunctionIndex(Function *fn) { // FIXME: no linear scan
 	Prototype *prototype = fn->prototype;
 	ScriptType *ty = prototype->scriptType;
 	uint32_t numFunctions = ty->blob->m_functions.size();
@@ -469,9 +469,35 @@ static uint32_t scanFunctionIndex(Function *fn) { // FIXME: no linear scan?
 	return 9999;
 }
 
+static uint32_t scanPrototypeIndex(Prototype *pt) { // FIXME: no linear scan
+	ScriptType *ty = pt->scriptType;
+	uint32_t numFunctions = ty && ty->blob->m_functions ? ty->blob->m_functions.size() : 0;
+	for (uint32_t i=0; i<numFunctions; i++)
+		if (ty->blob->m_functions[i].prototype == pt)
+			return i;
+	return 9999;
+}
+
 void Signature(UIActions& uiact, uint32_t i, Prototype *pt, void *origin, ScriptType *impliedThisType);
 
+static void FunctionOperand(UIActions& uiact, uint32_t word, ScriptType *impliedThisType) {
+	ImGui::SameLine();
+	if (auto *func = (Function*)word)
+		Signature(uiact, scanFunctionIndex(func), func->prototype, (void*)func, impliedThisType);
+	else
+		ImGui::Text("(null)");
+}
+
+static void PrototypeOperand(UIActions& uiact, uint32_t word, ScriptType *impliedThisType) {
+	ImGui::SameLine();
+	if (auto *pt = (Prototype*)word)
+		Signature(uiact, scanPrototypeIndex(pt), pt, (void*)pt, impliedThisType);
+	else
+		ImGui::Text("(null)");
+}
+
 static void ByteCode(UIActions& uiact, uint32_t *begin, uint32_t *end) {
+	ScriptType *thisType = nullptr; // TODO
 	uint32_t *cursor = begin;
 	while (cursor < end) {
 		uint32_t op = (*cursor) >> 24;
@@ -509,21 +535,17 @@ static void ByteCode(UIActions& uiact, uint32_t *begin, uint32_t *end) {
 		case SCMD_CALLU: // 0x65
 		case SCMD_CALL1: // 0x66
 		case SCMD_CALL4: // 0x69
-		{
-			auto *func = (Function*)*cursor++;
-			ImGui::SameLine();
-			Signature(uiact, scanFunctionIndex(func), func->prototype, (void*)func, /*TODO*/ nullptr);
+			FunctionOperand(uiact, *cursor++, thisType);
 			break;
-		}
 
 		case SCMD_CALL2: // 0x67
 			cursor++;
-			cursor++;
+			PrototypeOperand(uiact, *cursor++, thisType);
 			break;
 
 		case SCMD_CALL3: // 0x68
 		case SCMD_CALL5: // 0x6A
-			cursor++;
+			PrototypeOperand(uiact, *cursor++, thisType);
 			break;
 
 		case SCMD_ISTYPE: // 0x7E
