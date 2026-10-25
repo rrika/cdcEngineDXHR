@@ -501,12 +501,33 @@ static void ByteCode(UIActions& uiact, uint32_t *begin, uint32_t *end) {
 	uint32_t *cursor = begin;
 	while (cursor < end) {
 		uint32_t op = (*cursor) >> 24;
-		uint32_t zx = (*cursor) & 0xffffff;
+		uint32_t zx = (*cursor) & 0xffffff; // 24 bits zero-extended
+		int32_t sx = int32_t(zx << 8) >> 8; // 24 bits sign-extended
 		const char *name = op < SCMD_NUM_BYTECODE ? opcodeNames[op] : "INVALID";
 		ImGui::TextDisabled("%04x: %08x %-7s", cursor-begin, *cursor, name);
 		cursor++;
 
 		switch (op) {
+		case SCMD_PUSH: // 0x2
+		{
+			uint32_t word = *cursor++;
+			float f; memcpy(&f, &word, 4);
+			float a = f < 0.f ? -f : f;
+			ImGui::SameLine();
+			if (a >= 1e-4f && a < 1e7f)
+				ImGui::Text("%d /* %f */", (int32_t)word, f);
+			else
+				ImGui::Text("%d", (int32_t)word);
+			break;
+		}
+		case SCMD_PUSHI: // 0x3
+			ImGui::SameLine();
+			ImGui::Text("%d", sx);
+			break;
+		case SCMD_PUSHI8: // 0x4, used for bools
+			ImGui::SameLine();
+			ImGui::Text("%d", zx & 0xff);
+			break;
 		case SCMD_PUSHC: // 0x5
 		{
 			const char *str = (const char*)*cursor++;
@@ -530,6 +551,14 @@ static void ByteCode(UIActions& uiact, uint32_t *begin, uint32_t *end) {
 		case SCMD_PUSHSR: //0x10
 			ImGui::SameLine();
 			ImGui::Text("field_%x", zx);
+			break;
+
+		case SCMD_MOVEU: // 0x34
+		case SCMD_MOVET: // 0x35
+		case SCMD_MOVEAU: // 0x3B
+		case SCMD_MOVEAT: // 0x3C
+			ImGui::SameLine();
+			ImGui::TextDisabled("%08x", *cursor++);
 			break;
 
 		case SCMD_CALLU: case SCMD_CALL1: case SCMD_CALL4: // 0x65, 0x66, 0x69
