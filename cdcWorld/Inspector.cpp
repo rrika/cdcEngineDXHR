@@ -348,6 +348,10 @@ void buildUI(UIActions& uiact, Instance *instance) {
 			instance->position.x,
 			instance->position.y,
 			instance->position.z);
+		ImGui::Text("Rotation         %f %f %f",
+			instance->rotation.x,
+			instance->rotation.y,
+			instance->rotation.z);
 		ImGui::Text("SceneEntity      %p", instance->sceneEntity);
 		ImGui::Text("InstanceDrawable %p", instance->instanceDrawable);
 		if (instance->instanceDrawable) {

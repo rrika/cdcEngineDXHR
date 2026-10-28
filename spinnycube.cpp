@@ -547,29 +547,31 @@ struct HackCamera : private cdc::ICamera {
 		cdc::Matrix rotateY   = { static_cast<float>(cos(cameraRotation.y)), 0, static_cast<float>(sin(cameraRotation.y)), 0, 0, 1, 0, 0, -static_cast<float>(sin(cameraRotation.y)), 0, static_cast<float>(cos(cameraRotation.y)), 0, 0, 0, 0, 1 };
 		cdc::Matrix rotateZ   = { static_cast<float>(cos(cameraRotation.z)), -static_cast<float>(sin(cameraRotation.z)), 0, 0, static_cast<float>(sin(cameraRotation.z)), static_cast<float>(cos(cameraRotation.z)), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 		cdc::Matrix cameraTranslate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -cameraPosition .x, -cameraPosition .y, -cameraPosition .z, 1 };
-		cdc::Matrix zUpWorld = {0, 0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1};
-		cdc::Matrix cameraRotate = rotateX * rotateY * zUpWorld;
+		cdc::Matrix zUpWorld = { 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1};
+		cdc::Matrix z180 = { -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+
+		cdc::Matrix cameraRotate = rotateX * rotateZ * z180;
 
 		// HACK: apply motion as side-effect of query
 		cameraPosition += cdc::Vector{
-			cameraRotate.m[0][2],
-			cameraRotate.m[1][2],
-			cameraRotate.m[2][2]} * forward;
+			cameraRotate.m[0][1],
+			cameraRotate.m[1][1],
+			cameraRotate.m[2][1]} * forward;
 		cameraPosition += cdc::Vector{
 			cameraRotate.m[0][0],
 			cameraRotate.m[1][0],
 			cameraRotate.m[2][0]} * sideways;
 		forward = sideways = 0.f;
 
-		viewMatrix = cameraRotate * cameraTranslate;
+		viewMatrix = zUpWorld * cameraRotate * cameraTranslate;
 		return &viewMatrix;
 	}
 
 	float getNearPlane() override { return m_nearPlane; }
 
 	void applyMouseDelta(float x, float y) {
-		cameraRotation.x += y;
-		cameraRotation.y += x;
+		cameraRotation.x -= y;
+		cameraRotation.z -= x;
 	}
 };
 
@@ -692,8 +694,10 @@ struct SpinnyUIActions : public UIActions, public HackCamera {
 	}
 
 	void camTeleport(cdc::Vector target, float yaw) override {
+		// yaw 0 = looking along Y positive
+		// this matches rotations on player spawns
 		cameraPosition = target;
-		cameraRotation.y = yaw;
+		cameraRotation.z = yaw;
 	}
 
 	void camOrbit(cdc::Vector target, float radius) override {
@@ -983,7 +987,7 @@ int spinnyCube(HWND window,
 
 	float scale = 1.f;
 	cdc::Vector modelScale       = { scale, scale, scale };
-	cdc::Vector modelTranslation = { 60.0f, 0.0f, 0.0f };
+	cdc::Vector modelTranslation = { 0.0f, 60.0f, 0.0f };
 
 	bool mouseLook = false;
 	bool useFrustumCulling = true;
@@ -1005,6 +1009,7 @@ int spinnyCube(HWND window,
 	CameraManager cameraManager;
 	cameraManager.activeCamera = camera.asCamera();
 	camera.m_nearPlane = n;
+	camera.cameraRotation.z = -3.141592654f; // look along positive Y
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
