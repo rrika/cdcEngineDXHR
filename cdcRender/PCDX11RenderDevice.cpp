@@ -83,6 +83,12 @@ void PCDX11RenderDevice::LineBatcher::Flush() {
 	PCDX11VertexShader *vs = m_pRenderDevice->shtab_vs_ui[vsIndex]; // 10D38
 	PCDX11PixelShader *ps = m_pRenderDevice->shtab_ps_passthrough[0]; // 10D90
 
+	// For some god-forsaken reason the vertex shader interprets
+	// control.y to modulate the passthrough vertex color, and
+	// control.x to modulate the swapped vertex color
+	// (rather than x=passthrough). So let's just swap it here.
+	m_polyFlags ^= POLYFLAG_BGRSWAP;
+
 	// HACK: draw call not present in DXHR, taken from TRAS
 	m_pRenderDevice->DrawPrimitive(
 		&identity4x4,
