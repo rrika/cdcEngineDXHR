@@ -525,8 +525,57 @@ struct DRMExplorer {
 	}
 } drmexplorer;
 
-struct SpinnyUIActions : public UIActions {
-	DRMExplorer *drmexplorer = nullptr;
+#endif
+
+struct HackCamera : private cdc::ICamera {
+
+	cdc::Vector cameraPosition { 0.f, 0.f, 0.f };
+	cdc::Vector cameraRotation { 0.f, 0.f, 0.f };
+	float forward = 0.f;
+	float sideways = 0.f;
+	float m_nearPlane = 40.f;
+	cdc::Matrix viewMatrix = cdc::identity4x4;
+
+	cdc::ICamera *asCamera() { return static_cast<cdc::ICamera*>(this); }
+
+	void enable(ICamera *prevCamera) override { /* empty */ }
+	void disable(ICamera *nextCamera) override { /* empty */ }
+	Type getType() override { return kFree; }
+
+	cdc::Matrix *getMatrix() override {
+		cdc::Matrix rotateX   = { 1, 0, 0, 0, 0, static_cast<float>(cos(cameraRotation.x)), -static_cast<float>(sin(cameraRotation.x)), 0, 0, static_cast<float>(sin(cameraRotation.x)), static_cast<float>(cos(cameraRotation.x)), 0, 0, 0, 0, 1 };
+		cdc::Matrix rotateY   = { static_cast<float>(cos(cameraRotation.y)), 0, static_cast<float>(sin(cameraRotation.y)), 0, 0, 1, 0, 0, -static_cast<float>(sin(cameraRotation.y)), 0, static_cast<float>(cos(cameraRotation.y)), 0, 0, 0, 0, 1 };
+		cdc::Matrix rotateZ   = { static_cast<float>(cos(cameraRotation.z)), -static_cast<float>(sin(cameraRotation.z)), 0, 0, static_cast<float>(sin(cameraRotation.z)), static_cast<float>(cos(cameraRotation.z)), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+		cdc::Matrix cameraTranslate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -cameraPosition .x, -cameraPosition .y, -cameraPosition .z, 1 };
+		cdc::Matrix zUpWorld = {0, 0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1};
+		cdc::Matrix cameraRotate = rotateX * rotateY * zUpWorld;
+
+		// HACK: apply motion as side-effect of query
+		cameraPosition += cdc::Vector{
+			cameraRotate.m[0][2],
+			cameraRotate.m[1][2],
+			cameraRotate.m[2][2]} * forward;
+		cameraPosition += cdc::Vector{
+			cameraRotate.m[0][0],
+			cameraRotate.m[1][0],
+			cameraRotate.m[2][0]} * sideways;
+		forward = sideways = 0.f;
+
+		viewMatrix = cameraRotate * cameraTranslate;
+		return &viewMatrix;
+	}
+
+	float getNearPlane() override { return m_nearPlane; }
+
+	void applyMouseDelta(float x, float y) {
+		cameraRotation.x += y;
+		cameraRotation.y += x;
+	}
+};
+
+#ifdef ENABLE_IMGUI
+
+struct SpinnyUIActions : public UIActions, public HackCamera {
 	cdc::IRenderTerrain *selectedRenderTerrain = 0;
 	cdc::RenderMesh *selectedModel = nullptr;
 	cdc::ModelBatch *selectedBatch = nullptr;
@@ -540,7 +589,7 @@ struct SpinnyUIActions : public UIActions {
 
 	void *selectedMovable = nullptr;
 
-	cdc::Vector toolPosition;
+	DRMExplorer *drmexplorer = nullptr;
 	bool ctrlClickHint = true;
 
 	void select(cdc::IRenderTerrain *renderTerrain) override {
@@ -576,10 +625,6 @@ struct SpinnyUIActions : public UIActions {
 	void select(Instance *instance) override {
 		selectedInstance = instance;
 		selectedMovable = (void*)instance;
-	}
-
-	cdc::Vector getToolPosition() override {
-		return toolPosition;
 	}
 
 	void origin(void *ptr) override {
@@ -629,6 +674,31 @@ struct SpinnyUIActions : public UIActions {
 			drmexplorer->open(newTab);
 			ctrlClickHint = false;
 		}
+	}
+
+	cdc::Vector getToolPosition() override {
+		return cameraPosition + cdc::Vector{
+			viewMatrix.m[0][2],
+			viewMatrix.m[1][2],
+			viewMatrix.m[2][2]} * 300.f;
+	}
+
+	cdc::Vector getCameraPosition() override {
+		return cameraPosition;
+	}
+
+	void camTeleport(cdc::Vector target) override {
+		cameraPosition = target;
+	}
+
+	void camTeleport(cdc::Vector target, float yaw) override {
+		cameraPosition = target;
+		cameraRotation.y = yaw;
+	}
+
+	void camOrbit(cdc::Vector target, float radius) override {
+		cameraPosition = target;
+		// TODO
 	}
 };
 
@@ -912,7 +982,6 @@ int spinnyCube(HWND window,
 	float f = 100000.0f;                        // far
 
 	float scale = 1.f;
-	cdc::Vector modelRotation    = { 0.0f, 0.0f, 0.0f };
 	cdc::Vector modelScale       = { scale, scale, scale };
 	cdc::Vector modelTranslation = { 60.0f, 0.0f, 0.0f };
 
@@ -923,14 +992,18 @@ int spinnyCube(HWND window,
 	bool drawCellBoxes = false;
 	bool pointlessCopy = true;
 	int showTempBuffer = -1;
-	cdc::Vector cameraPos{0, 0, 0};
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
-	GenericCamera camera;
-	CameraManager cameraManager;
+#if ENABLE_IMGUI
+	SpinnyUIActions uiact;
+	HackCamera& camera = uiact;
+#else
+	HackCamera camera; 
+#endif
 
-	cameraManager.activeCamera = &camera;
+	CameraManager cameraManager;
+	cameraManager.activeCamera = camera.asCamera();
 	camera.m_nearPlane = n;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -965,7 +1038,7 @@ int spinnyCube(HWND window,
 	bool showDrawablesWindow = false;
 	bool showFilesystemWindow = false;
 	bool showObjectsWindow = false;
-	SpinnyUIActions uiact; uiact.drmexplorer = &drmexplorer;
+	uiact.drmexplorer = &drmexplorer;
 	bool showDRMWindow = false;
 	bool showUnitsWindow = false;
 	bool showLoadedUnitsWindow = false;
@@ -1177,35 +1250,25 @@ int spinnyCube(HWND window,
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 
-		cdc::Matrix rotateX   = { 1, 0, 0, 0, 0, static_cast<float>(cos(modelRotation.x)), -static_cast<float>(sin(modelRotation.x)), 0, 0, static_cast<float>(sin(modelRotation.x)), static_cast<float>(cos(modelRotation.x)), 0, 0, 0, 0, 1 };
-		cdc::Matrix rotateY   = { static_cast<float>(cos(modelRotation.y)), 0, static_cast<float>(sin(modelRotation.y)), 0, 0, 1, 0, 0, -static_cast<float>(sin(modelRotation.y)), 0, static_cast<float>(cos(modelRotation.y)), 0, 0, 0, 0, 1 };
-		cdc::Matrix rotateZ   = { static_cast<float>(cos(modelRotation.z)), -static_cast<float>(sin(modelRotation.z)), 0, 0, static_cast<float>(sin(modelRotation.z)), static_cast<float>(cos(modelRotation.z)), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 		cdc::Matrix bottleScale = { modelScale.x, 0, 0, 0, 0, modelScale.y, 0, 0, 0, 0, modelScale.z, 0, 0, 0, 0, 1 };
 		cdc::Matrix bottleTranslate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, modelTranslation.x, modelTranslation.y, modelTranslation.z, 1 };
-		cdc::Matrix cameraTranslate = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -cameraPos.x, -cameraPos.y, -cameraPos.z, 1 };
 		cdc::Matrix lightScaleTranslate = { lightRadius * 2.0f, 0, 0, 0, 0, lightRadius * 2.0f, 0, 0, 0, 0, lightRadius * 2.0f, 0, 1, 1, 1, 1 };
-		cdc::Matrix zUpWorld = {0, 0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1};
 
 		if (mouseLook) {
 			if (false) {
-				modelRotation.x += mouseKeyboard->state.deltaY;
-				modelRotation.y += mouseKeyboard->state.deltaX;
+				camera.applyMouseDelta(
+					mouseKeyboard->state.deltaX,
+					mouseKeyboard->state.deltaY);
 			} else {
-				modelRotation.x += inputSystem.GetValue(cdc::Input_MouseY);
-				modelRotation.y += inputSystem.GetValue(cdc::Input_MouseX);
+				camera.applyMouseDelta(
+					inputSystem.GetValue(cdc::Input_MouseX),
+					inputSystem.GetValue(cdc::Input_MouseY));
 			}
 		}
 
-		cdc::Matrix cameraRotate = rotateX * rotateY * zUpWorld;
-
-		cameraPos += cdc::Vector{
-			cameraRotate.m[0][2],
-			cameraRotate.m[1][2],
-			cameraRotate.m[2][2]} * (speedModifier * forward);
-		cameraPos += cdc::Vector{
-			cameraRotate.m[0][0],
-			cameraRotate.m[1][0],
-			cameraRotate.m[2][0]} * (speedModifier * sideways);
+		camera.forward += speedModifier * forward;
+		camera.sideways += speedModifier * sideways;
+		cameraManager.update();
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1279,15 +1342,8 @@ int spinnyCube(HWND window,
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 
-		cdc::Matrix viewMatrix = cameraRotate * cameraTranslate;
-		camera.matrix = viewMatrix;
-		cameraManager.update();
-		viewMatrix = *cameraManager.getMatrix(); // wow, it's nothing
+		cdc::Matrix viewMatrix = *cameraManager.getMatrix();
 		renderViewport.nearz = cameraManager.getNearPlane();
-		uiact.toolPosition = cameraPos + cdc::Vector{
-			cameraRotate.m[0][2],
-			cameraRotate.m[1][2],
-			cameraRotate.m[2][2]} * 300.f;
 
 		// HACK: apply parabola movement
 		for (Instance *instance : InstanceManager::s_instances) {
@@ -1326,7 +1382,7 @@ int spinnyCube(HWND window,
 		scene->viewMatrix = viewMatrix;
 
 		cdc::g_microphone.m_viewMatrix = viewMatrix;
-		cdc::g_microphone.m_position = cameraPos;
+		cdc::g_microphone.m_position = camera.cameraPosition;
 		cdc::SFXMARKER_ProcessAllMarkers();
 
 		cdc::CullingFrustum cullingFrustum;
@@ -2439,7 +2495,7 @@ int spinnyCube(HWND window,
 
 				if (cdc::CellGroupData *cellGroupData = level->pSceneData) {
 					auto *playerCell = static_cast<cdc::SceneCell*>(
-						unit.sceneCellGroup->GetCellFromPoint((cdc::Vector3&)cameraPos, false));
+						unit.sceneCellGroup->GetCellFromPoint((cdc::Vector3&)camera.cameraPosition, false));
 					ImGui::PushID("cells");
 					uint32_t numCells = cellGroupData->header->numTotalCells;
 					for (uint32_t i=0; i < numCells; i++) {
@@ -2453,9 +2509,7 @@ int spinnyCube(HWND window,
 						ImGui::PushID(i);
 						if (ImGui::SmallButton("Teleport to")) {
 							float *center = cell->pHeader->vec10;
-							cameraPos.x = center[0];
-							cameraPos.y = center[1];
-							cameraPos.z = center[2];
+							uiact.camTeleport({ center[0], center[1], center[2] });
 						}
 
 						// buttons for renderterrain
@@ -2510,9 +2564,7 @@ int spinnyCube(HWND window,
 					ImGui::SameLine();
 					ImGui::PushID(i);
 					if (ImGui::SmallButton("Teleport to")) {
-						cameraPos.x = marker->position.x;
-						cameraPos.y = marker->position.y;
-						cameraPos.z = marker->position.z;
+						uiact.camTeleport(marker->position);
 					}
 					ImGui::PopID();
 					if (true) {
@@ -2564,9 +2616,10 @@ int spinnyCube(HWND window,
 					ImGui::PushID(i);
 					ImGui::SameLine();
 					if (ImGui::SmallButton("Teleport to")) {
-						cameraPos.x = intro.position[0];
-						cameraPos.y = intro.position[1];
-						cameraPos.z = intro.position[2];
+						uiact.camTeleport({
+							intro.position[0],
+							intro.position[1],
+							intro.position[2]});
 					}
 					ImGui::SameLine();
 					if (ImGui::SmallButton("Details"))

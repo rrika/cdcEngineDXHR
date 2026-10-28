@@ -30,7 +30,11 @@ struct UIActions {
 	virtual void select(dtp::IMFRef *imfRef) = 0;
 	virtual void select(Instance *instance) = 0;
 
-	virtual cdc::Vector getToolPosition() = 0;
-
 	virtual void origin(void *) = 0;
+
+	virtual cdc::Vector getToolPosition() = 0;
+	virtual cdc::Vector getCameraPosition() = 0;
+	virtual void camTeleport(cdc::Vector) = 0;
+	virtual void camTeleport(cdc::Vector, float yaw) = 0;
+	virtual void camOrbit(cdc::Vector, float radius) = 0;
 };
